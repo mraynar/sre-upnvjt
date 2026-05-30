@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-primary: #10b981;
+  --color-primary-focus: #059669;
+  --color-primary-on-dark: #34d399;
+  --color-ink: #131f1c;
+  --color-body: #131f1c;
+  --color-body-on-dark: #ffffff;
+  --color-body-muted: #b2c0b9;
+  --color-ink-muted-80: #2a3f37;
+  --color-ink-muted-48: #6c8278;
+  --color-divider-soft: #e6f0eb;
+  --color-hairline: #d3e0d8;
+  --color-canvas: #ffffff;
+  --color-canvas-parchment: #f3f8f5;
+  --color-surface-pearl: #f7fbf8;
+  --color-surface-tile-1: #1b2621;
+  --color-surface-tile-2: #1f2b25;
+  --color-surface-tile-3: #18221d;
+  --color-surface-black: #0b120f;
+  --color-surface-chip-translucent: rgba(193, 209, 200, 0.64);
+  --color-on-primary: #ffffff;
+  --color-on-dark: #ffffff;
+
+  /* Typography / Fonts */
+  --font-display: var(--font-display), system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Border Radii */
+  --radius-xs: 5px;
+  --radius-sm: 8px;
+  --radius-md: 11px;
+  --radius-lg: 18px;
+  --radius-pill: 9999px;
+  --radius-full: 9999px;
+}
+
+body {
+  background-color: #ffffff;
+  color: #131f1c;
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: var(--font-display);
+}
+
+/* Custom Grid Pattern for tech aesthetic */
+.bg-grid-pattern {
+  background-size: 60px 60px;
+  background-image: 
+    linear-gradient(to right, rgba(52, 211, 153, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(52, 211, 153, 0.035) 1px, transparent 1px);
+}
+
+/* Custom marquee layout for infinite scroll */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Custom scrollbar to match Apple-like premium gallery */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3f8f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d3e0d8;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b2c0b9;
+}
