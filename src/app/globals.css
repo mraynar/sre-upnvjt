@@ -61,12 +61,12 @@ h1, h2, h3, h4, h5, h6, .font-display {
 /* Custom marquee layout for infinite scroll */
 @keyframes marquee {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  100% { transform: translateX(-100%); }
 }
 
 .animate-marquee {
   display: flex;
-  width: max-content;
+  flex-shrink: 0;
   animation: marquee 25s linear infinite;
 }
 
@@ -91,4 +91,13 @@ h1, h2, h3, h4, h5, h6, .font-display {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #b2c0b9;
+}
+
+/* Hide scrollbar for carousel */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

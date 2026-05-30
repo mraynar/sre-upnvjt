@@ -1,26 +1,13 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowUpRight,
-  Menu,
-  X,
   Zap,
-  Globe,
   Users,
   BookOpen,
-  Calendar,
-  Award,
-  Cpu,
-  Layers,
   ChevronRight,
-  ShoppingBag,
-  ArrowRight,
-  TrendingUp,
-  Share2,
-  CheckCircle2,
-  ExternalLink,
-  ChevronDown,
+  ArrowUpRight,
+  Eye,
 } from "lucide-react";
 
 // Subtle organic scroll reveals mimicking Apple's easing
@@ -132,11 +119,7 @@ const MERCHANDISE = [
   },
 ];
 
-const PARTNERS = [
-  "SRE Indonesia",
-  "UPN Veteran Jawa Timur",
-  "Ministry of Energy (ESDM)",
-];
+const PARTNERS = ["SRE Indonesia", "UPN Veteran Jawa Timur", "SRE UPNVJT"];
 
 // Helper to generate coordinates for floating background particles
 const PARTICLES = [
@@ -156,6 +139,7 @@ export default function Home() {
   const [hoveredMerch, setHoveredMerch] = useState(null);
   const [iyrefActive, setIyrefActive] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeProgram, setActiveProgram] = useState(0);
 
   // Monitor scroll to update active section in sub-navigation
   useEffect(() => {
@@ -188,109 +172,120 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Auto-play the WOW 3D Carousel
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveProgram((prev) => (prev + 1) % 5);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Responsive card dimensions for the carousel
+  const [cardDims, setCardDims] = useState({ width: 760, gap: 32, height: 540 });
+  useEffect(() => {
+    const update = () => {
+      if (window.innerWidth < 640) {
+        setCardDims({ width: Math.round(window.innerWidth * 0.82), gap: 16, height: 420 });
+      } else if (window.innerWidth < 1024) {
+        setCardDims({ width: 520, gap: 24, height: 480 });
+      } else {
+        setCardDims({ width: 760, gap: 32, height: 540 });
+      }
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-canvas text-ink antialiased">
       {/* Main Stack of Full-Bleed alternating Tiles */}
       <main className="w-full flex flex-col overflow-hidden">
-        {/* 2. [Home] Hero Section (Canvas: Custom Grid Pattern Mesh and Floating Energy Particles) */}
+        {/* 2. [Home] Hero Section (Editorial Magazine Design) */}
         <section
           id="home"
-          className="relative min-h-[95vh] flex flex-col justify-center items-start py-24 px-6 md:px-16 overflow-hidden bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=1920&auto=format&fit=crop')",
-          }}
+          className="relative min-h-screen flex flex-col justify-center items-start py-24 px-6 md:px-12 lg:px-20 overflow-hidden bg-[#0a1c15]"
         >
-          {/* Deep ocean-teal gradient mask overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0f3036]/95 via-[#0f3036]/85 to-[#0b120f]/98 pointer-events-none z-0" />
-
-          {/* Premium CSS tech grid overlay line mesh */}
-          <div className="absolute inset-0 bg-grid-pattern pointer-events-none opacity-60 z-0" />
-
-          {/* Glowing Green Ambient Light Spot (seamless visual depth) */}
-          <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] pointer-events-none z-0" />
-
-          {/* Floating Micro-Particle Energy Nodes */}
-          {PARTICLES.map((p) => (
-            <motion.div
-              key={p.id}
-              className="absolute rounded-full bg-primary-on-dark pointer-events-none opacity-20 z-0"
-              style={{
-                top: p.top,
-                left: p.left,
-                width: p.size,
-                height: p.size,
-              }}
-              animate={{
-                y: [0, -40, 0],
-                x: [0, 20, 0],
-                opacity: [0.15, 0.35, 0.15],
-              }}
-              transition={{
-                duration: 10 + p.delay * 2,
-                repeat: Infinity,
-                delay: p.delay,
-                ease: "easeInOut",
-              }}
+          {/* Background Video */}
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=1920&auto=format&fit=crop"
+            className="absolute inset-0 w-full h-full object-cover z-0"
+          >
+            <source
+              src="/video/hero.mp4"
+              type="video/mp4"
             />
-          ))}
+          </video>
+          
+          {/* Solid Green Editorial Overlay (mix-blend-multiply for rich color) */}
+          <div className="absolute inset-0 bg-[#0a2e24] opacity-80 mix-blend-multiply z-0 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#08201a]/30 to-[#08201a]/80 z-0 pointer-events-none" />
 
-          <div className="max-w-7xl mx-auto w-full z-10 flex flex-col justify-center items-start h-full">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="max-w-4xl text-left flex flex-col items-start"
-            >
-              <h1 className="text-[44px] md:text-[68px] lg:text-[88px] font-display font-semibold tracking-tight text-white leading-[1.05] uppercase mb-4">
-                SOCIETY OF <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-on-dark to-[#8fc3a7] drop-shadow-sm">
-                  RENEWABLE ENERGY
-                </span>
-              </h1>
-
-              <p className="text-[20px] md:text-[28px] font-light text-white/90 leading-relaxed mb-6 font-sans">
-                UPN Veteran Jawa Timur
-              </p>
-
-              <div className="bg-[#1b434b]/60 border border-white/5 backdrop-blur-md rounded-full px-5 py-2 mb-10 select-none shadow-[0_0_20px_rgba(255,255,255,0.02)]">
-                <span className="text-[14px] md:text-[16px] font-semibold tracking-wider text-primary-on-dark uppercase">
-                  #REassemblingSRE
-                </span>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center gap-6">
-                <a
-                  href="#about"
-                  className="bg-primary hover:bg-primary-focus text-white text-[16px] font-semibold tracking-tight rounded-full px-8 py-3.5 transition-all duration-300 transform active:scale-95 hover:shadow-[0_0_25px_rgba(16,185,129,0.4)]"
-                >
-                  Explore Chapter
-                </a>
-                <a
-                  href="#join"
-                  className="border border-white/30 hover:bg-white/10 text-white text-[16px] font-semibold tracking-tight rounded-full px-8 py-3.5 transition-all duration-300 transform active:scale-95"
-                >
-                  Join Us
-                </a>
-              </div>
-            </motion.div>
+          {/* Top Right Decoration (EST. 2024 & Crosshair Lines) */}
+          <div className="absolute top-0 right-8 md:right-16 lg:right-24 w-64 h-32 z-10 hidden md:block">
+            {/* <div className="absolute top-[80px] -left-[100vw] w-[200vw] h-[1px] bg-white/20 pointer-events-none" />
+            <div className="absolute top-0 right-16 w-[1px] h-[100vh] bg-white/20 pointer-events-none" />
+            <span className="absolute top-10 right-20 text-[11px] font-bold tracking-[0.2em] text-[#e8ecc4] uppercase">
+              EST. 2024
+            </span> */}
           </div>
+
+          <div className="w-full z-10 flex flex-col justify-center items-start h-full mt-12 md:mt-20">
+            {/* Main Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-[64px] sm:text-[90px] md:text-[110px] lg:text-[130px] font-display font-black tracking-[-0.04em] leading-[0.85] uppercase flex flex-col items-start"
+            >
+              <div className="flex items-center gap-3 md:gap-5">
+                <span className="text-white drop-shadow-md">SOCIETY</span>
+                <span className="text-[32px] sm:text-[48px] md:text-[64px] lg:text-[72px] font-serif italic font-normal text-[#e8ecc4] normal-case tracking-normal transform -translate-y-2 md:-translate-y-4">of</span>
+              </div>
+              <div className="text-[#e8ecc4] drop-shadow-md">
+                RENEWABLE
+              </div>
+              <div className="flex items-center gap-2 md:gap-4 ml-6 sm:ml-12 md:ml-24">
+                <span className="text-white drop-shadow-md">ENERGY</span>
+              </div>
+            </motion.h1>
+          </div>
+
+          {/* Bottom Right Text */}
+          <div className="absolute bottom-8 md:bottom-12 right-6 md:right-12 lg:right-20 z-10 flex flex-col items-end">
+            <span className="text-[12px] sm:text-[14px] font-medium text-white/90 tracking-wide drop-shadow-md text-right">
+              Student Organization at <strong className="text-white font-bold block sm:inline">UPN Veteran Jawa Timur</strong>
+            </span>
+          </div>
+
+          {/* Bottom Thin Yellow Line */}
+          <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#e8ecc4] z-20" />
         </section>
 
         {/* Seamless Infinite Loop Partner Marquee Scroller */}
-        <section className="bg-surface-black border-y border-white/5 py-8 overflow-hidden z-10 select-none">
-          <div className="w-full flex items-center">
-            <div className="animate-marquee whitespace-nowrap flex items-center gap-16">
-              {PARTNERS.concat(PARTNERS).map((p, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary-on-dark" />
-                  <span className="text-[13px] md:text-[14px] font-display font-semibold tracking-widest text-body-muted uppercase">
-                    {p}
-                  </span>
-                </div>
-              ))}
+        <section className="bg-surface-black border-y border-white/5 py-8 overflow-hidden z-10 select-none flex">
+          {[0, 1].map((i) => (
+            <div
+              key={i}
+              className="animate-marquee flex items-center gap-16 px-8"
+            >
+              {Array(6)
+                .fill(PARTNERS)
+                .flat()
+                .map((p, idx) => (
+                  <div key={`${i}-${idx}`} className="flex items-center gap-3">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary-on-dark" />
+                    <span className="text-[13px] md:text-[14px] font-display font-semibold tracking-widest text-body-muted uppercase">
+                      {p}
+                    </span>
+                  </div>
+                ))}
             </div>
-          </div>
+          ))}
         </section>
 
         {/* 3. [About] Section (Canvas: #ffffff) */}
@@ -301,276 +296,326 @@ export default function Home() {
           {/* Subtle decoration elements */}
           <div className="absolute right-0 top-1/3 w-[300px] h-[300px] rounded-full bg-canvas-parchment blur-3xl opacity-60 pointer-events-none" />
 
-          <div className="max-w-7xl mx-auto w-full flex flex-col gap-20">
-            {/* Top Student Solar Group Photo Banner */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.98, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full aspect-[21/7] rounded-[18px] overflow-hidden"
-              style={{
-                filter: "drop-shadow(0 20px 40px rgba(19, 31, 28, 0.08))",
-              }}
-            >
-              <img
-                src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=1200&auto=format&fit=crop"
-                alt="SRE UPN Veteran Jawa Timur Chapter Members Solar Panel Grid"
-                className="w-full h-full object-cover grayscale transition-all duration-700 hover:grayscale-0 hover:scale-[1.02]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0f3036]/75 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute bottom-8 left-8 text-white z-10">
-                <span className="text-[12px] font-semibold tracking-widest uppercase text-primary-on-dark mb-1 block">
-                  FOUNDING HUB
-                </span>
-                <h3 className="text-[28px] md:text-[36px] font-display font-semibold tracking-tight uppercase">
-                  SOCIETY OF RENEWABLE ENERGY
-                </h3>
-              </div>
-            </motion.div>
-
-            {/* Split layout below */}
-            <div className="flex flex-col lg:flex-row gap-16 items-start">
-              {/* Left Headline with Gradient Line Underline Accent */}
+          <div className="w-full relative z-10 flex flex-col gap-16">
+            {/* WOW Bento Grid Layout for About Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+              
+              {/* Massive Title Block (Col 1-4) */}
               <motion.div
-                {...fadeInUp}
-                className="flex-1 flex flex-col justify-start"
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="lg:col-span-5 xl:col-span-4 flex flex-col justify-between bg-[#07130e] text-white rounded-3xl p-8 md:p-12 relative overflow-hidden group"
               >
-                <div className="relative pb-6">
-                  <h2 className="text-[42px] md:text-[52px] font-display font-semibold tracking-tight text-ink leading-none uppercase">
+                {/* Decoration */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[80px] rounded-full group-hover:scale-150 transition-transform duration-1000" />
+                
+                <div className="relative z-10">
+                  <span className="inline-block py-1.5 px-4 rounded-full bg-primary/20 text-primary border border-primary/30 text-[12px] font-bold tracking-widest uppercase mb-8 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                    Who We Are
+                  </span>
+                  <h2 className="text-[56px] md:text-[72px] lg:text-[64px] xl:text-[80px] font-display font-black leading-[0.9] tracking-tighter uppercase drop-shadow-xl">
                     ABOUT <br />
-                    <span className="text-primary">SRE UPN VJ</span>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-br from-primary to-[#a8d3ba]">SRE UPNVJT</span>
                   </h2>
-                  <div className="absolute bottom-0 left-0 w-32 h-1.5 bg-gradient-to-r from-primary to-primary-focus rounded-full" />
                 </div>
-                <div className="mt-8">
-                  <p className="text-[14px] font-normal text-ink-muted-48 uppercase tracking-widest">
-                    CHAPTER FOCUS
+
+                <div className="relative z-10 mt-16 lg:mt-32 border-l-2 border-primary/50 pl-5">
+                  <p className="text-[13px] font-bold text-primary uppercase tracking-[0.2em] mb-2">
+                    Chapter Focus
                   </p>
-                  <p className="text-[17px] font-semibold text-ink mt-1">
-                    Operational microgrids, biofuel experiments, & green
-                    advocacy.
+                  <p className="text-[17px] font-light text-white/80 leading-relaxed">
+                    Operational microgrids, biofuel experiments, & green advocacy.
                   </p>
                 </div>
               </motion.div>
 
-              {/* Right Descriptions */}
+              {/* Main Image Banner (Col 5-12) */}
               <motion.div
-                {...fadeInUp}
-                className="flex-[1.5] flex flex-col justify-start gap-8 text-[17px] leading-relaxed text-ink/85 font-light"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+                className="lg:col-span-7 xl:col-span-8 relative min-h-[400px] lg:min-h-[auto] rounded-3xl overflow-hidden group shadow-[0_20px_40px_rgba(0,0,0,0.06)]"
               >
-                <p className="text-[20px] font-normal text-ink leading-relaxed">
-                  <strong>Society of Renewable Energy (SRE)</strong> is a
-                  student-led organization that aims to spark student’s role in
-                  the field of new and renewable energy.
-                </p>
-                <p>
-                  <strong>SRE UPN Veteran Jawa Timur</strong>, the key
+                <img
+                  src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=1200&auto=format&fit=crop"
+                  alt="SRE UPN Veteran Jawa Timur Chapter Members Solar Panel Grid"
+                  className="absolute inset-0 w-full h-full object-cover grayscale transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#07130e]/90 via-[#07130e]/20 to-transparent pointer-events-none" />
+                
+                {/* Image Overlay Text */}
+                <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 text-white z-10 pr-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="w-2 h-2 rounded-full bg-primary" />
+                    <span className="text-[11px] md:text-[13px] font-bold tracking-[0.3em] uppercase text-white/90">
+                      Founding Hub
+                    </span>
+                  </div>
+                  <h3 className="text-[24px] sm:text-[28px] md:text-[40px] font-display font-black tracking-tighter uppercase leading-none drop-shadow-2xl">
+                    SOCIETY OF <br className="hidden sm:block" /> RENEWABLE ENERGY
+                  </h3>
+                </div>
+              </motion.div>
+
+              {/* Story Block 1 (Col 1-6) */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+                className="lg:col-span-6 bg-white border border-black/[0.04] rounded-3xl p-8 md:p-12 hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-shadow duration-500 relative overflow-hidden"
+              >
+                {/* Decorative background element */}
+                <div className="absolute -top-12 -right-12 text-black/[0.02] transform rotate-12">
+                  <Users className="w-64 h-64" />
+                </div>
+                
+                <div className="relative z-10">
+                  <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
+                    <Users className="w-7 h-7 text-primary" />
+                  </div>
+                  <p className="text-[22px] md:text-[26px] font-light text-ink leading-[1.6] tracking-tight">
+                    <strong className="font-semibold">Society of Renewable Energy (SRE)</strong> is a
+                    student-led organization that aims to spark student’s role in
+                    the field of new and renewable energy.
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Story Block 2 (Col 7-12) */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+                className="lg:col-span-6 bg-surface-pearl border border-black/[0.04] rounded-3xl p-8 md:p-12 hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-shadow duration-500 flex flex-col justify-between"
+              >
+                <p className="text-[17px] md:text-[19px] text-ink/75 leading-[1.7] font-light mb-10">
+                  <strong className="font-semibold text-ink">SRE UPN Veteran Jawa Timur</strong>, the key
                   operational student chapter, was established to accelerate
                   Indonesia's energy transition by providing high-fidelity
                   learning programs, practical microgrid field projects, and
                   institutional energy audits for the members.
                 </p>
-                <div className="pt-4 flex items-center gap-4">
+                <div className="flex items-center">
                   <a
                     href="#activity"
-                    className="bg-[#0f3036] hover:bg-[#1b434b] text-white text-[15px] font-semibold rounded-full px-6 py-3 transition-colors duration-300 transform active:scale-95"
+                    className="group inline-flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow-sm hover:shadow-md transition-all duration-300 text-[14px] font-bold uppercase tracking-widest text-ink hover:text-primary"
                   >
                     See Our Activities
+                    <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                   </a>
                 </div>
               </motion.div>
             </div>
           </div>
-        </section>
 
-        {/* 4. [Map] SRE Indonesia Network Map Section */}
-        <section
-          id="map"
-          className="bg-surface-tile-1 text-white py-32 px-6 overflow-hidden border-b border-hairline/10 relative"
-        >
-          {/* Subtle background abstract shapes */}
-          <div className="absolute inset-0 bg-[#0f3036]/50 opacity-40 pointer-events-none" />
+            {/* Vision & Mission — WOW Editorial Split */}
+            <div className="w-[100vw] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-32 flex flex-col lg:flex-row min-h-[100vh] border-y border-black/10 overflow-hidden">
 
-          {/* Subtle grid mesh backdrop */}
-          <div className="absolute inset-0 bg-grid-pattern pointer-events-none opacity-20" />
+              {/* ━━━ LEFT — VISION (Dark, Cinematic, Immersive) ━━━ */}
+              <div className="w-full lg:w-1/2 relative flex flex-col justify-center px-8 md:px-14 lg:px-20 py-28 overflow-hidden text-white"
+                style={{ background: "linear-gradient(135deg, #061510 0%, #0a1f15 50%, #071812 100%)" }}>
 
-          <div className="max-w-7xl mx-auto w-full relative z-10 flex flex-col items-center">
-            {/* Header */}
-            <motion.div
-              {...fadeInUp}
-              className="text-center mb-16 max-w-2xl flex flex-col items-center"
-            >
-              <span className="text-[14px] font-semibold tracking-wider text-primary-on-dark uppercase mb-3">
-                NATIONAL CHAPTER COALITION
-              </span>
-              <h2 className="text-[38px] md:text-[46px] font-display font-semibold tracking-tight uppercase text-white">
-                SRE Indonesia Coalition
-              </h2>
-            </motion.div>
+                {/* Floating animated particles */}
+                {[
+                  { top: "10%", left: "15%", size: 4, dur: 8, delay: 0 },
+                  { top: "25%", left: "70%", size: 3, dur: 12, delay: 2 },
+                  { top: "55%", left: "8%", size: 5, dur: 10, delay: 1 },
+                  { top: "70%", left: "85%", size: 3, dur: 14, delay: 3 },
+                  { top: "85%", left: "40%", size: 4, dur: 9, delay: 1.5 },
+                  { top: "40%", left: "55%", size: 2, dur: 11, delay: 4 },
+                ].map((p, i) => (
+                  <motion.div key={i}
+                    animate={{ y: [0, -24, 0], x: [0, 12, 0], opacity: [0.2, 0.8, 0.2] }}
+                    transition={{ duration: p.dur, repeat: Infinity, delay: p.delay, ease: "easeInOut" }}
+                    className="absolute rounded-full bg-primary pointer-events-none"
+                    style={{ top: p.top, left: p.left, width: p.size, height: p.size }}
+                  />
+                ))}
 
-            {/* Network Map Vector Container */}
-            <div className="w-full max-w-[1000px] aspect-[21/9] relative flex items-center justify-center">
-              {/* Custom SVG abstract Indonesia network map */}
-              <svg
-                viewBox="0 0 800 300"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-full h-full opacity-60"
-              >
-                {/* Sumatra path simplified */}
-                <path
-                  d="M 50 80 L 150 160 L 130 180 L 30 90 Z"
-                  fill="#34d399"
-                  opacity="0.25"
-                />
-                <path
-                  d="M 50 80 L 150 160 L 130 180 L 30 90 Z"
-                  stroke="#34d399"
-                  strokeWidth="1"
-                  strokeDasharray="3 3"
-                  opacity="0.4"
+                {/* Glowing radial bg pulse */}
+                <motion.div
+                  animate={{ scale: [1, 1.4, 1], opacity: [0.12, 0.25, 0.12] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
+                  style={{ background: "radial-gradient(circle, rgba(16,185,129,1) 0%, transparent 70%)" }}
                 />
 
-                {/* Java path simplified */}
-                <path
-                  d="M 140 180 L 280 190 L 280 200 L 140 190 Z"
-                  fill="#34d399"
-                  opacity="0.25"
-                />
-                <path
-                  d="M 140 180 L 280 190 L 280 200 L 140 190 Z"
-                  stroke="#34d399"
-                  strokeWidth="1"
-                  strokeDasharray="3 3"
-                  opacity="0.4"
-                />
+                <div className="relative z-10">
+                  {/* Eyebrow */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.7 }}
+                    className="flex items-center gap-3 mb-14"
+                  >
+                    <div className="relative flex-shrink-0">
+                      <div className="w-11 h-11 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center">
+                        <Eye className="w-5 h-5 text-primary" />
+                      </div>
+                      <motion.div
+                        animate={{ scale: [1, 1.8, 1], opacity: [0.5, 0, 0.5] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="absolute inset-0 rounded-xl border border-primary/50"
+                      />
+                    </div>
+                    <span className="text-[11px] tracking-[0.4em] text-primary/70 uppercase font-semibold">Our Vision</span>
+                  </motion.div>
 
-                {/* Kalimantan path simplified */}
-                <path
-                  d="M 190 70 L 260 65 L 280 120 L 190 125 Z"
-                  fill="#34d399"
-                  opacity="0.25"
-                />
-                <path
-                  d="M 190 70 L 260 65 L 280 120 L 190 125 Z"
-                  stroke="#34d399"
-                  strokeWidth="1"
-                  strokeDasharray="3 3"
-                  opacity="0.4"
-                />
+                  {/* Giant editorial vision statement */}
+                  <div className="mb-12">
+                    {[
+                      { text: "Leading", accent: false },
+                      { text: "student", accent: false },
+                      { text: "catalyst", accent: false },
+                      { text: "for", accent: false },
+                      { text: "new &", accent: true },
+                      { text: "renewable", accent: true },
+                      { text: "energy", accent: false },
+                      { text: "transition.", accent: false },
+                    ].map((w, i) => (
+                      <motion.span
+                        key={i}
+                        initial={{ opacity: 0, y: 50, filter: "blur(8px)" }}
+                        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+                        className={`inline-block mr-3 md:mr-4 font-display font-black tracking-tight leading-none text-[52px] md:text-[68px] lg:text-[72px] ${w.accent ? "text-primary" : "text-white"}`}
+                      >
+                        {w.text}
+                      </motion.span>
+                    ))}
+                  </div>
 
-                {/* Sulawesi path simplified */}
-                <path
-                  d="M 330 80 L 370 75 L 365 130 L 330 110 Z"
-                  fill="#34d399"
-                  opacity="0.25"
-                />
-                <path
-                  d="M 330 80 L 370 75 L 365 130 L 330 110 Z"
-                  stroke="#34d399"
-                  strokeWidth="1"
-                  strokeDasharray="3 3"
-                  opacity="0.4"
-                />
+                  {/* Tagline with animated left border */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.7 }}
+                    className="flex gap-4 items-start"
+                  >
+                    <motion.div
+                      initial={{ height: 0 }}
+                      whileInView={{ height: "100%" }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.8, delay: 1 }}
+                      className="w-0.5 bg-primary/50 rounded-full flex-shrink-0 min-h-[48px]"
+                    />
+                    <p className="text-[17px] font-light text-white/50 leading-relaxed max-w-md">
+                      Fostering a generation of innovators dedicated to sustainable, equitable, and clean energy solutions across the archipelago.
+                    </p>
+                  </motion.div>
+                </div>
 
-                {/* Papua path simplified */}
-                <path
-                  d="M 460 120 L 560 125 L 550 160 L 480 150 Z"
-                  fill="#34d399"
-                  opacity="0.25"
-                />
-                <path
-                  d="M 460 120 L 560 125 L 550 160 L 480 150 Z"
-                  stroke="#34d399"
-                  strokeWidth="1"
-                  strokeDasharray="3 3"
-                  opacity="0.4"
-                />
-
-                {/* Major Chapter Nodes */}
-                <circle
-                  cx="60"
-                  cy="90"
-                  r="4"
-                  fill="#34d399"
-                  className="animate-ping"
-                />
-                <circle cx="60" cy="90" r="3.5" fill="#34d399" />
-                <circle
-                  cx="155"
-                  cy="180"
-                  r="4"
-                  fill="#34d399"
-                  className="animate-ping"
-                />
-                <circle cx="155" cy="180" r="3.5" fill="#34d399" />
-                <circle
-                  cx="175"
-                  cy="185"
-                  r="4"
-                  fill="#34d399"
-                  className="animate-ping"
-                />
-                <circle cx="175" cy="185" r="3.5" fill="#34d399" />
-                <circle
-                  cx="235"
-                  cy="192"
-                  r="5"
-                  fill="#10b981"
-                  className="animate-pulse"
-                />
-                <circle cx="235" cy="192" r="4.5" fill="#10b981" />
-                <circle cx="245" cy="195" r="4" fill="#34d399" />
-                <circle cx="340" cy="115" r="4" fill="#34d399" />
-                <circle cx="255" cy="100" r="4" fill="#34d399" />
-              </svg>
-
-              {/* Big SRE Logo overlaid perfectly in the center */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-                <motion.h3
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2 }}
-                  className="text-[96px] md:text-[140px] font-display font-semibold tracking-tighter text-white/95 uppercase"
-                >
-                  SRE
-                </motion.h3>
+                {/* Giant ghost watermark */}
+                <span className="absolute -bottom-8 -left-4 text-[160px] md:text-[220px] font-display font-black text-white/[0.018] select-none pointer-events-none leading-none tracking-[-0.05em]">
+                  VISION
+                </span>
               </div>
 
-              {/* Floating Statistic Capsules */}
-              <motion.div
-                initial={{ opacity: 0, x: -30, y: -20 }}
-                whileInView={{ opacity: 1, x: 0, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.1 }}
-                className="absolute top-2 left-4 md:top-6 md:left-12 bg-[#0c2a2f]/80 backdrop-blur-md border border-white/5 px-5 py-3 rounded-[18px] text-left shadow-lg pointer-events-none"
-              >
-                <p className="text-[11px] font-normal text-body-muted uppercase tracking-wider">
-                  WITH MORE THAN
-                </p>
-                <p className="text-[16px] font-display font-semibold text-primary-on-dark tracking-tight">
-                  2000+ Active Members
-                </p>
-              </motion.div>
+              {/* ━━━ RIGHT — MISSION (Editorial, Bold, Minimal) ━━━ */}
+              <div className="w-full lg:w-1/2 bg-white flex flex-col justify-center px-8 md:px-14 lg:px-20 py-28 relative overflow-hidden border-l border-black/5">
 
-              <motion.div
-                initial={{ opacity: 0, x: 30, y: 20 }}
-                whileInView={{ opacity: 1, x: 0, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="absolute bottom-2 right-4 md:bottom-6 md:right-12 bg-[#0c2a2f]/80 backdrop-blur-md border border-white/5 px-5 py-3 rounded-[18px] text-left shadow-lg pointer-events-none"
-              >
-                <p className="text-[11px] font-normal text-body-muted uppercase tracking-wider">
-                  WE ARE CURRENTLY SPREAD ACROSS
-                </p>
-                <p className="text-[16px] font-display font-semibold text-primary-on-dark tracking-tight">
-                  40+ Universities Chapters
-                </p>
-              </motion.div>
+                <div className="relative z-10">
+                  <motion.p
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    className="text-[11px] font-semibold tracking-[0.4em] text-black/25 uppercase mb-16"
+                  >
+                    Core Missions
+                  </motion.p>
+
+                  {/* Editorial numbered mission rows */}
+                  <div className="flex flex-col">
+                    {[
+                      {
+                        num: "01",
+                        icon: <BookOpen className="w-5 h-5" />,
+                        title: "Educate & Empower",
+                        desc: "Equipping students with high-fidelity learning programs and deep technical knowledge in renewable energy.",
+                      },
+                      {
+                        num: "02",
+                        icon: <Zap className="w-5 h-5" />,
+                        title: "Practical Action",
+                        desc: "Implementing operational microgrid and biofuel field projects directly to communities across Indonesia.",
+                      },
+                      {
+                        num: "03",
+                        icon: <Users className="w-5 h-5" />,
+                        title: "Green Advocacy",
+                        desc: "Collaborating with state institutions for critical energy audits and policy advocacy at a national scale.",
+                      },
+                    ].map((m, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, y: 32 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.7, delay: idx * 0.15, ease: [0.16, 1, 0.3, 1] }}
+                        className="group relative"
+                      >
+                        {/* Top animated line */}
+                        <div className="relative h-px bg-black/8 overflow-hidden mb-7">
+                          <motion.div
+                            initial={{ x: "-100%" }}
+                            whileInView={{ x: "0%" }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.9, delay: idx * 0.15 + 0.2, ease: [0.16, 1, 0.3, 1] }}
+                            className="absolute inset-0 bg-gradient-to-r from-primary to-black/20"
+                          />
+                        </div>
+
+                        <div className="flex items-start gap-6 pb-9">
+                          {/* Large editorial number */}
+                          <span className="text-[52px] md:text-[64px] font-display font-black leading-none tracking-tighter text-black/8 flex-shrink-0 select-none group-hover:text-primary/20 transition-colors duration-500 -mt-2">
+                            {m.num}
+                          </span>
+
+                          <div className="flex-1 pt-1">
+                            <div className="flex items-center gap-3 mb-3">
+                              <div className="w-8 h-8 rounded-lg bg-black/5 flex items-center justify-center text-black/40 group-hover:bg-primary group-hover:text-white transition-all duration-400">
+                                {m.icon}
+                              </div>
+                              <h4 className="text-[20px] md:text-[24px] font-display font-black tracking-tight text-[#0a1410] group-hover:text-primary transition-colors duration-300">
+                                {m.title}
+                              </h4>
+                            </div>
+                            <p className="text-[14px] md:text-[15px] text-black/45 leading-relaxed font-light">
+                              {m.desc}
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+
+                    {/* Bottom line */}
+                    <div className="relative h-px bg-black/8 overflow-hidden">
+                      <motion.div
+                        initial={{ x: "-100%" }}
+                        whileInView={{ x: "0%" }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.9, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                        className="absolute inset-0 bg-gradient-to-r from-primary to-black/20"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ghost watermark */}
+                <span className="absolute -bottom-8 -right-4 text-[160px] md:text-[220px] font-display font-black text-black/[0.018] select-none pointer-events-none leading-none tracking-[-0.05em]">
+                  MISSION
+                </span>
+              </div>
             </div>
-          </div>
         </section>
 
         {/* 5. [Activity] Section */}
@@ -578,7 +623,7 @@ export default function Home() {
           id="activity"
           className="bg-canvas py-32 px-6 border-b border-divider-soft relative overflow-hidden"
         >
-          <div className="max-w-7xl mx-auto w-full relative z-10 flex flex-col items-center">
+          <div className="w-full relative z-10 flex flex-col items-center">
             {/* Header */}
             <div className="text-center mb-16 max-w-xl">
               <span className="text-[14px] font-semibold tracking-wider text-primary uppercase mb-3 block">
@@ -589,53 +634,94 @@ export default function Home() {
               </h2>
             </div>
 
-            {/* Activities grid cards with rounded corners and solid teal-footers */}
-            <motion.div
-              variants={staggerContainer}
-              initial="initial"
-              whileInView="whileInView"
-              viewport={{ once: true }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mb-16"
+            {/* WOW Auto-Playing Coverflow Carousel - FULLY RESPONSIVE */}
+            <div
+              className="w-screen relative -mx-6 md:-mx-12 lg:-mx-24 overflow-hidden mb-16"
+              style={{ height: cardDims.height + 60 }}
             >
-              {REDESIGNED_ACTIVITIES.map((act) => (
-                <motion.div
-                  key={act.id}
-                  variants={fadeInUp}
-                  className="bg-canvas border border-hairline/80 rounded-[18px] overflow-hidden flex flex-col justify-between h-[460px] transition-all duration-300 hover:scale-[1.01] hover:border-primary/45 group"
-                  style={{
-                    filter: "drop-shadow(0 15px 30px rgba(19, 31, 28, 0.04))",
-                  }}
-                >
-                  {/* Top Image */}
-                  <div className="w-full flex-1 overflow-hidden relative">
-                    <img
-                      src={act.image}
-                      alt={act.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-black/15 group-hover:bg-black/10 transition-colors duration-300 pointer-events-none" />
-                  </div>
-
-                  {/* Deep Teal Footer Band */}
-                  <div className="bg-[#0f3036] text-white p-6 flex flex-col justify-center text-center h-[160px] relative z-10">
-                    <h3 className="text-[22px] font-display font-semibold tracking-tight uppercase mb-2 text-primary-on-dark">
-                      {act.title}
-                    </h3>
-                    <p className="text-[14px] font-light text-body-muted leading-relaxed line-clamp-3">
-                      {act.desc}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* Slider Dots indicators */}
-            <div className="flex items-center justify-center gap-2.5 mb-12">
-              <span className="w-2.5 h-2.5 rounded-full bg-primary" />
-              <span className="w-2 h-2 rounded-full bg-hairline" />
-              <span className="w-2 h-2 rounded-full bg-hairline" />
-              <span className="w-2 h-2 rounded-full bg-hairline" />
-              <span className="w-2 h-2 rounded-full bg-hairline" />
+              {/* Sliding Track */}
+              <motion.div
+                animate={{
+                  x: `calc(50vw - ${activeProgram * (cardDims.width + cardDims.gap) + cardDims.width / 2}px)`,
+                }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute top-0 left-0 flex items-center h-full"
+                style={{ gap: cardDims.gap, willChange: "transform" }}
+              >
+                {[0, 1, 2, 3, 4].map((idx) => {
+                  const isActive = idx === activeProgram;
+                  return (
+                    <motion.div
+                      key={idx}
+                      animate={{
+                        scale: isActive ? 1 : 0.82,
+                        opacity: isActive ? 1 : 0.4,
+                        rotateY: isActive ? 0 : idx < activeProgram ? 18 : -18,
+                      }}
+                      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                      onClick={() => setActiveProgram(idx)}
+                      className="relative flex-shrink-0 rounded-[28px] md:rounded-[40px] overflow-hidden shadow-2xl cursor-pointer group"
+                      style={{
+                        width: cardDims.width,
+                        height: cardDims.height,
+                        transformOrigin: "center center",
+                      }}
+                    >
+                      {/* Background Image */}
+                      <img
+                        src={`https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=1200&auto=format&fit=crop&sig=${idx}`}
+                        alt="Program Item"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                      />
+                      {/* Gradient Overlay */}
+                      <div
+                        className={`absolute inset-0 transition-all duration-700 ${
+                          isActive
+                            ? "bg-gradient-to-t from-[#0b120f] via-[#0b120f]/50 to-transparent"
+                            : "bg-black/70"
+                        }`}
+                      />
+                      {/* Active State Content */}
+                      <AnimatePresence>
+                        {isActive && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            className="absolute inset-x-0 bottom-0 p-5 md:p-8 lg:p-12 text-white flex flex-col justify-end"
+                          >
+                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center mb-4 md:mb-6 border border-white/20 group-hover:bg-primary group-hover:border-primary transition-all duration-300">
+                              <ArrowUpRight className="w-4 h-4 md:w-5 md:h-5 text-white transform group-hover:rotate-45 transition-transform duration-300" />
+                            </div>
+                            <h3 className="text-[22px] md:text-[32px] lg:text-[40px] font-display font-bold leading-tight mb-2 md:mb-4 tracking-tight">
+                              Lorem Ipsum Dolor Sit Amet
+                            </h3>
+                            <p className="text-[13px] md:text-[16px] lg:text-[18px] font-light text-white/80 leading-relaxed line-clamp-2">
+                              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                            </p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+              {/* Dot Indicators */}
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-50">
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveProgram(i)}
+                    aria-label={`Program ${i + 1}`}
+                    className={`h-1.5 rounded-full transition-all duration-500 ${
+                      i === activeProgram
+                        ? "w-7 bg-primary"
+                        : "w-1.5 bg-black/30 hover:bg-black/50"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
 
             {/* "See More of Our Activities" Pill Button */}
@@ -648,101 +734,14 @@ export default function Home() {
               </a>
             </motion.div>
           </div>
-
-          {/* Rolling Hills Vector Landscape (High-fidelity SVGs overlay with Gradients) */}
-          <div className="absolute bottom-0 left-0 right-0 w-full pointer-events-none select-none z-0">
-            <svg
-              viewBox="0 0 1440 240"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-full h-auto translate-y-2"
-            >
-              <defs>
-                <linearGradient
-                  id="hillGrad1"
-                  x1="0%"
-                  y1="0%"
-                  x2="0%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor="#d3e0d8" />
-                  <stop offset="100%" stopColor="#b2c0b9" />
-                </linearGradient>
-                <linearGradient
-                  id="hillGrad2"
-                  x1="0%"
-                  y1="0%"
-                  x2="0%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor="#b2c0b9" />
-                  <stop offset="100%" stopColor="#0f3036" />
-                </linearGradient>
-                <linearGradient
-                  id="hillGrad3"
-                  x1="0%"
-                  y1="0%"
-                  x2="0%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor="#0f3036" />
-                  <stop offset="100%" stopColor="#0b120f" />
-                </linearGradient>
-              </defs>
-
-              {/* Layer 1: Back Light Sage Hill */}
-              <path
-                d="M-50 180 C 250 100, 500 210, 800 130 C 1100 50, 1300 140, 1500 90 L 1500 240 L -50 240 Z"
-                fill="url(#hillGrad1)"
-                opacity="0.8"
-              />
-
-              {/* Layer 2: Middle Sage Hill */}
-              <path
-                d="M-50 200 C 300 150, 700 230, 1000 160 C 1250 90, 1350 170, 1500 130 L 1500 240 L -50 240 Z"
-                fill="url(#hillGrad2)"
-              />
-
-              {/* Layer 3: Foreground Deep Teal Hill */}
-              <path
-                d="M-50 220 C 400 180, 800 240, 1100 190 C 1280 150, 1380 200, 1500 170 L 1500 240 L -50 240 Z"
-                fill="url(#hillGrad3)"
-              />
-
-              {/* Minimalist vector conifer and pine trees */}
-              <g transform="translate(150, 130) scale(0.65)">
-                <rect x="-1.5" y="0" width="3" height="8" fill="#131f1c" />
-                <polygon points="0,-12 -8,-4 8,-4" fill="#8da396" />
-                <polygon points="0,-7 -6,0 6,0" fill="#8da396" />
-              </g>
-
-              <g transform="translate(540, 160) scale(0.8)">
-                <rect x="-2" y="0" width="4" height="10" fill="#131f1c" />
-                <polygon points="0,-15 -9,-5 9,-5" fill="#8da396" />
-                <polygon points="0,-9 -7,0 7,0" fill="#8da396" />
-              </g>
-
-              <g transform="translate(960, 140) scale(0.9)">
-                <rect x="-2" y="0" width="4" height="12" fill="#131f1c" />
-                <polygon points="0,-16 -10,-5 10,-5" fill="#1b2621" />
-                <polygon points="0,-9 -8,0 8,0" fill="#1b2621" />
-              </g>
-
-              <g transform="translate(1380, 160) scale(0.75)">
-                <rect x="-1.5" y="0" width="3" height="9" fill="#131f1c" />
-                <polygon points="0,-13 -8,-4 8,-4" fill="#0f3036" />
-                <polygon points="0,-7 -6,0 6,0" fill="#0f3036" />
-              </g>
-            </svg>
-          </div>
         </section>
 
         {/* 6. [Article] Section */}
         <section
           id="article"
-          className="bg-canvas py-32 px-6 border-b border-divider-soft"
+          className="bg-canvas pt-32 pb-56 px-6 relative overflow-hidden"
         >
-          <div className="max-w-7xl mx-auto w-full">
+          <div className="w-full">
             <motion.div {...fadeInUp} className="mb-16">
               <span className="text-[14px] font-semibold tracking-wider text-primary uppercase mb-3 block">
                 EDITORIALS & DISCOVERIES
@@ -752,18 +751,18 @@ export default function Home() {
               </h2>
             </motion.div>
 
-            {/* Magazine layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-              {/* Left Side: Large Featured Article (2 columns wide) */}
+            {/* Magazine layout - Restored and Resized */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              {/* Left Side: Featured Article (50% width now instead of 66%) */}
               {ARTICLES.filter((art) => art.featured).map((art) => (
                 <motion.div
                   key={art.id}
                   {...fadeInUp}
-                  className="lg:col-span-2 flex flex-col justify-between border-r border-divider-soft pr-0 lg:pr-12 gap-8"
+                  className="flex flex-col justify-between border-r-0 lg:border-r border-divider-soft pr-0 lg:pr-12 gap-8"
                 >
                   <div className="flex flex-col gap-6">
-                    {/* Large crisp image */}
-                    <div className="w-full aspect-[21/9] rounded-[18px] overflow-hidden">
+                    {/* Image resized to match standard 16:9 ratio rather than ultra-wide */}
+                    <div className="w-full aspect-[16/9] rounded-[18px] overflow-hidden">
                       <img
                         src={art.image}
                         alt={art.title}
@@ -849,436 +848,107 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
-
-        {/* 7. [Student] Section (Canvas: surface-tile-2 - Bento Box Glassmorphism) */}
-        <section
-          id="student"
-          className="bg-surface-tile-2 text-white py-32 px-6 border-b border-hairline/15 relative"
-        >
-          {/* Subtle grid mesh pattern */}
-          <div className="absolute inset-0 bg-grid-pattern pointer-events-none opacity-10" />
-
-          <div className="max-w-7xl mx-auto w-full relative z-10">
-            <motion.div {...fadeInUp} className="mb-20 max-w-xl">
-              <span className="text-[14px] font-semibold tracking-wider text-primary-on-dark uppercase mb-3 block">
-                ORGANIZATIONAL INFRASTRUCTURE
-              </span>
-              <h2 className="text-[40px] font-display font-semibold tracking-tight text-white leading-tight">
-                Our Student Bento Infrastructure
-              </h2>
-              <p className="text-[17px] font-normal text-body-muted mt-4 leading-relaxed">
-                How our operations are configured to drive clean tech
-                integration, rural expansion, and elite academic publishing.
-              </p>
-            </motion.div>
-
-            {/* Asymmetrical Bento Grid with Premium Translucent Glassmorphism */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Box 1 (Large 2-column span on desktop) */}
-              <motion.div
-                {...fadeInUp}
-                className="md:col-span-2 bg-[#1b434b]/15 border border-white/5 backdrop-blur-lg rounded-[18px] p-8 flex flex-col justify-between gap-12 group hover:border-primary/20 transition-all duration-300"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="p-3.5 rounded-full bg-primary/10 border border-primary/20 group-hover:bg-primary/20 transition-colors duration-300">
-                    <Cpu className="w-6 h-6 text-primary-on-dark" />
-                  </div>
-                  <span className="text-[11px] font-semibold tracking-wider text-primary-on-dark uppercase bg-white/5 border border-white/5 rounded-full px-3 py-1">
-                    RESEARCH ENGINE
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-[28px] font-display font-semibold tracking-tight text-white mb-3">
-                    Research & Technical Development
-                  </h3>
-                  <p className="text-[17px] font-light text-body-muted leading-relaxed max-w-2xl">
-                    Focuses on computational modeling, hybrid microgrid
-                    simulation, and the physical optimization of monocrystalline
-                    solar systems. Members run testing rigs for clean hydrogen
-                    generation and organic waste biofuels.
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  {[
-                    "PV Modeling",
-                    "Microgrid Design",
-                    "Biofuels Testing",
-                    "Hydrogen Labs",
-                  ].map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-[12px] font-normal bg-white/5 border border-white/5 px-3 py-1 rounded-full text-body-muted"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* Box 2 (1-column span) */}
-              <motion.div
-                {...fadeInUp}
-                className="bg-[#1b434b]/15 border border-white/5 backdrop-blur-lg rounded-[18px] p-8 flex flex-col justify-between gap-10 group hover:border-primary/20 transition-all duration-300"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="p-3.5 rounded-full bg-primary/10 border border-primary/20 group-hover:bg-primary/20 transition-colors duration-300">
-                    <Globe className="w-6 h-6 text-primary-on-dark" />
-                  </div>
-                  <span className="text-[11px] font-semibold tracking-wider text-primary-on-dark uppercase bg-white/5 border border-white/5 rounded-full px-3 py-1">
-                    FIELD DEPLOYMENT
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-[24px] font-display font-semibold tracking-tight text-white mb-2">
-                    Community Empowerment
-                  </h3>
-                  <p className="text-[14px] font-light text-body-muted leading-relaxed">
-                    Deploying engineering solutions directly to rural off-grid
-                    sectors in East Java. We install solar pumping systems and
-                    hybrid battery grids.
-                  </p>
-                </div>
-                <a
-                  href="#deploy"
-                  className="text-[14px] font-semibold text-primary-on-dark hover:underline flex items-center gap-1 group/link"
+          {/* Rolling Hills Vector Landscape (High-fidelity SVGs overlay with Gradients) */}
+          <div className="absolute bottom-0 left-0 right-0 w-full pointer-events-none select-none z-0">
+            <svg
+              viewBox="0 0 1440 240"
+              preserveAspectRatio="xMidYMax slice"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-full h-[120px] md:h-auto translate-y-[1px]"
+            >
+              <defs>
+                <linearGradient
+                  id="hillGrad1"
+                  x1="0%"
+                  y1="0%"
+                  x2="0%"
+                  y2="100%"
                 >
-                  Explore Deployments
-                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/link:translate-x-1" />
-                </a>
-              </motion.div>
-
-              {/* Box 3 (1-column span) */}
-              <motion.div
-                {...fadeInUp}
-                className="bg-[#1b434b]/15 border border-white/5 backdrop-blur-lg rounded-[18px] p-8 flex flex-col justify-between gap-10 group hover:border-primary/20 transition-all duration-300"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="p-3.5 rounded-full bg-primary/10 border border-primary/20 group-hover:bg-primary/20 transition-colors duration-300">
-                    <Users className="w-6 h-6 text-primary-on-dark" />
-                  </div>
-                  <span className="text-[11px] font-semibold tracking-wider text-primary-on-dark uppercase bg-white/5 border border-white/5 rounded-full px-3 py-1">
-                    MENTOR COLLAB
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-[24px] font-display font-semibold tracking-tight text-white mb-2">
-                    Professional Networks
-                  </h3>
-                  <p className="text-[14px] font-light text-body-muted leading-relaxed">
-                    Connecting our students directly with renewable energy
-                    corporate executives, certification boards, and state
-                    engineering mentors.
-                  </p>
-                </div>
-                <a
-                  href="#network"
-                  className="text-[14px] font-semibold text-primary-on-dark hover:underline flex items-center gap-1 group/link"
+                  <stop offset="0%" stopColor="#d3e0d8" />
+                  <stop offset="100%" stopColor="#b2c0b9" />
+                </linearGradient>
+                <linearGradient
+                  id="hillGrad2"
+                  x1="0%"
+                  y1="0%"
+                  x2="0%"
+                  y2="100%"
                 >
-                  See Corporate Partners
-                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/link:translate-x-1" />
-                </a>
-              </motion.div>
+                  <stop offset="0%" stopColor="#b2c0b9" />
+                  <stop offset="100%" stopColor="#0f3036" />
+                </linearGradient>
+                <linearGradient
+                  id="hillGrad3"
+                  x1="0%"
+                  y1="0%"
+                  x2="0%"
+                  y2="100%"
+                >
+                  <stop offset="0%" stopColor="#0f3036" />
+                  <stop offset="100%" stopColor="#0b120f" />
+                </linearGradient>
+              </defs>
 
-              {/* Box 4 (Large 2-column span on desktop) */}
-              <motion.div
-                {...fadeInUp}
-                className="md:col-span-2 bg-[#1b434b]/15 border border-white/5 backdrop-blur-lg rounded-[18px] p-8 flex flex-col justify-between gap-12 group hover:border-primary/20 transition-all duration-300"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="p-3.5 rounded-full bg-primary/10 border border-primary/20 group-hover:bg-primary/20 transition-colors duration-300">
-                    <Layers className="w-6 h-6 text-primary-on-dark" />
-                  </div>
-                  <span className="text-[11px] font-semibold tracking-wider text-primary-on-dark uppercase bg-white/5 border border-white/5 rounded-full px-3 py-1">
-                    COALITION ALLIANCE
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-[28px] font-display font-semibold tracking-tight text-white mb-3">
-                    National Integration (SRE Indonesia)
-                  </h3>
-                  <p className="text-[17px] font-light text-body-muted leading-relaxed max-w-2xl">
-                    UPN Veteran Jawa Timur is a key integrated hub of the larger
-                    SRE Indonesia coalition, linking over 40 major active
-                    university chapters nationwide in joint technology
-                    development, policy submissions, and green summits.
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <TrendingUp className="w-4 h-4 text-primary-on-dark" />
-                  <span className="text-[12px] font-semibold text-body-muted tracking-tight">
-                    Active joint actions across 34 Indonesian provinces.
-                  </span>
-                </div>
-              </motion.div>
-            </div>
+              {/* Layer 1: Back Light Sage Hill */}
+              <path
+                d="M-50 180 C 250 100, 500 210, 800 130 C 1100 50, 1300 140, 1500 90 L 1500 240 L -50 240 Z"
+                fill="url(#hillGrad1)"
+                opacity="0.8"
+              />
+
+              {/* Layer 2: Middle Sage Hill */}
+              <path
+                d="M-50 200 C 300 150, 700 230, 1000 160 C 1250 90, 1350 170, 1500 130 L 1500 240 L -50 240 Z"
+                fill="url(#hillGrad2)"
+              />
+
+              {/* Layer 3: Foreground Deep Teal Hill */}
+              <path
+                d="M-50 220 C 400 180, 800 240, 1100 190 C 1280 150, 1380 200, 1500 170 L 1500 240 L -50 240 Z"
+                fill="url(#hillGrad3)"
+              />
+            </svg>
           </div>
-        </section>
-
-        {/* 8. [Merchandise] Section */}
-        <section
-          id="merchandise"
-          className="bg-canvas py-32 px-6 border-b border-divider-soft"
-        >
-          <div className="max-w-7xl mx-auto w-full">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-6">
-              <motion.div {...fadeInUp}>
-                <span className="text-[14px] font-semibold tracking-wider text-primary uppercase mb-3 block">
-                  LIMITED EXCLUSIVES
-                </span>
-                <h2 className="text-[40px] font-display font-semibold tracking-tight text-ink">
-                  SRE Supply Store
-                </h2>
-              </motion.div>
-              <motion.p
-                {...fadeInUp}
-                className="text-[17px] font-normal text-ink-muted-80 max-w-md leading-relaxed animate-pulse"
-              >
-                Support our sustainable off-grid project initiatives. 100% of
-                store proceeds fund student materials for microgrid community
-                deployments.
-              </motion.p>
-            </div>
-
-            {/* Apple Store grid style */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {MERCHANDISE.map((item) => (
-                <motion.div
-                  key={item.id}
-                  {...fadeInUp}
-                  className="group relative border border-hairline rounded-[18px] bg-canvas overflow-hidden flex flex-col justify-between p-6 h-[480px] transition-transform duration-300 hover:scale-[1.01]"
-                  onMouseEnter={() => setHoveredMerch(item.id)}
-                  onMouseLeave={() => setHoveredMerch(null)}
-                >
-                  {/* Subtle hover blur background / overlay */}
-                  <div className="absolute inset-0 bg-canvas-parchment opacity-0 group-hover:opacity-40 transition-opacity duration-300 pointer-events-none" />
-
-                  {/* Centered Image (Square 1:1) */}
-                  <div className="w-full aspect-square rounded-[8px] overflow-hidden mb-6 flex items-center justify-center bg-canvas-parchment relative">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-black/5 pointer-events-none" />
-                  </div>
-
-                  {/* Meta Content */}
-                  <div>
-                    <h3 className="text-[21px] font-display font-semibold tracking-tight text-ink">
-                      {item.name}
-                    </h3>
-                    <p className="text-[14px] font-normal text-ink-muted-48 uppercase tracking-widest mt-1">
-                      {item.price}
-                    </p>
-                    <p className="text-[14px] font-normal text-ink-muted-80 mt-2 leading-relaxed line-clamp-2">
-                      {item.desc}
-                    </p>
-                  </div>
-
-                  {/* Action Pill Pre-order */}
-                  <div className="mt-6 h-11 relative overflow-hidden">
-                    <AnimatePresence>
-                      {hoveredMerch === item.id ? (
-                        <motion.button
-                          initial={{ y: 40, opacity: 0 }}
-                          animate={{ y: 0, opacity: 1 }}
-                          exit={{ y: 40, opacity: 0 }}
-                          transition={{
-                            duration: 0.25,
-                            ease: [0.16, 1, 0.3, 1],
-                          }}
-                          className="absolute inset-0 w-full bg-primary hover:bg-primary-focus text-white text-[14px] font-semibold tracking-tight rounded-full flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_15px_rgba(16,185,129,0.3)]"
-                        >
-                          <ShoppingBag className="w-4 h-4" /> Pre-order Now
-                        </motion.button>
-                      ) : (
-                        <motion.div
-                          initial={{ y: 0, opacity: 1 }}
-                          animate={{ y: 0, opacity: 1 }}
-                          exit={{ y: -40, opacity: 0 }}
-                          className="absolute inset-0 flex items-center justify-start text-[14px] font-semibold text-primary"
-                        >
-                          Hover to inspect
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Dynamic call to action at the bottom */}
-        <section
-          id="join"
-          className="bg-surface-black text-white py-32 px-6 flex flex-col justify-center items-center text-center overflow-hidden relative"
-        >
-          {/* subtle grid background mesh */}
-          <div className="absolute inset-0 bg-grid-pattern pointer-events-none opacity-20" />
-
-          <motion.div
-            {...fadeInUp}
-            className="max-w-3xl mx-auto flex flex-col items-center relative z-10"
-          >
-            <span className="text-[14px] font-semibold tracking-wider text-primary-on-dark uppercase mb-4">
-              MEMBERSHIP REGISTRATION 2026
-            </span>
-            <h2 className="text-[44px] md:text-[56px] font-display font-semibold tracking-tighter text-white leading-[1.1] mb-6 uppercase">
-              Empower the transition. <br />
-              Become a catalyst.
-            </h2>
-            <p className="text-[21px] font-light text-body-muted max-w-xl leading-relaxed mb-10">
-              Applications are officially open for new researchers, engineering
-              leads, and campaign managers. Join the movement.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center gap-4">
-              <a
-                href="#form"
-                className="bg-primary hover:bg-primary-focus text-white text-[17px] font-semibold tracking-tight rounded-full px-8 py-3.5 transition-all duration-300 transform hover:scale-[1.02] active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-              >
-                Apply Online
-              </a>
-              <a
-                href="mailto:sre.upnjatim@gmail.com"
-                className="text-[17px] font-semibold text-primary-on-dark hover:underline flex items-center gap-1 group"
-              >
-                Inquire via Email{" "}
-                <ArrowUpRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </a>
-            </div>
-          </motion.div>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="bg-canvas-parchment text-ink-muted-80 py-20 px-6 border-t border-hairline">
-        <div className="max-w-7xl mx-auto w-full">
-          {/* Main columns */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
-            {/* Column 1: About */}
-            <div className="flex flex-col gap-4">
-              <h5 className="text-[14px] font-display font-semibold tracking-wide text-ink uppercase">
-                About Chapter
-              </h5>
-              <div className="flex flex-col gap-2 text-[14px] font-normal leading-relaxed text-ink-muted-80">
-                <a href="#about" className="hover:text-primary">
-                  Who We Are
-                </a>
-                <a href="#about" className="hover:text-primary">
-                  Executive Committee
-                </a>
-                <a href="#student" className="hover:text-primary">
-                  Operations Infrastructure
-                </a>
-                <a href="#join" className="hover:text-primary">
-                  Chapters Career
-                </a>
-              </div>
-            </div>
-
-            {/* Column 2: Projects */}
-            <div className="flex flex-col gap-4">
-              <h5 className="text-[14px] font-display font-semibold tracking-wide text-ink uppercase">
-                Active Projects
-              </h5>
-              <div className="flex flex-col gap-2 text-[14px] font-normal leading-relaxed text-ink-muted-80">
-                <a href="#student" className="hover:text-primary">
-                  PV Microgrid Labs
-                </a>
-                <a href="#activity" className="hover:text-primary">
-                  Socio-Electrics Grid
-                </a>
-                <a href="#student" className="hover:text-primary">
-                  Biofuels Research
-                </a>
-                <a href="#student" className="hover:text-primary">
-                  Smart Campus Generation
-                </a>
-              </div>
-            </div>
-
-            {/* Column 3: Community */}
-            <div className="flex flex-col gap-4">
-              <h5 className="text-[14px] font-display font-semibold tracking-wide text-ink uppercase">
-                Community Hub
-              </h5>
-              <div className="flex flex-col gap-2 text-[14px] font-normal leading-relaxed text-ink-muted-80">
-                <a href="#join" className="hover:text-primary">
-                  Active Memberships
-                </a>
-                <a href="#activity" className="hover:text-primary">
-                  Calendar & Events
-                </a>
-                <a href="#merchandise" className="hover:text-primary">
-                  Supply Store
-                </a>
-                <a href="#article" className="hover:text-primary">
-                  Research Dispatches
-                </a>
-              </div>
-            </div>
-
-            {/* Column 4: SRE Networks */}
-            <div className="flex flex-col gap-4">
-              <h5 className="text-[14px] font-display font-semibold tracking-wide text-ink uppercase">
-                Connect & Alliance
-              </h5>
-              <div className="flex flex-col gap-2 text-[14px] font-normal leading-relaxed text-ink-muted-80">
-                <a
-                  href="https://linkedin.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-primary flex items-center gap-1"
-                >
-                  LinkedIn <ArrowUpRight className="w-3 h-3" />
-                </a>
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-primary flex items-center gap-1"
-                >
-                  Instagram <ArrowUpRight className="w-3 h-3" />
-                </a>
-                <a
-                  href="mailto:sre.upnjatim@gmail.com"
-                  className="hover:text-primary"
-                >
-                  Email Outreach
-                </a>
-                <a
-                  href="https://sre.id"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-primary flex items-center gap-1"
-                >
-                  SRE Indonesia National <ArrowUpRight className="w-3 h-3" />
-                </a>
-              </div>
-            </div>
+      <footer className="bg-surface-black text-white/70 py-12 px-6">
+        <div className="w-full flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex flex-col items-center md:items-start gap-2">
+            <h5 className="text-[20px] font-display font-bold tracking-tight text-white uppercase">
+              SRE UPNVJT.
+            </h5>
+            <span className="text-[13px] font-normal text-white/50 text-center md:text-left">
+              © 2026 Society of Renewable Energy UPN Veteran Jawa Timur. All
+              rights reserved.
+            </span>
           </div>
 
-          {/* Bottom Legal bar */}
-          <div className="pt-8 border-t border-divider-soft flex flex-col md:flex-row items-center justify-between gap-6 text-[12px] font-normal text-ink-muted-48">
-            <div className="flex items-center gap-2">
-              <span>
-                © 2026 Society of Renewable Energy (SRE) UPN Veteran Jawa Timur.
-                All rights reserved.
-              </span>
-            </div>
-            <div className="flex items-center gap-6">
-              <a href="#privacy" className="hover:text-primary">
-                Privacy Policy
-              </a>
-              <a href="#terms" className="hover:text-primary">
-                Terms of Action
-              </a>
-              <a href="#security" className="hover:text-primary">
-                Infrastructure Security
-              </a>
-            </div>
+          <div className="flex items-center gap-8 text-[14px] font-medium text-white/80">
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-primary transition-colors"
+            >
+              LinkedIn
+            </a>
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-primary transition-colors"
+            >
+              Instagram
+            </a>
+            <a
+              href="mailto:sre.upnjatim@gmail.com"
+              className="hover:text-primary transition-colors"
+            >
+              Email
+            </a>
           </div>
         </div>
       </footer>
