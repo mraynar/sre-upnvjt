@@ -143,7 +143,12 @@ export default function AboutPage() {
       {/* 1. Hero / Visi Misi */}
       <section className="px-6 md:px-12 lg:px-20 max-w-[1400px] mx-auto mb-32">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="mb-20">
-          <p className="text-[#e8ecc4] text-[12px] md:text-[14px] font-bold tracking-[0.2em] uppercase mb-4">About</p>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+            <p className="text-[#e8ecc4] text-[12px] md:text-[14px] font-bold tracking-[0.2em] uppercase">About</p>
+            <a href="https://sre.co.id" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/20 text-[10px] sm:text-[11px] font-bold tracking-widest uppercase text-white/70 hover:text-[#07130e] hover:bg-[#e8ecc4] hover:border-[#e8ecc4] transition-all cursor-pointer group">
+               Member of SRE INDONESIA <ArrowUpRight className="w-3 h-3 group-hover:rotate-45 transition-transform" />
+            </a>
+          </div>
           <h1 className="text-[50px] md:text-[80px] lg:text-[100px] font-display font-black leading-[0.9] tracking-tighter uppercase">
             SRE <span className="text-white/40 italic font-serif lowercase font-normal tracking-normal">at</span> <br />
             UPN Veteran <br />
@@ -210,7 +215,6 @@ export default function AboutPage() {
             </h2>
             <div className="h-[2px] w-full bg-[#07130e]/10 my-8" />
             
-            {/* Division Tabs */}
             <div className="flex flex-wrap gap-2 md:gap-4">
               {divisionsSliderData.map((div) => (
                 <button
@@ -230,7 +234,6 @@ export default function AboutPage() {
 
           <div className="h-[1px] w-full bg-[#07130e]/10 mb-12" />
 
-          {/* Active Division Content Slider */}
           <AnimatePresence mode="wait">
             {activeDivision && (
               <motion.div 
@@ -242,7 +245,6 @@ export default function AboutPage() {
                 className="flex flex-col xl:flex-row gap-12 w-full pl-6 md:pl-12 lg:pl-20"
               >
                 
-                {/* Left Column (Info) */}
                 <div className="xl:w-[400px] flex-shrink-0 xl:sticky xl:top-40 xl:self-start z-10 pr-6">
                   <span className="text-[12px] font-mono tracking-widest uppercase mb-4 block text-[#07130e]/50 font-bold">
                     Division Focus
@@ -254,7 +256,6 @@ export default function AboutPage() {
                     {activeDivision.desc}
                   </p>
                   
-                  {/* Arrows */}
                   <div className="flex gap-3">
                     <button className="w-10 h-10 rounded-full border border-[#07130e]/20 flex items-center justify-center hover:bg-[#07130e] hover:text-[#e8ecc4] transition-colors group">
                       <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -265,11 +266,9 @@ export default function AboutPage() {
                   </div>
                 </div>
 
-                {/* Right Column Slider */}
                 <div className="flex-1 flex overflow-x-auto gap-6 pr-6 md:pr-12 lg:pr-20 snap-x snap-mandatory pb-12 cursor-grab active:cursor-grabbing hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                   {activeDivision.members.map((member, i) => (
                     <div key={i} className="w-[280px] md:w-[320px] flex-shrink-0 snap-center relative aspect-[3/4.5] rounded-[32px] overflow-hidden group bg-[#07130e]">
-                      {/* Photo */}
                       <img 
                         src={`https://images.unsplash.com/photo-15${5000000000 + (divisionsSliderData.findIndex(d => d.id === activeTab) * 100 + i) * 1234567}?q=80&w=600&auto=format&fit=crop`} 
                         alt={member.name}
@@ -277,15 +276,12 @@ export default function AboutPage() {
                         onError={(e) => { e.target.src = `https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=600&auto=format&fit=crop`; }}
                       />
                       
-                      {/* Plus Icon */}
                       <div className="absolute top-5 right-5 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white/70 group-hover:text-white transition-colors">
                         <Plus className="w-4 h-4" />
                       </div>
 
-                      {/* Gradient */}
                       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#07130e] via-[#07130e]/60 to-transparent pointer-events-none" />
 
-                      {/* Content */}
                       <div className="absolute bottom-6 left-6 right-6 text-white flex flex-col items-start pointer-events-none">
                         <div className="flex items-center gap-3 mb-2">
                           <span className="w-6 h-[1.5px] bg-[#e8ecc4]" />

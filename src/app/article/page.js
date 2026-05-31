@@ -97,20 +97,17 @@ export default function ArticlePage() {
           transition={{ duration: 0.8 }}
           className="group cursor-pointer grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center"
         >
-          {/* Image */}
           <div className="w-full aspect-[4/3] lg:aspect-[4/4] overflow-hidden rounded-[32px] bg-black/5 relative">
             <img 
               src={featuredArticle.img} 
               alt={featuredArticle.title} 
               className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000 ease-out"
             />
-            {/* Overlay badge */}
             <div className="absolute top-6 left-6 bg-[#07130e] text-[#e8ecc4] px-4 py-2 rounded-full text-[10px] font-bold tracking-widest uppercase">
               Featured
             </div>
           </div>
 
-          {/* Content */}
           <div className="flex flex-col">
             <div className="flex items-center gap-4 mb-6">
               <span className="text-[12px] font-mono uppercase tracking-[0.2em] text-[#07130e]/60 font-bold border border-[#07130e]/20 px-3 py-1 rounded-full">
@@ -171,7 +168,6 @@ export default function ArticlePage() {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="group cursor-pointer flex flex-col"
               >
-                {/* Image */}
                 <div className="w-full aspect-[4/3] overflow-hidden rounded-2xl bg-white/5 mb-6">
                   <img 
                     src={article.img} 
@@ -180,7 +176,6 @@ export default function ArticlePage() {
                   />
                 </div>
 
-                {/* Tags */}
                 <div className="flex items-center gap-3 mb-4">
                   <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-[#e8ecc4] border border-[#e8ecc4]/30 px-2 py-1 rounded-sm">
                     {article.category}
@@ -190,17 +185,14 @@ export default function ArticlePage() {
                   </span>
                 </div>
 
-                {/* Title */}
                 <h4 className="text-[24px] font-display font-bold uppercase tracking-tight text-white mb-3 group-hover:text-[#e8ecc4] transition-colors leading-[1.1]">
                   {article.title}
                 </h4>
 
-                {/* Desc */}
                 <p className="text-[14px] text-white/60 leading-relaxed mb-6 line-clamp-2">
                   {article.desc}
                 </p>
 
-                {/* Author & Read More */}
                 <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-4">
                   <span className="text-[12px] font-bold uppercase tracking-widest text-white/50">
                     By {article.author}
@@ -213,7 +205,6 @@ export default function ArticlePage() {
             ))}
           </div>
 
-          {/* Load More Button */}
           <div className="mt-20 flex justify-center">
             <button className="px-8 py-4 rounded-full border border-white/20 hover:bg-white hover:text-[#07130e] text-white transition-colors text-[13px] font-bold uppercase tracking-widest">
               Load More Articles

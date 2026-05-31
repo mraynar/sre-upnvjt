@@ -3,37 +3,60 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+
+    if (res?.error) {
+      setError(res.error);
+      setIsLoading(false);
+    } else {
+      router.push("/dashboard");
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex bg-[#0a1c15] text-white overflow-hidden">
       
-      {/* ━━━ LEFT SIDE (Image/Video Branding) ━━━ */}
       <div className="hidden lg:flex w-1/2 relative flex-col justify-between p-12 lg:p-20 overflow-hidden">
-        {/* Background Image */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1509391366360-1e97f52ce23b?q=80&w=2070&auto=format&fit=crop" 
-            alt="Solar Panels" 
+          <video 
+            src="/video/hero.mp4" 
+            autoPlay 
+            loop 
+            muted
             className="w-full h-full object-cover"
           />
-          {/* Green tint overlay */}
           <div className="absolute inset-0 bg-[#0a2e24] opacity-80 mix-blend-multiply" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0a1c15] via-transparent to-[#0a1c15]/50" />
         </div>
 
-        {/* Content over image */}
         <div className="relative z-10 flex flex-col justify-between h-full">
-          {/* Logo */}
           <Link href="/">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-1 font-display font-bold text-[28px] tracking-tight cursor-pointer"
+              className="inline-flex items-center cursor-pointer"
             >
-              SRE<span className="text-[#e8ecc4] font-light -ml-1.5">.</span>
+              <img src="/images/logo.png" alt="SRE Logo" className="h-10 w-auto object-contain" />
             </motion.div>
           </Link>
 
@@ -56,14 +79,12 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* ━━━ RIGHT SIDE (Login Form) ━━━ */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 md:p-20 relative z-10">
         
-        {/* Mobile Logo (Visible only on small screens) */}
         <div className="absolute top-8 left-8 lg:hidden">
           <Link href="/">
-            <div className="inline-flex items-center gap-1 font-display font-bold text-[24px] tracking-tight cursor-pointer">
-              SRE<span className="text-[#e8ecc4] font-light -ml-1">.</span>
+            <div className="inline-flex items-center cursor-pointer">
+              <img src="/images/logo.png" alt="SRE Logo" className="h-8 w-auto object-contain" />
             </div>
           </Link>
         </div>
@@ -83,13 +104,14 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form className="flex flex-col gap-8" onSubmit={(e) => e.preventDefault()}>
+          <form className="flex flex-col gap-8" onSubmit={handleLogin}>
             
-            {/* Email Input */}
             <div className="relative group">
               <input 
                 type="email" 
                 id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder=" "
                 className="block w-full px-0 py-3 text-white bg-transparent border-0 border-b-2 border-white/20 appearance-none focus:outline-none focus:ring-0 focus:border-[#e8ecc4] peer transition-colors"
                 required
@@ -102,11 +124,12 @@ export default function LoginPage() {
               </label>
             </div>
 
-            {/* Password Input */}
             <div className="relative group">
               <input 
                 type={showPassword ? "text" : "password"} 
                 id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder=" "
                 className="block w-full px-0 py-3 text-white bg-transparent border-0 border-b-2 border-white/20 appearance-none focus:outline-none focus:ring-0 focus:border-[#e8ecc4] peer transition-colors pr-10"
                 required
@@ -126,7 +149,6 @@ export default function LoginPage() {
               </button>
             </div>
 
-            {/* Forgot Password & Remember Me */}
             <div className="flex items-center justify-between mt-2">
               <label className="flex items-center gap-2 cursor-pointer group">
                 <div className="relative flex items-center justify-center w-4 h-4">
@@ -143,18 +165,23 @@ export default function LoginPage() {
               </a>
             </div>
 
-            {/* Submit Button */}
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm px-4 py-3 rounded-lg text-center">
+                {error}
+              </div>
+            )}
+
             <button 
               type="submit"
-              className="group relative w-full flex items-center justify-center gap-3 bg-[#e8ecc4] text-[#0a1c15] text-[15px] font-bold tracking-widest uppercase rounded-full px-8 py-4 mt-4 overflow-hidden transition-transform active:scale-95 hover:bg-white"
+              disabled={isLoading}
+              className="group relative w-full flex items-center justify-center gap-3 bg-[#e8ecc4] text-[#0a1c15] text-[15px] font-bold tracking-widest uppercase rounded-full px-8 py-4 mt-4 overflow-hidden transition-transform active:scale-95 hover:bg-white disabled:opacity-70 disabled:active:scale-100"
             >
-              Sign In
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              {isLoading ? "Signing In..." : "Sign In"}
+              {!isLoading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
             </button>
 
           </form>
 
-          {/* Sign Up Link */}
           <div className="mt-10 text-center text-[13px] text-white/50">
             Don't have an account?{' '}
             <a href="#" className="text-[#e8ecc4] hover:text-white transition-colors font-bold tracking-wide">

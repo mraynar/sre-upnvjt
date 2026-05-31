@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { Home, Lock, KeyRound, ServerCrash, ZapOff } from "lucide-react";
 
 export default function StatusErrorPage({ params }) {
-  // Use `use()` to unwrap the params promise in Next.js 14+
   const unwrappedParams = use(params);
   const code = unwrappedParams.code || "Unknown";
 

@@ -7,7 +7,6 @@ import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 
 export default function Error({ error, reset }) {
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error("Global Error Caught:", error);
   }, [error]);
 

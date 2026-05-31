@@ -1,11 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// Animated Hamburger Icon – Asymmetrical to X with hover effects
 function HamburgerIcon({ isOpen, onClick, isLightBackground }) {
   return (
     <button
@@ -53,14 +52,12 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
-  // Monitor scroll
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Lock body scroll when menu open
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -76,8 +73,9 @@ export default function Header() {
 
   const close = () => setMobileMenuOpen(false);
 
-  // Hide header on login page
-  if (pathname === "/login") return null;
+  const adminRoutes = ["/dashboard", "/roles", "/users", "/departments", "/projects", "/attendance", "/finance", "/inventory", "/documents", "/articles", "/activities", "/merch", "/settings", "/tasks"];
+  const isDashboardRoute = adminRoutes.some(route => pathname === route || pathname.startsWith(route + "/"));
+  if (pathname === "/login" || isDashboardRoute) return null;
 
   const isLightBackground = 
     (pathname.startsWith("/article") || pathname.startsWith("/merchandise/order")) && 
@@ -102,10 +100,13 @@ export default function Header() {
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-1 select-none group font-display font-bold text-[28px] tracking-tight cursor-pointer z-[60] relative"
+              className="flex items-center select-none cursor-pointer z-[60] relative"
             >
-              SRE
-              <span className={`font-light -ml-1.5 ${isLightBackground ? "text-[#0a1f18]" : "text-primary-on-dark"}`}>.</span>
+              <img 
+                src="/images/logo.png" 
+                alt="SRE Logo" 
+                className={`h-10 w-auto object-contain transition-all duration-300 ${isLightBackground ? "brightness-0" : ""}`} 
+              />
             </motion.div>
           </Link>
 
@@ -208,7 +209,7 @@ export default function Header() {
 
                 {/* Primary Links */}
                 <nav className="flex flex-col gap-1">
-                  {['Home', 'About', 'Merchandise'].map((name, i) => {
+                  {['Home', 'About', 'Activity', 'Article', 'Merchandise'].map((name, i) => {
                     const item = navItems.find((n) => n.name === name);
                     if (!item) return null;
                     return (
@@ -217,7 +218,7 @@ export default function Header() {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.15 + i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                          className="text-[52px] sm:text-[64px] font-display font-bold text-[#e8ecc4] tracking-tighter leading-[1.05] hover:text-white transition-colors cursor-pointer"
+                          className="text-[48px] sm:text-[56px] font-display font-bold text-[#e8ecc4] tracking-tighter leading-[1.1] hover:text-white transition-colors cursor-pointer"
                         >
                           {name}
                         </motion.div>
@@ -226,32 +227,17 @@ export default function Header() {
                   })}
                 </nav>
 
-                {/* Thin Divider */}
-                <motion.div 
-                  initial={{ opacity: 0, scaleX: 0 }}
-                  animate={{ opacity: 1, scaleX: 1 }}
-                  transition={{ delay: 0.6, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  className="w-full max-w-[280px] h-px bg-[#e8ecc4]/20 my-10 origin-left"
-                />
-
-                {/* Secondary Links */}
+                {/* Login Button in Mobile Menu */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex gap-6"
+                  transition={{ delay: 0.15 + 5 * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="mt-10"
                 >
-                  {['Activity', 'Article'].map((name) => {
-                    const item = navItems.find((n) => n.name === name);
-                    if (!item) return null;
-                    return (
-                      <Link key={name} href={item.path} onClick={close}>
-                        <span className="text-[13px] font-bold tracking-widest text-[#e8ecc4]/80 uppercase hover:text-[#e8ecc4] transition-colors cursor-pointer">
-                          {name}
-                        </span>
-                      </Link>
-                    )
-                  })}
+                  <Link href="/login" onClick={close} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-primary text-[#07130e] text-[15px] font-bold tracking-widest uppercase transition-all hover:bg-[#e8ecc4] hover:scale-105 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                    <User className="w-5 h-5" />
+                    Member Login
+                  </Link>
                 </motion.div>
               </div>
 

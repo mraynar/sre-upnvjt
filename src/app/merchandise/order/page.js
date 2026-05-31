@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, CheckCircle2, ChevronDown, Plus, Minus } from "lucide-react";
 import Link from "next/link";
 
-// Custom Dropdown Component for Awwwards Style
 const CustomSelect = ({ label, options, value, onChange, disabled }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -29,10 +28,8 @@ const CustomSelect = ({ label, options, value, onChange, disabled }) => {
       <AnimatePresence>
         {isOpen && !disabled && (
           <>
-            {/* Invisible Backdrop for click-outside */}
             <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
             
-            {/* Dropdown Menu */}
             <motion.div 
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -95,7 +92,6 @@ export default function OrderPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simulate submission for UI
     setIsSubmitted(true);
   };
 
@@ -131,7 +127,6 @@ export default function OrderPage() {
       
       <div className="px-6 md:px-12 lg:px-20 max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24">
         
-        {/* Left Column - Info */}
         <motion.div 
           initial={{ opacity: 0, x: -20 }} 
           animate={{ opacity: 1, x: 0 }} 
@@ -161,7 +156,6 @@ export default function OrderPage() {
           </div>
         </motion.div>
 
-        {/* Right Column - Form */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
@@ -171,7 +165,6 @@ export default function OrderPage() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-10">
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {/* Full Name */}
               <div className="flex flex-col gap-2">
                 <label className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/50 font-bold">Full Name</label>
                 <input 
@@ -184,7 +177,6 @@ export default function OrderPage() {
                 />
               </div>
 
-              {/* NIM / NPM */}
               <div className="flex flex-col gap-2">
                 <label className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/50 font-bold">NPM / NIM</label>
                 <input 
@@ -198,7 +190,6 @@ export default function OrderPage() {
               </div>
             </div>
 
-            {/* WhatsApp Number */}
             <div className="flex flex-col gap-2">
               <label className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/50 font-bold">WhatsApp Number</label>
               <input 
@@ -212,7 +203,6 @@ export default function OrderPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10 border-y border-white/10 py-10 relative">
-              {/* Item Selection (Custom Dropdown) */}
               <div className="md:col-span-2">
                 <CustomSelect 
                   label="Select Item"
@@ -222,7 +212,6 @@ export default function OrderPage() {
                 />
               </div>
 
-              {/* Size & Qty */}
               <div className="flex gap-6">
                 <div className="w-1/2">
                   <CustomSelect 
@@ -264,7 +253,6 @@ export default function OrderPage() {
               </div>
             </div>
 
-            {/* Additional Notes */}
             <div className="flex flex-col gap-2">
               <label className="text-[11px] font-mono uppercase tracking-[0.2em] text-white/50 font-bold">Additional Notes / Address</label>
               <textarea 
@@ -276,7 +264,6 @@ export default function OrderPage() {
               ></textarea>
             </div>
 
-            {/* Submit */}
             <div className="mt-4">
               <button 
                 type="submit"
