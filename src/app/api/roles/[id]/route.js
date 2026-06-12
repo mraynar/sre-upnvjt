@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { role } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 
@@ -15,15 +17,12 @@ export async function PUT(req, { params }) {
     const body = await req.json();
     const { name, permissions } = body;
 
-    const updatedRole = await prisma.role.update({
-      where: { id: parseInt(id) },
-      data: {
-        name,
-        permissions: permissions || {},
-      },
-    });
+    await db.update(role).set({
+      name,
+      permissions: permissions || {},
+    }).where(eq(role.id, parseInt(id)));
 
-    return NextResponse.json(updatedRole);
+    return NextResponse.json({ id: parseInt(id), name, permissions: permissions || {} });
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
@@ -39,14 +38,12 @@ export async function DELETE(req, { params }) {
   try {
     const { id } = await params;
     
-    const role = await prisma.role.findUnique({ where: { id: parseInt(id) } });
-    if (role?.name === "SUPER_ADMIN") {
+    const foundRole = await db.query.role.findFirst({ where: eq(role.id, parseInt(id)) });
+    if (foundRole?.name === "SUPER_ADMIN") {
       return NextResponse.json({ error: "Cannot delete SUPER_ADMIN role" }, { status: 400 });
     }
 
-    await prisma.role.delete({
-      where: { id: parseInt(id) },
-    });
+    await db.delete(role).where(eq(role.id, parseInt(id)));
 
     return NextResponse.json({ success: true });
   } catch (error) {

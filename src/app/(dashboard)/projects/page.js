@@ -1,5 +1,7 @@
 import React from "react";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { project, department, user } from "@/db/schema";
+import { desc, asc, eq } from "drizzle-orm";
 import ProjectsClient from "./ProjectsClient";
 
 export const metadata = {
@@ -12,40 +14,49 @@ export default async function ProjectsPage() {
   let users = [];
 
   try {
-    projects = await prisma.project.findMany({
-      include: {
+    const fetchedProjects = await db.query.project.findMany({
+      with: {
         department: true,
         committees: {
-          include: {
+          with: {
             user: {
-              include: { role: true }
+              with: { role: true }
             }
           },
-          orderBy: { id: "asc" }
+          orderBy: (committees, { asc }) => [asc(committees.id)]
         },
-        _count: {
-          select: { committees: true, attendanceSessions: true }
-        }
+        attendanceSessions: { columns: { id: true } }
       },
-      orderBy: { createdAt: "desc" }
+      orderBy: [desc(project.createdAt)]
+    });
+    
+    projects = fetchedProjects.map(p => {
+      const { attendanceSessions, ...rest } = p;
+      return {
+        ...rest,
+        _count: {
+          committees: rest.committees.length,
+          attendanceSessions: attendanceSessions.length
+        }
+      };
     });
   } catch (e) {
     console.error("Error fetching projects:", e);
   }
 
   try {
-    departments = await prisma.department.findMany({
-      orderBy: { name: "asc" }
+    departments = await db.query.department.findMany({
+      orderBy: [asc(department.name)]
     });
   } catch (e) {
     console.error("Error fetching departments:", e);
   }
 
   try {
-    users = await prisma.user.findMany({
-      where: { isActive: true },
-      include: { role: true, department: true },
-      orderBy: { name: "asc" }
+    users = await db.query.user.findMany({
+      where: eq(user.isActive, true),
+      with: { role: true, department: true },
+      orderBy: [asc(user.name)]
     });
   } catch (e) {
     console.error("Error fetching users:", e);

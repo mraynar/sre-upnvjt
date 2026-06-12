@@ -1,7 +1,6 @@
 import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { HeaderWrapper, FooterWrapper } from "@/components/NavigationWrapper";
 import { Providers } from "@/components/Providers";
 
 const inter = Inter({
@@ -30,9 +29,9 @@ export default function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col bg-canvas text-ink font-sans">
         <Providers>
-          <Header />
+          <HeaderWrapper />
           {children}
-          <Footer />
+          <FooterWrapper />
         </Providers>
       </body>
     </html>

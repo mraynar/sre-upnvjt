@@ -1,5 +1,7 @@
 import React from "react";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { user, attendanceSession, project } from "@/db/schema";
+import { eq, desc, asc } from "drizzle-orm";
 import AttendanceClient from "./AttendanceClient";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -16,32 +18,32 @@ export default async function AttendancePage() {
     redirect("/login");
   }
 
-  const currentUser = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    include: { role: true }
+  const currentUser = await db.query.user.findFirst({
+    where: eq(user.email, session.user.email),
+    with: { role: true }
   });
 
   if (!currentUser) redirect("/login");
 
-  const attendanceSessions = await prisma.attendanceSession.findMany({
-    include: {
-      createdBy: { select: { name: true } },
-      project: { select: { title: true } },
+  const attendanceSessions = await db.query.attendanceSession.findMany({
+    with: {
+      createdBy: { columns: { name: true } },
+      project: { columns: { title: true } },
       attendances: {
-        include: { user: { select: { name: true, npm: true } } }
+        with: { user: { columns: { name: true, npm: true } } }
       }
     },
-    orderBy: { date: "desc" }
+    orderBy: [desc(attendanceSession.date)]
   });
 
-  const users = await prisma.user.findMany({
-    select: { id: true, name: true, npm: true, isActive: true },
-    where: { isActive: true },
-    orderBy: { name: "asc" }
+  const users = await db.query.user.findMany({
+    columns: { id: true, name: true, npm: true, isActive: true },
+    where: eq(user.isActive, true),
+    orderBy: [asc(user.name)]
   });
 
-  const projects = await prisma.project.findMany({
-    orderBy: { title: "asc" }
+  const projects = await db.query.project.findMany({
+    orderBy: [asc(project.title)]
   });
 
   const canManageAttendance = currentUser.role.name === 'SUPER_ADMIN' || currentUser.role.name.includes('Manager');

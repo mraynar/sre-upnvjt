@@ -1,21 +1,26 @@
 "use server";
 
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { department, division } from "@/db/schema";
+import { eq, asc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-
 
 export async function getDepartments() {
   try {
-    const departments = await prisma.department.findMany({
-      include: {
+    const depts = await db.query.department.findMany({
+      with: {
         divisions: true,
-        _count: {
-          select: { users: true }
-        }
+        users: { columns: { id: true } }
       },
-      orderBy: { name: "asc" }
+      orderBy: [asc(department.name)]
     });
-    return { success: true, data: departments };
+    
+    const formattedDepts = depts.map(d => {
+      const { users, ...rest } = d;
+      return { ...rest, _count: { users: users.length } };
+    });
+    
+    return { success: true, data: formattedDepts };
   } catch (error) {
     return { success: false, error: "Failed to fetch departments" };
   }
@@ -24,11 +29,9 @@ export async function getDepartments() {
 export async function createDepartment(data) {
   try {
     const { name, code } = data;
-    const dept = await prisma.department.create({
-      data: { name, code }
-    });
+    const [result] = await db.insert(department).values({ name, code });
     revalidatePath("/departments");
-    return { success: true, data: dept };
+    return { success: true, data: { id: result.insertId, name, code } };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -37,12 +40,9 @@ export async function createDepartment(data) {
 export async function updateDepartment(id, data) {
   try {
     const { name, code } = data;
-    const dept = await prisma.department.update({
-      where: { id },
-      data: { name, code }
-    });
+    await db.update(department).set({ name, code }).where(eq(department.id, id));
     revalidatePath("/departments");
-    return { success: true, data: dept };
+    return { success: true, data: { id, name, code } };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -50,7 +50,7 @@ export async function updateDepartment(id, data) {
 
 export async function deleteDepartment(id) {
   try {
-    await prisma.department.delete({ where: { id } });
+    await db.delete(department).where(eq(department.id, id));
     revalidatePath("/departments");
     return { success: true };
   } catch (error) {
@@ -58,15 +58,12 @@ export async function deleteDepartment(id) {
   }
 }
 
-
 export async function createDivision(data) {
   try {
     const { name, departmentId } = data;
-    const div = await prisma.division.create({
-      data: { name, departmentId }
-    });
+    const [result] = await db.insert(division).values({ name, departmentId });
     revalidatePath("/departments");
-    return { success: true, data: div };
+    return { success: true, data: { id: result.insertId, name, departmentId } };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -75,12 +72,9 @@ export async function createDivision(data) {
 export async function updateDivision(id, data) {
   try {
     const { name, departmentId } = data;
-    const div = await prisma.division.update({
-      where: { id },
-      data: { name, departmentId }
-    });
+    await db.update(division).set({ name, departmentId }).where(eq(division.id, id));
     revalidatePath("/departments");
-    return { success: true, data: div };
+    return { success: true, data: { id, name, departmentId } };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -88,7 +82,7 @@ export async function updateDivision(id, data) {
 
 export async function deleteDivision(id) {
   try {
-    await prisma.division.delete({ where: { id } });
+    await db.delete(division).where(eq(division.id, id));
     revalidatePath("/departments");
     return { success: true };
   } catch (error) {

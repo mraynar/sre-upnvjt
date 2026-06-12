@@ -1,26 +1,26 @@
 "use server";
 
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { finance } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function createFinanceRecord(data) {
   try {
     const { title, amount, type, proofUrl, date, loggedById, projectId } = data;
     
-    const record = await prisma.finance.create({
-      data: {
-        title,
-        amount: parseFloat(amount),
-        type,
-        proofUrl: proofUrl || null,
-        date: new Date(date),
-        loggedById: parseInt(loggedById),
-        projectId: projectId ? parseInt(projectId) : null
-      }
+    const [result] = await db.insert(finance).values({
+      title,
+      amount: parseFloat(amount),
+      type,
+      proofUrl: proofUrl || null,
+      date: new Date(date),
+      loggedById: parseInt(loggedById),
+      projectId: projectId ? parseInt(projectId) : null
     });
     
     revalidatePath("/finance");
-    return { success: true, data: record };
+    return { success: true, data: { id: result.insertId, title, amount } };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -30,20 +30,17 @@ export async function updateFinanceRecord(id, data) {
   try {
     const { title, amount, type, proofUrl, date, projectId } = data;
     
-    const record = await prisma.finance.update({
-      where: { id },
-      data: {
-        title,
-        amount: parseFloat(amount),
-        type,
-        proofUrl: proofUrl || null,
-        date: new Date(date),
-        projectId: projectId ? parseInt(projectId) : null
-      }
-    });
+    await db.update(finance).set({
+      title,
+      amount: parseFloat(amount),
+      type,
+      proofUrl: proofUrl || null,
+      date: new Date(date),
+      projectId: projectId ? parseInt(projectId) : null
+    }).where(eq(finance.id, id));
     
     revalidatePath("/finance");
-    return { success: true, data: record };
+    return { success: true, data: { id, title, amount } };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -51,7 +48,7 @@ export async function updateFinanceRecord(id, data) {
 
 export async function deleteFinanceRecord(id) {
   try {
-    await prisma.finance.delete({ where: { id } });
+    await db.delete(finance).where(eq(finance.id, id));
     revalidatePath("/finance");
     return { success: true };
   } catch (error) {

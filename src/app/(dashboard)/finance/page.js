@@ -1,5 +1,7 @@
 import React from "react";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { user, finance, project } from "@/db/schema";
+import { eq, desc, asc } from "drizzle-orm";
 import FinanceClient from "./FinanceClient";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -16,23 +18,23 @@ export default async function FinancePage() {
     redirect("/login");
   }
 
-  const currentUser = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    include: { role: true }
+  const currentUser = await db.query.user.findFirst({
+    where: eq(user.email, session.user.email),
+    with: { role: true }
   });
 
   if (!currentUser) redirect("/login");
 
-  const records = await prisma.finance.findMany({
-    include: {
+  const records = await db.query.finance.findMany({
+    with: {
       project: true,
       loggedBy: true
     },
-    orderBy: { date: "desc" }
+    orderBy: [desc(finance.date)]
   });
 
-  const projects = await prisma.project.findMany({
-    orderBy: { title: "asc" }
+  const projects = await db.query.project.findMany({
+    orderBy: [asc(project.title)]
   });
 
   return (

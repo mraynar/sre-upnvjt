@@ -1,7 +1,9 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]/route";
 import SettingsClient from "./SettingsClient";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { user as userSchema } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -16,9 +18,9 @@ export default async function SettingsPage() {
     redirect("/login");
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: parseInt(session.user.id) },
-    include: {
+  const user = await db.query.user.findFirst({
+    where: eq(userSchema.id, parseInt(session.user.id)),
+    with: {
       role: true,
       department: true,
     }

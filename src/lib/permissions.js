@@ -9,6 +9,7 @@ export function hasAccess(user, moduleName, action = 'read') {
   if (!user || !user.roleName) return false;
 
   if (user.roleName === 'SUPER_ADMIN') return true;
+  if (moduleName === 'settings' || moduleName === 'overview') return true;
 
   const perms = user.permissions || {};
   

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { user } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 
@@ -12,14 +14,14 @@ export async function PUT(req) {
     }
 
     const body = await req.json();
-    const { name, email, npm } = body;
+    const { name, email, npm, profilePictureUrl, instagramUrl, linkedinUrl } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "Name and email are required" }, { status: 400 });
     }
 
-    const existingEmail = await prisma.user.findUnique({
-      where: { email },
+    const existingEmail = await db.query.user.findFirst({
+      where: eq(user.email, email),
     });
 
     if (existingEmail && existingEmail.id !== parseInt(session.user.id)) {
@@ -27,8 +29,8 @@ export async function PUT(req) {
     }
 
     if (npm) {
-      const existingNpm = await prisma.user.findUnique({
-        where: { npm },
+      const existingNpm = await db.query.user.findFirst({
+        where: eq(user.npm, npm),
       });
 
       if (existingNpm && existingNpm.id !== parseInt(session.user.id)) {
@@ -36,18 +38,36 @@ export async function PUT(req) {
       }
     }
 
-    const updatedUser = await prisma.user.update({
-      where: { id: parseInt(session.user.id) },
-      data: {
-        name,
-        email,
-        npm: npm || null,
-      },
-      select: {
+    const updateData = {
+      name,
+      email,
+      npm: npm || null,
+    };
+
+    if (profilePictureUrl !== undefined) {
+      updateData.profilePictureUrl = profilePictureUrl;
+    }
+    if (instagramUrl !== undefined) {
+      updateData.instagramUrl = instagramUrl;
+    }
+    if (linkedinUrl !== undefined) {
+      updateData.linkedinUrl = linkedinUrl;
+    }
+
+    await db.update(user).set(updateData).where(eq(user.id, parseInt(session.user.id)));
+
+    const updatedUser = await db.query.user.findFirst({
+      where: eq(user.id, parseInt(session.user.id)),
+      columns: {
         id: true,
         name: true,
         email: true,
         npm: true,
+        profilePictureUrl: true,
+        instagramUrl: true,
+        linkedinUrl: true,
+      },
+      with: {
         role: true,
         department: true,
       }

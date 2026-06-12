@@ -39,7 +39,6 @@ export default function DepartmentsClient({ initialDepartments }) {
     const data = {
       name: formData.get("name"),
       code: formData.get("code")?.toUpperCase(),
-      description: formData.get("description"),
     };
 
     let res;
@@ -65,7 +64,6 @@ export default function DepartmentsClient({ initialDepartments }) {
     const formData = new FormData(e.target);
     const data = {
       name: formData.get("name"),
-      description: formData.get("description"),
       departmentId: divModal.deptId
     };
 
@@ -105,11 +103,11 @@ export default function DepartmentsClient({ initialDepartments }) {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-white">
+          <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-gray-900 dark:text-white">
             <FolderTree className="w-8 h-8 text-primary" />
             Departments & Divisions
           </h1>
-          <p className="text-white/50 max-w-xl">
+          <p className="text-gray-500 dark:text-white/50 max-w-xl">
             Manage the organizational structure of SRE UPNVJT.
           </p>
         </div>
@@ -127,10 +125,10 @@ export default function DepartmentsClient({ initialDepartments }) {
       {/* Departments List */}
       <div className="grid grid-cols-1 gap-6">
         {departments.length === 0 ? (
-          <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-12 text-center flex flex-col items-center justify-center backdrop-blur-md">
-            <FolderTree className="w-16 h-16 text-white/10 mb-4" />
-            <h3 className="text-xl font-display font-bold text-white mb-2">No Departments Found</h3>
-            <p className="text-white/40">Start by adding a new department to build your organizational structure.</p>
+          <div className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 shadow-sm rounded-3xl p-12 text-center flex flex-col items-center justify-center backdrop-blur-md">
+            <FolderTree className="w-16 h-16 text-gray-500 dark:text-white/10 mb-4" />
+            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">No Departments Found</h3>
+            <p className="text-gray-500 dark:text-white/40">Start by adding a new department to build your organizational structure.</p>
           </div>
         ) : (
           departments.map((dept) => (
@@ -138,11 +136,11 @@ export default function DepartmentsClient({ initialDepartments }) {
               key={dept.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden backdrop-blur-sm"
+              className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10 shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)] rounded-3xl overflow-hidden backdrop-blur-xl transition-all duration-300 hover:shadow-[0_15px_40px_rgba(16,185,129,0.1)] group/dept"
             >
               {/* Department Header */}
               <div 
-                className="p-6 md:p-8 flex items-center justify-between cursor-pointer hover:bg-white/[0.02] transition-colors"
+                className="p-6 md:p-8 flex items-center justify-between cursor-pointer hover:bg-white/60 dark:hover:bg-white/[0.04] transition-colors"
                 onClick={() => setExpandedDept(expandedDept === dept.id ? null : dept.id)}
               >
                 <div className="flex items-center gap-4">
@@ -150,11 +148,10 @@ export default function DepartmentsClient({ initialDepartments }) {
                     <ChevronRight className="w-6 h-6" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-display font-black text-white tracking-tight">{dept.name}</h2>
-                    <p className="text-white/50 text-sm mt-1 max-w-2xl">{dept.description || "No description provided."}</p>
-                    <div className="flex items-center gap-3 mt-3 text-xs text-white/40 font-medium">
+                    <h2 className="text-2xl font-display font-black text-gray-900 dark:text-white tracking-tight">{dept.name}</h2>
+                    <div className="flex items-center gap-3 mt-3 text-xs text-gray-500 dark:text-white/40 font-medium">
                       <span className="flex items-center gap-1.5"><Users className="w-4 h-4" /> {dept._count?.users || 0} Members</span>
-                      <span className="w-1.5 h-1.5 rounded-full bg-white/20"></span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-white dark:bg-white/20 shadow-sm dark:shadow-none"></span>
                       <span>{dept.divisions?.length || 0} Divisions</span>
                     </div>
                   </div>
@@ -164,7 +161,7 @@ export default function DepartmentsClient({ initialDepartments }) {
                   {canUpdate && (
                     <button 
                       onClick={() => setDeptModal({ isOpen: true, isEdit: true, data: dept })}
-                      className="p-2.5 rounded-xl bg-white/5 text-white/70 hover:bg-white/10 hover:text-white transition-colors border border-white/5"
+                      className="p-2.5 rounded-xl bg-white dark:bg-white/5 shadow-sm dark:shadow-none text-gray-500 dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/10 hover:text-gray-900 dark:text-white transition-colors border border-gray-200 dark:border-white/5"
                       title="Edit Department"
                     >
                       <Edit2 className="w-4 h-4" />
@@ -189,11 +186,11 @@ export default function DepartmentsClient({ initialDepartments }) {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="border-t border-white/5 bg-[#030906]"
+                    className="border-t border-gray-200/50 dark:border-white/5 bg-gray-50/50 dark:bg-black/20 backdrop-blur-md"
                   >
                     <div className="p-6 md:p-8">
                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-white/40">Divisions</h3>
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Divisions</h3>
                         {canUpdate && (
                           <button 
                             onClick={() => setDivModal({ isOpen: true, isEdit: false, data: null, deptId: dept.id })}
@@ -206,20 +203,19 @@ export default function DepartmentsClient({ initialDepartments }) {
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {dept.divisions.length === 0 ? (
-                          <div className="col-span-full py-8 text-center border border-dashed border-white/10 rounded-2xl">
-                            <p className="text-white/30 text-sm">No divisions assigned to this department yet.</p>
+                          <div className="col-span-full py-8 text-center border border-dashed border-gray-200 dark:border-white/10 rounded-2xl">
+                            <p className="text-gray-500 dark:text-white/30 text-sm">No divisions assigned to this department yet.</p>
                           </div>
                         ) : (
                           dept.divisions.map((div) => (
-                            <div key={div.id} className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors group relative">
-                              <h4 className="font-bold text-white mb-1 pr-16">{div.name}</h4>
-                              <p className="text-white/50 text-xs line-clamp-2">{div.description || "No description."}</p>
+                            <div key={div.id} className="bg-white dark:bg-white/5 shadow-sm border border-gray-200 dark:border-white/10 rounded-2xl p-5 hover:-translate-y-1 hover:shadow-md hover:border-primary/30 transition-all duration-300 group relative">
+                              <h4 className="font-bold text-gray-900 dark:text-white mb-1 pr-16">{div.name}</h4>
                               
                               <div className="absolute top-4 right-4 flex opacity-0 group-hover:opacity-100 transition-opacity">
                                 {canUpdate && (
                                   <button 
                                     onClick={() => setDivModal({ isOpen: true, isEdit: true, data: div, deptId: dept.id })}
-                                    className="p-2 text-white/50 hover:text-white transition-colors"
+                                    className="p-2 text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white transition-colors"
                                   >
                                     <Edit2 className="w-3.5 h-3.5" />
                                   </button>
@@ -227,7 +223,7 @@ export default function DepartmentsClient({ initialDepartments }) {
                                 {canDelete && (
                                   <button 
                                     onClick={() => handleDeleteDiv(div.id)}
-                                    className="p-2 text-white/50 hover:text-red-400 transition-colors"
+                                    className="p-2 text-gray-500 dark:text-white/50 hover:text-red-400 transition-colors"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
                                   </button>
@@ -257,13 +253,13 @@ export default function DepartmentsClient({ initialDepartments }) {
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-[#0a1f18] border border-white/10 rounded-3xl p-8 w-full max-w-md relative z-10 shadow-2xl"
+              className="bg-white dark:bg-[#0a1f18] border border-gray-200 dark:border-white/10 rounded-3xl p-8 w-full max-w-md relative z-10 shadow-2xl"
             >
-              <button onClick={() => setDeptModal({ isOpen: false, isEdit: false, data: null })} className="absolute top-6 right-6 text-white/50 hover:text-white">
+              <button onClick={() => setDeptModal({ isOpen: false, isEdit: false, data: null })} className="absolute top-6 right-6 text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white">
                 <X className="w-6 h-6" />
               </button>
               
-              <h2 className="text-2xl font-display font-bold text-white mb-6">
+              <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-6">
                 {deptModal.isEdit ? "Edit Department" : "Add Department"}
               </h2>
               
@@ -271,27 +267,19 @@ export default function DepartmentsClient({ initialDepartments }) {
               
               <form onSubmit={handleDeptSubmit} className="flex flex-col gap-5">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Department Name</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Department Name</label>
                   <input 
                     name="name" type="text" required defaultValue={deptModal.data?.name}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-colors"
+                    className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
                     placeholder="e.g. Badan Pengurus Harian"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Department Code</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Department Code</label>
                   <input 
                     name="code" type="text" required defaultValue={deptModal.data?.code}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-colors uppercase"
+                    className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors uppercase"
                     placeholder="e.g. BPH"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Description</label>
-                  <textarea 
-                    name="description" rows="3" defaultValue={deptModal.data?.description}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-colors resize-none"
-                    placeholder="Brief description of the department's role..."
                   />
                 </div>
                 <div className="pt-2">
@@ -316,13 +304,13 @@ export default function DepartmentsClient({ initialDepartments }) {
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-[#0a1f18] border border-white/10 rounded-3xl p-8 w-full max-w-md relative z-10 shadow-2xl"
+              className="bg-white dark:bg-[#0a1f18] border border-gray-200 dark:border-white/10 rounded-3xl p-8 w-full max-w-md relative z-10 shadow-2xl"
             >
-              <button onClick={() => setDivModal({ isOpen: false, isEdit: false, data: null, deptId: null })} className="absolute top-6 right-6 text-white/50 hover:text-white">
+              <button onClick={() => setDivModal({ isOpen: false, isEdit: false, data: null, deptId: null })} className="absolute top-6 right-6 text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white">
                 <X className="w-6 h-6" />
               </button>
               
-              <h2 className="text-2xl font-display font-bold text-white mb-6">
+              <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-6">
                 {divModal.isEdit ? "Edit Division" : "Add Division"}
               </h2>
               
@@ -330,19 +318,11 @@ export default function DepartmentsClient({ initialDepartments }) {
               
               <form onSubmit={handleDivSubmit} className="flex flex-col gap-5">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Division Name</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Division Name</label>
                   <input 
                     name="name" type="text" required defaultValue={divModal.data?.name}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-colors"
+                    className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
                     placeholder="e.g. Media & Information"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Description</label>
-                  <textarea 
-                    name="description" rows="3" defaultValue={divModal.data?.description}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-colors resize-none"
-                    placeholder="Brief description..."
                   />
                 </div>
                 <div className="pt-2">

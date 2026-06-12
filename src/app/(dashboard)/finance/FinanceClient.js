@@ -28,12 +28,12 @@ const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, r
       <input type="hidden" name={name} value={value || ""} required={required} />
       <div 
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full bg-white/5 border ${isOpen ? 'border-primary/50 bg-white/10 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'border-white/10'} rounded-xl px-4 py-3.5 flex items-center justify-between cursor-pointer transition-all duration-300`}
+        className={`w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border ${isOpen ? 'border-primary/50 bg-white dark:bg-white/10 shadow-sm dark:shadow-none shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'border-gray-200 dark:border-white/10'} rounded-xl px-4 py-3.5 flex items-center justify-between cursor-pointer transition-all duration-300`}
       >
-        <span className={selectedOption ? 'text-white font-medium' : 'text-white/40'}>
+        <span className={selectedOption ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-white/40'}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <ChevronDown className={`w-4 h-4 text-white/50 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary' : ''}`} />
+        <ChevronDown className={`w-4 h-4 text-gray-500 dark:text-white/50 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary' : ''}`} />
       </div>
       <AnimatePresence>
         {isOpen && (
@@ -42,17 +42,17 @@ const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, r
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute top-full left-0 right-0 mt-2 bg-[#0a1f18] border border-white/10 rounded-xl overflow-hidden z-[60] shadow-2xl backdrop-blur-2xl ring-1 ring-black/50"
+            className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#0a1f18] border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden z-[60] shadow-2xl backdrop-blur-2xl ring-1 ring-black/5"
           >
             <div className="max-h-60 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
               {options.length === 0 ? (
-                <div className="px-4 py-3 text-white/40 text-sm text-center">No options available</div>
+                <div className="px-4 py-3 text-gray-500 dark:text-white/40 text-sm text-center">No options available</div>
               ) : (
                 options.map(option => (
                   <div 
                     key={option.value}
                     onClick={() => { onChange(option.value?.toString()); setIsOpen(false); }}
-                    className={`px-4 py-3 rounded-lg text-sm cursor-pointer transition-all flex items-center justify-between ${value?.toString() === option.value?.toString() ? 'bg-primary/20 text-primary font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}
+                    className={`px-4 py-3 rounded-lg text-sm cursor-pointer transition-all flex items-center justify-between ${value?.toString() === option.value?.toString() ? 'bg-primary/20 text-primary font-bold' : 'text-gray-500 dark:text-white/80 hover:bg-gray-50 dark:hover:bg-white/10 hover:text-gray-900 dark:text-white'}`}
                   >
                     {option.label}
                     {value?.toString() === option.value?.toString() && <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(16,185,129,0.8)]" />}
@@ -109,29 +109,59 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
     
     const rawAmount = formData.get("amount").replace(/[^0-9.-]+/g,"");
 
-    const data = {
-      title: formData.get("title"),
-      amount: rawAmount,
-      type: formData.get("type"),
-      proofUrl: formData.get("proofUrl"),
-      date: formData.get("date"),
-      loggedById: currentUser.id,
-      projectId: formData.get("projectId"),
-    };
+    let finalProofUrl = null;
 
-    let res;
-    if (modal.isEdit) {
-      res = await updateFinanceRecord(modal.data.id, data);
-    } else {
-      res = await createFinanceRecord(data);
-    }
+    try {
+      const proofFile = formData.get("proofFile");
+      if (proofFile && proofFile.size > 0) {
+        const uploadFormData = new FormData();
+        uploadFormData.append("file", proofFile);
+        uploadFormData.append("folder", "finance_proofs");
 
-    setLoading(false);
-    if (res.success) {
-      setModal({ isOpen: false, isEdit: false, data: null });
-      refreshData();
-    } else {
-      setError(res.error);
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: uploadFormData,
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error("Gagal mengunggah file bukti.");
+        }
+
+        const uploadData = await uploadRes.json();
+        finalProofUrl = uploadData.url;
+      } else {
+        // If editing and no new file uploaded, keep the old proofUrl
+        finalProofUrl = modal.data?.proofUrl || null;
+      }
+
+      const data = {
+        title: formData.get("title"),
+        amount: rawAmount,
+        type: formData.get("type"),
+        proofUrl: finalProofUrl,
+        date: formData.get("date"),
+        loggedById: currentUser.id,
+        projectId: formData.get("projectId"),
+      };
+
+      let res;
+      if (modal.isEdit) {
+        res = await updateFinanceRecord(modal.data.id, data);
+      } else {
+        res = await createFinanceRecord(data);
+      }
+
+      if (res.success) {
+        setModal({ isOpen: false, isEdit: false, data: null });
+        refreshData();
+      } else {
+        setError(res.error);
+      }
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Terjadi kesalahan saat memproses data.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -155,11 +185,11 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-white">
+          <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-gray-900 dark:text-white">
             <CreditCard className="w-8 h-8 text-primary" />
             Buku Kas Digital
           </h1>
-          <p className="text-white/50 max-w-xl">
+          <p className="text-gray-500 dark:text-white/50 max-w-xl">
             Transparansi arus kas organisasi. Lacak pemasukan dan pengeluaran secara real-time.
           </p>
         </div>
@@ -186,32 +216,32 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
 
       {/* Stats Widgets */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 relative overflow-hidden">
+        <div className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 shadow-md dark:shadow-none rounded-3xl p-6 relative overflow-hidden backdrop-blur-xl">
           <div className="flex justify-between items-start mb-4 relative z-10">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">Total Saldo Aktif</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Total Saldo Aktif</div>
             <div className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20"><Wallet className="w-4 h-4" /></div>
           </div>
-          <div className="text-3xl lg:text-4xl font-display font-black tracking-tighter text-white relative z-10">
+          <div className="text-3xl lg:text-4xl font-display font-black tracking-tighter text-gray-900 dark:text-white relative z-10">
             {formatCurrency(balance)}
           </div>
         </div>
-        <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 relative overflow-hidden">
+        <div className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 shadow-md dark:shadow-none rounded-3xl p-6 relative overflow-hidden backdrop-blur-xl">
           <div className="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 blur-[40px] rounded-full"></div>
           <div className="flex justify-between items-start mb-4 relative z-10">
             <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-400/80">Total Pemasukan</div>
             <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><ArrowDownRight className="w-4 h-4" /></div>
           </div>
-          <div className="text-3xl lg:text-4xl font-display font-black tracking-tighter text-white relative z-10">
+          <div className="text-3xl lg:text-4xl font-display font-black tracking-tighter text-gray-900 dark:text-white relative z-10">
             {formatCurrency(totalIncome)}
           </div>
         </div>
-        <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 relative overflow-hidden">
+        <div className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 shadow-md dark:shadow-none rounded-3xl p-6 relative overflow-hidden backdrop-blur-xl">
           <div className="absolute -right-10 -top-10 w-32 h-32 bg-red-500/10 blur-[40px] rounded-full"></div>
           <div className="flex justify-between items-start mb-4 relative z-10">
             <div className="text-[10px] font-bold uppercase tracking-widest text-red-400/80">Total Pengeluaran</div>
             <div className="p-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20"><ArrowUpRight className="w-4 h-4" /></div>
           </div>
-          <div className="text-3xl lg:text-4xl font-display font-black tracking-tighter text-white relative z-10">
+          <div className="text-3xl lg:text-4xl font-display font-black tracking-tighter text-gray-900 dark:text-white relative z-10">
             {formatCurrency(totalExpense)}
           </div>
         </div>
@@ -231,10 +261,10 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredRecords.length === 0 ? (
-          <div className="col-span-full bg-white/[0.02] border border-white/5 rounded-3xl p-12 text-center flex flex-col items-center justify-center backdrop-blur-md">
-            <CreditCard className="w-16 h-16 text-white/10 mb-4" />
-            <h3 className="text-xl font-display font-bold text-white mb-2">Tidak Ada Transaksi</h3>
-            <p className="text-white/40">Belum ada catatan keuangan yang sesuai filter.</p>
+          <div className="col-span-full bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 rounded-3xl p-12 text-center flex flex-col items-center justify-center backdrop-blur-md shadow-sm">
+            <CreditCard className="w-16 h-16 text-gray-500 dark:text-white/10 mb-4" />
+            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">Tidak Ada Transaksi</h3>
+            <p className="text-gray-500 dark:text-white/40">Belum ada catatan keuangan yang sesuai filter.</p>
           </div>
         ) : (
           filteredRecords.map((record) => (
@@ -242,7 +272,7 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
               key={record.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 backdrop-blur-sm relative group hover:bg-white/[0.04] transition-all flex flex-col h-full"
+              className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10 shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)] rounded-3xl p-6 backdrop-blur-xl relative group hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(16,185,129,0.1)] transition-all duration-300 flex flex-col h-full"
             >
               <div className="flex justify-between items-start mb-4">
                 {record.type === 'INCOME' ? (
@@ -251,20 +281,20 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
                   <span className="px-2.5 py-1 rounded-md bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 w-fit"><ArrowUpRight className="w-3.5 h-3.5" /> Keluar</span>
                 )}
                 <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => handleOpenModal(true, record)} className="p-2 text-white/50 hover:text-white"><Edit2 className="w-4 h-4" /></button>
-                  <button onClick={() => handleDelete(record.id)} className="p-2 text-white/50 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
+                  <button onClick={() => handleOpenModal(true, record)} className="p-2 text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white"><Edit2 className="w-4 h-4" /></button>
+                  <button onClick={() => handleDelete(record.id)} className="p-2 text-gray-500 dark:text-white/50 hover:text-red-400"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
 
               <div className="mb-6">
-                <div className="text-2xl font-display font-black text-white tracking-tight mb-2">
+                <div className="text-2xl font-display font-black text-gray-900 dark:text-white tracking-tight mb-2">
                   {formatCurrency(record.amount)}
                 </div>
-                <h3 className="text-sm font-bold text-white/80 line-clamp-2">{record.title}</h3>
+                <h3 className="text-sm font-bold text-gray-500 dark:text-white/80 line-clamp-2">{record.title}</h3>
               </div>
 
               <div className="space-y-3 mt-auto">
-                <div className="flex items-center gap-3 text-xs text-white/50">
+                <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-white/50">
                   <Calendar className="w-4 h-4" />
                   <span>{new Date(record.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                 </div>
@@ -275,7 +305,7 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
                   </div>
                 )}
                 {record.proofUrl && (
-                  <div className="pt-3 border-t border-white/5 mt-3">
+                  <div className="pt-3 border-t border-gray-200 dark:border-white/5 mt-3">
                     <a href={record.proofUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 font-medium">
                       <ExternalLink className="w-3.5 h-3.5" /> Lihat Bukti Transaksi
                     </a>
@@ -298,13 +328,13 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-[#0a1f18] border border-white/10 rounded-3xl p-8 w-full max-w-xl relative z-10 shadow-2xl max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
+              className="bg-white dark:bg-[#0a1f18] border border-gray-200 dark:border-white/10 rounded-3xl p-8 w-full max-w-xl relative z-10 shadow-2xl max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-white/10 scrollbar-track-transparent"
             >
-              <button onClick={() => setModal({ isOpen: false, isEdit: false, data: null })} className="absolute top-6 right-6 text-white/50 hover:text-white z-50">
+              <button onClick={() => setModal({ isOpen: false, isEdit: false, data: null })} className="absolute top-6 right-6 text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white z-50">
                 <X className="w-6 h-6" />
               </button>
               
-              <h2 className="text-2xl font-display font-bold text-white mb-6">
+              <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-6">
                 {modal.isEdit ? "Edit Catatan Keuangan" : "Catat Transaksi Baru"}
               </h2>
               
@@ -313,17 +343,17 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
               <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-5 relative">
                 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Keterangan Transaksi</label>
-                  <input name="title" type="text" required defaultValue={modal.data?.title} placeholder="Misal: Uang Kas Bulan Mei / Beli Konsumsi" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-colors" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Keterangan Transaksi</label>
+                  <input name="title" type="text" required defaultValue={modal.data?.title} placeholder="Misal: Uang Kas Bulan Mei / Beli Konsumsi" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Nominal (Rp)</label>
-                  <input name="amount" type="number" step="any" required defaultValue={modal.data?.amount} placeholder="150000" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-colors font-mono" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Nominal (Rp)</label>
+                  <input name="amount" type="number" step="any" required defaultValue={modal.data?.amount} placeholder="150000" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors font-mono" />
                 </div>
 
                 <div className="relative z-[50]">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Jenis Transaksi</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Jenis Transaksi</label>
                   <CustomSelect 
                     name="type" 
                     options={typeOptions} 
@@ -335,7 +365,7 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
                 </div>
 
                 <div className="relative z-[49]">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Terkait Proker (Opsional)</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Terkait Proker (Opsional)</label>
                   <CustomSelect 
                     name="projectId" 
                     options={[{ value: "", label: "Uang Kas Organisasi Utama" }, ...projectOptions]} 
@@ -346,16 +376,21 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Tanggal Transaksi</label>
-                  <input name="date" type="date" required defaultValue={modal.data?.date ? new Date(modal.data.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-colors [color-scheme:dark]" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Tanggal Transaksi</label>
+                  <input name="date" type="date" required defaultValue={modal.data?.date ? new Date(modal.data.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors dark:[color-scheme:dark]" />
                 </div>
 
                 <div className="pt-1">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Tautan Bukti Transaksi (Struk/Nota)</label>
-                  <input name="proofUrl" type="url" defaultValue={modal.data?.proofUrl || ""} placeholder="https://..." className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-primary/50 transition-colors" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Unggah Bukti Transaksi (Struk/Nota)</label>
+                  <input name="proofFile" type="file" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" />
+                  {modal.isEdit && modal.data?.proofUrl && (
+                    <div className="mt-3 text-xs text-gray-500 dark:text-white/40">
+                      File saat ini: <a href={modal.data.proofUrl} target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300 underline">Lihat Bukti</a>
+                    </div>
+                  )}
                 </div>
 
-                <div className="pt-4 mt-2 border-t border-white/10">
+                <div className="pt-4 mt-2 border-t border-gray-200 dark:border-white/10">
                   <button type="submit" disabled={loading} className="w-full bg-primary text-[#050e0a] font-bold py-3.5 rounded-xl hover:bg-primary-focus hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all disabled:opacity-50">
                     {loading ? "Menyimpan..." : "Simpan Transaksi"}
                   </button>

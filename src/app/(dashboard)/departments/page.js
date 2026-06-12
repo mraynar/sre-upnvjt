@@ -1,5 +1,7 @@
 import React from "react";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { department } from "@/db/schema";
+import { asc } from "drizzle-orm";
 import DepartmentsClient from "./DepartmentsClient";
 
 export const metadata = {
@@ -7,14 +9,20 @@ export const metadata = {
 };
 
 export default async function DepartmentsPage() {
-  const departments = await prisma.department.findMany({
-    include: {
+  const fetchedDepartments = await db.query.department.findMany({
+    with: {
       divisions: true,
-      _count: {
-        select: { users: true }
-      }
+      users: { columns: { id: true } }
     },
-    orderBy: { name: "asc" }
+    orderBy: [asc(department.name)]
+  });
+
+  const departments = fetchedDepartments.map(d => {
+    const { users, ...rest } = d;
+    return {
+      ...rest,
+      _count: { users: users.length }
+    };
   });
 
   return <DepartmentsClient initialDepartments={departments} />;

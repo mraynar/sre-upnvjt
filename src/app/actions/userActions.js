@@ -1,18 +1,20 @@
 "use server";
 
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { user } from "@/db/schema";
+import { eq, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 
 export async function getUsers() {
   try {
-    const users = await prisma.user.findMany({
-      include: {
+    const users = await db.query.user.findMany({
+      with: {
         role: true,
         department: true,
         division: true
       },
-      orderBy: { createdAt: "desc" }
+      orderBy: [desc(user.createdAt)]
     });
     return { success: true, data: users };
   } catch (error) {
@@ -24,26 +26,24 @@ export async function createUser(data) {
   try {
     const { name, email, password, npm, positionName, isActive, roleId, departmentId, divisionId } = data;
     
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await db.query.user.findFirst({ where: eq(user.email, email) });
     if (existingUser) return { success: false, error: "Email already exists" };
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        npm: npm || null,
-        positionName: positionName || null,
-        isActive: isActive === "true" || isActive === true,
-        roleId: parseInt(roleId),
-        departmentId: departmentId ? parseInt(departmentId) : null,
-        divisionId: divisionId ? parseInt(divisionId) : null,
-      }
+    const [result] = await db.insert(user).values({
+      name,
+      email,
+      password: hashedPassword,
+      npm: npm || null,
+      positionName: positionName || null,
+      isActive: isActive === "true" || isActive === true,
+      roleId: parseInt(roleId),
+      departmentId: departmentId ? parseInt(departmentId) : null,
+      divisionId: divisionId ? parseInt(divisionId) : null,
     });
     revalidatePath("/users");
-    return { success: true, data: user };
+    return { success: true, data: { id: result.insertId, name, email } };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -68,12 +68,9 @@ export async function updateUser(id, data) {
       updateData.password = await bcrypt.hash(password, 10);
     }
 
-    const user = await prisma.user.update({
-      where: { id },
-      data: updateData
-    });
+    await db.update(user).set(updateData).where(eq(user.id, id));
     revalidatePath("/users");
-    return { success: true, data: user };
+    return { success: true, data: { id, name, email } };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -81,7 +78,7 @@ export async function updateUser(id, data) {
 
 export async function deleteUser(id) {
   try {
-    await prisma.user.delete({ where: { id } });
+    await db.delete(user).where(eq(user.id, id));
     revalidatePath("/users");
     return { success: true };
   } catch (error) {

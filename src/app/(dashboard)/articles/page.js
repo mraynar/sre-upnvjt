@@ -1,5 +1,7 @@
 import React from "react";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { user, article } from "@/db/schema";
+import { eq, desc } from "drizzle-orm";
 import ArticlesClient from "./ArticlesClient";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -16,18 +18,18 @@ export default async function ArticlesPage() {
     redirect("/login");
   }
 
-  const currentUser = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    include: { role: true }
+  const currentUser = await db.query.user.findFirst({
+    where: eq(user.email, session.user.email),
+    with: { role: true }
   });
 
   if (!currentUser) redirect("/login");
 
-  const articles = await prisma.article.findMany({
-    include: {
+  const articles = await db.query.article.findMany({
+    with: {
       author: true
     },
-    orderBy: { createdAt: "desc" }
+    orderBy: [desc(article.createdAt)]
   });
 
   return (

@@ -1,5 +1,7 @@
 import React from "react";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { user, role, department, division } from "@/db/schema";
+import { desc, asc } from "drizzle-orm";
 import UsersClient from "./UsersClient";
 
 export const metadata = {
@@ -7,25 +9,25 @@ export const metadata = {
 };
 
 export default async function UsersPage() {
-  const users = await prisma.user.findMany({
-    include: {
+  const users = await db.query.user.findMany({
+    with: {
       role: true,
       department: true,
       division: true
     },
-    orderBy: { createdAt: "desc" }
+    orderBy: [desc(user.createdAt)]
   });
 
-  const roles = await prisma.role.findMany({
-    orderBy: { id: "asc" }
+  const roles = await db.query.role.findMany({
+    orderBy: [asc(role.id)]
   });
 
-  const departments = await prisma.department.findMany({
-    orderBy: { name: "asc" }
+  const departments = await db.query.department.findMany({
+    orderBy: [asc(department.name)]
   });
 
-  const divisions = await prisma.division.findMany({
-    orderBy: { name: "asc" }
+  const divisions = await db.query.division.findMany({
+    orderBy: [asc(division.name)]
   });
 
   return (

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { role } from "@/db/schema";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 
@@ -11,14 +12,18 @@ export async function GET() {
   }
 
   try {
-    const roles = await prisma.role.findMany({
-      include: {
-        _count: {
-          select: { users: true }
-        }
+    const roles = await db.query.role.findMany({
+      with: {
+        users: { columns: { id: true } }
       }
     });
-    return NextResponse.json(roles);
+    
+    const formattedRoles = roles.map(r => {
+      const { users, ...rest } = r;
+      return { ...rest, _count: { users: users.length } };
+    });
+    
+    return NextResponse.json(formattedRoles);
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
@@ -35,14 +40,12 @@ export async function POST(req) {
     const body = await req.json();
     const { name, permissions } = body;
 
-    const newRole = await prisma.role.create({
-      data: {
-        name,
-        permissions: permissions || {},
-      },
+    const [result] = await db.insert(role).values({
+      name,
+      permissions: permissions || {},
     });
 
-    return NextResponse.json(newRole);
+    return NextResponse.json({ id: result.insertId, name, permissions: permissions || {} });
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }

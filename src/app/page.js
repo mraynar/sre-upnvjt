@@ -6,6 +6,8 @@ import {
   ArrowUpRight,
   Eye,
 } from "lucide-react";
+import { getPublicArticles } from "@/app/actions/articleActions";
+import { getPublicActivities } from "@/app/actions/activityActions";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 35 },
@@ -60,8 +62,45 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState("home");
   const [hoveredMerch, setHoveredMerch] = useState(null);
   const [iyrefActive, setIyrefActive] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [activeProgram, setActiveProgram] = useState(0);
+  const [partnersList, setPartnersList] = useState([]);
+  const [publicArticlesList, setPublicArticlesList] = useState([]);
+  const [publicActivitiesList, setPublicActivitiesList] = useState([{}, {}, {}, {}, {}]); // Fallback array so layout doesn't break if empty
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/partners')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setPartnersList(data);
+      })
+      .catch(console.error);
+
+    getPublicActivities().then((res) => {
+      if (res.success && res.data.length > 0) {
+        setPublicActivitiesList(res.data);
+      }
+    }).catch(console.error);
+
+    getPublicArticles().then((res) => {
+      if (res.success) {
+        // Transform the DB articles to match the UI format
+        const formatted = res.data.map((art, index) => ({
+          id: art.id,
+          title: art.title,
+          category: "News",
+          date: new Date(art.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase(),
+          author: art.author?.name || "SRE UPNVJT",
+          readTime: "5 min read",
+          desc: art.excerpt || "Baca selengkapnya untuk mengetahui detail lebih lanjut mengenai artikel ini.",
+          image: art.thumbnailUrl || "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=1200&auto=format&fit=crop",
+          featured: index === 0, // Make the first one featured
+          slug: art.slug
+        }));
+        setPublicArticlesList(formatted.length > 0 ? formatted : ARTICLES);
+      }
+    }).catch(console.error);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -94,11 +133,13 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveProgram((prev) => (prev + 1) % 5);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, []);
+    if (publicActivitiesList.length > 0) {
+      const timer = setInterval(() => {
+        setActiveProgram((prev) => (prev + 1) % publicActivitiesList.length);
+      }, 4000);
+      return () => clearInterval(timer);
+    }
+  }, [publicActivitiesList.length]);
 
   const [cardDims, setCardDims] = useState({ width: 760, gap: 32, height: 540 });
   useEffect(() => {
@@ -401,11 +442,11 @@ export default function Home() {
                 className="absolute top-0 left-0 flex items-center h-full"
                 style={{ gap: cardDims.gap, willChange: "transform" }}
               >
-                {[0, 1, 2, 3, 4].map((idx) => {
+                {publicActivitiesList.map((activity, idx) => {
                   const isActive = idx === activeProgram;
                   return (
                     <motion.div
-                      key={idx}
+                      key={activity.id || idx}
                       animate={{
                         scale: isActive ? 1 : 0.82,
                         opacity: isActive ? 1 : 0.4,
@@ -421,8 +462,8 @@ export default function Home() {
                       }}
                     >
                       <img
-                        src={`https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=1200&auto=format&fit=crop&sig=${idx}`}
-                        alt="Program Item"
+                        src={activity.imageUrl || `https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=1200&auto=format&fit=crop&sig=${idx}`}
+                        alt={activity.title || "Program Item"}
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                       />
                       <div
@@ -444,11 +485,11 @@ export default function Home() {
                             <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center mb-4 md:mb-6 border border-white/20 group-hover:bg-primary group-hover:border-primary transition-all duration-300">
                               <ArrowUpRight className="w-4 h-4 md:w-5 md:h-5 text-white transform group-hover:rotate-45 transition-transform duration-300" />
                             </div>
-                            <h3 className="text-[22px] md:text-[32px] lg:text-[40px] font-display font-bold leading-tight mb-2 md:mb-4 tracking-tight">
-                              Lorem Ipsum Dolor Sit Amet
+                            <h3 className="text-[22px] md:text-[32px] lg:text-[40px] font-display font-bold leading-tight mb-2 md:mb-4 tracking-tight line-clamp-1">
+                              {activity.title || "SRE Activity Program"}
                             </h3>
                             <p className="text-[13px] md:text-[16px] lg:text-[18px] font-light text-white/80 leading-relaxed line-clamp-2">
-                              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                              {activity.description || "Stay tuned for more details regarding this activity. SRE is committed to green transition."}
                             </p>
                           </motion.div>
                         )}
@@ -458,7 +499,7 @@ export default function Home() {
                 })}
               </motion.div>
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-50">
-                {[0, 1, 2, 3, 4].map((i) => (
+                {publicActivitiesList.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveProgram(i)}
@@ -500,14 +541,14 @@ export default function Home() {
             </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              {ARTICLES.filter((art) => art.featured).map((art) => (
+              {publicArticlesList.filter((art) => art.featured).map((art) => (
                 <motion.div
                   key={art.id}
                   {...fadeInUp}
                   className="flex flex-col justify-between border-r-0 lg:border-r border-divider-soft pr-0 lg:pr-12 gap-8"
                 >
                   <div className="flex flex-col gap-6">
-                    <div className="w-full aspect-[16/9] rounded-[18px] overflow-hidden">
+                    <div className="w-full aspect-[16/9] rounded-[18px] overflow-hidden bg-white/5">
                       <img
                         src={art.image}
                         alt={art.title}
@@ -523,25 +564,25 @@ export default function Home() {
                       <span>•</span>
                       <span>{art.readTime}</span>
                     </div>
-                    <h3 className="text-[34px] font-display font-semibold tracking-tight text-ink leading-tight hover:text-primary transition-colors duration-200">
-                      <a href="#article-read">{art.title}</a>
+                    <h3 className="text-[34px] font-display font-semibold tracking-tight text-ink leading-tight hover:text-primary transition-colors duration-200 line-clamp-3">
+                      <a href={`/article/${art.slug}`}>{art.title}</a>
                     </h3>
-                    <p className="text-[17px] font-normal text-ink-muted-80 leading-relaxed">
+                    <p className="text-[17px] font-normal text-ink-muted-80 leading-relaxed line-clamp-4">
                       {art.desc}
                     </p>
                   </div>
                   <div className="flex items-center justify-between pt-6 border-t border-divider-soft">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-canvas-parchment border border-hairline flex items-center justify-center font-semibold text-[12px] text-ink uppercase">
+                      <div className="w-8 h-8 rounded-full bg-canvas-parchment border border-hairline flex items-center justify-center font-semibold text-[12px] text-ink uppercase shrink-0">
                         SRE
                       </div>
-                      <span className="text-[14px] font-semibold text-ink">
+                      <span className="text-[14px] font-semibold text-ink line-clamp-1">
                         {art.author}
                       </span>
                     </div>
                     <a
-                      href="#read"
-                      className="bg-[#0f3036] hover:bg-[#1b434b] text-white text-[14px] font-semibold tracking-tight rounded-full px-5 py-2 transition-all duration-300"
+                      href={`/article/${art.slug}`}
+                      className="bg-[#0f3036] hover:bg-[#1b434b] text-white text-[14px] font-semibold tracking-tight rounded-full px-5 py-2 transition-all duration-300 shrink-0"
                     >
                       Read Article
                     </a>
@@ -554,7 +595,7 @@ export default function Home() {
                   LATEST DISPATCHES
                 </span>
 
-                {ARTICLES.filter((art) => !art.featured).map((art) => (
+                {publicArticlesList.filter((art) => !art.featured).map((art) => (
                   <motion.div
                     key={art.id}
                     {...fadeInUp}
@@ -566,19 +607,19 @@ export default function Home() {
                       </span>
                       <span>{art.readTime}</span>
                     </div>
-                    <h4 className="text-[21px] font-display font-semibold tracking-tight text-ink leading-snug hover:text-primary transition-colors duration-200">
-                      <a href="#read">{art.title}</a>
+                    <h4 className="text-[21px] font-display font-semibold tracking-tight text-ink leading-snug hover:text-primary transition-colors duration-200 line-clamp-2">
+                      <a href={`/article/${art.slug}`}>{art.title}</a>
                     </h4>
                     <p className="text-[14px] font-normal text-ink-muted-80 line-clamp-2 leading-relaxed">
                       {art.desc}
                     </p>
                     <div className="flex items-center justify-between pt-2">
-                      <span className="text-[12px] font-semibold text-ink-muted-80">
+                      <span className="text-[12px] font-semibold text-ink-muted-80 line-clamp-1">
                         {art.author}
                       </span>
                       <a
-                        href="#read"
-                        className="text-[12px] font-semibold text-primary hover:underline flex items-center gap-0.5"
+                        href={`/article/${art.slug}`}
+                        className="text-[12px] font-semibold text-primary hover:underline flex items-center gap-0.5 shrink-0"
                       >
                         Read <ChevronRight className="w-3 h-3" />
                       </a>
@@ -610,14 +651,28 @@ export default function Home() {
             
             <motion.div 
               {...fadeInUp}
-              className="flex flex-wrap justify-center items-center gap-6 md:gap-12 opacity-80"
+              className="flex flex-wrap justify-center items-center gap-6 md:gap-12 opacity-80 mt-8"
             >
-              {/* Partner Logo Placeholders */}
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-40 h-20 bg-[#0f3036]/5 rounded-2xl border border-[#0f3036]/10 flex items-center justify-center hover:bg-[#0f3036]/10 hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-                  <span className="text-[13px] font-bold text-[#0f3036]/30 tracking-widest uppercase group-hover:text-primary transition-colors">Partner {i}</span>
-                </div>
-              ))}
+              {partnersList.length > 0 ? (
+                partnersList.map((partner) => {
+                  let sizeClasses = "w-40 h-20 md:w-48 md:h-24"; // MEDIUM
+                  if (partner.size === "LARGE") sizeClasses = "w-56 h-28 md:w-72 md:h-36";
+                  if (partner.size === "SMALL") sizeClasses = "w-32 h-16 md:w-36 md:h-16";
+
+                  return (
+                    <div key={partner.id} className={`${sizeClasses} bg-[#0f3036]/2 rounded-2xl border border-[#0f3036]/5 p-4 flex items-center justify-center hover:bg-[#0f3036]/5 hover:-translate-y-1 transition-all duration-300 cursor-pointer group`}>
+                      <img 
+                        src={partner.imageUrl} 
+                        alt={partner.name} 
+                        className="max-w-full max-h-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" 
+                        title={partner.name} 
+                      />
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-ink-muted-48 text-[14px]">No partners added yet.</div>
+              )}
             </motion.div>
           </div>
         </section>

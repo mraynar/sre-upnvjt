@@ -1,68 +1,33 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { getPublicArticles } from "@/app/actions/articleActions";
 
 export default function ArticlePage() {
-  const articles = [
-    {
-      id: 1,
-      title: "The Future of Solar Energy in Indonesia",
-      category: "Renewable Energy",
-      date: "May 20, 2026",
-      author: "Aditya Alvarel",
-      img: "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=1200&auto=format&fit=crop",
-      desc: "Exploring the vast potential of solar power adoption across the archipelago and the policies driving its growth.",
-    },
-    {
-      id: "2",
-      title: "Wind Turbines: Efficiency and Environmental Impact",
-      category: "Technology",
-      date: "April 15, 2026",
-      author: "Dalilah Baharmus",
-      img: "https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=1200&auto=format&fit=crop",
-      desc: "An in-depth look at how modern wind turbines are balancing high energy output with minimal ecological disruption.",
-    },
-    {
-      id: "3",
-      title: "Biomass as an Alternative Fuel Source",
-      category: "Research",
-      date: "March 10, 2026",
-      author: "Ahmad Risky Firdiansyah",
-      img: "https://images.unsplash.com/photo-1511496155998-3236e792e86b?q=80&w=1200&auto=format&fit=crop",
-      desc: "How agricultural waste is being transformed into a viable and sustainable alternative to fossil fuels in rural areas.",
-    },
-    {
-      id: "4",
-      title: "The Role of Youth in Energy Transition",
-      category: "Campaign",
-      date: "February 28, 2026",
-      author: "Dygta Azzahwa",
-      img: "https://images.unsplash.com/photo-1529390079861-591de354faf5?q=80&w=1200&auto=format&fit=crop",
-      desc: "Highlighting the initiatives driven by students and young professionals to advocate for a greener future.",
-    },
-    {
-      id: "5",
-      title: "Understanding Carbon Credits and Trading",
-      category: "Economy",
-      date: "January 15, 2026",
-      author: "Ninit Agus Ramadhani",
-      img: "https://images.unsplash.com/photo-1616423640778-28d1b53229bd?q=80&w=1200&auto=format&fit=crop",
-      desc: "A beginner's guide to the carbon market, how it works, and its impact on corporate sustainability efforts.",
-    },
-    {
-      id: "6",
-      title: "Geothermal Power: Indonesia's Hidden Gem",
-      category: "Renewable Energy",
-      date: "December 05, 2025",
-      author: "Desmond Natanael Sinaga",
-      img: "https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?q=80&w=1200&auto=format&fit=crop",
-      desc: "With one of the world's largest geothermal reserves, how can Indonesia fully capitalize on this stable energy source?",
-    },
-  ];
+  const [articlesList, setArticlesList] = useState([]);
 
-  const featuredArticle = articles[0];
-  const regularArticles = articles.slice(1);
+  useEffect(() => {
+    getPublicArticles().then((res) => {
+      if (res.success) {
+        const formatted = res.data.map((art) => ({
+          id: art.id,
+          title: art.title,
+          category: "News",
+          date: new Date(art.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase(),
+          author: art.author?.name || "SRE UPNVJT",
+          img: art.thumbnailUrl || "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=1200&auto=format&fit=crop",
+          desc: art.excerpt || "Baca selengkapnya untuk mengetahui detail lebih lanjut mengenai artikel ini.",
+          slug: art.slug
+        }));
+        setArticlesList(formatted);
+      }
+    }).catch(console.error);
+  }, []);
+
+  const featuredArticle = articlesList.length > 0 ? articlesList[0] : null;
+  const regularArticles = articlesList.length > 1 ? articlesList.slice(1) : [];
+
 
   return (
     <div className="min-h-screen bg-[#e8ecc4] text-[#07130e] pt-32 pb-0 selection:bg-[#07130e] selection:text-[#e8ecc4]">
@@ -89,7 +54,8 @@ export default function ArticlePage() {
       </section>
 
       {/* 2. Featured Article */}
-      <section className="px-6 md:px-12 lg:px-20 max-w-[1400px] mx-auto mb-24">
+      {featuredArticle && (
+        <section className="px-6 md:px-12 lg:px-20 max-w-[1400px] mx-auto mb-24">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -138,12 +104,15 @@ export default function ArticlePage() {
               </div>
               
               <div className="w-12 h-12 rounded-full border border-[#07130e]/20 flex items-center justify-center group-hover:bg-[#07130e] group-hover:text-[#e8ecc4] transition-colors">
-                <ArrowUpRight className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <a href={`/article/${featuredArticle.slug}`}>
+                  <ArrowUpRight className="w-5 h-5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </a>
               </div>
             </div>
           </div>
         </motion.div>
       </section>
+      )}
 
       {/* 3. Article Grid */}
       <section className="bg-[#07130e] text-[#e8ecc4] pt-24 pb-32 rounded-t-[40px]">
@@ -167,6 +136,7 @@ export default function ArticlePage() {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="group cursor-pointer flex flex-col"
+                onClick={() => window.location.href = `/article/${article.slug}`}
               >
                 <div className="w-full aspect-[4/3] overflow-hidden rounded-2xl bg-white/5 mb-6">
                   <img 

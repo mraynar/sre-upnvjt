@@ -24,7 +24,11 @@ export default function SettingsClient({ user }) {
     name: user.name || "",
     email: user.email || "",
     npm: user.npm || "",
+    profilePictureUrl: user.profilePictureUrl || "",
+    instagramUrl: user.instagramUrl || "",
+    linkedinUrl: user.linkedinUrl || "",
   });
+  const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState(null);
 
@@ -42,22 +46,46 @@ export default function SettingsClient({ user }) {
     setProfileMessage(null);
 
     try {
+      let finalProfilePictureUrl = profileData.profilePictureUrl;
+
+      // Upload file first if exists
+      if (profilePictureFile) {
+        const formData = new FormData();
+        formData.append("file", profilePictureFile);
+        formData.append("folder", "profiles");
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error("Failed to upload profile picture");
+        }
+
+        const uploadData = await uploadRes.json();
+        finalProfilePictureUrl = uploadData.url;
+      }
+
       const res = await fetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profileData),
+        body: JSON.stringify({ ...profileData, profilePictureUrl: finalProfilePictureUrl }),
       });
 
       const data = await res.json();
 
       if (res.ok) {
         setProfileMessage({ type: "success", text: "Profile updated successfully!" });
+        setProfileData(prev => ({ ...prev, profilePictureUrl: finalProfilePictureUrl }));
+        setProfilePictureFile(null); // Clear selected file
         router.refresh();
       } else {
         setProfileMessage({ type: "error", text: data.error || "Failed to update profile." });
       }
     } catch (error) {
-      setProfileMessage({ type: "error", text: "An unexpected error occurred." });
+      console.error(error);
+      setProfileMessage({ type: "error", text: error.message || "An unexpected error occurred." });
     } finally {
       setIsSavingProfile(false);
     }
@@ -109,20 +137,20 @@ export default function SettingsClient({ user }) {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-display font-bold text-white mb-2 tracking-tight">Settings</h1>
-        <p className="text-white/60">Manage your account preferences and security.</p>
+        <h1 className="text-4xl font-display font-bold text-gray-900 dark:text-white mb-2 tracking-tight">Settings</h1>
+        <p className="text-gray-500 dark:text-white/60">Manage your account preferences and security.</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar Navigation */}
         <div className="w-full lg:w-64 shrink-0">
-          <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-3 backdrop-blur-xl flex flex-col gap-2">
+          <div className="bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-3xl p-3 backdrop-blur-xl flex flex-col gap-2">
             <button
               onClick={() => setActiveTab("profile")}
               className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold tracking-wide transition-all ${
                 activeTab === "profile" 
                   ? "bg-primary text-[#050e0a]" 
-                  : "text-white/50 hover:text-white hover:bg-white/5"
+                  : "text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5"
               }`}
             >
               <User className="w-4 h-4" />
@@ -133,7 +161,7 @@ export default function SettingsClient({ user }) {
               className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold tracking-wide transition-all ${
                 activeTab === "password" 
                   ? "bg-primary text-[#050e0a]" 
-                  : "text-white/50 hover:text-white hover:bg-white/5"
+                  : "text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5"
               }`}
             >
               <Lock className="w-4 h-4" />
@@ -144,7 +172,7 @@ export default function SettingsClient({ user }) {
 
         {/* Content Area */}
         <div className="flex-1">
-          <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[500px]">
+          <div className="bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[500px]">
             <AnimatePresence mode="wait">
               
               {/* PROFILE TAB */}
@@ -157,16 +185,52 @@ export default function SettingsClient({ user }) {
                   transition={{ duration: 0.2 }}
                 >
                   <div className="mb-8">
-                    <h2 className="text-2xl font-display font-bold text-white mb-2">Profile Details</h2>
-                    <p className="text-white/50 text-sm">Update your personal information and contact details.</p>
+                    <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-2">Profile Details</h2>
+                    <p className="text-gray-500 dark:text-white/50 text-sm">Update your personal information and contact details.</p>
                   </div>
 
                   <form onSubmit={handleProfileSubmit} className="space-y-6 max-w-2xl">
+                    {/* Profile Picture Upload */}
+                    <div className="flex flex-col md:flex-row items-center gap-6 pb-6 border-b border-gray-200 dark:border-white/10">
+                      <div className="relative group">
+                        <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 dark:bg-white/5 border-2 border-gray-200 dark:border-white/10 flex items-center justify-center">
+                          {profilePictureFile ? (
+                            <img src={URL.createObjectURL(profilePictureFile)} alt="Preview" className="w-full h-full object-cover" />
+                          ) : profileData.profilePictureUrl ? (
+                            <img src={profileData.profilePictureUrl} alt="Profile" className="w-full h-full object-cover" />
+                          ) : (
+                            <User className="w-10 h-10 text-gray-400 dark:text-white/20" />
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-center md:items-start gap-2">
+                        <h3 className="text-sm font-bold text-gray-900 dark:text-white">Profile Photo</h3>
+                        <p className="text-xs text-gray-500 dark:text-white/50 text-center md:text-left max-w-xs">
+                          Upload a professional picture for your team profile. Recommended size is 400x400px.
+                        </p>
+                        <div className="mt-2">
+                          <label className="cursor-pointer bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 text-gray-900 dark:text-white px-4 py-2 rounded-xl text-xs font-bold tracking-wide transition-colors">
+                            <span>Change Photo</span>
+                            <input 
+                              type="file" 
+                              accept="image/*" 
+                              className="hidden" 
+                              onChange={(e) => {
+                                if (e.target.files && e.target.files[0]) {
+                                  setProfilePictureFile(e.target.files[0]);
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest text-white/50 font-bold">Full Name</label>
+                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">Full Name</label>
                         <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-white/40">
+                          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 dark:text-white/40">
                             <User className="w-4 h-4" />
                           </div>
                           <input
@@ -174,15 +238,15 @@ export default function SettingsClient({ user }) {
                             required
                             value={profileData.name}
                             onChange={(e) => setProfileData({...profileData, name: e.target.value})}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:border-primary focus:bg-white/10 transition-colors"
+                            className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
                           />
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest text-white/50 font-bold">Email Address</label>
+                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">Email Address</label>
                         <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-white/40">
+                          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 dark:text-white/40">
                             <Mail className="w-4 h-4" />
                           </div>
                           <input
@@ -190,42 +254,78 @@ export default function SettingsClient({ user }) {
                             required
                             value={profileData.email}
                             onChange={(e) => setProfileData({...profileData, email: e.target.value})}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:border-primary focus:bg-white/10 transition-colors"
+                            className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
                           />
                         </div>
                       </div>
                     </div>
 
-                    <div className="space-y-2 max-w-[50%]">
-                      <label className="text-xs uppercase tracking-widest text-white/50 font-bold">NPM (Nomor Induk Mahasiswa)</label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-white/40">
-                          <BadgeIcon className="w-4 h-4" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">NPM (Nomor Induk Mahasiswa)</label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 dark:text-white/40">
+                            <BadgeIcon className="w-4 h-4" />
+                          </div>
+                          <input
+                            type="text"
+                            value={profileData.npm}
+                            onChange={(e) => setProfileData({...profileData, npm: e.target.value})}
+                            placeholder="Optional"
+                            className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
+                          />
                         </div>
-                        <input
-                          type="text"
-                          value={profileData.npm}
-                          onChange={(e) => setProfileData({...profileData, npm: e.target.value})}
-                          placeholder="Optional"
-                          className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-white focus:outline-none focus:border-primary focus:bg-white/10 transition-colors"
-                        />
                       </div>
                     </div>
 
-                    <div className="bg-white/5 rounded-2xl p-5 border border-white/10 mt-8">
-                      <h4 className="text-sm font-bold text-white mb-4 flex items-center gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">Instagram URL</label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 dark:text-white/40">
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                          </div>
+                          <input
+                            type="url"
+                            value={profileData.instagramUrl}
+                            onChange={(e) => setProfileData({...profileData, instagramUrl: e.target.value})}
+                            placeholder="https://instagram.com/yourusername"
+                            className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">LinkedIn URL</label>
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 dark:text-white/40">
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                          </div>
+                          <input
+                            type="url"
+                            value={profileData.linkedinUrl}
+                            onChange={(e) => setProfileData({...profileData, linkedinUrl: e.target.value})}
+                            placeholder="https://linkedin.com/in/yourusername"
+                            className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white dark:bg-white/5 shadow-sm dark:shadow-none rounded-2xl p-5 border border-gray-200 dark:border-white/10 mt-8">
+                      <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                         <Shield className="w-4 h-4 text-primary" /> Role Information
                       </h4>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Current Role</p>
+                          <p className="text-xs text-gray-500 dark:text-white/40 uppercase tracking-wider mb-1">Current Role</p>
                           <span className="inline-block px-3 py-1 bg-primary/20 text-primary rounded-md text-xs font-bold tracking-widest uppercase border border-primary/30">
                             {user.roleName}
                           </span>
                         </div>
                         <div>
-                          <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Department</p>
-                          <p className="text-sm text-white font-medium">{user.departmentName}</p>
+                          <p className="text-xs text-gray-500 dark:text-white/40 uppercase tracking-wider mb-1">Department</p>
+                          <p className="text-sm text-gray-900 dark:text-white font-medium">{user.departmentName}</p>
                         </div>
                       </div>
                     </div>
@@ -237,7 +337,7 @@ export default function SettingsClient({ user }) {
                       </div>
                     )}
 
-                    <div className="pt-4 flex justify-end border-t border-white/10">
+                    <div className="pt-4 flex justify-end border-t border-gray-200 dark:border-white/10">
                       <button
                         type="submit"
                         disabled={isSavingProfile}
@@ -261,43 +361,43 @@ export default function SettingsClient({ user }) {
                   transition={{ duration: 0.2 }}
                 >
                   <div className="mb-8">
-                    <h2 className="text-2xl font-display font-bold text-white mb-2">Change Password</h2>
-                    <p className="text-white/50 text-sm">Ensure your account is using a long, random password to stay secure.</p>
+                    <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-2">Change Password</h2>
+                    <p className="text-gray-500 dark:text-white/50 text-sm">Ensure your account is using a long, random password to stay secure.</p>
                   </div>
 
                   <form onSubmit={handlePasswordSubmit} className="space-y-6 max-w-md">
                     <div className="space-y-2">
-                      <label className="text-xs uppercase tracking-widest text-white/50 font-bold">Current Password</label>
+                      <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">Current Password</label>
                       <input
                         type="password"
                         required
                         value={passwordData.currentPassword}
                         onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:bg-white/10 transition-colors"
+                        className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-xs uppercase tracking-widest text-white/50 font-bold">New Password</label>
+                      <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">New Password</label>
                       <input
                         type="password"
                         required
                         minLength={6}
                         value={passwordData.newPassword}
                         onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:bg-white/10 transition-colors"
+                        className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-xs uppercase tracking-widest text-white/50 font-bold">Confirm New Password</label>
+                      <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">Confirm New Password</label>
                       <input
                         type="password"
                         required
                         minLength={6}
                         value={passwordData.confirmPassword}
                         onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
-                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary focus:bg-white/10 transition-colors"
+                        className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
                       />
                     </div>
 
@@ -308,7 +408,7 @@ export default function SettingsClient({ user }) {
                       </div>
                     )}
 
-                    <div className="pt-4 flex justify-end border-t border-white/10">
+                    <div className="pt-4 flex justify-end border-t border-gray-200 dark:border-white/10">
                       <button
                         type="submit"
                         disabled={isSavingPassword}

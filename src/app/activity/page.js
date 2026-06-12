@@ -1,5 +1,7 @@
 import React from "react";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { activity } from "@/db/schema";
+import { eq, desc } from "drizzle-orm";
 import ActivityPublicClient from "./ActivityPublicClient";
 
 export const metadata = {
@@ -8,9 +10,9 @@ export const metadata = {
 };
 
 export default async function ActivityPage() {
-  const dbActivities = await prisma.activity.findMany({
-    where: { isPublished: true },
-    orderBy: { createdAt: "desc" }
+  const dbActivities = await db.query.activity.findMany({
+    where: eq(activity.isPublished, true),
+    orderBy: [desc(activity.createdAt)]
   });
 
   return <ActivityPublicClient activities={dbActivities} />;

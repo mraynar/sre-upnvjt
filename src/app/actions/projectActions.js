@@ -1,26 +1,38 @@
 "use server";
 
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { project, committee } from "@/db/schema";
+import { eq, and, desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-
 
 export async function getProjects() {
   try {
-    const projects = await prisma.project.findMany({
-      include: {
+    const projects = await db.query.project.findMany({
+      with: {
         department: true,
         committees: {
-          include: {
+          with: {
             user: true
           }
         },
-        _count: {
-          select: { committees: true, finances: true, attendances: true }
-        }
+        finances: { columns: { id: true } },
+        attendanceSessions: { columns: { id: true } }
       },
-      orderBy: { createdAt: "desc" }
+      orderBy: [desc(project.createdAt)]
     });
-    return { success: true, data: projects };
+    
+    const formattedProjects = projects.map(p => {
+      const { finances, attendanceSessions, ...rest } = p;
+      return { 
+        ...rest, 
+        _count: { 
+          committees: p.committees.length, 
+          finances: finances.length, 
+          attendances: attendanceSessions.length 
+        } 
+      };
+    });
+    return { success: true, data: formattedProjects };
   } catch (error) {
     return { success: false, error: "Failed to fetch projects: " + error.message };
   }
@@ -29,18 +41,16 @@ export async function getProjects() {
 export async function createProject(data) {
   try {
     const { title, description, departmentId, startDate, endDate, status } = data;
-    const project = await prisma.project.create({
-      data: {
-        title,
-        description,
-        departmentId: parseInt(departmentId),
-        startDate: new Date(startDate),
-        endDate: endDate ? new Date(endDate) : null,
-        status: status || "PENDING"
-      }
+    const [result] = await db.insert(project).values({
+      title,
+      description,
+      departmentId: parseInt(departmentId),
+      startDate: new Date(startDate),
+      endDate: endDate ? new Date(endDate) : null,
+      status: status || "PENDING"
     });
     revalidatePath("/projects");
-    return { success: true, data: project };
+    return { success: true, data: { id: result.insertId, title } };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -49,19 +59,16 @@ export async function createProject(data) {
 export async function updateProject(id, data) {
   try {
     const { title, description, departmentId, startDate, endDate, status } = data;
-    const project = await prisma.project.update({
-      where: { id },
-      data: {
-        title,
-        description,
-        departmentId: parseInt(departmentId),
-        startDate: new Date(startDate),
-        endDate: endDate ? new Date(endDate) : null,
-        status
-      }
-    });
+    await db.update(project).set({
+      title,
+      description,
+      departmentId: parseInt(departmentId),
+      startDate: new Date(startDate),
+      endDate: endDate ? new Date(endDate) : null,
+      status
+    }).where(eq(project.id, id));
     revalidatePath("/projects");
-    return { success: true, data: project };
+    return { success: true, data: { id, title } };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -69,7 +76,7 @@ export async function updateProject(id, data) {
 
 export async function deleteProject(id) {
   try {
-    await prisma.project.delete({ where: { id } });
+    await db.delete(project).where(eq(project.id, id));
     revalidatePath("/projects");
     return { success: true };
   } catch (error) {
@@ -77,33 +84,25 @@ export async function deleteProject(id) {
   }
 }
 
-
 export async function addCommitteeMember(data) {
   try {
     const { projectId, userId, role } = data;
     
-    const existing = await prisma.committee.findUnique({
-      where: {
-        userId_projectId: {
-          userId: parseInt(userId),
-          projectId: parseInt(projectId)
-        }
-      }
+    const existing = await db.query.committee.findFirst({
+      where: and(eq(committee.userId, parseInt(userId)), eq(committee.projectId, parseInt(projectId)))
     });
 
     if (existing) {
       return { success: false, error: "User is already in this committee." };
     }
 
-    const member = await prisma.committee.create({
-      data: {
-        projectId: parseInt(projectId),
-        userId: parseInt(userId),
-        role
-      }
+    const [result] = await db.insert(committee).values({
+      projectId: parseInt(projectId),
+      userId: parseInt(userId),
+      role
     });
     revalidatePath("/projects");
-    return { success: true, data: member };
+    return { success: true, data: { id: result.insertId, role } };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -111,7 +110,7 @@ export async function addCommitteeMember(data) {
 
 export async function removeCommitteeMember(id) {
   try {
-    await prisma.committee.delete({ where: { id } });
+    await db.delete(committee).where(eq(committee.id, id));
     revalidatePath("/projects");
     return { success: true };
   } catch (error) {

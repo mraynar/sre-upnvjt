@@ -34,12 +34,12 @@ const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, r
       
       <div 
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full bg-white/5 border ${isOpen ? 'border-primary/50 bg-white/10 shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'border-white/10'} rounded-xl px-4 py-3.5 flex items-center justify-between cursor-pointer transition-all duration-300`}
+        className={`w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border ${isOpen ? 'border-primary/50 bg-white dark:bg-white/10 shadow-sm dark:shadow-none shadow-[0_0_15px_rgba(16,185,129,0.15)]' : 'border-gray-200 dark:border-white/10'} rounded-xl px-4 py-3.5 flex items-center justify-between cursor-pointer transition-all duration-300`}
       >
-        <span className={selectedOption ? 'text-white font-medium' : 'text-white/40'}>
+        <span className={selectedOption ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-500 dark:text-white/40'}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <ChevronDown className={`w-4 h-4 text-white/50 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary' : ''}`} />
+        <ChevronDown className={`w-4 h-4 text-gray-500 dark:text-white/50 transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary' : ''}`} />
       </div>
 
       <AnimatePresence>
@@ -49,11 +49,11 @@ const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, r
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute top-full left-0 right-0 mt-2 bg-[#0a1f18] border border-white/10 rounded-xl overflow-hidden z-[60] shadow-2xl backdrop-blur-2xl ring-1 ring-black/50"
+            className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#0a1f18] border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden z-[60] shadow-2xl backdrop-blur-2xl ring-1 ring-black/5"
           >
             <div className="max-h-60 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
               {options.length === 0 ? (
-                <div className="px-4 py-3 text-white/40 text-sm text-center">No options available</div>
+                <div className="px-4 py-3 text-gray-500 dark:text-white/40 text-sm text-center">No options available</div>
               ) : (
                 options.map(option => (
                   <div 
@@ -62,7 +62,7 @@ const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, r
                       onChange(option.value?.toString());
                       setIsOpen(false);
                     }}
-                    className={`px-4 py-3 rounded-lg text-sm cursor-pointer transition-all flex items-center justify-between ${value?.toString() === option.value?.toString() ? 'bg-primary/20 text-primary font-bold' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}
+                    className={`px-4 py-3 rounded-lg text-sm cursor-pointer transition-all flex items-center justify-between ${value?.toString() === option.value?.toString() ? 'bg-primary/20 text-primary font-bold' : 'text-gray-500 dark:text-white/80 hover:bg-gray-50 dark:hover:bg-white/10 hover:text-gray-900 dark:text-white'}`}
                   >
                     {option.label}
                     {value?.toString() === option.value?.toString() && <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(16,185,129,0.8)]" />}
@@ -165,24 +165,24 @@ export default function UsersClient({ initialUsers, roles, departments, division
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
-          <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-white">
+          <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-gray-900 dark:text-white">
             <Users className="w-8 h-8 text-primary" />
             User Management
           </h1>
-          <p className="text-white/50 max-w-xl">
+          <p className="text-gray-500 dark:text-white/50 max-w-xl">
             Manage members, roles, and access across the organization.
           </p>
         </div>
         
         <div className="flex items-center gap-4 w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-white/30" />
             <input 
               type="text"
               placeholder="Search users..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-primary/50 transition-colors"
+              className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-colors"
             />
           </div>
           {canCreate && (
@@ -198,44 +198,44 @@ export default function UsersClient({ initialUsers, roles, departments, division
       </div>
 
       {/* Users Table */}
-      <div className="bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden backdrop-blur-xl">
-        <div className="overflow-x-auto w-full">
+      <div className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)]">
+        <div className="overflow-x-auto w-full scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-white/10 scrollbar-track-transparent">
           <table className="w-full min-w-[800px] text-left border-collapse">
-            <thead className="border-b border-white/10 bg-white/[0.02]">
+            <thead className="border-b border-gray-200/50 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02]">
               <tr>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-white/40">User</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-white/40">Role</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-white/40">Department</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-white/40">Status</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-white/40 text-right">Actions</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">User</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Role</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Department</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Status</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-gray-100 dark:divide-white/5">
               {filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="px-6 py-12 text-center">
-                    <UserCircle className="w-12 h-12 text-white/10 mx-auto mb-3" />
-                    <p className="text-white/40">No users match your current filters.</p>
+                    <UserCircle className="w-12 h-12 text-gray-500 dark:text-white/10 mx-auto mb-3" />
+                    <p className="text-gray-500 dark:text-white/40">No users match your current filters.</p>
                   </td>
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
-                  <tr key={user.id} className="hover:bg-white/[0.02] transition-colors group">
+                  <tr key={user.id} className="hover:bg-white/60 dark:hover:bg-white/[0.04] transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-emerald-500/10 border border-primary/20 flex items-center justify-center text-primary font-bold">
                           {user.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <h3 className="text-white font-bold tracking-wide text-sm">{user.name}</h3>
-                          <p className="text-white/40 text-xs">{user.email}</p>
-                          {user.npm && <p className="text-white/30 text-[10px] mt-0.5">NPM: {user.npm}</p>}
+                          <h3 className="text-gray-900 dark:text-white font-bold tracking-wide text-sm">{user.name}</h3>
+                          <p className="text-gray-500 dark:text-white/40 text-xs">{user.email}</p>
+                          {user.npm && <p className="text-gray-500 dark:text-white/30 text-[10px] mt-0.5">NPM: {user.npm}</p>}
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col items-start gap-1">
-                        <span className="px-2 py-1 bg-white/5 border border-white/10 rounded-md text-white/70 text-xs font-medium">
+                        <span className="px-2 py-1 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-md text-gray-500 dark:text-white/70 text-xs font-medium">
                           {user.role.name.replace("_", " ")}
                         </span>
                         {user.positionName && (
@@ -245,8 +245,8 @@ export default function UsersClient({ initialUsers, roles, departments, division
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col gap-0.5">
-                        <span className="text-white/80 text-sm font-medium">{user.department?.name || "-"}</span>
-                        {user.division && <span className="text-white/40 text-xs">{user.division.name}</span>}
+                        <span className="text-gray-500 dark:text-white/80 text-sm font-medium">{user.department?.name || "-"}</span>
+                        {user.division && <span className="text-gray-500 dark:text-white/40 text-xs">{user.division.name}</span>}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -267,7 +267,7 @@ export default function UsersClient({ initialUsers, roles, departments, division
                         {canUpdate && (
                           <button 
                             onClick={() => handleOpenModal(true, user)} 
-                            className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                            className="p-2 text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/10 rounded-lg transition-colors"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
@@ -275,7 +275,7 @@ export default function UsersClient({ initialUsers, roles, departments, division
                         {canDelete && (
                           <button 
                             onClick={() => handleDelete(user.id)} 
-                            className="p-2 text-white/50 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                            className="p-2 text-gray-500 dark:text-white/50 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -301,13 +301,13 @@ export default function UsersClient({ initialUsers, roles, departments, division
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-[#0a1f18] border border-white/10 rounded-3xl p-8 w-full max-w-2xl relative z-10 shadow-2xl max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent"
+              className="bg-white dark:bg-[#0a1f18] border border-gray-200 dark:border-white/10 rounded-3xl p-8 w-full max-w-2xl relative z-10 shadow-2xl max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-white/10 scrollbar-track-transparent"
             >
-              <button onClick={() => setModal({ isOpen: false, isEdit: false, data: null })} className="absolute top-6 right-6 text-white/50 hover:text-white z-50">
+              <button onClick={() => setModal({ isOpen: false, isEdit: false, data: null })} className="absolute top-6 right-6 text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white z-50">
                 <X className="w-6 h-6" />
               </button>
               
-              <h2 className="text-2xl font-display font-bold text-white mb-6">
+              <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-6">
                 {modal.isEdit ? "Edit User" : "Add New User"}
               </h2>
               
@@ -317,37 +317,37 @@ export default function UsersClient({ initialUsers, roles, departments, division
                 
                 {/* Basic Info */}
                 <div className="col-span-full">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-3 border-b border-white/10 pb-2">Basic Info</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-3 border-b border-gray-200 dark:border-white/10 pb-2">Basic Info</h3>
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Full Name</label>
-                  <input name="name" type="text" required defaultValue={modal.data?.name} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-colors" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Full Name</label>
+                  <input name="name" type="text" required defaultValue={modal.data?.name} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Email</label>
-                  <input name="email" type="email" required defaultValue={modal.data?.email} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-colors" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Email</label>
+                  <input name="email" type="email" required defaultValue={modal.data?.email} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">NPM (NIM)</label>
-                  <input name="npm" type="text" defaultValue={modal.data?.npm || ""} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-colors" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">NPM (NIM)</label>
+                  <input name="npm" type="text" defaultValue={modal.data?.npm || ""} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Password</label>
-                  <input name="password" type={modal.isEdit ? "password" : "text"} required={!modal.isEdit} placeholder={modal.isEdit ? "Leave blank to keep unchanged" : "Set password..."} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-colors" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Password</label>
+                  <input name="password" type={modal.isEdit ? "password" : "text"} required={!modal.isEdit} placeholder={modal.isEdit ? "Leave blank to keep unchanged" : "Set password..."} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
 
                 {/* Organization Structure */}
                 <div className="col-span-full mt-4">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-3 border-b border-white/10 pb-2">Organization Structure</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-3 border-b border-gray-200 dark:border-white/10 pb-2">Organization Structure</h3>
                 </div>
 
                 {/* --- COOL CUSTOM SELECTS --- */}
                 <div className="relative z-50">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Role Level</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Role Level</label>
                   <CustomSelect 
                     name="roleId" 
                     options={roleOptions} 
@@ -359,12 +359,12 @@ export default function UsersClient({ initialUsers, roles, departments, division
                 </div>
 
                 <div className="relative z-[49]">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Specific Position (Optional)</label>
-                  <input name="positionName" type="text" defaultValue={modal.data?.positionName || ""} placeholder="e.g. Kepala Departemen" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-colors" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Specific Position (Optional)</label>
+                  <input name="positionName" type="text" defaultValue={modal.data?.positionName || ""} placeholder="e.g. Kepala Departemen" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
 
                 <div className="relative z-[48]">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Department</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Department</label>
                   <CustomSelect 
                     name="departmentId" 
                     options={[{ value: "", label: "No Department" }, ...deptOptions]} 
@@ -378,7 +378,7 @@ export default function UsersClient({ initialUsers, roles, departments, division
                 </div>
 
                 <div className="relative z-[47]">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-2">Division</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Division</label>
                   <CustomSelect 
                     name="divisionId" 
                     options={[{ value: "", label: "No Division" }, ...divOptions]} 
@@ -400,10 +400,10 @@ export default function UsersClient({ initialUsers, roles, departments, division
                     defaultChecked={modal.isEdit ? modal.data?.isActive : true}
                     className="w-5 h-5 accent-primary rounded cursor-pointer"
                   />
-                  <label htmlFor="isActive" className="text-sm font-medium text-white cursor-pointer">Account is Active</label>
+                  <label htmlFor="isActive" className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer">Account is Active</label>
                 </div>
 
-                <div className="col-span-full pt-4 mt-2 border-t border-white/10">
+                <div className="col-span-full pt-4 mt-2 border-t border-gray-200 dark:border-white/10">
                   <button type="submit" disabled={loading} className="w-full bg-primary text-[#050e0a] font-bold py-3.5 rounded-xl hover:bg-primary-focus hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all disabled:opacity-50">
                     {loading ? "Saving..." : "Save User Account"}
                   </button>

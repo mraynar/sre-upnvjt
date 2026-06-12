@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Plus, Edit2, Trash2, X, Search, CheckCircle2, 
-  XCircle, AlertTriangle, ShoppingBag, ExternalLink
+  XCircle, AlertTriangle, ShoppingBag, ExternalLink, UploadCloud
 } from "lucide-react";
 import { createMerchandise, updateMerchandise, deleteMerchandise } from "@/app/actions/merchandiseActions";
 import { useSession } from "next-auth/react";
@@ -34,6 +34,40 @@ export default function MerchClient({ initialMerchandise }) {
   const showNotification = (type, message) => {
     setNotification({ type, message });
     setTimeout(() => setNotification(null), 3000);
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      showNotification("error", "Please upload an image file");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", "merchandise");
+
+    try {
+      setIsLoading(true);
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.url) {
+        setCurrentMerch(prev => ({ ...prev, imageUrl: data.url }));
+        showNotification("success", "Image uploaded successfully!");
+      } else {
+        showNotification("error", data.error || "Failed to upload image");
+      }
+    } catch (error) {
+      showNotification("error", "An error occurred during upload");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const canCreate = hasAccess(session?.user, 'merchandise', 'create');
@@ -114,49 +148,43 @@ export default function MerchClient({ initialMerchandise }) {
 
   return (
     <div className="w-full max-w-[1400px] mx-auto relative">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                <ShoppingBag className="w-5 h-5 text-primary" />
-              </div>
-              <span className="text-[12px] font-bold tracking-[0.2em] text-primary uppercase">Toko SRE</span>
-            </div>
-            <h1 className="text-[32px] md:text-[40px] font-display font-bold text-white tracking-tight">
-              Merchandise
-            </h1>
-            <p className="text-white/50 text-[15px] mt-2 max-w-xl">
-              Kelola produk dan merchandise SRE UPNVJT yang akan ditampilkan ke publik.
-            </p>
-          </div>
-          {canCreate && (
-            <button
-              onClick={() => handleOpenModal()}
-              className="h-12 px-6 rounded-xl bg-primary text-[#050e0a] font-bold text-[14px] flex items-center justify-center gap-2 hover:bg-[#a8d3ba] transition-all"
-            >
-              <Plus className="w-5 h-5" />
-              <span>Tambah Produk</span>
-            </button>
-          )}
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-gray-900 dark:text-white">
+            <ShoppingBag className="w-8 h-8 text-primary" />
+            Toko SRE (Merchandise)
+          </h1>
+          <p className="text-gray-500 dark:text-white/50 max-w-xl">
+            Kelola produk dan merchandise SRE UPNVJT yang akan ditampilkan ke publik.
+          </p>
         </div>
-
-        {/* Filters & Search */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
-            <input
+        
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          <div className="relative flex-1 md:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-white/30" />
+            <input 
               type="text"
               placeholder="Cari nama produk..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-12 pl-12 pr-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 focus:outline-none focus:border-primary/50 transition-all"
+              className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-colors"
             />
           </div>
+          {canCreate && (
+            <button 
+              onClick={() => handleOpenModal()}
+              className="flex items-center gap-2 bg-primary text-[#050e0a] px-6 py-3 rounded-xl font-bold tracking-wide hover:bg-primary-focus hover:scale-105 transition-all shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+            >
+              <Plus className="w-5 h-5" />
+              <span className="hidden sm:inline">Tambah Produk</span>
+            </button>
+          )}
         </div>
+      </div>
 
         {/* Merch Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <AnimatePresence>
             {filteredMerchandise.length > 0 ? (
               filteredMerchandise.map((item) => (
@@ -165,9 +193,9 @@ export default function MerchClient({ initialMerchandise }) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden group hover:border-white/20 transition-all flex flex-col"
+                  className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10 shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)] rounded-3xl overflow-hidden backdrop-blur-xl relative group hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(16,185,129,0.1)] transition-all duration-300 flex flex-col h-full"
                 >
-                  <div className="relative aspect-square w-full overflow-hidden bg-black/50 border-b border-white/5">
+                  <div className="relative aspect-square w-full overflow-hidden bg-gray-100 dark:bg-black/50 border-b border-gray-200 dark:border-white/5">
                     {item.imageUrl ? (
                       <img
                         src={item.imageUrl}
@@ -175,7 +203,7 @@ export default function MerchClient({ initialMerchandise }) {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-white/20">
+                      <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 dark:text-white/20">
                         <ShoppingBag className="w-10 h-10 mb-2" />
                         <span className="text-[12px]">No Image</span>
                       </div>
@@ -192,28 +220,28 @@ export default function MerchClient({ initialMerchandise }) {
                   </div>
 
                   <div className="p-5 flex-1 flex flex-col">
-                    <h3 className="text-[16px] font-bold text-white mb-1 leading-tight group-hover:text-primary transition-colors">{item.name}</h3>
+                    <h3 className="text-[16px] font-bold text-gray-900 dark:text-white mb-1 leading-tight group-hover:text-primary transition-colors">{item.name}</h3>
                     <div className="text-[14px] font-medium text-[#e8ecc4] mb-3">
                       Rp {parseFloat(item.price || 0).toLocaleString("id-ID")}
                     </div>
-                    <p className="text-[12px] text-white/50 line-clamp-2 mb-4 flex-1">
+                    <p className="text-[12px] text-gray-500 dark:text-white/50 line-clamp-2 mb-4 flex-1">
                       {item.description}
                     </p>
                     
-                    <div className="flex items-center justify-between pt-4 border-t border-white/10 mt-auto">
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-white/10 mt-auto">
                       {item.linkUrl ? (
                         <a href={item.linkUrl} target="_blank" rel="noreferrer" className="text-[11px] text-primary hover:underline flex items-center gap-1">
                           Buy Link <ExternalLink className="w-3 h-3" />
                         </a>
                       ) : (
-                        <span className="text-[11px] text-white/30">No Link</span>
+                        <span className="text-[11px] text-gray-500 dark:text-white/30">No Link</span>
                       )}
                       
                       <div className="flex gap-2">
                         {canUpdate && (
                           <button
                             onClick={() => handleOpenModal(item)}
-                            className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 hover:text-white flex items-center justify-center transition-all border border-transparent hover:border-white/10"
+                            className="w-8 h-8 rounded-lg bg-white dark:bg-white/5 shadow-sm dark:shadow-none hover:bg-gray-50 dark:hover:bg-white/10 text-gray-500 dark:text-white/70 hover:text-gray-900 dark:text-white flex items-center justify-center transition-all border border-transparent hover:border-gray-200 dark:border-white/10"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
@@ -235,10 +263,10 @@ export default function MerchClient({ initialMerchandise }) {
                 </motion.div>
               ))
             ) : (
-              <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-white/[0.02] border border-white/5 rounded-2xl border-dashed">
-                <ShoppingBag className="w-12 h-12 text-white/20 mb-4" />
-                <h3 className="text-lg font-bold text-white mb-1">Belum ada produk</h3>
-                <p className="text-white/40 text-sm">Tambahkan merchandise baru untuk ditampilkan di landing page.</p>
+              <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 rounded-3xl backdrop-blur-md shadow-sm border-dashed">
+                <ShoppingBag className="w-12 h-12 text-gray-500 dark:text-white/20 mb-4" />
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Belum ada produk</h3>
+                <p className="text-gray-500 dark:text-white/40 text-sm">Tambahkan merchandise baru untuk ditampilkan di landing page.</p>
               </div>
             )}
           </AnimatePresence>
@@ -253,19 +281,19 @@ export default function MerchClient({ initialMerchandise }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={handleCloseModal}
-              className="absolute inset-0 bg-[#050e0a]/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-white dark:bg-[#050e0a]/80 backdrop-blur-sm"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl bg-[#0a1612] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+              className="relative w-full max-w-2xl bg-white dark:bg-[#0a1612] border border-gray-200 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
-              <div className="p-6 border-b border-white/10 flex items-center justify-between shrink-0 bg-white/[0.02]">
-                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <div className="p-6 border-b border-gray-200 dark:border-white/10 flex items-center justify-between shrink-0 bg-gray-50/50 dark:bg-white/[0.02]">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                   {isEditing ? "Edit Produk" : "Produk Baru"}
                 </h2>
-                <button onClick={handleCloseModal} className="text-white/50 hover:text-white transition-colors">
+                <button onClick={handleCloseModal} className="text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white transition-colors">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -274,74 +302,83 @@ export default function MerchClient({ initialMerchandise }) {
                 <form id="merchForm" onSubmit={handleSaveMerch} className="space-y-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="md:col-span-1">
-                      <label className="block text-[11px] font-bold tracking-wider text-white/50 uppercase mb-2">Nama Produk</label>
+                      <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">Nama Produk</label>
                       <input
                         type="text"
                         required
                         value={currentMerch.name}
                         onChange={(e) => setCurrentMerch(prev => ({ ...prev, name: e.target.value }))}
-                        className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
+                        className="w-full h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
                         placeholder="e.g. SRE Signature T-Shirt"
                       />
                     </div>
 
                     <div className="md:col-span-1">
-                      <label className="block text-[11px] font-bold tracking-wider text-white/50 uppercase mb-2">Harga (Rp)</label>
+                      <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">Harga (Rp)</label>
                       <input
                         type="number"
                         required
                         min="0"
                         value={currentMerch.price}
                         onChange={(e) => setCurrentMerch(prev => ({ ...prev, price: e.target.value }))}
-                        className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
+                        className="w-full h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
                         placeholder="e.g. 149000"
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-[11px] font-bold tracking-wider text-white/50 uppercase mb-2">Deskripsi</label>
+                      <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">Deskripsi</label>
                       <textarea
                         required
                         value={currentMerch.description}
                         onChange={(e) => setCurrentMerch(prev => ({ ...prev, description: e.target.value }))}
-                        className="w-full p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 transition-all resize-none h-24"
+                        className="w-full p-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all resize-none h-24"
                         placeholder="Detail bahan, ukuran, dll..."
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-[11px] font-bold tracking-wider text-white/50 uppercase mb-2">Foto Produk (URL)</label>
+                      <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">Foto Produk (URL or Upload)</label>
                       <div className="flex gap-4">
                         {currentMerch.imageUrl && (
-                          <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-white/10 bg-black">
+                          <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-gray-200 dark:border-white/10 bg-black">
                             <img src={currentMerch.imageUrl} alt="Preview" className="w-full h-full object-cover" />
                           </div>
                         )}
                         <input
-                          type="url"
+                          type="text"
                           value={currentMerch.imageUrl}
                           onChange={(e) => setCurrentMerch(prev => ({ ...prev, imageUrl: e.target.value }))}
-                          className="flex-1 h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
+                          className="flex-1 h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
                           placeholder="https://images.unsplash.com/..."
                         />
+                        <label className={`relative overflow-hidden w-12 h-12 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl flex items-center justify-center hover:bg-gray-50 dark:hover:bg-white/10 transition-colors cursor-pointer shrink-0 ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}>
+                          <input 
+                            type="file" 
+                            accept="image/*"
+                            onChange={handleFileUpload}
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                          />
+                          <UploadCloud className="w-5 h-5 text-gray-500 dark:text-white/50" />
+                        </label>
                       </div>
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-[11px] font-bold tracking-wider text-white/50 uppercase mb-2">Tautan Pembelian (Opsional)</label>
+                      <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">Tautan Pembelian (Opsional)</label>
                       <input
                         type="url"
                         value={currentMerch.linkUrl}
                         onChange={(e) => setCurrentMerch(prev => ({ ...prev, linkUrl: e.target.value }))}
-                        className="w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
+                        className="w-full h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
                         placeholder="Link Shopee / Tokopedia / WhatsApp"
                       />
                     </div>
 
-                    <div className="md:col-span-2 flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl">
+                    <div className="md:col-span-2 flex items-center justify-between p-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl">
                       <div>
-                        <div className="text-white font-medium text-[14px]">Stok Tersedia</div>
-                        <div className="text-white/40 text-[12px]">Aktifkan jika barang sedang in-stock</div>
+                        <div className="text-gray-900 dark:text-white font-medium text-[14px]">Stok Tersedia</div>
+                        <div className="text-gray-500 dark:text-white/40 text-[12px]">Aktifkan jika barang sedang in-stock</div>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input
@@ -350,18 +387,18 @@ export default function MerchClient({ initialMerchandise }) {
                           checked={currentMerch.isAvailable}
                           onChange={(e) => setCurrentMerch(prev => ({ ...prev, isAvailable: e.target.checked }))}
                         />
-                        <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                        <div className="w-11 h-6 bg-white dark:bg-white/10 shadow-sm dark:shadow-none peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                       </label>
                     </div>
                   </div>
                 </form>
               </div>
 
-              <div className="p-6 border-t border-white/10 flex justify-end gap-3 shrink-0 bg-white/[0.02]">
+              <div className="p-6 border-t border-gray-200 dark:border-white/10 flex justify-end gap-3 shrink-0 bg-gray-50/50 dark:bg-white/[0.02]">
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-6 py-2.5 rounded-xl font-semibold text-white/70 hover:text-white hover:bg-white/10 transition-all"
+                  className="px-6 py-2.5 rounded-xl font-semibold text-gray-500 dark:text-white/70 hover:text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/10 transition-all"
                 >
                   Batal
                 </button>
@@ -392,35 +429,35 @@ export default function MerchClient({ initialMerchandise }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={handleCloseDeleteModal}
-              className="absolute inset-0 bg-[#050e0a]/80 backdrop-blur-sm"
+              className="absolute inset-0 bg-white dark:bg-[#050e0a]/80 backdrop-blur-sm"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-md bg-[#0a1612] border border-white/10 rounded-2xl shadow-2xl p-6 text-center"
+              className="relative w-full max-w-md bg-white dark:bg-[#0a1612] border border-gray-200 dark:border-white/10 rounded-3xl shadow-2xl p-6 text-center"
             >
               <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4 border border-red-500/20">
                 <AlertTriangle className="w-8 h-8 text-red-500" />
               </div>
-              <h2 className="text-xl font-bold text-white mb-2">Hapus Produk</h2>
-              <p className="text-white/50 mb-8">
-                Apakah Anda yakin ingin menghapus <strong className="text-white">{currentMerch.name}</strong>? Tindakan ini tidak dapat dibatalkan.
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Hapus Produk</h2>
+              <p className="text-gray-500 dark:text-white/50 mb-8">
+                Apakah Anda yakin ingin menghapus <strong className="text-gray-900 dark:text-white">{currentMerch.name}</strong>? Tindakan ini tidak dapat dibatalkan.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={handleCloseDeleteModal}
-                  className="flex-1 px-4 py-3 rounded-xl font-semibold text-white/70 hover:text-white hover:bg-white/10 border border-white/10 transition-all"
+                  className="flex-1 px-4 py-3 rounded-xl font-semibold text-gray-500 dark:text-white/70 hover:text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 transition-all"
                 >
                   Batal
                 </button>
                 <button
                   onClick={handleDeleteMerch}
                   disabled={isLoading}
-                  className="flex-1 px-4 py-3 rounded-xl font-bold bg-red-500 text-white hover:bg-red-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="flex-1 px-4 py-3 rounded-xl font-bold bg-red-500 text-gray-900 dark:text-white hover:bg-red-600 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                 >
                   {isLoading ? (
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-gray-200 dark:border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
                     "Hapus Produk"
                   )}

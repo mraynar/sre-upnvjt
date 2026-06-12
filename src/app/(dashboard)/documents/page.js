@@ -1,5 +1,7 @@
 import React from "react";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { document } from "@/db/schema";
+import { desc } from "drizzle-orm";
 import DocumentsClient from "./DocumentsClient";
 
 export const metadata = {
@@ -7,8 +9,8 @@ export const metadata = {
 };
 
 export default async function DocumentsPage() {
-  const docs = await prisma.document.findMany({
-    orderBy: { createdAt: "desc" }
+  const docs = await db.query.document.findMany({
+    orderBy: [desc(document.createdAt)]
   });
 
   return (

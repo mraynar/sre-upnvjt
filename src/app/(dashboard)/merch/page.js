@@ -1,5 +1,7 @@
 import React from "react";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { merchandise } from "@/db/schema";
+import { desc } from "drizzle-orm";
 import MerchClient from "./MerchClient";
 
 export const metadata = {
@@ -7,11 +9,11 @@ export const metadata = {
 };
 
 export default async function MerchandisePage() {
-  const merchandise = await prisma.merchandise.findMany({
-    orderBy: { createdAt: "desc" }
+  const dbMerchandise = await db.query.merchandise.findMany({
+    orderBy: [desc(merchandise.createdAt)]
   });
 
-  const safeMerch = merchandise.map(m => ({
+  const safeMerch = dbMerchandise.map(m => ({
     ...m,
     price: m.price ? m.price.toString() : "0"
   }));

@@ -1,5 +1,7 @@
 import React from "react";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { inventory } from "@/db/schema";
+import { desc } from "drizzle-orm";
 import InventoryClient from "./InventoryClient";
 
 export const metadata = {
@@ -7,8 +9,8 @@ export const metadata = {
 };
 
 export default async function InventoryPage() {
-  const items = await prisma.inventory.findMany({
-    orderBy: { createdAt: "desc" }
+  const items = await db.query.inventory.findMany({
+    orderBy: [desc(inventory.createdAt)]
   });
 
   return (

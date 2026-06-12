@@ -1,6 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import prisma from "@/lib/prisma";
+import db from "@/lib/prisma";
+import { user } from "@/db/schema";
+import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
 export const authOptions = {
@@ -16,42 +18,42 @@ export const authOptions = {
           throw new Error("Missing email or password");
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-          include: {
+        const foundUser = await db.query.user.findFirst({
+          where: eq(user.email, credentials.email),
+          with: {
             role: true,
             department: true,
             division: true
           }
         });
 
-        if (!user) {
+        if (!foundUser) {
           throw new Error("No user found with this email");
         }
 
         const isPasswordValid = await bcrypt.compare(
           credentials.password,
-          user.password
+          foundUser.password
         );
 
         if (!isPasswordValid) {
           throw new Error("Invalid password");
         }
 
-        if (!user.isActive) {
+        if (!foundUser.isActive) {
           throw new Error("This account is inactive");
         }
 
         return {
-          id: user.id.toString(),
-          name: user.name,
-          email: user.email,
-          roleName: user.role?.name,
-          permissions: user.role?.permissions,
-          departmentCode: user.department?.code,
-          departmentName: user.department?.name,
-          divisionName: user.division?.name,
-          positionName: user.positionName,
+          id: foundUser.id.toString(),
+          name: foundUser.name,
+          email: foundUser.email,
+          roleName: foundUser.role?.name,
+          permissions: foundUser.role?.permissions,
+          departmentCode: foundUser.department?.code,
+          departmentName: foundUser.department?.name,
+          divisionName: foundUser.division?.name,
+          positionName: foundUser.positionName,
         };
       },
     }),
@@ -60,15 +62,15 @@ export const authOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.roleName = user.roleName;
-        token.permissions = user.permissions;
-        token.departmentCode = user.departmentCode;
-        token.departmentName = user.departmentName;
-        token.divisionName = user.divisionName;
-        token.positionName = user.positionName;
+    async jwt({ token, user: authUser }) {
+      if (authUser) {
+        token.id = authUser.id;
+        token.roleName = authUser.roleName;
+        token.permissions = authUser.permissions;
+        token.departmentCode = authUser.departmentCode;
+        token.departmentName = authUser.departmentName;
+        token.divisionName = authUser.divisionName;
+        token.positionName = authUser.positionName;
       }
       return token;
     },

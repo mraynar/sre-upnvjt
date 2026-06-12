@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, CheckCircle2, ChevronDown, Plus, Minus } from "lucide-react";
 import Link from "next/link";
+import { getPublicMerchandise } from "@/app/actions/merchandiseActions";
 
 const CustomSelect = ({ label, options, value, onChange, disabled }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -74,13 +75,22 @@ export default function OrderPage() {
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const itemOptions = [
-    { value: "SRE Essential T-Shirt", label: "SRE Essential T-Shirt - Rp 115.000" },
-    { value: "Eco-Friendly Tote Bag", label: "Eco-Friendly Tote Bag - Rp 65.000" },
-    { value: "Energy Lanyard", label: "Energy Lanyard - Rp 35.000" },
-    { value: "Stainless Steel Tumbler", label: "Stainless Tumbler - Rp 120.000" },
-    { value: "Sticker Pack", label: "Sticker Pack - Rp 15.000" }
-  ];
+  const [itemOptions, setItemOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  React.useEffect(() => {
+    getPublicMerchandise().then(res => {
+      if (res.success && res.data.length > 0) {
+        const options = res.data.map(m => ({
+          value: m.name,
+          label: `${m.name} - Rp ${parseFloat(m.price).toLocaleString('id-ID')}`
+        }));
+        setItemOptions(options);
+        setFormData(prev => ({ ...prev, item: options[0].value }));
+      }
+      setIsLoading(false);
+    }).catch(() => setIsLoading(false));
+  }, []);
 
   const sizeOptions = [
     { value: "S", label: "Size S (Small)" },
@@ -92,6 +102,26 @@ export default function OrderPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Construct WhatsApp Message
+    const adminPhone = "6281234567890"; // Ganti dengan nomor WhatsApp Admin SRE yang sesungguhnya
+    let message = `Halo Admin SRE UPNVJT, saya ingin memesan merchandise:\n\n`;
+    message += `*Nama:* ${formData.name}\n`;
+    message += `*NPM/NIM:* ${formData.nim}\n`;
+    message += `*No WhatsApp:* ${formData.phone}\n\n`;
+    message += `*Pesanan:*\n`;
+    message += `- Barang: ${formData.item}\n`;
+    if (formData.item.toLowerCase().includes("t-shirt") || formData.item.toLowerCase().includes("kaos") || formData.item.toLowerCase().includes("shirt") || formData.item.toLowerCase().includes("polo")) {
+      message += `- Ukuran: ${formData.size}\n`;
+    }
+    message += `- Jumlah: ${formData.qty}\n`;
+    if (formData.notes) {
+      message += `\n*Catatan/Alamat:*\n${formData.notes}\n`;
+    }
+    
+    const whatsappUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank");
+    
     setIsSubmitted(true);
   };
 
@@ -205,10 +235,11 @@ export default function OrderPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10 border-y border-white/10 py-10 relative">
               <div className="md:col-span-2">
                 <CustomSelect 
-                  label="Select Item"
-                  options={itemOptions}
+                  label={isLoading ? "Loading Items..." : "Select Item"}
+                  options={itemOptions.length > 0 ? itemOptions : [{ value: formData.item, label: formData.item }]}
                   value={formData.item}
                   onChange={(val) => setFormData({...formData, item: val})}
+                  disabled={isLoading || itemOptions.length === 0}
                 />
               </div>
 
@@ -219,7 +250,7 @@ export default function OrderPage() {
                     options={sizeOptions}
                     value={formData.size}
                     onChange={(val) => setFormData({...formData, size: val})}
-                    disabled={!formData.item.includes("T-Shirt")}
+                    disabled={!formData.item.toLowerCase().includes("t-shirt") && !formData.item.toLowerCase().includes("kaos") && !formData.item.toLowerCase().includes("shirt") && !formData.item.toLowerCase().includes("polo")}
                   />
                 </div>
                 <div className="flex flex-col gap-2 w-1/2">
