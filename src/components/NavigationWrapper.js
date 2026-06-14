@@ -20,7 +20,8 @@ const dashboardRoutes = [
   "/activities",
   "/merch",
   "/settings",
-  "/partners"
+  "/partners",
+  "/logs"
 ];
 
 function isDashboardRoute(pathname) {

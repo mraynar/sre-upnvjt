@@ -1,7 +1,7 @@
 "use server";
 
 import db from "@/lib/prisma";
-import { user, project, article, attendanceSession, attendance, department } from "@/db/schema";
+import { user, project, article, attendanceSession, attendance, department, activity } from "@/db/schema";
 import { eq, inArray, count, desc, and, notExists } from "drizzle-orm";
 
 export async function getDashboardStats(role, departmentId, userId) {
@@ -61,6 +61,11 @@ export async function getDashboardStats(role, departmentId, userId) {
       with: { author: true }
     });
 
+    const recentOrgActivities = await db.query.activity.findMany({
+      limit: 2,
+      orderBy: [desc(activity.createdAt)]
+    });
+
     const recentActivities = [
       ...recentProjects.map(p => ({
         id: `proj-${p.id}`,
@@ -75,17 +80,25 @@ export async function getDashboardStats(role, departmentId, userId) {
         desc: `Drafted by ${a.author.name}`,
         date: a.createdAt,
         type: "article"
+      })),
+      ...recentOrgActivities.map(act => ({
+        id: `act-${act.id}`,
+        title: `Event: ${act.title}`,
+        desc: `New organization activity`,
+        date: act.createdAt,
+        type: "event"
       }))
-    ].sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, 5);
+    ].sort((a, b) => b.date.getTime() - a.date.getTime()).slice(0, 3);
 
     stats.recentActivities = recentActivities;
 
-    // Calculate functional chart data (Projects + Articles per month for the current year)
+    // Calculate functional chart data (Projects + Articles + Activities per month for the current year)
     const currentYear = new Date().getFullYear();
     const monthlyData = new Array(12).fill(0);
     
     const allProjects = await db.select({ createdAt: project.createdAt }).from(project);
     const allArticles = await db.select({ createdAt: article.createdAt }).from(article);
+    const allActivities = await db.select({ createdAt: activity.createdAt }).from(activity);
     
     allProjects.forEach(p => {
       if (p.createdAt && new Date(p.createdAt).getFullYear() === currentYear) {
@@ -95,6 +108,11 @@ export async function getDashboardStats(role, departmentId, userId) {
     allArticles.forEach(a => {
       if (a.createdAt && new Date(a.createdAt).getFullYear() === currentYear) {
         monthlyData[new Date(a.createdAt).getMonth()]++;
+      }
+    });
+    allActivities.forEach(act => {
+      if (act.createdAt && new Date(act.createdAt).getFullYear() === currentYear) {
+        monthlyData[new Date(act.createdAt).getMonth()]++;
       }
     });
 

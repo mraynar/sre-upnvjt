@@ -33,10 +33,12 @@ export async function POST(req) {
       if (err.code !== 'EEXIST') throw err;
     }
 
-    // Generate unique filename
+    // Generate neat unique filename with prefix
     const ext = path.extname(file.name);
-    const basename = path.basename(file.name, ext).replace(/[^a-zA-Z0-9_-]/g, '');
-    const filename = `${Date.now()}-${basename}${ext}`;
+    const prefix = safeFolder ? safeFolder.toUpperCase() : "FILE";
+    const randomStr = Math.random().toString(36).substring(2, 8);
+    const filename = `${prefix}_${Date.now()}_${randomStr}${ext}`;
+    
     const filepath = path.join(uploadDir, filename);
 
     // Write file

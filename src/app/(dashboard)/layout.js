@@ -7,7 +7,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   LayoutDashboard, Users, FileText, CheckSquare, Shield,
-  Settings, LogOut, Menu, X, CreditCard, Box, ChevronLeft, ChevronRight, FolderKanban, ClipboardCheck, FolderOpen, Newspaper, Presentation, ShoppingBag, Handshake
+  Settings, LogOut, Menu, X, CreditCard, Box, ChevronLeft, ChevronRight, FolderKanban, ClipboardCheck, FolderOpen, Newspaper, Presentation, ShoppingBag, Handshake, Activity
 } from "lucide-react";
 
 import { hasAccess } from "@/lib/permissions";
@@ -58,11 +58,13 @@ export default function DashboardLayout({ children }) {
     { name: "Partners", icon: Handshake, href: "/partners", module: "partners" },
     
     // System
+    { name: "System Logs", icon: Activity, href: "/logs", module: "logs" },
     { name: "Settings", icon: Settings, href: "/settings", module: "settings" },
   ];
 
   const allowedNavItems = navItems.filter(item => {
     if (item.module === "overview" || item.module === "settings" || item.module === "tasks") return true;
+    if (item.module === "logs" && (role === "SUPER_ADMIN" || role === "ADMIN")) return true;
     if (item.module === "partners") return role === "SUPER_ADMIN";
     return hasAccess(session?.user, item.module, "read");
   });

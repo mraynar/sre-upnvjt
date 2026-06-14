@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Cropper from "react-easy-crop";
+import getCroppedImg from "@/lib/cropImage";
 import { 
   User, 
   Lock, 
@@ -31,6 +33,44 @@ export default function SettingsClient({ user }) {
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileMessage, setProfileMessage] = useState(null);
+
+  // Crop Modal States
+  const [imageToCrop, setImageToCrop] = useState(null);
+  const [isCropModalOpen, setIsCropModalOpen] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+
+  const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const showCropModal = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        setImageToCrop(reader.result);
+        setIsCropModalOpen(true);
+      });
+      reader.readAsDataURL(e.target.files[0]);
+    }
+  };
+
+  const handleCropSave = async () => {
+    try {
+      const croppedImageBlob = await getCroppedImg(
+        imageToCrop,
+        croppedAreaPixels,
+        0
+      );
+      
+      const croppedFile = new File([croppedImageBlob], "profile_cropped.jpg", { type: "image/jpeg" });
+      setProfilePictureFile(croppedFile);
+      setIsCropModalOpen(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -193,7 +233,7 @@ export default function SettingsClient({ user }) {
                     {/* Profile Picture Upload */}
                     <div className="flex flex-col md:flex-row items-center gap-6 pb-6 border-b border-gray-200 dark:border-white/10">
                       <div className="relative group">
-                        <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 dark:bg-white/5 border-2 border-gray-200 dark:border-white/10 flex items-center justify-center">
+                        <div className="w-24 md:w-32 aspect-[3/4.5] rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/5 border-2 border-gray-200 dark:border-white/10 flex items-center justify-center shadow-md">
                           {profilePictureFile ? (
                             <img src={URL.createObjectURL(profilePictureFile)} alt="Preview" className="w-full h-full object-cover" />
                           ) : profileData.profilePictureUrl ? (
@@ -204,9 +244,9 @@ export default function SettingsClient({ user }) {
                         </div>
                       </div>
                       <div className="flex flex-col items-center md:items-start gap-2">
-                        <h3 className="text-sm font-bold text-gray-900 dark:text-white">Profile Photo</h3>
+                        <h3 className="text-sm font-bold text-gray-900 dark:text-white">Foto Profil (Portrait)</h3>
                         <p className="text-xs text-gray-500 dark:text-white/50 text-center md:text-left max-w-xs">
-                          Upload a professional picture for your team profile. Recommended size is 400x400px.
+                          Unggah foto profesional untuk halaman "About Us". Disarankan rasio portrait (misalnya 600x900px).
                         </p>
                         <div className="mt-2">
                           <label className="cursor-pointer bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 text-gray-900 dark:text-white px-4 py-2 rounded-xl text-xs font-bold tracking-wide transition-colors">
@@ -216,9 +256,8 @@ export default function SettingsClient({ user }) {
                               accept="image/*" 
                               className="hidden" 
                               onChange={(e) => {
-                                if (e.target.files && e.target.files[0]) {
-                                  setProfilePictureFile(e.target.files[0]);
-                                }
+                                showCropModal(e);
+                                e.target.value = null; // reset input
                               }}
                             />
                           </label>
@@ -426,6 +465,67 @@ export default function SettingsClient({ user }) {
           </div>
         </div>
       </div>
+
+      {/* Crop Modal */}
+      <AnimatePresence>
+        {isCropModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-[#0a1612] border border-gray-200 dark:border-white/10 rounded-3xl overflow-hidden w-full max-w-lg flex flex-col shadow-2xl"
+            >
+              <div className="p-4 border-b border-gray-200 dark:border-white/10 bg-white/[0.02]">
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Sesuaikan Foto (Crop)</h3>
+              </div>
+              <div className="relative w-full h-[400px] bg-black">
+                <Cropper
+                  image={imageToCrop}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={3 / 4.5}
+                  onCropChange={setCrop}
+                  onCropComplete={onCropComplete}
+                  onZoomChange={setZoom}
+                />
+              </div>
+              <div className="p-4 border-t border-gray-200 dark:border-white/10 bg-white/[0.02] flex flex-col gap-4">
+                <div className="flex items-center gap-4">
+                  <span className="text-xs text-gray-500 font-bold uppercase">Zoom</span>
+                  <input
+                    type="range"
+                    value={zoom}
+                    min={1}
+                    max={3}
+                    step={0.1}
+                    aria-labelledby="Zoom"
+                    onChange={(e) => setZoom(e.target.value)}
+                    className="flex-1 accent-primary"
+                  />
+                </div>
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => {
+                      setIsCropModalOpen(false);
+                      setImageToCrop(null);
+                    }}
+                    className="px-4 py-2 rounded-xl text-sm font-bold text-gray-500 hover:text-white hover:bg-white/10 transition-colors"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={handleCropSave}
+                    className="px-4 py-2 rounded-xl text-sm font-bold bg-primary text-[#050e0a] hover:bg-primary-focus transition-colors"
+                  >
+                    Simpan Potongan
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
