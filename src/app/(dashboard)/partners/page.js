@@ -4,6 +4,8 @@ import { partner } from "@/db/schema";
 import { asc } from "drizzle-orm";
 import PartnerClient from "./PartnerClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Our Partners | SRE Portal",
 };

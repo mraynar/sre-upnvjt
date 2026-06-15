@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { getPublicArticles } from "@/app/actions/articleActions";
 
+export const dynamic = "force-dynamic";
+
 export default function ArticlePage() {
   const [articlesList, setArticlesList] = useState([]);
 

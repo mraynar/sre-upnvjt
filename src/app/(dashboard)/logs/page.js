@@ -7,6 +7,8 @@ import { db } from "@/lib/db";
 import { user, project, article, activity } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "System Logs | SRE Portal",
 };

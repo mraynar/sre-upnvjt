@@ -4,6 +4,8 @@ import { department } from "@/db/schema";
 import { asc } from "drizzle-orm";
 import DepartmentsClient from "./DepartmentsClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Departments & Divisions | SRE Portal",
 };

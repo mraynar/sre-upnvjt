@@ -5,6 +5,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Home, Lock, KeyRound, ServerCrash, ZapOff } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default function StatusErrorPage({ params }) {
   const unwrappedParams = use(params);
   const code = unwrappedParams.code || "Unknown";

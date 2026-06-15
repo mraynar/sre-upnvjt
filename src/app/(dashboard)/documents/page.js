@@ -4,6 +4,8 @@ import { document } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import DocumentsClient from "./DocumentsClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Bank Data & Dokumen | SRE Portal",
 };

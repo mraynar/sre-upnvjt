@@ -4,6 +4,8 @@ import { project, department, user } from "@/db/schema";
 import { desc, asc, eq } from "drizzle-orm";
 import ProjectsClient from "./ProjectsClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Program Kerja | SRE Portal",
 };

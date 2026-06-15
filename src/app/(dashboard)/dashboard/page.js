@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { getDashboardStats } from "@/app/actions/dashboardActions";
 
+export const dynamic = "force-dynamic";
+
 import { user } from "@/db/schema";
 import { eq } from "drizzle-orm";
 

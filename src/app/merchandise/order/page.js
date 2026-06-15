@@ -5,6 +5,8 @@ import { ArrowRight, CheckCircle2, ChevronDown, Plus, Minus } from "lucide-react
 import Link from "next/link";
 import { getPublicMerchandise } from "@/app/actions/merchandiseActions";
 
+export const dynamic = "force-dynamic";
+
 const CustomSelect = ({ label, options, value, onChange, disabled }) => {
   const [isOpen, setIsOpen] = useState(false);
 

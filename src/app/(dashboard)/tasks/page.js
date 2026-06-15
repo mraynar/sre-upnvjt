@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import { Plus, CheckCircle, Clock, CheckSquare, X, Save, Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+export const dynamic = "force-dynamic";
+
 export default function TasksPage() {
   const { data: session } = useSession();
   const [tasks, setTasks] = useState([]);

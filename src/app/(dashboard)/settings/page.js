@@ -6,6 +6,8 @@ import { user as userSchema } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Settings - SRE UPN Jatim",
   description: "User and System Settings",

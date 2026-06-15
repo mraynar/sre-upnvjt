@@ -4,6 +4,8 @@ import { activity } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import ActivityClient from "./ActivityClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Programs & Activities | SRE Portal",
 };

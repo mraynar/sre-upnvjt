@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Edit2, Trash2, Shield, X, Save } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 const availableModules = [
   "users", "roles", "departments", "projects", 
   "attendance", "finance", "inventory", "documents", 

@@ -4,6 +4,8 @@ import { merchandise } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import MerchClient from "./MerchClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Merchandise | SRE Portal",
 };

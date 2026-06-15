@@ -4,6 +4,8 @@ import { user, role, department, division } from "@/db/schema";
 import { desc, asc } from "drizzle-orm";
 import UsersClient from "./UsersClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "User Management | SRE Portal",
 };

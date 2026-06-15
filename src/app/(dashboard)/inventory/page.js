@@ -4,6 +4,8 @@ import { inventory } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import InventoryClient from "./InventoryClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Inventaris | SRE Portal",
 };
