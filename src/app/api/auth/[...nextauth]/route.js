@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/lib/db";
-import { user } from "@/db/schema";
+import { user, role, department, division } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
@@ -18,14 +18,30 @@ export const authOptions = {
           throw new Error("Missing email or password");
         }
 
-        const foundUser = await db.query.user.findFirst({
-          where: eq(user.email, credentials.email),
-          with: {
-            role: true,
-            department: true,
-            division: true
-          }
-        });
+        const results = await db
+          .select({
+            user: user,
+            role: role,
+            department: department,
+            division: division
+          })
+          .from(user)
+          .leftJoin(role, eq(user.roleId, role.id))
+          .leftJoin(department, eq(user.departmentId, department.id))
+          .leftJoin(division, eq(user.divisionId, division.id))
+          .where(eq(user.email, credentials.email))
+          .limit(1);
+
+        let foundUser = null;
+        if (results.length > 0) {
+          const row = results[0];
+          foundUser = {
+            ...row.user,
+            role: row.role,
+            department: row.department,
+            division: row.division
+          };
+        }
 
         if (!foundUser) {
           throw new Error("No user found with this email");
