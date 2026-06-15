@@ -4,6 +4,8 @@ import { merchandise } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import MerchPublicClient from "./MerchPublicClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Merchandise | SRE UPNVJT",
   description: "Official merchandise SRE UPN Veteran Jawa Timur.",

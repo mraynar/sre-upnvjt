@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+
+export const dynamic = "force-dynamic";
   ChevronRight,
   ArrowUpRight,
   Eye,

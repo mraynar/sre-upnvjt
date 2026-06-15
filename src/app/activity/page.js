@@ -4,6 +4,8 @@ import { activity } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import ActivityPublicClient from "./ActivityPublicClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Activities | SRE UPNVJT",
   description: "Lihat aktivitas dan program kerja unggulan SRE UPNVJT.",

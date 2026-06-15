@@ -6,6 +6,8 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Calendar, User, Clock } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 // Server Component
 export default async function ArticleDetailPage({ params }) {
   const resolvedParams = await params;

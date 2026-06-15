@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { user, department, role } from "@/db/schema";
 import { eq, desc, asc } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "About Us | SRE UPNVJT",
   description: "Meet the team and learn more about SRE UPNVJT.",
