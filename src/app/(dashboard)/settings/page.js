@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../api/auth/[...nextauth]/route";
 import SettingsClient from "./SettingsClient";
-import db from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { user as userSchema } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";

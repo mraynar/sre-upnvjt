@@ -1,6 +1,6 @@
 "use server";
 
-import db from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { user, project, article, attendanceSession, attendance, department, activity } from "@/db/schema";
 import { eq, inArray, count, desc, and, notExists } from "drizzle-orm";
 

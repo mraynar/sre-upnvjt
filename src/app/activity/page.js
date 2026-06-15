@@ -1,5 +1,5 @@
 import React from "react";
-import db from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { activity } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import ActivityPublicClient from "./ActivityPublicClient";

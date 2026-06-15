@@ -1,5 +1,5 @@
 import React from "react";
-import db from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { inventory } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import InventoryClient from "./InventoryClient";

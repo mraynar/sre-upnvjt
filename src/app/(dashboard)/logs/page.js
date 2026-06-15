@@ -3,7 +3,7 @@ import LogsClient from "./LogsClient";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
-import db from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { user, project, article, activity } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 

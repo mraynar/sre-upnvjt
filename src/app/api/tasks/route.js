@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import db from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { user, task, _TaskRoles, notification } from "@/db/schema";
 import { eq, desc, inArray } from "drizzle-orm";
 import { getServerSession } from "next-auth";

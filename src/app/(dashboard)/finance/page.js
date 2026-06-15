@@ -1,5 +1,5 @@
 import React from "react";
-import db from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { user, finance, project } from "@/db/schema";
 import { eq, desc, asc } from "drizzle-orm";
 import FinanceClient from "./FinanceClient";

@@ -1,5 +1,5 @@
 import React from "react";
-import db from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { document } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import DocumentsClient from "./DocumentsClient";
