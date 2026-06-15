@@ -2,14 +2,14 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-
-export const dynamic = "force-dynamic";
   ChevronRight,
   ArrowUpRight,
   Eye,
 } from "lucide-react";
 import { getPublicArticles } from "@/app/actions/articleActions";
 import { getPublicActivities } from "@/app/actions/activityActions";
+
+export const dynamic = "force-dynamic";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 35 },
