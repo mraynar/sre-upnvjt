@@ -25,7 +25,6 @@ export default function NotFound() {
       />
 
       <div className="relative z-10 flex flex-col items-center text-center max-w-lg">
-        {/* Cute Animated Plug Icon */}
         <motion.div
           animate={{ rotate: [-10, 10, -10] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -86,7 +85,6 @@ export default function NotFound() {
             <div className="group relative inline-flex items-center gap-3 bg-primary text-white font-semibold rounded-full px-8 py-4 overflow-hidden transition-transform active:scale-95 shadow-[0_0_40px_rgba(16,185,129,0.3)] hover:shadow-[0_0_60px_rgba(16,185,129,0.5)]">
               <Home className="w-5 h-5 group-hover:-translate-y-1 group-hover:text-white transition-transform" />
               <span className="relative z-10 text-[16px]">Recharge & Go Home</span>
-              {/* Button hover effect */}
               <div className="absolute inset-0 bg-white/20 translate-y-[100%] group-hover:translate-y-0 transition-transform duration-300 ease-in-out" />
             </div>
           </Link>

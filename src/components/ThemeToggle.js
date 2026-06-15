@@ -28,7 +28,6 @@ export function ThemeToggle() {
     >
       <Sun className={`w-5 h-5 absolute inset-0 m-auto transition-transform duration-500 ${isDark ? "rotate-90 opacity-0 scale-50" : "rotate-0 opacity-100 scale-100"}`} />
       <Moon className={`w-5 h-5 absolute inset-0 m-auto transition-transform duration-500 ${isDark ? "rotate-0 opacity-100 scale-100" : "-rotate-90 opacity-0 scale-50"}`} />
-      {/* Invisible placeholder to keep button size stable */}
       <div className="w-5 h-5 opacity-0"></div>
     </button>
   );

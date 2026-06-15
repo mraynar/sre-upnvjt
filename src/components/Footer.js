@@ -12,7 +12,7 @@ export default function Footer() {
   // Determine the background color of the wave container based on the page's last section
   const getWaveBgColor = () => {
     if (pathname === "/") {
-      return "bg-canvas"; // Home page's last section is white/canvas
+      return "bg-canvas";
     }
     if (pathname.startsWith("/article")) {
       return "bg-[#07130e]";
@@ -22,7 +22,6 @@ export default function Footer() {
 
   return (
     <div className="w-full flex flex-col mt-auto relative z-10">
-      {/* Rolling Hills Vector Landscape */}
       <div className={`w-full leading-[0] pointer-events-none select-none ${getWaveBgColor()}`}>
         <svg
           viewBox="0 0 1440 240"

@@ -61,7 +61,6 @@ export default async function getCroppedImg(
   ctx.scale(flip.horizontal ? -1 : 1, flip.vertical ? -1 : 1)
   ctx.translate(-image.width / 2, -image.height / 2)
 
-  // draw rotated image
   ctx.drawImage(image, 0, 0)
 
   const croppedCanvas = document.createElement('canvas')

@@ -16,19 +16,19 @@ const TASK_STATUSES = ['TODO', 'IN_PROGRESS', 'DONE', 'OVERDUE'];
 // 2. DYNAMIC RBAC & ORGANIZATION STRUCTURE
 // ==========================================
 export const department = mysqlTable('Department', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   name: varchar('name', { length: 255 }).unique().notNull(),
   code: varchar('code', { length: 255 }).unique().notNull(),
 });
 
 export const division = mysqlTable('Division', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
-  departmentId: int('departmentId').notNull(),
+  departmentId: int('departmentId').references(() => department.id).notNull(),
 });
 
 export const role = mysqlTable('Role', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   name: varchar('name', { length: 255 }).unique().notNull(),
   permissions: json('permissions').notNull(),
 });
@@ -37,7 +37,7 @@ export const role = mysqlTable('Role', {
 // 3. USER & MANAJEMEN SDM
 // ==========================================
 export const user = mysqlTable('User', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).unique().notNull(),
   password: varchar('password', { length: 255 }).notNull(),
@@ -47,9 +47,9 @@ export const user = mysqlTable('User', {
   instagramUrl: varchar('instagramUrl', { length: 500 }),
   linkedinUrl: varchar('linkedinUrl', { length: 500 }),
   isActive: boolean('isActive').default(true).notNull(),
-  roleId: int('roleId').notNull(),
-  departmentId: int('departmentId'),
-  divisionId: int('divisionId'),
+  roleId: int('roleId').references(() => role.id).notNull(),
+  departmentId: int('departmentId').references(() => department.id),
+  divisionId: int('divisionId').references(() => division.id),
   createdAt: datetime('createdAt').$defaultFn(() => new Date()).notNull(),
   updatedAt: datetime('updatedAt').$defaultFn(() => new Date()).notNull(),
 });
@@ -58,10 +58,10 @@ export const user = mysqlTable('User', {
 // 4. MANAJEMEN PROKER & KEPANITIAAN
 // ==========================================
 export const project = mysqlTable('Project', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description'),
-  departmentId: int('departmentId').notNull(),
+  departmentId: int('departmentId').references(() => department.id).notNull(),
   startDate: datetime('startDate').notNull(),
   endDate: datetime('endDate'),
   status: mysqlEnum('status', APPROVAL_STATUSES).default('PENDING').notNull(),
@@ -70,9 +70,9 @@ export const project = mysqlTable('Project', {
 });
 
 export const committee = mysqlTable('Committee', {
-  id: serial('id').primaryKey(),
-  userId: int('userId').notNull(),
-  projectId: int('projectId').notNull(),
+  id: int('id').autoincrement().primaryKey(),
+  userId: int('userId').references(() => user.id).notNull(),
+  projectId: int('projectId').references(() => project.id).notNull(),
   role: varchar('role', { length: 255 }).notNull(),
 });
 
@@ -80,18 +80,18 @@ export const committee = mysqlTable('Committee', {
 // 5. ABSENSI & KEHADIRAN
 // ==========================================
 export const attendanceSession = mysqlTable('AttendanceSession', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   date: datetime('date').$defaultFn(() => new Date()).notNull(),
   isActive: boolean('isActive').default(true).notNull(),
-  createdById: int('createdById').notNull(),
-  projectId: int('projectId'),
+  createdById: int('createdById').references(() => user.id).notNull(),
+  projectId: int('projectId').references(() => project.id),
 });
 
 export const attendance = mysqlTable('Attendance', {
-  id: serial('id').primaryKey(),
-  sessionId: int('sessionId').notNull(),
-  userId: int('userId').notNull(),
+  id: int('id').autoincrement().primaryKey(),
+  sessionId: int('sessionId').references(() => attendanceSession.id).notNull(),
+  userId: int('userId').references(() => user.id).notNull(),
   status: varchar('status', { length: 50 }).notNull(), // "HADIR", "IZIN", "SAKIT", "ALFA"
   proofUrl: varchar('proofUrl', { length: 1000 }),
   date: datetime('date').$defaultFn(() => new Date()).notNull(),
@@ -101,28 +101,28 @@ export const attendance = mysqlTable('Attendance', {
 // 6. MANAJEMEN KEUANGAN (CASHFLOW)
 // ==========================================
 export const finance = mysqlTable('Finance', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   amount: decimal('amount', { precision: 12, scale: 2 }).notNull(),
   type: mysqlEnum('type', TRANSACTION_TYPES).notNull(),
   proofUrl: varchar('proofUrl', { length: 1000 }),
   date: datetime('date').$defaultFn(() => new Date()).notNull(),
-  loggedById: int('loggedById').notNull(),
-  projectId: int('projectId'),
+  loggedById: int('loggedById').references(() => user.id).notNull(),
+  projectId: int('projectId').references(() => project.id),
 });
 
 // ==========================================
 // 7. KONTEN & MEDIA (CMS UNTUK WEB PUBLIK)
 // ==========================================
 export const article = mysqlTable('Article', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   slug: varchar('slug', { length: 255 }).unique().notNull(),
   content: text('content').notNull(),
   excerpt: text('excerpt'),
   thumbnailUrl: varchar('thumbnailUrl', { length: 1000 }),
   isPublished: boolean('isPublished').default(false).notNull(),
-  authorId: int('authorId').notNull(),
+  authorId: int('authorId').references(() => user.id).notNull(),
   createdAt: datetime('createdAt').$defaultFn(() => new Date()).notNull(),
   updatedAt: datetime('updatedAt').$defaultFn(() => new Date()).notNull(),
 });
@@ -131,7 +131,7 @@ export const article = mysqlTable('Article', {
 // 8. INVENTARIS & PEMINJAMAN BARANG
 // ==========================================
 export const inventory = mysqlTable('Inventory', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   code: varchar('code', { length: 255 }),
   category: varchar('category', { length: 255 }).default('GENERAL').notNull(),
@@ -144,9 +144,9 @@ export const inventory = mysqlTable('Inventory', {
 });
 
 export const inventoryLoan = mysqlTable('InventoryLoan', {
-  id: serial('id').primaryKey(),
-  itemId: int('itemId').notNull(),
-  userId: int('userId').notNull(),
+  id: int('id').autoincrement().primaryKey(),
+  itemId: int('itemId').references(() => inventory.id).notNull(),
+  userId: int('userId').references(() => user.id).notNull(),
   quantity: int('quantity').notNull(),
   status: mysqlEnum('status', APPROVAL_STATUSES).default('PENDING').notNull(),
   borrowDate: datetime('borrowDate').$defaultFn(() => new Date()).notNull(),
@@ -157,7 +157,7 @@ export const inventoryLoan = mysqlTable('InventoryLoan', {
 // 9. BANK DATA (DOKUMEN TERPUSAT)
 // ==========================================
 export const document = mysqlTable('Document', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   url: varchar('url', { length: 1000 }).notNull(),
   type: varchar('type', { length: 50 }).default('OTHER').notNull(),
@@ -170,7 +170,7 @@ export const document = mysqlTable('Document', {
 // 10. ACTIVITY (KEGIATAN/PROGRAM BESAR)
 // ==========================================
 export const activity = mysqlTable('Activity', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description').notNull(),
   imageUrl: varchar('imageUrl', { length: 1000 }),
@@ -183,7 +183,7 @@ export const activity = mysqlTable('Activity', {
 // 11. MERCHANDISE (TOKO SRE)
 // ==========================================
 export const merchandise = mysqlTable('Merchandise', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   price: decimal('price', { precision: 10, scale: 2 }).notNull(),
   description: text('description').notNull(),
@@ -198,11 +198,11 @@ export const merchandise = mysqlTable('Merchandise', {
 // 12. TODOLIST & TASK MANAGEMENT
 // ==========================================
 export const task = mysqlTable('Task', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description').notNull(),
-  departmentId: int('departmentId').notNull(),
-  assignedById: int('assignedById').notNull(),
+  departmentId: int('departmentId').references(() => department.id).notNull(),
+  assignedById: int('assignedById').references(() => user.id).notNull(),
   deadline: datetime('deadline').notNull(),
   status: mysqlEnum('status', TASK_STATUSES).default('TODO').notNull(),
   requireWeeklyReport: boolean('requireWeeklyReport').default(false).notNull(),
@@ -212,24 +212,24 @@ export const task = mysqlTable('Task', {
 });
 
 export const taskReport = mysqlTable('TaskReport', {
-  id: serial('id').primaryKey(),
-  taskId: int('taskId').notNull(),
+  id: int('id').autoincrement().primaryKey(),
+  taskId: int('taskId').references(() => task.id).notNull(),
   reportText: text('reportText').notNull(),
   createdAt: datetime('createdAt').$defaultFn(() => new Date()).notNull(),
 });
 
 // Prisma implicit m2m for Task <-> Role
 export const _TaskRoles = mysqlTable('_TaskRoles', {
-  A: int('A').notNull(), // Role id
-  B: int('B').notNull(), // Task id
+  A: int('A').references(() => role.id).notNull(), // Role id
+  B: int('B').references(() => task.id).notNull(), // Task id
 });
 
 // ==========================================
 // 13. NOTIFICATIONS
 // ==========================================
 export const notification = mysqlTable('Notification', {
-  id: serial('id').primaryKey(),
-  userId: int('userId').notNull(),
+  id: int('id').autoincrement().primaryKey(),
+  userId: int('userId').references(() => user.id).notNull(),
   title: varchar('title', { length: 255 }).notNull(),
   message: text('message').notNull(),
   isRead: boolean('isRead').default(false).notNull(),
@@ -241,7 +241,7 @@ export const notification = mysqlTable('Notification', {
 // 14. PARTNERS (HOME PAGE)
 // ==========================================
 export const partner = mysqlTable('Partner', {
-  id: serial('id').primaryKey(),
+  id: int('id').autoincrement().primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   imageUrl: varchar('imageUrl', { length: 1000 }).notNull(),
   size: varchar('size', { length: 50 }).default('MEDIUM').notNull(),

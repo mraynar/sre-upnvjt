@@ -71,7 +71,7 @@ export default function DashboardLayout({ children }) {
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-white/80 dark:bg-[#050e0a]/80 backdrop-blur-2xl p-6 relative overflow-hidden rounded-3xl border border-gray-200 dark:border-white/10">
-      {/* Decorative Glow */}
+  
       <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-primary/10 to-transparent pointer-events-none" />
       <div className="absolute -left-20 top-20 w-40 h-40 bg-primary/20 blur-[100px] pointer-events-none" />
 
@@ -175,7 +175,6 @@ export default function DashboardLayout({ children }) {
 
   return (
     <div className="flex h-[100dvh] bg-gray-50 dark:bg-[#020806] text-gray-900 dark:text-white overflow-hidden relative selection:bg-primary/30 transition-colors duration-500">
-      {/* Decorative Blur */}
       <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
       

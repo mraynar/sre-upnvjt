@@ -168,7 +168,6 @@ export default function Header() {
         />
       </div>
 
-      {/* Premium Full-Screen Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
@@ -236,7 +235,7 @@ export default function Header() {
                 >
                   <Link href="/login" onClick={close} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-primary text-[#07130e] text-[15px] font-bold tracking-widest uppercase transition-all hover:bg-[#e8ecc4] hover:scale-105 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
                     <User className="w-5 h-5" />
-                    Member Login
+                    Login
                   </Link>
                 </motion.div>
               </div>

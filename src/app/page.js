@@ -84,7 +84,6 @@ export default function Home() {
 
     getPublicArticles().then((res) => {
       if (res.success) {
-        // Transform the DB articles to match the UI format
         const formatted = res.data.map((art, index) => ({
           id: art.id,
           title: art.title,
@@ -94,7 +93,7 @@ export default function Home() {
           readTime: "5 min read",
           desc: art.excerpt || "Baca selengkapnya untuk mengetahui detail lebih lanjut mengenai artikel ini.",
           image: art.thumbnailUrl || "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=1200&auto=format&fit=crop",
-          featured: index === 0, // Make the first one featured
+          featured: index === 0,
           slug: art.slug
         }));
         setPublicArticlesList(formatted.length > 0 ? formatted : ARTICLES);
