@@ -41,7 +41,9 @@ sre-upnjatim/
 ├── src/
 │   ├── app/                   # Next.js App Router
 │   │   ├── (dashboard)/       # Route group untuk Dashboard Internal (dilindungi middleware)
+│   │   │   ├── achievements/  # Modul Prestasi & Sertifikat
 │   │   │   ├── activities/    # Modul Programs & Activities
+│   │   │   ├── appraisals/    # Modul Penilaian Pengurus (Appraisals)
 │   │   │   ├── articles/      # Modul CMS Publikasi Artikel
 │   │   │   ├── attendance/    # Modul Presensi/Absensi
 │   │   │   ├── dashboard/     # Halaman utama (Overview) dashboard
@@ -49,10 +51,15 @@ sre-upnjatim/
 │   │   │   ├── documents/     # Modul Bank Data & Dokumen
 │   │   │   ├── finance/       # Modul Buku Kas Digital (Pemasukan & Pengeluaran)
 │   │   │   ├── inventory/     # Modul Manajemen Inventaris
+│   │   │   ├── leaderboard/   # Modul Papan Peringkat Poin Aktif
+│   │   │   ├── logs/          # Modul Sistem Log (Catatan Aktivitas)
 │   │   │   ├── merch/         # Modul Toko SRE (Merchandise)
 │   │   │   ├── partners/      # Modul Kelola Partners (Our Partners)
-│   │   │   ├── settings/      # Pengaturan Profil & Password Pengguna
-│   │   │   ├── users/         # Manajemen Pengurus/Anggota (Super Admin)
+│   │   │   ├── projects/      # Modul Kelola Proyek Kerja
+│   │   │   ├── roles/         # Modul Peran & Hak Akses
+│   │   │   ├── settings/      # Pengaturan Profil, Password & Sistem
+│   │   │   ├── tasks/         # Modul Tugas & Kanban Board
+│   │   │   ├── users/         # Manajemen Pengurus/Anggota
 │   │   │   └── layout.js      # Layout global dashboard (Sidebar & Header)
 │   │   │
 │   │   ├── api/               # API Routes (Backend)
@@ -61,12 +68,30 @@ sre-upnjatim/
 │   │   │   └── ...            # Endpoint REST API untuk masing-masing modul
 │   │   │
 │   │   ├── about/             # Landing page: About Us (Visi, Misi, Tim)
-│   │   ├── articles/          # Landing page: Publikasi Artikel
+│   │   ├── actions/           # Server Actions (Fungsi backend Next.js)
+│   │   ├── activity/          # Landing page: Daftar & Detail Kegiatan
+│   │   ├── article/           # Landing page: Daftar & Detail Artikel Publikasi
+│   │   ├── login/             # Halaman Autentikasi/Login
+│   │   ├── merchandise/       # Landing page: Katalog Toko Merch
+│   │   ├── status/            # Halaman publik untuk melacak status registrasi/sertifikat
+│   │   ├── error.js           # Penanganan error global (Global Error Boundary)
+│   │   ├── not-found.js       # Halaman 404 Kustom (Not Found)
+│   │   ├── globals.css        # Styling utama (Tailwind directives)
 │   │   ├── page.js            # Landing page: Beranda (Home)
 │   │   └── layout.js          # Root layout (Provider & Navbar publik)
+│   ├── components/            # Komponen React yang digunakan berulang (Reusable)
+│   │   ├── Footer.js          # Komponen Footer untuk public landing page
+│   │   ├── Header.js          # Komponen Header/Navbar untuk public landing page
+│   │   ├── NavigationWrapper.js # Komponen kondisional (menyembunyikan header di dashboard)
+│   │   ├── Providers.js       # Global state providers (Next-Auth, Theme, dll)
+│   │   └── ThemeToggle.js     # Tombol toggle Dark/Light Mode
+│   │
+│   ├── i18n/                  # Folder Dictionary (Kamus Translasi)
+│   │   ├── id.json            # Teks Bahasa Indonesia
+│   │   ├── en.json            # Teks English
+│   │   └── LanguageProvider.js # State manager untuk pergantian bahasa (Context API)
 │   │
 │   ├── db/                    # Konfigurasi Database (Drizzle ORM)
-│   │   ├── index.js           # Koneksi ke MySQL
 │   │   └── schema.js          # Definisi skema tabel database
 │   │
 │   ├── lib/                   # Utilitas & Helper
@@ -76,7 +101,6 @@ sre-upnjatim/
 │   │
 │   └── middleware.js          # Konfigurasi NextAuth middleware untuk membatasi akses (dashboard vs public)
 │
-├── alter_db.js                # SCRIPT WAJIB untuk modifikasi skema database (DDL)
 ├── package.json               # Dependensi proyek
 └── tailwind.config.js         # Konfigurasi Tailwind & tema warna
 ```
