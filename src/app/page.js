@@ -633,29 +633,29 @@ export default function Home() {
         </section>
 
         {/* 7. [Partners] Section */}
-        <section
-          id="partners"
-          className="bg-canvas pb-32 px-6 relative overflow-hidden"
-        >
-          <div className="w-full max-w-7xl mx-auto flex flex-col items-center justify-center text-center">
-            <motion.div {...fadeInUp} className="mb-12">
-              <span className="text-[14px] font-semibold tracking-wider text-primary uppercase mb-3 block">
-                Collaboration & Synergy
-              </span>
-              <h2 className="text-[36px] font-display font-black tracking-tight text-ink uppercase">
-                Our Partners
-              </h2>
-              <p className="text-[15px] text-ink-muted-80 mt-4 max-w-lg mx-auto">
-                Organizations, institutions, and communities we work with to accelerate the sustainable transition.
-              </p>
-            </motion.div>
-            
-            <motion.div 
-              {...fadeInUp}
-              className="flex flex-wrap justify-center items-center gap-6 md:gap-12 opacity-80 mt-8"
-            >
-              {partnersList.length > 0 ? (
-                partnersList.map((partner) => {
+        {partnersList.length > 0 && (
+          <section
+            id="partners"
+            className="bg-canvas pb-32 px-6 relative overflow-hidden"
+          >
+            <div className="w-full max-w-7xl mx-auto flex flex-col items-center justify-center text-center">
+              <motion.div {...fadeInUp} className="mb-12">
+                <span className="text-[14px] font-semibold tracking-wider text-primary uppercase mb-3 block">
+                  Collaboration & Synergy
+                </span>
+                <h2 className="text-[36px] font-display font-black tracking-tight text-ink uppercase">
+                  Our Partners
+                </h2>
+                <p className="text-[15px] text-ink-muted-80 mt-4 max-w-lg mx-auto">
+                  Organizations, institutions, and communities we work with to accelerate the sustainable transition.
+                </p>
+              </motion.div>
+              
+              <motion.div 
+                {...fadeInUp}
+                className="flex flex-wrap justify-center items-center gap-6 md:gap-12 opacity-80 mt-8"
+              >
+                {partnersList.map((partner) => {
                   let sizeClasses = "w-40 h-20 md:w-48 md:h-24"; // MEDIUM
                   if (partner.size === "LARGE") sizeClasses = "w-56 h-28 md:w-72 md:h-36";
                   if (partner.size === "SMALL") sizeClasses = "w-32 h-16 md:w-36 md:h-16";
@@ -670,13 +670,11 @@ export default function Home() {
                       />
                     </div>
                   );
-                })
-              ) : (
-                <div className="text-ink-muted-48 text-[14px]">No partners added yet.</div>
-              )}
-            </motion.div>
-          </div>
-        </section>
+                })}
+              </motion.div>
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );
