@@ -192,4 +192,25 @@ Setelah berhasil dijalankan, Anda bisa masuk menggunakan:
 
 ---
 
+## 5. Fitur Tambahan & Panduan Khusus
+
+### Dukungan Multibahasa (i18n)
+Sistem dilengkapi fitur dwibahasa (Bahasa Indonesia & English).
+- Translasi disimpan di `src/i18n/id.json` dan `en.json`.
+- Pengguna (Super Admin) dapat mengganti bahasa bawaan (*default*) sistem melalui **Settings > System (Super Admin)**. 
+- Komponen menggunakan *hook* `useLanguage()` dan fungsi `t('key')` untuk menampilkan teks terjemahan yang menyesuaikan secara langsung (*real-time*).
+
+### Fleksibilitas Tautan Bukti (File & Link)
+Pada modul-modul pelaporan (seperti *Finance*, *Attendance*, *Achievements*, dan *Documents*), sistem memperbolehkan dua tipe pengumpulan bukti:
+1. **Upload File Langsung** (Sistem akan otomatis melemparnya ke `/api/upload` dan merapikan foldernya).
+2. **Tautan Eksternal (URL)** (Misalnya: Link Google Drive, Sertifikat Digital, Trello).
+
+Jika pengguna memilih kondisi tertentu (seperti Izin/Sakit pada *Attendance*), sistem akan otomatis melakukan validasi untuk memastikan salah satu dari tipe bukti ini terisi.
+
+### Optimalisasi *Connection Pool* di Development
+Sistem sudah menerapkan *singleton caching* pada objek koneksi Drizzle di `src/lib/db.js`. 
+Saat Anda menjalankan `npm run dev`, fitur *hot-reload* dari Next.js tidak akan membanjiri (*exhaust*) koneksi server database Anda, sehingga mencegah error `ER_CON_COUNT_ERROR` yang umum terjadi saat pengembangan.
+
+---
+
 *Panduan ini dirancang untuk memastikan kesinambungan arsitektur, gaya kode, dan keamanan basis data untuk generasi developer SRE UPNVJT selanjutnya. Selamat berkarya!*

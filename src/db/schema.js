@@ -43,15 +43,16 @@ export const user = mysqlTable('User', {
   password: varchar('password', { length: 255 }).notNull(),
   npm: varchar('npm', { length: 255 }).unique(),
   positionName: varchar('positionName', { length: 255 }),
-  profilePictureUrl: varchar('profilePictureUrl', { length: 500 }),
-  instagramUrl: varchar('instagramUrl', { length: 500 }),
-  linkedinUrl: varchar('linkedinUrl', { length: 500 }),
   isActive: boolean('isActive').default(true).notNull(),
   roleId: int('roleId').references(() => role.id).notNull(),
   departmentId: int('departmentId').references(() => department.id),
   divisionId: int('divisionId').references(() => division.id),
   createdAt: datetime('createdAt').$defaultFn(() => new Date()).notNull(),
   updatedAt: datetime('updatedAt').$defaultFn(() => new Date()).notNull(),
+  profilePictureUrl: varchar('profilePictureUrl', { length: 500 }),
+  instagramUrl: varchar('instagramUrl', { length: 500 }),
+  linkedinUrl: varchar('linkedinUrl', { length: 500 }),
+  totalPoints: int('totalPoints').default(0).notNull(),
 });
 
 // ==========================================
@@ -249,6 +250,40 @@ export const partner = mysqlTable('Partner', {
   updatedAt: datetime('updatedAt').$defaultFn(() => new Date()).notNull(),
 });
 
+// ==========================================
+// 15. LEADERBOARD, APPRAISAL & ACHIEVEMENT
+// ==========================================
+export const userPointHistory = mysqlTable('UserPointHistory', {
+  id: int('id').autoincrement().primaryKey(),
+  userId: int('userId').references(() => user.id).notNull(),
+  source: mysqlEnum('source', ['ACHIEVEMENT', 'APPRAISAL']).notNull(),
+  points: int('points').notNull(),
+  description: text('description').notNull(),
+  createdAt: datetime('createdAt').$defaultFn(() => new Date()).notNull(),
+});
+
+export const achievement = mysqlTable('Achievement', {
+  id: int('id').autoincrement().primaryKey(),
+  userId: int('userId').references(() => user.id).notNull(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description').notNull(),
+  pointsAwarded: int('pointsAwarded').default(0).notNull(),
+  proofUrl: varchar('proofUrl', { length: 1000 }),
+  status: mysqlEnum('status', APPROVAL_STATUSES).default('PENDING').notNull(),
+  createdAt: datetime('createdAt').$defaultFn(() => new Date()).notNull(),
+  updatedAt: datetime('updatedAt').$defaultFn(() => new Date()).notNull(),
+});
+
+export const appraisal = mysqlTable('Appraisal', {
+  id: int('id').autoincrement().primaryKey(),
+  evaluatorId: int('evaluatorId').references(() => user.id).notNull(),
+  evaluateeId: int('evaluateeId').references(() => user.id).notNull(),
+  score: int('score').notNull(),
+  feedback: text('feedback'),
+  period: varchar('period', { length: 255 }),
+  createdAt: datetime('createdAt').$defaultFn(() => new Date()).notNull(),
+});
+
 
 // ==========================================
 // RELATIONS
@@ -286,6 +321,10 @@ export const userRelations = relations(user, ({ one, many }) => ({
   createdSessions: many(attendanceSession),
   createdTasks: many(task),
   notifications: many(notification),
+  pointHistories: many(userPointHistory),
+  achievements: many(achievement),
+  appraisalsGiven: many(appraisal, { relationName: 'EvaluatorAppraisals' }),
+  appraisalsReceived: many(appraisal, { relationName: 'EvaluateeAppraisals' }),
 }));
 
 export const projectRelations = relations(project, ({ one, many }) => ({
@@ -348,3 +387,26 @@ export const _TaskRolesRelations = relations(_TaskRoles, ({ one }) => ({
 export const notificationRelations = relations(notification, ({ one }) => ({
   user: one(user, { fields: [notification.userId], references: [user.id] }),
 }));
+
+export const userPointHistoryRelations = relations(userPointHistory, ({ one }) => ({
+  user: one(user, { fields: [userPointHistory.userId], references: [user.id] }),
+}));
+
+export const achievementRelations = relations(achievement, ({ one }) => ({
+  user: one(user, { fields: [achievement.userId], references: [user.id] }),
+}));
+
+export const appraisalRelations = relations(appraisal, ({ one }) => ({
+  evaluator: one(user, { fields: [appraisal.evaluatorId], references: [user.id], relationName: 'EvaluatorAppraisals' }),
+  evaluatee: one(user, { fields: [appraisal.evaluateeId], references: [user.id], relationName: 'EvaluateeAppraisals' }),
+}));
+
+// ==========================================
+// 16. SYSTEM SETTINGS (GLOBAL CONFIG)
+// ==========================================
+export const systemSetting = mysqlTable('SystemSetting', {
+  id: int('id').autoincrement().primaryKey(),
+  keyName: varchar('keyName', { length: 255 }).unique().notNull(),
+  valueData: text('valueData').notNull(),
+  updatedAt: datetime('updatedAt').$defaultFn(() => new Date()).notNull(),
+});

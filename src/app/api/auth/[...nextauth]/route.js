@@ -18,30 +18,14 @@ export const authOptions = {
           throw new Error("Missing email or password");
         }
 
-        const results = await db
-          .select({
-            user: user,
-            role: role,
-            department: department,
-            division: division
-          })
-          .from(user)
-          .leftJoin(role, eq(user.roleId, role.id))
-          .leftJoin(department, eq(user.departmentId, department.id))
-          .leftJoin(division, eq(user.divisionId, division.id))
-          .where(eq(user.email, credentials.email))
-          .limit(1);
-
-        let foundUser = null;
-        if (results.length > 0) {
-          const row = results[0];
-          foundUser = {
-            ...row.user,
-            role: row.role,
-            department: row.department,
-            division: row.division
-          };
-        }
+        const foundUser = await db.query.user.findFirst({
+          where: eq(user.email, credentials.email),
+          with: {
+            role: true,
+            department: true,
+            division: true
+          }
+        });
 
         if (!foundUser) {
           throw new Error("No user found with this email");

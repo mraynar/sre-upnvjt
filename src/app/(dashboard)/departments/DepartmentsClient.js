@@ -11,9 +11,11 @@ import {
 } from "@/app/actions/departmentActions";
 import { useSession } from "next-auth/react";
 import { hasAccess } from "@/lib/permissions";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 export default function DepartmentsClient({ initialDepartments }) {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const [departments, setDepartments] = useState(initialDepartments);
   const [expandedDept, setExpandedDept] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -84,31 +86,31 @@ export default function DepartmentsClient({ initialDepartments }) {
   };
 
   const handleDeleteDept = async (id) => {
-    if (!confirm("Are you sure you want to delete this department? All associated divisions will also be deleted.")) return;
+    if (!confirm(t("departments.delete_dept_confirm"))) return;
     const res = await deleteDepartment(id);
     if (res.success) refreshData();
-    else alert("Failed to delete department: " + res.error);
+    else alert(t("departments.fail_delete_dept") + res.error);
   };
 
   const handleDeleteDiv = async (id) => {
-    if (!confirm("Are you sure you want to delete this division?")) return;
+    if (!confirm(t("departments.delete_div_confirm"))) return;
     const res = await deleteDivision(id);
     if (res.success) refreshData();
-    else alert("Failed to delete division: " + res.error);
+    else alert(t("departments.fail_delete_div") + res.error);
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto relative">
+    <div className="w-full relative">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-gray-900 dark:text-white">
             <FolderTree className="w-8 h-8 text-primary" />
-            Departments & Divisions
+            {t("departments.title")}
           </h1>
           <p className="text-gray-500 dark:text-white/50 max-w-xl">
-            Manage the organizational structure of SRE UPNVJT.
+            {t("departments.subtitle")}
           </p>
         </div>
         {canCreate && (
@@ -117,7 +119,7 @@ export default function DepartmentsClient({ initialDepartments }) {
             className="flex items-center gap-2 bg-primary text-[#050e0a] px-6 py-3 rounded-xl font-bold tracking-wide hover:bg-primary-focus hover:scale-105 transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
           >
             <Plus className="w-5 h-5" />
-            Add Department
+            {t("departments.add_dept")}
           </button>
         )}
       </div>
@@ -127,8 +129,8 @@ export default function DepartmentsClient({ initialDepartments }) {
         {departments.length === 0 ? (
           <div className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 shadow-sm rounded-3xl p-12 text-center flex flex-col items-center justify-center backdrop-blur-md">
             <FolderTree className="w-16 h-16 text-gray-500 dark:text-white/10 mb-4" />
-            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">No Departments Found</h3>
-            <p className="text-gray-500 dark:text-white/40">Start by adding a new department to build your organizational structure.</p>
+            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">{t("departments.no_depts")}</h3>
+            <p className="text-gray-500 dark:text-white/40">{t("departments.no_depts_desc")}</p>
           </div>
         ) : (
           departments.map((dept) => (
@@ -150,9 +152,9 @@ export default function DepartmentsClient({ initialDepartments }) {
                   <div>
                     <h2 className="text-2xl font-display font-black text-gray-900 dark:text-white tracking-tight">{dept.name}</h2>
                     <div className="flex items-center gap-3 mt-3 text-xs text-gray-500 dark:text-white/40 font-medium">
-                      <span className="flex items-center gap-1.5"><Users className="w-4 h-4" /> {dept._count?.users || 0} Members</span>
+                      <span className="flex items-center gap-1.5"><Users className="w-4 h-4" /> {t("departments.members_count").replace("{count}", dept._count?.users || 0)}</span>
                       <span className="w-1.5 h-1.5 rounded-full bg-white dark:bg-white/20 shadow-sm dark:shadow-none"></span>
-                      <span>{dept.divisions?.length || 0} Divisions</span>
+                      <span>{t("departments.divisions_count").replace("{count}", dept.divisions?.length || 0)}</span>
                     </div>
                   </div>
                 </div>
@@ -162,7 +164,7 @@ export default function DepartmentsClient({ initialDepartments }) {
                     <button 
                       onClick={() => setDeptModal({ isOpen: true, isEdit: true, data: dept })}
                       className="p-2.5 rounded-xl bg-white dark:bg-white/5 shadow-sm dark:shadow-none text-gray-500 dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/10 hover:text-gray-900 dark:text-white transition-colors border border-gray-200 dark:border-white/5"
-                      title="Edit Department"
+                      title={t("departments.edit_dept")}
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
@@ -171,7 +173,7 @@ export default function DepartmentsClient({ initialDepartments }) {
                     <button 
                       onClick={() => handleDeleteDept(dept.id)}
                       className="p-2.5 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors border border-red-500/10"
-                      title="Delete Department"
+                      title={t("departments.delete_dept")}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -190,13 +192,13 @@ export default function DepartmentsClient({ initialDepartments }) {
                   >
                     <div className="p-6 md:p-8">
                       <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Divisions</h3>
+                        <h3 className="text-sm font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">{t("departments.divisions")}</h3>
                         {canUpdate && (
                           <button 
                             onClick={() => setDivModal({ isOpen: true, isEdit: false, data: null, deptId: dept.id })}
                             className="text-xs font-bold uppercase tracking-widest text-primary hover:text-primary-focus flex items-center gap-1.5"
                           >
-                            <Plus className="w-4 h-4" /> Add Division
+                            <Plus className="w-4 h-4" /> {t("departments.add_div")}
                           </button>
                         )}
                       </div>
@@ -204,7 +206,7 @@ export default function DepartmentsClient({ initialDepartments }) {
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {dept.divisions.length === 0 ? (
                           <div className="col-span-full py-8 text-center border border-dashed border-gray-200 dark:border-white/10 rounded-2xl">
-                            <p className="text-gray-500 dark:text-white/30 text-sm">No divisions assigned to this department yet.</p>
+                            <p className="text-gray-500 dark:text-white/30 text-sm">{t("departments.no_divs")}</p>
                           </div>
                         ) : (
                           dept.divisions.map((div) => (
@@ -260,31 +262,31 @@ export default function DepartmentsClient({ initialDepartments }) {
               </button>
               
               <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-6">
-                {deptModal.isEdit ? "Edit Department" : "Add Department"}
+                {deptModal.isEdit ? t("departments.edit_dept") : t("departments.add_dept")}
               </h2>
               
               {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm">{error}</div>}
               
               <form onSubmit={handleDeptSubmit} className="flex flex-col gap-5">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Department Name</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("departments.dept_name")}</label>
                   <input 
                     name="name" type="text" required defaultValue={deptModal.data?.name}
                     className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
-                    placeholder="e.g. Badan Pengurus Harian"
+                    placeholder={t("departments.placeholder_dept")}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Department Code</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("departments.dept_code")}</label>
                   <input 
                     name="code" type="text" required defaultValue={deptModal.data?.code}
                     className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors uppercase"
-                    placeholder="e.g. BPH"
+                    placeholder={t("departments.placeholder_code")}
                   />
                 </div>
                 <div className="pt-2">
                   <button type="submit" disabled={loading} className="w-full bg-primary text-[#050e0a] font-bold py-3.5 rounded-xl hover:bg-primary-focus hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all disabled:opacity-50">
-                    {loading ? "Saving..." : "Save Department"}
+                    {loading ? t("departments.saving") : t("departments.save_dept")}
                   </button>
                 </div>
               </form>
@@ -311,23 +313,23 @@ export default function DepartmentsClient({ initialDepartments }) {
               </button>
               
               <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-6">
-                {divModal.isEdit ? "Edit Division" : "Add Division"}
+                {divModal.isEdit ? t("departments.edit_div") : t("departments.add_div")}
               </h2>
               
               {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm">{error}</div>}
               
               <form onSubmit={handleDivSubmit} className="flex flex-col gap-5">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Division Name</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("departments.div_name")}</label>
                   <input 
                     name="name" type="text" required defaultValue={divModal.data?.name}
                     className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
-                    placeholder="e.g. Media & Information"
+                    placeholder={t("departments.placeholder_div")}
                   />
                 </div>
                 <div className="pt-2">
                   <button type="submit" disabled={loading} className="w-full bg-primary text-[#050e0a] font-bold py-3.5 rounded-xl hover:bg-primary-focus hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all disabled:opacity-50">
-                    {loading ? "Saving..." : "Save Division"}
+                    {loading ? t("departments.saving") : t("departments.save_div")}
                   </button>
                 </div>
               </form>

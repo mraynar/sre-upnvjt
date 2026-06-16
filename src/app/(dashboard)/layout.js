@@ -7,13 +7,15 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   LayoutDashboard, Users, FileText, CheckSquare, Shield,
-  Settings, LogOut, Menu, X, CreditCard, Box, ChevronLeft, ChevronRight, FolderKanban, ClipboardCheck, FolderOpen, Newspaper, Presentation, ShoppingBag, Handshake, Activity
+  Settings, LogOut, Menu, X, CreditCard, Box, ChevronLeft, ChevronRight, FolderKanban, ClipboardCheck, FolderOpen, Newspaper, Presentation, ShoppingBag, Handshake, Activity, Trophy, Star, Target, ShieldCheck
 } from "lucide-react";
 
 import { hasAccess } from "@/lib/permissions";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 export default function DashboardLayout({ children }) {
+  const { t } = useLanguage();
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -36,34 +38,39 @@ export default function DashboardLayout({ children }) {
   const role = session?.user?.roleName;
 
   const navItems = [
-    { name: "Overview", icon: LayoutDashboard, href: "/dashboard", module: "overview" },
-    { name: "Tasks", icon: CheckSquare, href: "/tasks", module: "tasks" },
+    { name: t("sidebar.overview"), icon: LayoutDashboard, href: "/dashboard", module: "overview" },
+    { name: t("sidebar.tasks"), icon: CheckSquare, href: "/tasks", module: "tasks" },
     
     // Organization & Team
-    { name: "Projects", icon: FolderKanban, href: "/projects", module: "projects" },
-    { name: "Attendance", icon: ClipboardCheck, href: "/attendance", module: "attendance" },
-    { name: "Departments", icon: FileText, href: "/departments", module: "departments" },
-    { name: "Users", icon: Users, href: "/users", module: "users" },
-    { name: "Roles & Access", icon: Shield, href: "/roles", module: "roles" },
+    { name: t("sidebar.leaderboard"), icon: Trophy, href: "/leaderboard", module: "overview" },
+    { name: t("sidebar.appraisals"), icon: Star, href: "/appraisals", module: "overview" },
+    { name: t("sidebar.achievements"), icon: Target, href: "/achievements", module: "overview" },
+    { name: t("sidebar.verify_prestasi"), icon: ShieldCheck, href: "/achievements/verify", module: "verify" },
+    { name: t("sidebar.projects"), icon: FolderKanban, href: "/projects", module: "projects" },
+    { name: t("sidebar.attendance"), icon: ClipboardCheck, href: "/attendance", module: "attendance" },
+    { name: t("sidebar.departments"), icon: FileText, href: "/departments", module: "departments" },
+    { name: t("sidebar.users"), icon: Users, href: "/users", module: "users" },
+    { name: t("sidebar.roles"), icon: Shield, href: "/roles", module: "roles" },
     
     // Operations & Resources
-    { name: "Finances", icon: CreditCard, href: "/finance", module: "finance" },
-    { name: "Inventory", icon: Box, href: "/inventory", module: "inventory" },
-    { name: "Documents", icon: FolderOpen, href: "/documents", module: "documents" },
+    { name: t("sidebar.finances"), icon: CreditCard, href: "/finance", module: "finance" },
+    { name: t("sidebar.inventory"), icon: Box, href: "/inventory", module: "inventory" },
+    { name: t("sidebar.documents"), icon: FolderOpen, href: "/documents", module: "documents" },
     
     // Public & Media
-    { name: "Articles", icon: Newspaper, href: "/articles", module: "articles" },
-    { name: "Activities", icon: Presentation, href: "/activities", module: "activities" },
-    { name: "Merchandise", icon: ShoppingBag, href: "/merch", module: "merchandise" },
-    { name: "Partners", icon: Handshake, href: "/partners", module: "partners" },
+    { name: t("sidebar.articles"), icon: Newspaper, href: "/articles", module: "articles" },
+    { name: t("sidebar.activities"), icon: Activity, href: "/activities", module: "activities" },
+    { name: t("sidebar.merch"), icon: ShoppingBag, href: "/merch", module: "merchandise" },
+    { name: t("sidebar.partners"), icon: Handshake, href: "/partners", module: "partners" },
     
     // System
-    { name: "System Logs", icon: Activity, href: "/logs", module: "logs" },
-    { name: "Settings", icon: Settings, href: "/settings", module: "settings" },
+    { name: t("sidebar.logs"), icon: Activity, href: "/logs", module: "logs" },
+    { name: t("sidebar.settings"), icon: Settings, href: "/settings", module: "settings" },
   ];
 
   const allowedNavItems = navItems.filter(item => {
     if (item.module === "overview" || item.module === "settings" || item.module === "tasks") return true;
+    if (item.module === "verify") return ["SUPER_ADMIN", "PRESIDENT", "DIRECTOR"].includes(role);
     if (item.module === "logs" && (role === "SUPER_ADMIN" || role === "ADMIN")) return true;
     if (item.module === "partners") return role === "SUPER_ADMIN";
     return hasAccess(session?.user, item.module, "read");
@@ -116,7 +123,7 @@ export default function DashboardLayout({ children }) {
         {!isSidebarCollapsed && <div className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 dark:text-white/30 mb-4 pl-2 shrink-0">Menu</div>}
         {allowedNavItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+          const isActive = pathname === item.href || (pathname.startsWith(item.href + '/') && item.href !== '/achievements');
           return (
             <Link 
               key={item.name} 
@@ -153,7 +160,7 @@ export default function DashboardLayout({ children }) {
         <button 
           onClick={() => signOut({ callbackUrl: '/login' })}
           className={`flex items-center gap-4 py-3.5 rounded-xl text-[14px] font-medium text-red-500/80 dark:text-red-400/80 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all duration-300 group ${isSidebarCollapsed ? 'w-12 h-12 justify-center px-0 mx-auto' : 'w-full px-4'}`}
-          title={isSidebarCollapsed ? "Logout Account" : undefined}
+          title={isSidebarCollapsed ? t("sidebar.logout") : undefined}
         >
           <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform shrink-0" />
           <AnimatePresence>
@@ -164,7 +171,7 @@ export default function DashboardLayout({ children }) {
                 exit={{ opacity: 0, width: 0 }} 
                 className="whitespace-nowrap"
               >
-                Logout Account
+                {t("sidebar.logout")}
               </motion.span>
             )}
           </AnimatePresence>
@@ -215,8 +222,6 @@ export default function DashboardLayout({ children }) {
               <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-primary/10 to-transparent pointer-events-none" />
               <div className="absolute -left-20 top-20 w-40 h-40 bg-primary/20 blur-[100px] pointer-events-none" />
 
-              {/* Header space is managed by top padding. Brand is removed because it's always visible in the sticky header. */}
-
               {/* User Info Card */}
               <div className="mb-10 p-5 rounded-2xl bg-gradient-to-br from-gray-100 to-white dark:from-white/10 dark:to-white/5 border border-gray-200 dark:border-white/10 relative z-10 shrink-0">
                 <div className="text-[15px] font-bold text-gray-900 dark:text-white mb-1 tracking-wide">{session?.user?.name}</div>
@@ -233,7 +238,7 @@ export default function DashboardLayout({ children }) {
                 <div className="text-[10px] uppercase font-bold tracking-[0.2em] text-gray-400 dark:text-white/30 mb-4 pl-2 shrink-0">Menu</div>
                 {allowedNavItems.map((item) => {
                   const Icon = item.icon;
-                  const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+                  const isActive = pathname === item.href || (pathname.startsWith(item.href + '/') && item.href !== '/achievements');
                   return (
                     <Link 
                       key={item.name} 
@@ -254,13 +259,16 @@ export default function DashboardLayout({ children }) {
                   <span className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-white/30">Theme</span>
                   <ThemeToggle />
                 </div>
-                <button 
-                  onClick={() => signOut({ callbackUrl: '/login' })}
-                  className="w-full flex items-center gap-4 py-3.5 px-4 rounded-xl text-[14px] font-medium text-red-500/80 dark:text-red-400/80 hover:bg-red-50 dark:hover:bg-red-500/10"
-                >
-                  <LogOut className="w-5 h-5 shrink-0" />
-                  <span>Logout Account</span>
-                </button>
+                {/* Logout */}
+                <div className="p-4 border-t border-gray-100 dark:border-white/5">
+                  <button 
+                    onClick={() => signOut({ callbackUrl: '/login' })}
+                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 font-bold transition-all text-sm"
+                  >
+                    <LogOut className="w-5 h-5 shrink-0" />
+                    {!isSidebarCollapsed && t("sidebar.logout")}
+                  </button>
+                </div>
               </div>
             </div>
           </motion.aside>

@@ -8,7 +8,7 @@ import { getDashboardStats } from "@/app/actions/dashboardActions";
 
 export const dynamic = "force-dynamic";
 
-import { user } from "@/db/schema";
+import { user, role } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const metadata = {
@@ -22,12 +22,24 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const currentUser = await db.query.user.findFirst({
-    where: eq(user.email, session.user.email),
-    with: { role: true, department: true }
-  });
+  const usersResult = await db.select({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    departmentId: user.departmentId,
+    roleName: role.name
+  })
+  .from(user)
+  .leftJoin(role, eq(user.roleId, role.id))
+  .where(eq(user.email, session.user.email))
+  .limit(1);
 
-  if (!currentUser) redirect("/login");
+  if (!usersResult || usersResult.length === 0) redirect("/login");
+
+  const currentUser = {
+    ...usersResult[0],
+    role: { name: usersResult[0].roleName }
+  };
 
   const roleName = currentUser.role?.name || "";
   const departmentId = currentUser.departmentId;

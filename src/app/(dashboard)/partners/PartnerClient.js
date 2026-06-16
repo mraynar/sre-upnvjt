@@ -8,6 +8,7 @@ import {
   Plus, Edit2, Trash2, X, Search, CheckCircle2,
   XCircle, AlertTriangle, Handshake, ImageIcon, UploadCloud
 } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 const EMPTY_PARTNER = {
   name: "",
@@ -17,6 +18,7 @@ const EMPTY_PARTNER = {
 
 export default function PartnerClient({ initialPartners }) {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const router = useRouter();
   const [partners, setPartners] = useState(initialPartners || []);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,7 +32,7 @@ export default function PartnerClient({ initialPartners }) {
   if (session?.user?.roleName !== "SUPER_ADMIN") {
     return (
       <div className="w-full flex items-center justify-center py-32">
-        <div className="text-gray-500 dark:text-white/50">You do not have permission to view this page.</div>
+        <div className="text-gray-500 dark:text-white/50">{t("roles.access_denied")}</div>
       </div>
     );
   }
@@ -165,16 +167,16 @@ export default function PartnerClient({ initialPartners }) {
   );
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto relative">
+    <div className="w-full relative">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-gray-900 dark:text-white">
             <Handshake className="w-8 h-8 text-primary" />
-            Our Partners
+            {t("partners.title")}
           </h1>
           <p className="text-gray-500 dark:text-white/50 max-w-xl">
-            Kelola data partner organisasi, sponsor, dan kolaborator yang ditampilkan di beranda.
+            {t("partners.subtitle")}
           </p>
         </div>
         
@@ -183,7 +185,7 @@ export default function PartnerClient({ initialPartners }) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-white/30" />
             <input 
               type="text"
-              placeholder="Cari partner..."
+              placeholder={t("partners.search")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-colors"
@@ -194,7 +196,7 @@ export default function PartnerClient({ initialPartners }) {
             className="flex items-center gap-2 bg-primary text-[#050e0a] px-6 py-3 rounded-xl font-bold tracking-wide hover:bg-primary-focus hover:scale-105 transition-all shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
           >
             <Plus className="w-5 h-5" />
-            <span className="hidden sm:inline">Tambah Partner</span>
+            <span className="hidden sm:inline">{t("partners.add")}</span>
           </button>
         </div>
       </div>
@@ -221,7 +223,7 @@ export default function PartnerClient({ initialPartners }) {
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 dark:text-white/20">
                         <ImageIcon className="w-10 h-10 mb-2" />
-                        <span className="text-[12px]">No Image</span>
+                        <span className="text-[12px]">{t("partners.no_image")}</span>
                       </div>
                     )}
                   </div>
@@ -258,8 +260,8 @@ export default function PartnerClient({ initialPartners }) {
             ) : (
               <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 rounded-3xl backdrop-blur-md shadow-sm border-dashed">
                 <Handshake className="w-12 h-12 text-gray-500 dark:text-white/20 mb-4" />
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Belum ada partner</h3>
-                <p className="text-gray-500 dark:text-white/40 text-sm">Tambahkan partner baru untuk ditampilkan di landing page.</p>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">{t("partners.no_partners")}</h3>
+                <p className="text-gray-500 dark:text-white/40 text-sm">{t("partners.no_partners_desc")}</p>
               </div>
             )}
           </AnimatePresence>
@@ -284,7 +286,7 @@ export default function PartnerClient({ initialPartners }) {
             >
               <div className="p-6 border-b border-gray-200 dark:border-white/10 flex items-center justify-between shrink-0 bg-gray-50/50 dark:bg-white/[0.02]">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  {isEditing ? "Edit Partner" : "New Partner"}
+                  {isEditing ? t("partners.edit") : t("partners.new")}
                 </h2>
                 <button onClick={handleCloseModal} className="text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white transition-colors">
                   <X className="w-5 h-5" />
@@ -294,19 +296,19 @@ export default function PartnerClient({ initialPartners }) {
               <div className="p-6 overflow-y-auto flex-1">
                 <form id="partnerForm" onSubmit={handleSavePartner} className="space-y-5">
                   <div>
-                    <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">Partner Name</label>
+                    <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">{t("partners.name")}</label>
                     <input
                       type="text"
                       required
                       value={currentPartner.name}
                       onChange={(e) => setCurrentPartner(prev => ({ ...prev, name: e.target.value }))}
                       className="w-full h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
-                      placeholder="e.g. Pertamina"
+                      placeholder={t("partners.name_ph")}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">Logo Image URL or Upload</label>
+                    <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">{t("partners.logo")}</label>
                     <div className="flex gap-2 mb-3">
                       <input
                         type="text"
@@ -322,7 +324,7 @@ export default function PartnerClient({ initialPartners }) {
                         ) : (
                           <UploadCloud className="w-5 h-5 text-gray-500 dark:text-white/70" />
                         )}
-                        <span className="text-[14px] font-semibold text-gray-500 dark:text-white/70 hidden sm:block">Upload</span>
+                        <span className="text-[14px] font-semibold text-gray-500 dark:text-white/70 hidden sm:block">{t("partners.upload")}</span>
                         <input 
                           type="file" 
                           accept="image/*" 
@@ -339,15 +341,15 @@ export default function PartnerClient({ initialPartners }) {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">Display Size</label>
+                    <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">{t("partners.size")}</label>
                     <select
                       value={currentPartner.size}
                       onChange={(e) => setCurrentPartner(prev => ({ ...prev, size: e.target.value }))}
                       className="w-full h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-all appearance-none"
                     >
-                      <option value="LARGE" className="bg-[#0a1612] text-gray-900 dark:text-white">LARGE (Main Sponsors / H1)</option>
-                      <option value="MEDIUM" className="bg-[#0a1612] text-gray-900 dark:text-white">MEDIUM (Co-Sponsors / Standard)</option>
-                      <option value="SMALL" className="bg-[#0a1612] text-gray-900 dark:text-white">SMALL (Media Partners / Minor)</option>
+                      <option value="LARGE" className="bg-[#0a1612] text-gray-900 dark:text-white">{t("partners.large")}</option>
+                      <option value="MEDIUM" className="bg-[#0a1612] text-gray-900 dark:text-white">{t("partners.medium")}</option>
+                      <option value="SMALL" className="bg-[#0a1612] text-gray-900 dark:text-white">{t("partners.small")}</option>
                     </select>
                   </div>
                 </form>
@@ -359,7 +361,7 @@ export default function PartnerClient({ initialPartners }) {
                   onClick={handleCloseModal}
                   className="px-6 py-2.5 rounded-xl font-semibold text-gray-500 dark:text-white/70 hover:text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/10 transition-all"
                 >
-                  Cancel
+                  {t("partners.cancel")}
                 </button>
                 <button
                   type="submit"
@@ -370,7 +372,7 @@ export default function PartnerClient({ initialPartners }) {
                   {isLoading ? (
                     <div className="w-5 h-5 border-2 border-[#050e0a]/30 border-t-[#050e0a] rounded-full animate-spin" />
                   ) : (
-                    "Save Partner"
+                    t("partners.save")
                   )}
                 </button>
               </div>
@@ -399,16 +401,16 @@ export default function PartnerClient({ initialPartners }) {
               <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4 border border-red-500/20">
                 <AlertTriangle className="w-8 h-8 text-red-500" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Delete Partner</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t("partners.delete_title")}</h2>
               <p className="text-gray-500 dark:text-white/50 mb-8">
-                Are you sure you want to remove <strong className="text-gray-900 dark:text-white">{currentPartner.name}</strong> from partners list? This action cannot be undone.
+                {t("partners.delete_desc1")}<strong className="text-gray-900 dark:text-white">{currentPartner.name}</strong>{t("partners.delete_desc2")}
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={handleCloseDeleteModal}
                   className="flex-1 px-4 py-3 rounded-xl font-semibold text-gray-500 dark:text-white/70 hover:text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 transition-all"
                 >
-                  Cancel
+                  {t("partners.cancel")}
                 </button>
                 <button
                   onClick={handleDeletePartner}
@@ -418,7 +420,7 @@ export default function PartnerClient({ initialPartners }) {
                   {isLoading ? (
                     <div className="w-5 h-5 border-2 border-gray-200 dark:border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
-                    "Delete"
+                    t("partners.delete_btn")
                   )}
                 </button>
               </div>

@@ -6,12 +6,14 @@ import {
   Newspaper, Plus, Edit2, Trash2, X, Search, Image as ImageIcon, Calendar, Eye, EyeOff, UploadCloud
 } from "lucide-react";
 import { createArticle, updateArticle, deleteArticle } from "@/app/actions/articleActions";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 const generateSlug = (title) => {
   return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 };
 
 export default function ArticlesClient({ initialArticles, currentUser }) {
+  const { t } = useLanguage();
   const [articles, setArticles] = useState(initialArticles);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -49,7 +51,7 @@ export default function ArticlesClient({ initialArticles, currentUser }) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      alert("Please upload an image file");
+      alert(t("articles.fail_upload"));
       return;
     }
     setIsUploading(true);
@@ -101,24 +103,24 @@ export default function ArticlesClient({ initialArticles, currentUser }) {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Hapus artikel ini secara permanen?")) return;
+    if (!confirm(t("articles.delete_confirm"))) return;
     const res = await deleteArticle(id);
     if (res.success) refreshData();
-    else alert("Gagal menghapus: " + res.error);
+    else alert(t("articles.fail_delete") + res.error);
   };
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto relative">
+    <div className="w-full relative">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-gray-900 dark:text-white">
             <Newspaper className="w-8 h-8 text-primary" />
-            CMS Publikasi
+            {t("articles.title")}
           </h1>
           <p className="text-gray-500 dark:text-white/50 max-w-xl">
-            Sistem manajemen konten untuk artikel, berita, dan press release SRE UPNVJT.
+            {t("articles.subtitle")}
           </p>
         </div>
         
@@ -127,7 +129,7 @@ export default function ArticlesClient({ initialArticles, currentUser }) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-white/30" />
             <input 
               type="text"
-              placeholder="Cari artikel..."
+              placeholder={t("articles.search")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-colors"
@@ -138,7 +140,7 @@ export default function ArticlesClient({ initialArticles, currentUser }) {
             className="flex items-center gap-2 bg-primary text-[#050e0a] px-6 py-3 rounded-xl font-bold tracking-wide hover:bg-primary-focus hover:scale-105 transition-all shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
           >
             <Plus className="w-5 h-5" />
-            <span className="hidden sm:inline">Tulis Artikel</span>
+            <span className="hidden sm:inline">{t("articles.write")}</span>
           </button>
         </div>
       </div>
@@ -148,8 +150,8 @@ export default function ArticlesClient({ initialArticles, currentUser }) {
         {filteredArticles.length === 0 ? (
           <div className="col-span-full bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 rounded-3xl p-12 text-center flex flex-col items-center justify-center backdrop-blur-md shadow-sm">
             <Newspaper className="w-16 h-16 text-gray-500 dark:text-white/10 mb-4" />
-            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">Belum Ada Artikel</h3>
-            <p className="text-gray-500 dark:text-white/40">Mulai tulis press release atau berita kegiatan SRE.</p>
+            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">{t("articles.no_articles")}</h3>
+            <p className="text-gray-500 dark:text-white/40">{t("articles.no_articles_desc")}</p>
           </div>
         ) : (
           filteredArticles.map((article) => (
@@ -223,7 +225,7 @@ export default function ArticlesClient({ initialArticles, currentUser }) {
             >
               <div className="p-6 md:p-8 border-b border-gray-200 dark:border-white/10 shrink-0 flex justify-between items-center">
                 <h2 className="text-xl md:text-2xl font-display font-bold text-gray-900 dark:text-white">
-                  {modal.isEdit ? "Edit Artikel" : "Tulis Artikel Baru"}
+                  {modal.isEdit ? t("articles.edit") : t("articles.new")}
                 </h2>
                 <button onClick={() => setModal({ isOpen: false, isEdit: false, data: null })} className="text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white">
                   <X className="w-6 h-6" />
@@ -238,31 +240,31 @@ export default function ArticlesClient({ initialArticles, currentUser }) {
                   {/* Left Col - Editor */}
                   <div className="lg:col-span-2 space-y-5">
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Judul Artikel</label>
-                      <input name="title" type="text" required value={titleInput} onChange={handleTitleChange} placeholder="Judul yang menarik..." className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors text-lg font-bold" />
+                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("articles.title_input")}</label>
+                      <input name="title" type="text" required value={titleInput} onChange={handleTitleChange} placeholder={t("articles.title_ph")} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors text-lg font-bold" />
                     </div>
                     
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Konten / Isi Artikel (HTML / Teks Bebas)</label>
-                      <textarea name="content" required defaultValue={modal.data?.content} placeholder="Tuliskan isi berita atau artikel di sini..." rows="12" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-4 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors resize-none font-mono text-sm leading-relaxed" />
-                      <p className="text-[10px] text-gray-500 dark:text-white/30 mt-2">Mendukung input tag HTML dasar jika diperlukan (seperti &lt;br&gt;, &lt;b&gt;, &lt;a&gt;).</p>
+                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("articles.content")}</label>
+                      <textarea name="content" required defaultValue={modal.data?.content} placeholder={t("articles.content_ph")} rows="12" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-4 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors resize-none font-mono text-sm leading-relaxed" />
+                      <p className="text-[10px] text-gray-500 dark:text-white/30 mt-2">{t("articles.html_desc")}</p>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Kutipan Singkat (Excerpt)</label>
-                      <textarea name="excerpt" rows="2" defaultValue={modal.data?.excerpt} placeholder="Ringkasan 1-2 kalimat untuk ditampilkan di kartu artikel..." className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors resize-none text-sm" />
+                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("articles.excerpt")}</label>
+                      <textarea name="excerpt" rows="2" defaultValue={modal.data?.excerpt} placeholder={t("articles.excerpt_ph")} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors resize-none text-sm" />
                     </div>
                   </div>
 
                   {/* Right Col - Settings */}
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Slug (URL)</label>
+                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("articles.slug")}</label>
                       <input name="slug" type="text" required value={slugInput} onChange={(e) => setSlugInput(e.target.value)} placeholder="judul-artikel-ini" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-500 dark:text-white/70 focus:outline-none focus:border-primary/50 transition-colors font-mono text-xs" />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Tautan Thumbnail (Cover) or Upload</label>
+                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("articles.thumbnail")}</label>
                       <div className="flex gap-2">
                         <input name="thumbnailUrl" type="text" value={thumbnailUrlInput} onChange={(e) => setThumbnailUrlInput(e.target.value)} placeholder="https://..." className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-colors text-sm" />
                         <label className={`flex-shrink-0 px-4 flex items-center justify-center gap-2 rounded-xl border border-gray-200 dark:border-white/10 bg-primary/10 text-primary font-bold shadow-sm dark:shadow-none cursor-pointer hover:bg-primary/20 transition-all ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -271,7 +273,7 @@ export default function ArticlesClient({ initialArticles, currentUser }) {
                           ) : (
                             <>
                               <UploadCloud className="w-5 h-5" />
-                              <span className="hidden sm:inline">Unggah</span>
+                              <span className="hidden sm:inline">{t("articles.upload")}</span>
                             </>
                           )}
                           <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
@@ -285,15 +287,15 @@ export default function ArticlesClient({ initialArticles, currentUser }) {
                     </div>
 
                     <div className="bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl p-4">
-                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-4">Status Publikasi</label>
+                      <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-4">{t("articles.pub_status")}</label>
                       <div className="flex flex-col gap-3">
                         <label className="flex items-center gap-3 cursor-pointer group">
                           <input type="radio" name="isPublished" value="true" defaultChecked={modal.data ? modal.data.isPublished : true} className="w-4 h-4 accent-primary" />
-                          <span className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors flex items-center gap-2"><Eye className="w-4 h-4" /> Publikasi (Live)</span>
+                          <span className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors flex items-center gap-2"><Eye className="w-4 h-4" /> {t("articles.live")}</span>
                         </label>
                         <label className="flex items-center gap-3 cursor-pointer group">
                           <input type="radio" name="isPublished" value="false" defaultChecked={modal.data ? !modal.data.isPublished : false} className="w-4 h-4 accent-primary" />
-                          <span className="text-sm font-medium text-gray-500 dark:text-white/50 group-hover:text-gray-900 dark:text-white transition-colors flex items-center gap-2"><EyeOff className="w-4 h-4" /> Simpan sbg Draft</span>
+                          <span className="text-sm font-medium text-gray-500 dark:text-white/50 group-hover:text-gray-900 dark:text-white transition-colors flex items-center gap-2"><EyeOff className="w-4 h-4" /> {t("articles.draft")}</span>
                         </label>
                       </div>
                     </div>
@@ -304,10 +306,10 @@ export default function ArticlesClient({ initialArticles, currentUser }) {
               {/* Footer */}
               <div className="p-6 border-t border-gray-200 dark:border-white/10 shrink-0 flex justify-end gap-3">
                 <button type="button" onClick={() => setModal({ isOpen: false, isEdit: false, data: null })} className="px-6 py-3 rounded-xl font-bold text-gray-500 dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-gray-900 dark:text-white transition-colors">
-                  Batal
+                  {t("articles.cancel")}
                 </button>
                 <button form="article-form" type="submit" disabled={loading} className="bg-primary text-[#050e0a] px-8 py-3 rounded-xl font-bold hover:bg-primary-focus hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all disabled:opacity-50">
-                  {loading ? "Menyimpan..." : (modal.isEdit ? "Perbarui Artikel" : "Terbitkan Artikel")}
+                  {loading ? t("departments.saving") : (modal.isEdit ? t("articles.save_edit") : t("articles.save_new"))}
                 </button>
               </div>
             </motion.div>

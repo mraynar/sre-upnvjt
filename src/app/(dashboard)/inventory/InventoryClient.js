@@ -8,6 +8,7 @@ import {
 import { createInventoryItem, updateInventoryItem, deleteInventoryItem } from "@/app/actions/inventoryActions";
 import { useSession } from "next-auth/react";
 import { hasAccess } from "@/lib/permissions";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, required }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,6 +72,7 @@ const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, r
 
 export default function InventoryClient({ initialItems }) {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const [items, setItems] = useState(initialItems);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -131,38 +133,38 @@ export default function InventoryClient({ initialItems }) {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Hapus barang ini dari inventaris?")) return;
+    if (!confirm(t("inventory.delete_confirm"))) return;
     const res = await deleteInventoryItem(id);
     if (res.success) refreshData();
-    else alert("Gagal menghapus: " + res.error);
+    else alert(t("inventory.fail_delete") + res.error);
   };
 
   const categoryOptions = [
-    { value: "GENERAL", label: "Umum / Kesekretariatan" },
-    { value: "ELECTRONIC", label: "Elektronik & Gadget" },
-    { value: "FURNITURE", label: "Perabotan / Mebel" },
-    { value: "RESEARCH", label: "Alat Riset & Proyek" },
+    { value: "GENERAL", label: t("inventory.cat_general") },
+    { value: "ELECTRONIC", label: t("inventory.cat_electronic") },
+    { value: "FURNITURE", label: t("inventory.cat_furniture") },
+    { value: "RESEARCH", label: t("inventory.cat_research") },
   ];
 
   const conditionOptions = [
-    { value: "GOOD", label: "Baik" },
-    { value: "FAIR", label: "Layak (Sedikit Rusak)" },
-    { value: "POOR", label: "Rusak Ringan" },
-    { value: "BROKEN", label: "Rusak Berat" },
+    { value: "GOOD", label: t("inventory.cond_good") },
+    { value: "FAIR", label: t("inventory.cond_fair") },
+    { value: "POOR", label: t("inventory.cond_poor") },
+    { value: "BROKEN", label: t("inventory.cond_broken") },
   ];
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto relative">
+    <div className="w-full relative">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-gray-900 dark:text-white">
             <Box className="w-8 h-8 text-primary" />
-            Manajemen Inventaris
+            {t("inventory.title")}
           </h1>
           <p className="text-gray-500 dark:text-white/50 max-w-xl">
-            Katalog aset fisik organisasi. Lacak ketersediaan dan kondisi barang.
+            {t("inventory.subtitle")}
           </p>
         </div>
         
@@ -171,7 +173,7 @@ export default function InventoryClient({ initialItems }) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-white/30" />
             <input 
               type="text"
-              placeholder="Cari barang atau kode..."
+              placeholder={t("inventory.search")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-colors"
@@ -183,7 +185,7 @@ export default function InventoryClient({ initialItems }) {
               className="flex items-center gap-2 bg-primary text-[#050e0a] px-6 py-3 rounded-xl font-bold tracking-wide hover:bg-primary-focus hover:scale-105 transition-all shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
             >
               <Plus className="w-5 h-5" />
-              <span className="hidden sm:inline">Tambah Barang</span>
+              <span className="hidden sm:inline">{t("inventory.add")}</span>
             </button>
           )}
         </div>
@@ -194,8 +196,8 @@ export default function InventoryClient({ initialItems }) {
         {filteredItems.length === 0 ? (
           <div className="col-span-full bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 rounded-3xl p-12 text-center flex flex-col items-center justify-center backdrop-blur-md shadow-sm">
             <Box className="w-16 h-16 text-gray-500 dark:text-white/10 mb-4" />
-            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">Inventaris Kosong</h3>
-            <p className="text-gray-500 dark:text-white/40">Belum ada barang yang ditambahkan ke inventaris.</p>
+            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">{t("inventory.no_items")}</h3>
+            <p className="text-gray-500 dark:text-white/40">{t("inventory.no_items_desc")}</p>
           </div>
         ) : (
           filteredItems.map((item) => (
@@ -211,8 +213,8 @@ export default function InventoryClient({ initialItems }) {
                     ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" 
                     : "bg-amber-500/10 text-amber-400 border border-amber-500/20"
                 }`}>
-                  {item.isAvailable ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
-                  {item.isAvailable ? "Tersedia" : "Dipinjam"}
+                  {item.isAvailable ? <CheckCircle2 className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                  {item.isAvailable ? t("inventory.available") : t("inventory.borrowed")}
                 </div>
                 
                 <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -233,12 +235,12 @@ export default function InventoryClient({ initialItems }) {
               <div className="space-y-3 mt-auto">
                 <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-white/50">
                   <Layers className="w-4 h-4" />
-                  <span>Kategori: {item.category}</span>
+                  <span>{t("inventory.category")}{categoryOptions.find(o => o.value === item.category)?.label || item.category}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs text-gray-500 dark:text-white/50">
                   <div className="flex items-center gap-3">
                     <AlertTriangle className="w-4 h-4" />
-                    <span>Kondisi: {item.condition}</span>
+                    <span>{t("inventory.condition")}{conditionOptions.find(o => o.value === item.condition)?.label || item.condition}</span>
                   </div>
                   <div className="font-bold text-gray-900 dark:text-white bg-white dark:bg-white/10 shadow-sm dark:shadow-none px-2 py-0.5 rounded">Qty: {item.quantity}</div>
                 </div>
@@ -272,7 +274,7 @@ export default function InventoryClient({ initialItems }) {
               </button>
               
               <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-6">
-                {modal.isEdit ? "Edit Barang Inventaris" : "Tambah Barang Baru"}
+                {modal.isEdit ? t("inventory.edit") : t("inventory.new")}
               </h2>
               
               {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm">{error}</div>}
@@ -280,47 +282,47 @@ export default function InventoryClient({ initialItems }) {
               <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5 relative">
                 
                 <div className="col-span-full">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Nama Barang</label>
-                  <input name="name" type="text" required defaultValue={modal.data?.name} placeholder="Misal: Proyektor Epson X500" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("inventory.item_name")}</label>
+                  <input name="name" type="text" required defaultValue={modal.data?.name} placeholder={t("inventory.item_name_ph")} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Kode Barang (Opsional)</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("inventory.item_code")}</label>
                   <input name="code" type="text" defaultValue={modal.data?.code || ""} placeholder="SRE-INV-001" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors font-mono" />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Jumlah / Kuantitas</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("inventory.qty")}</label>
                   <input name="quantity" type="number" min="1" required defaultValue={modal.data?.quantity || 1} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
 
                 <div className="relative z-[50]">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Kategori</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("inventory.cat_label")}</label>
                   <CustomSelect 
                     name="category" 
                     options={categoryOptions} 
                     value={selectedCategory} 
                     onChange={setSelectedCategory} 
-                    placeholder="Pilih Kategori..." 
+                    placeholder={t("inventory.cat_select")} 
                     required 
                   />
                 </div>
 
                 <div className="relative z-[49]">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Kondisi Fisik</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("inventory.cond_label")}</label>
                   <CustomSelect 
                     name="condition" 
                     options={conditionOptions} 
                     value={selectedCondition} 
                     onChange={setSelectedCondition} 
-                    placeholder="Pilih Kondisi..." 
+                    placeholder={t("inventory.cond_select")} 
                     required 
                   />
                 </div>
 
                 <div className="col-span-full">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Lokasi Penyimpanan</label>
-                  <input name="location" type="text" defaultValue={modal.data?.location || ""} placeholder="Loker Sekretariat SRE" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("inventory.location")}</label>
+                  <input name="location" type="text" defaultValue={modal.data?.location || ""} placeholder={t("inventory.location_ph")} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
 
                 <div className="col-span-full flex items-center gap-3 mt-2">
@@ -333,12 +335,12 @@ export default function InventoryClient({ initialItems }) {
                     defaultChecked={modal.isEdit ? modal.data?.isAvailable : true}
                     className="w-5 h-5 accent-primary rounded cursor-pointer"
                   />
-                  <label htmlFor="isAvailable" className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer">Barang Tersedia (Bisa Dipinjam)</label>
+                  <label htmlFor="isAvailable" className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer">{t("inventory.is_available")}</label>
                 </div>
 
                 <div className="col-span-full pt-4 mt-2 border-t border-gray-200 dark:border-white/10">
                   <button type="submit" disabled={loading} className="w-full bg-primary text-[#050e0a] font-bold py-3.5 rounded-xl hover:bg-primary-focus hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all disabled:opacity-50">
-                    {loading ? "Menyimpan..." : "Simpan Barang"}
+                    {loading ? t("departments.saving") : t("inventory.save")}
                   </button>
                 </div>
               </form>

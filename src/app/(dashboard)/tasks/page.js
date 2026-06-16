@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Plus, CheckCircle, Clock, CheckSquare, X, Save, Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 export const dynamic = "force-dynamic";
 
 export default function TasksPage() {
+  const { t } = useLanguage();
   const { data: session } = useSession();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -139,10 +141,10 @@ export default function TasksPage() {
               <CheckSquare className="w-6 h-6" />
             </div>
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-white/60">
-              Todolist & Tugas
+              {t("tasks.title")}
             </span>
           </h1>
-          <p className="text-gray-500 dark:text-white/50 text-sm md:text-base font-medium">Kelola dan pantau tugas antar Role di organisasimu.</p>
+          <p className="text-gray-500 dark:text-white/50 text-sm md:text-base font-medium">{t("tasks.subtitle")}</p>
         </div>
         
         {canCreateTask && (
@@ -151,7 +153,7 @@ export default function TasksPage() {
             className="bg-primary hover:bg-primary/90 text-black px-6 py-3 rounded-xl font-bold tracking-wide flex items-center gap-2 transition-all hover:scale-105"
           >
             <Plus className="w-5 h-5" />
-            Buat Tugas Baru
+            {t("tasks.btn_new")}
           </button>
         )}
       </div>
@@ -166,7 +168,7 @@ export default function TasksPage() {
           )}
           <span className="relative z-10 flex items-center gap-2">
             <CheckCircle className="w-3.5 h-3.5" />
-            Tugas Role Saya
+            {t("tasks.tab_my_role")}
           </span>
         </button>
         {canCreateTask && (
@@ -179,7 +181,7 @@ export default function TasksPage() {
             )}
             <span className="relative z-10 flex items-center gap-2">
               <Save className="w-3.5 h-3.5" />
-              Tugas yang Saya Berikan
+              {t("tasks.tab_given_by_me")}
             </span>
           </button>
         )}
@@ -192,8 +194,8 @@ export default function TasksPage() {
       ) : tasks.length === 0 ? (
         <div className="text-center p-20 bg-white/[0.02] rounded-3xl border border-gray-200 dark:border-white/5 backdrop-blur-xl">
           <CheckCircle className="mx-auto h-16 w-16 text-gray-500 dark:text-white/20 mb-6" />
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Tidak ada tugas</h3>
-          <p className="text-gray-500 dark:text-white/50">Belum ada tugas yang masuk dalam daftar ini.</p>
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t("tasks.no_tasks")}</h3>
+          <p className="text-gray-500 dark:text-white/50">{t("tasks.no_tasks_desc")}</p>
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -226,12 +228,12 @@ export default function TasksPage() {
                 <div className="flex flex-col gap-1.5 bg-gray-50/80 dark:bg-white/[0.03] p-4 rounded-2xl border border-gray-100 dark:border-white/5">
                   {viewAs === 'assignedToMe' ? (
                     <div className="flex justify-between items-center">
-                      <span className="uppercase font-bold tracking-widest text-[9px] text-gray-400 dark:text-gray-500">Diberikan Oleh</span>
+                      <span className="uppercase font-bold tracking-widest text-[9px] text-gray-400 dark:text-gray-500">{t("tasks.given_by")}</span>
                       <span className="font-bold text-xs text-gray-800 dark:text-gray-200">{task.assignedBy?.name}</span>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-2.5">
-                      <span className="uppercase font-bold tracking-widest text-[9px] text-gray-400 dark:text-gray-500">Target Role</span>
+                      <span className="uppercase font-bold tracking-widest text-[9px] text-gray-400 dark:text-gray-500">{t("tasks.target_role")}</span>
                       <div className="flex flex-wrap gap-2">
                         {task.targetRoles?.map(role => (
                           <span key={role.id} className="bg-white dark:bg-white/10 shadow-sm border border-gray-200/50 dark:border-white/5 px-3 py-1 rounded-lg text-gray-700 dark:text-gray-200 text-[10px] font-bold">{role.name}</span>
@@ -243,17 +245,17 @@ export default function TasksPage() {
                 
                 {viewAs === 'assignedToMe' && (
                   <div className="flex flex-col gap-2">
-                    <label className="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">Ubah Status</label>
+                    <label className="text-[9px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">{t("tasks.change_status")}</label>
                     <div className="relative">
                       <select
                         value={task.status}
                         onChange={(e) => updateStatus(task.id, e.target.value)}
                         className="w-full appearance-none text-xs bg-white dark:bg-black/20 border border-gray-200 dark:border-white/10 px-4 py-3 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all cursor-pointer text-gray-800 dark:text-white shadow-sm"
                       >
-                        <option value="TODO">To Do (Mulai)</option>
-                        <option value="IN_PROGRESS">In Progress (Sedang Dikerjakan)</option>
-                        <option value="DONE">Done (Selesai)</option>
-                        <option value="OVERDUE">Overdue (Terlambat)</option>
+                        <option value="TODO">{t("tasks.status_todo")}</option>
+                        <option value="IN_PROGRESS">{t("tasks.status_in_progress")}</option>
+                        <option value="DONE">{t("tasks.status_done")}</option>
+                        <option value="OVERDUE">{t("tasks.status_overdue")}</option>
                       </select>
                       <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -266,7 +268,7 @@ export default function TasksPage() {
                   <div className="mt-2 flex flex-col gap-3">
                     <div className="flex items-center gap-2">
                       <div className="h-px bg-gray-200 dark:bg-white/10 flex-1"></div>
-                      <span className="uppercase font-black tracking-widest text-[9px] text-primary/80">Laporan Mingguan</span>
+                      <span className="uppercase font-black tracking-widest text-[9px] text-primary/80">{t("tasks.weekly_report")}</span>
                       <div className="h-px bg-gray-200 dark:bg-white/10 flex-1"></div>
                     </div>
                     
@@ -282,7 +284,7 @@ export default function TasksPage() {
                       </div>
                     ) : (
                       <div className="bg-gray-50 dark:bg-white/5 border border-dashed border-gray-200 dark:border-white/10 rounded-xl p-4 text-center">
-                        <p className="text-xs text-gray-400 dark:text-gray-500 italic font-medium">Belum ada laporan progres.</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 italic font-medium">{t("tasks.no_report")}</p>
                       </div>
                     )}
                     
@@ -291,7 +293,7 @@ export default function TasksPage() {
                         <textarea 
                           value={reportText[task.id] || ""}
                           onChange={e => setReportText({...reportText, [task.id]: e.target.value})}
-                          placeholder="Ketik laporan mingguan di sini..."
+                          placeholder={t("tasks.report_placeholder")}
                           className="w-full bg-white dark:bg-black/20 text-xs px-4 pt-3.5 pb-[44px] pr-4 rounded-[16px] border border-gray-200 dark:border-white/10 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 resize-none text-gray-800 dark:text-white shadow-inner placeholder:text-gray-400 transition-all leading-relaxed"
                           rows="2"
                         />
@@ -308,11 +310,11 @@ export default function TasksPage() {
                           {submittingReport[task.id] ? (
                             <>
                               <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                              <span>Kirim</span>
+                              <span>{t("tasks.btn_send")}</span>
                             </>
                           ) : (
                             <>
-                              <span>Kirim</span>
+                              <span>{t("tasks.btn_send")}</span>
                               <Send className="w-3.5 h-3.5" />
                             </>
                           )}
@@ -339,8 +341,8 @@ export default function TasksPage() {
 
               <div className="p-6 md:p-8 border-b border-gray-100 dark:border-white/10 flex justify-between items-center relative z-10">
                 <div>
-                  <h2 className="text-2xl font-display font-black tracking-tight text-gray-900 dark:text-white mb-1">Buat Tugas Baru</h2>
-                  <p className="text-sm font-medium text-gray-500 dark:text-white/50">Tugaskan pekerjaan ke divisi atau role tertentu.</p>
+                  <h2 className="text-2xl font-display font-black tracking-tight text-gray-900 dark:text-white mb-1">{t("tasks.btn_new")}</h2>
+                  <p className="text-sm font-medium text-gray-500 dark:text-white/50">{t("tasks.modal_subtitle")}</p>
                 </div>
                 <button onClick={() => setShowModal(false)} className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-gray-500 dark:text-white/50 hover:bg-gray-200 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white transition-all">
                   <X className="w-5 h-5" />
@@ -350,30 +352,30 @@ export default function TasksPage() {
               <form onSubmit={handleCreateTask} className="flex flex-col overflow-hidden">
                 <div className="p-6 md:p-8 overflow-y-auto space-y-8 relative z-10 custom-scrollbar">
                   <div>
-                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Judul Tugas</label>
+                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("tasks.task_title")}</label>
                     <input 
                       type="text" 
                       required 
                       className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-5 py-4 text-gray-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-gray-400 dark:placeholder:text-white/20" 
                       value={newTask.title} 
                       onChange={e => setNewTask({...newTask, title: e.target.value})} 
-                      placeholder="Contoh: Desain Banner Event"
+                      placeholder={t("tasks.task_title_ph")}
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Deskripsi Detail</label>
+                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("tasks.task_desc")}</label>
                     <textarea 
                       className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-5 py-4 text-gray-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none placeholder:text-gray-400 dark:placeholder:text-white/20" 
                       rows="4" 
                       value={newTask.description} 
                       onChange={e => setNewTask({...newTask, description: e.target.value})} 
-                      placeholder="Jelaskan instruksi atau detail dari tugas ini..."
+                      placeholder={t("tasks.task_desc_ph")}
                     ></textarea>
                   </div>
                   
                   <div>
-                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-3">Tugaskan ke Role <span className="text-gray-400 dark:text-white/30 normal-case font-medium tracking-normal">(Bisa pilih lebih dari 1)</span></label>
+                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-3">{t("tasks.assign_to")} <span className="text-gray-400 dark:text-white/30 normal-case font-medium tracking-normal">{t("tasks.can_select_multiple")}</span></label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-52 overflow-y-auto pr-2 custom-scrollbar">
                       {roles.map(role => {
                         const isSelected = newTask.targetRoleIds.includes(role.id);
@@ -394,7 +396,7 @@ export default function TasksPage() {
                   </div>
                   
                   <div>
-                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Tenggat Waktu (Deadline)</label>
+                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("tasks.deadline")}</label>
                     <input 
                       type="date" 
                       required 
@@ -409,7 +411,7 @@ export default function TasksPage() {
                       {newTask.requireWeeklyReport && <CheckCircle size={14} className="text-black" />}
                     </div>
                     <label className="ml-3 text-sm font-bold text-gray-900 dark:text-white cursor-pointer select-none">
-                      Wajibkan Laporan Mingguan untuk Tugas Ini
+                      {t("tasks.require_report")}
                     </label>
                   </div>
                 </div>
@@ -421,7 +423,7 @@ export default function TasksPage() {
                     className="px-6 py-3.5 rounded-2xl font-bold tracking-wide text-gray-500 dark:text-white/60 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all text-sm w-full sm:w-auto"
                     disabled={isSubmitting}
                   >
-                    Batal
+                    {t("tasks.btn_cancel")}
                   </button>
                   <button 
                     type="submit" 
@@ -431,12 +433,12 @@ export default function TasksPage() {
                     {isSubmitting ? (
                       <>
                         <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
-                        Menyimpan...
+                        {t("tasks.btn_saving")}
                       </>
                     ) : (
                       <>
                         <Save className="w-5 h-5" /> 
-                        Buat Tugas
+                        {t("tasks.btn_create")}
                       </>
                     )}
                   </button>

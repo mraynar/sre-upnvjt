@@ -3,11 +3,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  CreditCard, Plus, Edit2, Trash2, X, Search, Calendar, FolderKanban, ChevronDown, ArrowDownRight, ArrowUpRight, Wallet, ExternalLink
+  CreditCard, Plus, Edit2, Trash2, X, Search, Calendar, FolderKanban, ChevronDown, ArrowDownRight, ArrowUpRight, Wallet, ExternalLink, LinkIcon
 } from "lucide-react";
 import { createFinanceRecord, updateFinanceRecord, deleteFinanceRecord } from "@/app/actions/financeActions";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
-const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, required }) => {
+const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, required, t }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -46,7 +47,7 @@ const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, r
           >
             <div className="max-h-60 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
               {options.length === 0 ? (
-                <div className="px-4 py-3 text-gray-500 dark:text-white/40 text-sm text-center">No options available</div>
+                <div className="px-4 py-3 text-gray-500 dark:text-white/40 text-sm text-center">{t("finance.no_options")}</div>
               ) : (
                 options.map(option => (
                   <div 
@@ -72,6 +73,7 @@ const formatCurrency = (amount) => {
 };
 
 export default function FinanceClient({ initialRecords, projects, currentUser }) {
+  const { t } = useLanguage();
   const [records, setRecords] = useState(initialRecords);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterProjectId, setFilterProjectId] = useState("");
@@ -109,7 +111,7 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
     
     const rawAmount = formData.get("amount").replace(/[^0-9.-]+/g,"");
 
-    let finalProofUrl = null;
+    let finalProofUrl = formData.get("proofUrl") || null;
 
     try {
       const proofFile = formData.get("proofFile");
@@ -129,8 +131,10 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
 
         const uploadData = await uploadRes.json();
         finalProofUrl = uploadData.url;
-      } else {
-        // If editing and no new file uploaded, keep the old proofUrl
+      }
+
+      if (modal.isEdit && !finalProofUrl && (!proofFile || proofFile.size === 0)) {
+        // If editing and no new file uploaded or link provided, keep the old proofUrl
         finalProofUrl = modal.data?.proofUrl || null;
       }
 
@@ -166,31 +170,31 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Hapus catatan transaksi ini secara permanen?")) return;
+    if (!confirm(t("finance.delete_confirm"))) return;
     const res = await deleteFinanceRecord(id);
     if (res.success) refreshData();
-    else alert("Gagal menghapus: " + res.error);
+    else alert(t("finance.fail_delete") + res.error);
   };
 
   const typeOptions = [
-    { value: "INCOME", label: "Pemasukan (Income)" },
-    { value: "EXPENSE", label: "Pengeluaran (Expense)" },
+    { value: "INCOME", label: t("finance.type_income") },
+    { value: "EXPENSE", label: t("finance.type_expense") },
   ];
   
   const projectOptions = projects.map(p => ({ value: p.id, label: p.title }));
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto relative">
+    <div className="w-full relative">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-gray-900 dark:text-white">
             <CreditCard className="w-8 h-8 text-primary" />
-            Buku Kas Digital
+            {t("finance.title")}
           </h1>
           <p className="text-gray-500 dark:text-white/50 max-w-xl">
-            Transparansi arus kas organisasi. Lacak pemasukan dan pengeluaran secara real-time.
+            {t("finance.subtitle")}
           </p>
         </div>
         
@@ -198,10 +202,11 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
           <div className="relative z-20 w-48 hidden lg:block">
             <CustomSelect 
               name="filterProject" 
-              options={[{ value: "", label: "Semua Kas" }, ...projectOptions]} 
+              options={[{ value: "", label: t("finance.all_cash") }, ...projectOptions]} 
               value={filterProjectId} 
               onChange={setFilterProjectId} 
-              placeholder="Filter Proker..." 
+              placeholder={t("finance.filter_project")} 
+              t={t}
             />
           </div>
           <button 
@@ -209,7 +214,7 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
             className="flex items-center gap-2 bg-primary text-[#050e0a] px-6 py-3.5 rounded-xl font-bold tracking-wide hover:bg-primary-focus hover:scale-105 transition-all shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
           >
             <Plus className="w-5 h-5" />
-            <span className="hidden sm:inline">Catat Transaksi</span>
+            <span className="hidden sm:inline">{t("finance.btn_record")}</span>
           </button>
         </div>
       </div>
@@ -218,7 +223,7 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 shadow-md dark:shadow-none rounded-3xl p-6 relative overflow-hidden backdrop-blur-xl">
           <div className="flex justify-between items-start mb-4 relative z-10">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Total Saldo Aktif</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">{t("finance.total_balance")}</div>
             <div className="p-2 rounded-xl bg-primary/10 text-primary border border-primary/20"><Wallet className="w-4 h-4" /></div>
           </div>
           <div className="text-3xl lg:text-4xl font-display font-black tracking-tighter text-gray-900 dark:text-white relative z-10">
@@ -228,7 +233,7 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
         <div className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 shadow-md dark:shadow-none rounded-3xl p-6 relative overflow-hidden backdrop-blur-xl">
           <div className="absolute -right-10 -top-10 w-32 h-32 bg-emerald-500/10 blur-[40px] rounded-full"></div>
           <div className="flex justify-between items-start mb-4 relative z-10">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-400/80">Total Pemasukan</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-emerald-400/80">{t("finance.total_income")}</div>
             <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><ArrowDownRight className="w-4 h-4" /></div>
           </div>
           <div className="text-3xl lg:text-4xl font-display font-black tracking-tighter text-gray-900 dark:text-white relative z-10">
@@ -238,7 +243,7 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
         <div className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 shadow-md dark:shadow-none rounded-3xl p-6 relative overflow-hidden backdrop-blur-xl">
           <div className="absolute -right-10 -top-10 w-32 h-32 bg-red-500/10 blur-[40px] rounded-full"></div>
           <div className="flex justify-between items-start mb-4 relative z-10">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-red-400/80">Total Pengeluaran</div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-red-400/80">{t("finance.total_expense")}</div>
             <div className="p-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20"><ArrowUpRight className="w-4 h-4" /></div>
           </div>
           <div className="text-3xl lg:text-4xl font-display font-black tracking-tighter text-gray-900 dark:text-white relative z-10">
@@ -251,10 +256,11 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
       <div className="lg:hidden relative w-full mb-6 z-10">
         <CustomSelect 
           name="filterProjectMobile" 
-          options={[{ value: "", label: "Semua Kas" }, ...projectOptions]} 
+          options={[{ value: "", label: t("finance.all_cash") }, ...projectOptions]} 
           value={filterProjectId} 
           onChange={setFilterProjectId} 
-          placeholder="Filter Proker..." 
+          placeholder={t("finance.filter_project")} 
+          t={t}
         />
       </div>
 
@@ -263,8 +269,8 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
         {filteredRecords.length === 0 ? (
           <div className="col-span-full bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 rounded-3xl p-12 text-center flex flex-col items-center justify-center backdrop-blur-md shadow-sm">
             <CreditCard className="w-16 h-16 text-gray-500 dark:text-white/10 mb-4" />
-            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">Tidak Ada Transaksi</h3>
-            <p className="text-gray-500 dark:text-white/40">Belum ada catatan keuangan yang sesuai filter.</p>
+            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">{t("finance.no_transactions")}</h3>
+            <p className="text-gray-500 dark:text-white/40">{t("finance.no_transactions_desc")}</p>
           </div>
         ) : (
           filteredRecords.map((record) => (
@@ -276,9 +282,9 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
             >
               <div className="flex justify-between items-start mb-4">
                 {record.type === 'INCOME' ? (
-                  <span className="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 w-fit"><ArrowDownRight className="w-3.5 h-3.5" /> Masuk</span>
+                  <span className="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 w-fit"><ArrowDownRight className="w-3.5 h-3.5" /> {t("finance.income_badge")}</span>
                 ) : (
-                  <span className="px-2.5 py-1 rounded-md bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 w-fit"><ArrowUpRight className="w-3.5 h-3.5" /> Keluar</span>
+                  <span className="px-2.5 py-1 rounded-md bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold uppercase tracking-widest flex items-center gap-1.5 w-fit"><ArrowUpRight className="w-3.5 h-3.5" /> {t("finance.expense_badge")}</span>
                 )}
                 <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <button onClick={() => handleOpenModal(true, record)} className="p-2 text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white"><Edit2 className="w-4 h-4" /></button>
@@ -307,7 +313,7 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
                 {record.proofUrl && (
                   <div className="pt-3 border-t border-gray-200 dark:border-white/5 mt-3">
                     <a href={record.proofUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-xs text-blue-400 hover:text-blue-300 font-medium">
-                      <ExternalLink className="w-3.5 h-3.5" /> Lihat Bukti Transaksi
+                      <ExternalLink className="w-3.5 h-3.5" /> {t("finance.view_proof")}
                     </a>
                   </div>
                 )}
@@ -335,7 +341,7 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
               </button>
               
               <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-6">
-                {modal.isEdit ? "Edit Catatan Keuangan" : "Catat Transaksi Baru"}
+                {modal.isEdit ? t("finance.modal_edit") : t("finance.modal_create")}
               </h2>
               
               {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm">{error}</div>}
@@ -343,56 +349,72 @@ export default function FinanceClient({ initialRecords, projects, currentUser })
               <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-5 relative">
                 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Keterangan Transaksi</label>
-                  <input name="title" type="text" required defaultValue={modal.data?.title} placeholder="Misal: Uang Kas Bulan Mei / Beli Konsumsi" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("finance.desc_label")}</label>
+                  <input name="title" type="text" required defaultValue={modal.data?.title} placeholder={t("finance.desc_placeholder")} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Nominal (Rp)</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("finance.amount_label")}</label>
                   <input name="amount" type="number" step="any" required defaultValue={modal.data?.amount} placeholder="150000" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors font-mono" />
                 </div>
 
                 <div className="relative z-[50]">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Jenis Transaksi</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("finance.type_label")}</label>
                   <CustomSelect 
                     name="type" 
                     options={typeOptions} 
                     value={selectedType} 
                     onChange={setSelectedType} 
-                    placeholder="Pilih Jenis..." 
+                    placeholder={t("finance.select_type")} 
                     required 
+                    t={t}
                   />
                 </div>
 
                 <div className="relative z-[49]">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Terkait Proker (Opsional)</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("finance.related_project")}</label>
                   <CustomSelect 
                     name="projectId" 
-                    options={[{ value: "", label: "Uang Kas Organisasi Utama" }, ...projectOptions]} 
+                    options={[{ value: "", label: t("finance.main_cash") }, ...projectOptions]} 
                     value={selectedProjectId} 
                     onChange={setSelectedProjectId} 
-                    placeholder="Pilih Proker..." 
+                    placeholder={t("finance.select_project")} 
+                    t={t}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Tanggal Transaksi</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("finance.date_label")}</label>
                   <input name="date" type="date" required defaultValue={modal.data?.date ? new Date(modal.data.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors dark:[color-scheme:dark]" />
                 </div>
 
                 <div className="pt-1">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Unggah Bukti Transaksi (Struk/Nota)</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("finance.upload_proof")}</label>
                   <input name="proofFile" type="file" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" />
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  <div className="h-[1px] flex-1 bg-gray-200 dark:bg-white/10"></div>
+                  <span className="text-xs font-bold text-gray-400">{t("finance.or_link")}</span>
+                  <div className="h-[1px] flex-1 bg-gray-200 dark:bg-white/10"></div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("finance.proof_link")}</label>
+                  <div className="relative">
+                    <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-white/30" />
+                    <input name="proofUrl" type="url" defaultValue={modal.data?.proofUrl || ""} placeholder="https://drive.google.com/..." className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl pl-11 pr-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
+                  </div>
                   {modal.isEdit && modal.data?.proofUrl && (
                     <div className="mt-3 text-xs text-gray-500 dark:text-white/40">
-                      File saat ini: <a href={modal.data.proofUrl} target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300 underline">Lihat Bukti</a>
+                      {t("finance.current_file")} <a href={modal.data.proofUrl} target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300 underline line-clamp-1">{t("finance.view_file")}</a>
                     </div>
                   )}
                 </div>
 
                 <div className="pt-4 mt-2 border-t border-gray-200 dark:border-white/10">
                   <button type="submit" disabled={loading} className="w-full bg-primary text-[#050e0a] font-bold py-3.5 rounded-xl hover:bg-primary-focus hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all disabled:opacity-50">
-                    {loading ? "Menyimpan..." : "Simpan Transaksi"}
+                    {loading ? t("finance.saving") : t("finance.btn_save")}
                   </button>
                 </div>
               </form>

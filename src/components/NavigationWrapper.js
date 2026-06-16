@@ -21,7 +21,11 @@ const dashboardRoutes = [
   "/merch",
   "/settings",
   "/partners",
-  "/logs"
+  "/logs",
+  "/leaderboard",
+  "/appraisals",
+  "/achievements",
+  "/achievements/verify",
 ];
 
 function isDashboardRoute(pathname) {

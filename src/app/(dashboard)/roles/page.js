@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Edit2, Trash2, Shield, X, Save } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,7 @@ const actions = ["create", "read", "update", "delete"];
 
 export default function RolesManagementPage() {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -86,7 +88,7 @@ export default function RolesManagementPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this role?")) return;
+    if (!confirm(t("roles.delete_confirm"))) return;
     try {
       const res = await fetch(`/api/roles/${id}`, { method: "DELETE" });
       if (res.ok) fetchRoles();
@@ -96,25 +98,25 @@ export default function RolesManagementPage() {
   };
 
   if (session?.user?.roleName !== "SUPER_ADMIN") {
-    return <div className="p-10 text-center text-red-500">Access Denied. Super Admin only.</div>;
+    return <div className="p-10 text-center text-red-500">{t("roles.access_denied")}</div>;
   }
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto relative">
+    <div className="w-full relative">
       <div className="flex justify-between items-end mb-10">
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3">
             <Shield className="w-8 h-8 text-primary" />
-            Roles & Permissions
+            {t("roles.title")}
           </h1>
-          <p className="text-gray-500 dark:text-white/50">Manage access levels and module permissions for all staff.</p>
+          <p className="text-gray-500 dark:text-white/50">{t("roles.subtitle")}</p>
         </div>
         <button 
           onClick={() => handleOpenModal()}
           className="bg-primary hover:bg-primary-focus text-[#050e0a] px-6 py-3 rounded-xl font-bold tracking-wide flex items-center gap-2 transition-all hover:scale-105 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
         >
           <Plus className="w-5 h-5" />
-          Create Role
+          {t("roles.create_btn")}
         </button>
       </div>
 
@@ -124,15 +126,15 @@ export default function RolesManagementPage() {
           <table className="w-full min-w-[800px] text-left">
           <thead className="border-b border-gray-200/50 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02]">
             <tr>
-              <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Role Name</th>
-              <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Active Users</th>
-              <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Configured Permissions</th>
-              <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40 text-right">Actions</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">{t("roles.table_name")}</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">{t("roles.table_users")}</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">{t("roles.table_perms")}</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40 text-right">{t("roles.table_actions")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-white/5">
             {loading ? (
-              <tr><td colSpan="4" className="text-center py-10 text-gray-500 dark:text-white/30">Loading...</td></tr>
+              <tr><td colSpan="4" className="text-center py-10 text-gray-500 dark:text-white/30">{t("roles.loading")}</td></tr>
             ) : roles.map((role) => (
               <tr key={role.id} className="hover:bg-white/60 dark:hover:bg-white/[0.04] transition-colors group">
                 <td className="px-6 py-4">
@@ -141,19 +143,19 @@ export default function RolesManagementPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-gray-500 dark:text-white/70 font-medium">
-                  {role._count?.users || 0} Users
+                  {t("roles.users_count").replace("{count}", role._count?.users || 0)}
                 </td>
                 <td className="px-6 py-4 text-gray-500 dark:text-white/50 text-sm">
                   {Object.keys(role.permissions || {}).length > 0 ? (
                     <div className="flex gap-2 flex-wrap">
                       {Object.keys(role.permissions).map(mod => (
                         <span key={mod} className="text-[10px] uppercase bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 px-2 py-1 rounded">
-                          {mod}: {role.permissions[mod].length} rules
+                          {mod}: {t("roles.rules_count").replace("{count}", role.permissions[mod].length)}
                         </span>
                       ))}
                     </div>
                   ) : (
-                    <span className="italic">No permissions configured</span>
+                    <span className="italic">{t("roles.no_perms")}</span>
                   )}
                 </td>
                 <td className="px-6 py-4 text-right flex justify-end gap-2">
@@ -182,27 +184,27 @@ export default function RolesManagementPage() {
               
               <div className="p-6 border-b border-gray-200 dark:border-white/10 flex justify-between items-center bg-gray-50 dark:bg-white/[0.02]">
                 <h2 className="text-xl font-display font-bold tracking-tight text-gray-900 dark:text-white">
-                  {editingRole ? "Edit Role Permissions" : "Create New Role"}
+                  {editingRole ? t("roles.modal_edit") : t("roles.modal_create")}
                 </h2>
                 <button onClick={() => setIsModalOpen(false)} className="text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white"><X className="w-5 h-5" /></button>
               </div>
 
               <div className="p-6 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-white/10 scrollbar-track-transparent">
                 <div className="mb-8">
-                  <label className="block text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2 font-bold">Role Name</label>
+                  <label className="block text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2 font-bold">{t("roles.table_name")}</label>
                   <input 
                     type="text" 
                     value={formData.name} 
                     onChange={e => setFormData({...formData, name: e.target.value})}
                     disabled={editingRole?.name === "SUPER_ADMIN"}
                     className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary disabled:opacity-50"
-                    placeholder="e.g. Finance Staff"
+                    placeholder={t("roles.placeholder_name")}
                   />
                 </div>
 
                 <div className="mb-4">
                   <label className="block text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 mb-4 font-bold flex items-center gap-2">
-                    <Shield className="w-4 h-4" /> Granular Permissions (ABAC)
+                    <Shield className="w-4 h-4" /> {t("roles.granular_perms")}
                   </label>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -234,10 +236,10 @@ export default function RolesManagementPage() {
 
               <div className="p-6 border-t border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/[0.02] flex justify-end gap-3">
                 <button onClick={() => setIsModalOpen(false)} className="px-6 py-2.5 rounded-xl font-bold tracking-wide text-gray-500 dark:text-white/60 hover:text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-white/5 transition-colors">
-                  Cancel
+                  {t("roles.cancel")}
                 </button>
                 <button onClick={handleSave} className="bg-primary hover:bg-primary-focus text-[#050e0a] px-6 py-2.5 rounded-xl font-bold tracking-wide flex items-center gap-2 transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-                  <Save className="w-4 h-4" /> Save Role
+                  <Save className="w-4 h-4" /> {t("roles.save_role")}
                 </button>
               </div>
 

@@ -7,6 +7,7 @@ import {
   XCircle, AlertTriangle, ImageIcon, Presentation, UploadCloud
 } from "lucide-react";
 import { createActivity, updateActivity, deleteActivity } from "@/app/actions/activityActions";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 const EMPTY_ACTIVITY = {
   title: "",
@@ -16,6 +17,7 @@ const EMPTY_ACTIVITY = {
 };
 
 export default function ActivityClient({ initialActivities }) {
+  const { t } = useLanguage();
   const [activities, setActivities] = useState(initialActivities || []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -130,16 +132,16 @@ export default function ActivityClient({ initialActivities }) {
   );
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto relative">
+    <div className="w-full relative">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-gray-900 dark:text-white">
             <Presentation className="w-8 h-8 text-primary" />
-            Programs & Activities
+            {t("activities.title")}
           </h1>
           <p className="text-gray-500 dark:text-white/50 max-w-xl">
-            Kelola program utama dan aktivitas organisasi yang ditampilkan di carousel beranda (landing page).
+            {t("activities.subtitle")}
           </p>
         </div>
         
@@ -148,7 +150,7 @@ export default function ActivityClient({ initialActivities }) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-white/30" />
             <input 
               type="text"
-              placeholder="Cari aktivitas..."
+              placeholder={t("activities.search")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-colors"
@@ -159,7 +161,7 @@ export default function ActivityClient({ initialActivities }) {
             className="flex items-center gap-2 bg-primary text-[#050e0a] px-6 py-3 rounded-xl font-bold tracking-wide hover:bg-primary-focus hover:scale-105 transition-all shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
           >
             <Plus className="w-5 h-5" />
-            <span className="hidden sm:inline">Tambah Aktivitas</span>
+            <span className="hidden sm:inline">{t("activities.add")}</span>
           </button>
         </div>
       </div>
@@ -188,7 +190,7 @@ export default function ActivityClient({ initialActivities }) {
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 dark:text-white/20">
                         <ImageIcon className="w-10 h-10 mb-2" />
-                        <span className="text-[12px]">No Image</span>
+                        <span className="text-[12px]">{t("activities.no_image")}</span>
                       </div>
                     )}
                     <div className="absolute top-3 right-3 flex gap-2">
@@ -233,8 +235,8 @@ export default function ActivityClient({ initialActivities }) {
             ) : (
               <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 rounded-3xl backdrop-blur-md shadow-sm border-dashed">
                 <Presentation className="w-12 h-12 text-gray-500 dark:text-white/20 mb-4" />
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">No activities found</h3>
-                <p className="text-gray-500 dark:text-white/40 text-sm">Create a new activity to showcase on the landing page.</p>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">{t("activities.no_activities")}</h3>
+                <p className="text-gray-500 dark:text-white/40 text-sm">{t("activities.no_activities_desc")}</p>
               </div>
             )}
           </AnimatePresence>
@@ -259,7 +261,7 @@ export default function ActivityClient({ initialActivities }) {
             >
               <div className="p-6 border-b border-gray-200 dark:border-white/10 flex items-center justify-between shrink-0 bg-gray-50/50 dark:bg-white/[0.02]">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  {isEditing ? "Edit Activity" : "New Activity"}
+                  {isEditing ? t("activities.edit") : t("activities.new")}
                 </h2>
                 <button onClick={handleCloseModal} className="text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white transition-colors">
                   <X className="w-5 h-5" />
@@ -270,30 +272,30 @@ export default function ActivityClient({ initialActivities }) {
                 <form id="activityForm" onSubmit={handleSaveActivity} className="space-y-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="md:col-span-2">
-                      <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">Activity Title</label>
+                      <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">{t("activities.title_input")}</label>
                       <input
                         type="text"
                         required
                         value={currentActivity.title}
                         onChange={(e) => setCurrentActivity(prev => ({ ...prev, title: e.target.value }))}
                         className="w-full h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
-                        placeholder="e.g. SRE Mengajar 2026"
+                        placeholder={t("activities.title_ph")}
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">Description</label>
+                      <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">{t("activities.desc")}</label>
                       <textarea
                         required
                         value={currentActivity.description}
                         onChange={(e) => setCurrentActivity(prev => ({ ...prev, description: e.target.value }))}
                         className="w-full p-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all resize-none h-24"
-                        placeholder="Short description for the carousel..."
+                        placeholder={t("activities.desc_ph")}
                       />
                     </div>
 
                     <div className="md:col-span-2">
-                      <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">Cover Image</label>
+                      <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">{t("activities.cover")}</label>
                       <div className="flex gap-4">
                         {currentActivity.imageUrl && (
                           <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 border border-gray-200 dark:border-white/10 bg-black">
@@ -321,8 +323,8 @@ export default function ActivityClient({ initialActivities }) {
 
                     <div className="md:col-span-2 flex items-center justify-between p-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl">
                       <div>
-                        <div className="text-gray-900 dark:text-white font-medium text-[14px]">Publish Activity</div>
-                        <div className="text-gray-500 dark:text-white/40 text-[12px]">Make this activity visible on the landing page</div>
+                        <div className="text-gray-900 dark:text-white font-medium text-[14px]">{t("activities.pub_activity")}</div>
+                        <div className="text-gray-500 dark:text-white/40 text-[12px]">{t("activities.pub_desc")}</div>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input
@@ -344,7 +346,7 @@ export default function ActivityClient({ initialActivities }) {
                   onClick={handleCloseModal}
                   className="px-6 py-2.5 rounded-xl font-semibold text-gray-500 dark:text-white/70 hover:text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/10 transition-all"
                 >
-                  Cancel
+                  {t("activities.cancel")}
                 </button>
                 <button
                   type="submit"
@@ -355,7 +357,7 @@ export default function ActivityClient({ initialActivities }) {
                   {isLoading ? (
                     <div className="w-5 h-5 border-2 border-[#050e0a]/30 border-t-[#050e0a] rounded-full animate-spin" />
                   ) : (
-                    "Save Activity"
+                    t("activities.save")
                   )}
                 </button>
               </div>
@@ -384,16 +386,16 @@ export default function ActivityClient({ initialActivities }) {
               <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4 border border-red-500/20">
                 <AlertTriangle className="w-8 h-8 text-red-500" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Delete Activity</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t("activities.delete_title")}</h2>
               <p className="text-gray-500 dark:text-white/50 mb-8">
-                Are you sure you want to delete <strong className="text-gray-900 dark:text-white">{currentActivity.title}</strong>? This action cannot be undone.
+                {t("activities.delete_confirm")}<strong className="text-gray-900 dark:text-white">{currentActivity.title}</strong>?
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={handleCloseDeleteModal}
                   className="flex-1 px-4 py-3 rounded-xl font-semibold text-gray-500 dark:text-white/70 hover:text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 transition-all"
                 >
-                  Cancel
+                  {t("activities.cancel")}
                 </button>
                 <button
                   onClick={handleDeleteActivity}
@@ -403,7 +405,7 @@ export default function ActivityClient({ initialActivities }) {
                   {isLoading ? (
                     <div className="w-5 h-5 border-2 border-gray-200 dark:border-white/30 border-t-white rounded-full animate-spin" />
                   ) : (
-                    "Delete Activity"
+                    t("activities.delete_btn")
                   )}
                 </button>
               </div>

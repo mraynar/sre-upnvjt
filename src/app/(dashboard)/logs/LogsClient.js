@@ -3,8 +3,10 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Activity, Search, Filter, Calendar, FolderKanban, Newspaper, Presentation } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 export default function LogsClient({ logs }) {
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
 
@@ -34,11 +36,11 @@ export default function LogsClient({ logs }) {
   };
 
   return (
-    <div className="space-y-8 w-full max-w-[1400px] mx-auto pb-20">
+    <div className="space-y-8 w-full pb-20">
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-display font-bold text-gray-900 dark:text-white mb-2 tracking-tight">System Logs</h1>
-        <p className="text-gray-500 dark:text-white/60">Monitor all system activities and events in real-time.</p>
+        <h1 className="text-4xl font-display font-bold text-gray-900 dark:text-white mb-2 tracking-tight">{t("logs.title")}</h1>
+        <p className="text-gray-500 dark:text-white/60">{t("logs.subtitle")}</p>
       </div>
 
       {/* Filters & Search */}
@@ -49,7 +51,7 @@ export default function LogsClient({ logs }) {
           </div>
           <input
             type="text"
-            placeholder="Search logs..."
+            placeholder={t("logs.search")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-primary transition-colors shadow-sm dark:shadow-none"
@@ -61,25 +63,25 @@ export default function LogsClient({ logs }) {
             onClick={() => setFilterType("all")}
             className={`px-4 py-2.5 rounded-xl text-sm font-bold tracking-wide whitespace-nowrap transition-colors ${filterType === "all" ? "bg-gray-900 text-white dark:bg-white dark:text-black shadow-md" : "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-white/60 hover:bg-gray-50 dark:hover:bg-white/10"}`}
           >
-            All Logs
+            {t("logs.filter_all")}
           </button>
           <button 
             onClick={() => setFilterType("project")}
             className={`px-4 py-2.5 rounded-xl text-sm font-bold tracking-wide whitespace-nowrap transition-colors ${filterType === "project" ? "bg-primary text-[#050e0a] shadow-md shadow-primary/20" : "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-white/60 hover:bg-gray-50 dark:hover:bg-white/10"}`}
           >
-            Projects
+            {t("logs.filter_projects")}
           </button>
           <button 
             onClick={() => setFilterType("article")}
             className={`px-4 py-2.5 rounded-xl text-sm font-bold tracking-wide whitespace-nowrap transition-colors ${filterType === "article" ? "bg-blue-500 text-white shadow-md shadow-blue-500/20" : "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-white/60 hover:bg-gray-50 dark:hover:bg-white/10"}`}
           >
-            Articles
+            {t("logs.filter_articles")}
           </button>
           <button 
             onClick={() => setFilterType("event")}
             className={`px-4 py-2.5 rounded-xl text-sm font-bold tracking-wide whitespace-nowrap transition-colors ${filterType === "event" ? "bg-amber-500 text-white shadow-md shadow-amber-500/20" : "bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-white/60 hover:bg-gray-50 dark:hover:bg-white/10"}`}
           >
-            Activities
+            {t("logs.filter_activities")}
           </button>
         </div>
       </div>
@@ -128,7 +130,7 @@ export default function LogsClient({ logs }) {
                       {log.desc}
                     </p>
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-[#0a1612] border border-gray-200 dark:border-white/5 rounded-lg text-xs text-gray-500 dark:text-white/40">
-                      <span className="font-medium">Action by:</span>
+                      <span className="font-medium">{t("logs.action_by")}</span>
                       <span className="font-bold text-gray-900 dark:text-white">{log.user}</span>
                     </div>
                   </div>
@@ -141,9 +143,9 @@ export default function LogsClient({ logs }) {
             <div className="w-20 h-20 bg-gray-50 dark:bg-white/5 rounded-full flex items-center justify-center mb-4 border border-gray-100 dark:border-white/10">
               <Activity className="w-10 h-10 text-gray-300 dark:text-white/20" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No Logs Found</h3>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{t("logs.no_logs_title")}</h3>
             <p className="text-gray-500 dark:text-white/50 max-w-md">
-              There are no activities matching your search or filter criteria. Try adjusting your filters.
+              {t("logs.no_logs_desc")}
             </p>
           </div>
         )}

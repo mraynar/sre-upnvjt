@@ -10,8 +10,9 @@ import {
 } from "@/app/actions/userActions";
 import { useSession } from "next-auth/react";
 import { hasAccess } from "@/lib/permissions";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
-const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, required }) => {
+const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, required, t }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -53,7 +54,7 @@ const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, r
           >
             <div className="max-h-60 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
               {options.length === 0 ? (
-                <div className="px-4 py-3 text-gray-500 dark:text-white/40 text-sm text-center">No options available</div>
+                <div className="px-4 py-3 text-gray-500 dark:text-white/40 text-sm text-center">{t("users.no_options")}</div>
               ) : (
                 options.map(option => (
                   <div 
@@ -79,6 +80,7 @@ const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, r
 
 export default function UsersClient({ initialUsers, roles, departments, divisions }) {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const [users, setUsers] = useState(initialUsers);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -149,10 +151,10 @@ export default function UsersClient({ initialUsers, roles, departments, division
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
+    if (!confirm(t("users.delete_confirm"))) return;
     const res = await deleteUser(id);
     if (res.success) refreshData();
-    else alert("Failed to delete user: " + res.error);
+    else alert(t("users.fail_delete") + res.error);
   };
 
   const roleOptions = (roles || []).map(r => ({ value: r?.id, label: r?.name?.replace("_", " ") }));
@@ -160,17 +162,17 @@ export default function UsersClient({ initialUsers, roles, departments, division
   const divOptions = (availableDivisions || []).map(d => ({ value: d?.id, label: d?.name }));
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto relative">
+    <div className="w-full relative">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-gray-900 dark:text-white">
             <Users className="w-8 h-8 text-primary" />
-            User Management
+            {t("users.title")}
           </h1>
           <p className="text-gray-500 dark:text-white/50 max-w-xl">
-            Manage members, roles, and access across the organization.
+            {t("users.subtitle")}
           </p>
         </div>
         
@@ -179,7 +181,7 @@ export default function UsersClient({ initialUsers, roles, departments, division
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-white/30" />
             <input 
               type="text"
-              placeholder="Search users..."
+              placeholder={t("users.search")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-colors"
@@ -191,7 +193,7 @@ export default function UsersClient({ initialUsers, roles, departments, division
               className="flex items-center gap-2 bg-primary text-[#050e0a] px-6 py-3 rounded-xl font-bold tracking-wide hover:bg-primary-focus hover:scale-105 transition-all shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
             >
               <Plus className="w-5 h-5" />
-              <span className="hidden sm:inline">Add User</span>
+              <span className="hidden sm:inline">{t("users.add_user")}</span>
             </button>
           )}
         </div>
@@ -203,11 +205,11 @@ export default function UsersClient({ initialUsers, roles, departments, division
           <table className="w-full min-w-[800px] text-left border-collapse">
             <thead className="border-b border-gray-200/50 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02]">
               <tr>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">User</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Role</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Department</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">Status</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40 text-right">Actions</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">{t("users.table_user")}</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">{t("users.table_role")}</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">{t("users.table_dept")}</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">{t("users.table_status")}</th>
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40 text-right">{t("users.table_actions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -215,7 +217,7 @@ export default function UsersClient({ initialUsers, roles, departments, division
                 <tr>
                   <td colSpan="5" className="px-6 py-12 text-center">
                     <UserCircle className="w-12 h-12 text-gray-500 dark:text-white/10 mx-auto mb-3" />
-                    <p className="text-gray-500 dark:text-white/40">No users match your current filters.</p>
+                    <p className="text-gray-500 dark:text-white/40">{t("users.no_users")}</p>
                   </td>
                 </tr>
               ) : (
@@ -253,12 +255,12 @@ export default function UsersClient({ initialUsers, roles, departments, division
                       {user.isActive ? (
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold tracking-wide">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                          ACTIVE
+                          {t("users.active")}
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold tracking-wide">
                           <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
-                          INACTIVE
+                          {t("users.inactive")}
                         </span>
                       )}
                     </td>
@@ -308,7 +310,7 @@ export default function UsersClient({ initialUsers, roles, departments, division
               </button>
               
               <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-6">
-                {modal.isEdit ? "Edit User" : "Add New User"}
+                {modal.isEdit ? t("users.modal_edit") : t("users.modal_add")}
               </h2>
               
               {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm">{error}</div>}
@@ -317,75 +319,78 @@ export default function UsersClient({ initialUsers, roles, departments, division
                 
                 {/* Basic Info */}
                 <div className="col-span-full">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-3 border-b border-gray-200 dark:border-white/10 pb-2">Basic Info</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-3 border-b border-gray-200 dark:border-white/10 pb-2">{t("users.basic_info")}</h3>
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Full Name</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("users.full_name")}</label>
                   <input name="name" type="text" required defaultValue={modal.data?.name} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Email</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("users.email")}</label>
                   <input name="email" type="email" required defaultValue={modal.data?.email} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">NPM (NIM)</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("users.npm")}</label>
                   <input name="npm" type="text" defaultValue={modal.data?.npm || ""} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Password</label>
-                  <input name="password" type={modal.isEdit ? "password" : "text"} required={!modal.isEdit} placeholder={modal.isEdit ? "Leave blank to keep unchanged" : "Set password..."} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("users.password")}</label>
+                  <input name="password" type={modal.isEdit ? "password" : "text"} required={!modal.isEdit} placeholder={modal.isEdit ? t("users.pwd_placeholder_edit") : t("users.pwd_placeholder_add")} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
 
                 {/* Organization Structure */}
                 <div className="col-span-full mt-4">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-3 border-b border-gray-200 dark:border-white/10 pb-2">Organization Structure</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-widest text-primary mb-3 border-b border-gray-200 dark:border-white/10 pb-2">{t("users.org_structure")}</h3>
                 </div>
 
                 {/* --- COOL CUSTOM SELECTS --- */}
                 <div className="relative z-50">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Role Level</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("users.role_level")}</label>
                   <CustomSelect 
                     name="roleId" 
                     options={roleOptions} 
                     value={selectedRoleId} 
                     onChange={setSelectedRoleId} 
-                    placeholder="Select Role..." 
+                    placeholder={t("users.select_role")}
                     required 
+                    t={t}
                   />
                 </div>
 
                 <div className="relative z-[49]">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Specific Position (Optional)</label>
-                  <input name="positionName" type="text" defaultValue={modal.data?.positionName || ""} placeholder="e.g. Kepala Departemen" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("users.specific_position")}</label>
+                  <input name="positionName" type="text" defaultValue={modal.data?.positionName || ""} placeholder={t("users.placeholder_position")} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
 
                 <div className="relative z-[48]">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Department</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("users.table_dept")}</label>
                   <CustomSelect 
                     name="departmentId" 
-                    options={[{ value: "", label: "No Department" }, ...deptOptions]} 
+                    options={[{ value: "", label: t("users.no_dept") }, ...deptOptions]} 
                     value={selectedDeptId} 
                     onChange={(val) => {
                       setSelectedDeptId(val);
                       setSelectedDivId("");
                     }} 
-                    placeholder="Select Department..." 
+                    placeholder={t("users.select_dept")}
+                    t={t}
                   />
                 </div>
 
                 <div className="relative z-[47]">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Division</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("users.division")}</label>
                   <CustomSelect 
                     name="divisionId" 
-                    options={[{ value: "", label: "No Division" }, ...divOptions]} 
+                    options={[{ value: "", label: t("users.no_div") }, ...divOptions]} 
                     value={selectedDivId} 
                     onChange={setSelectedDivId} 
-                    placeholder="Select Division..." 
+                    placeholder={t("users.select_div")} 
                     disabled={!selectedDeptId} 
+                    t={t}
                   />
                 </div>
                 {/* --------------------------- */}
@@ -400,12 +405,12 @@ export default function UsersClient({ initialUsers, roles, departments, division
                     defaultChecked={modal.isEdit ? modal.data?.isActive : true}
                     className="w-5 h-5 accent-primary rounded cursor-pointer"
                   />
-                  <label htmlFor="isActive" className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer">Account is Active</label>
+                  <label htmlFor="isActive" className="text-sm font-medium text-gray-900 dark:text-white cursor-pointer">{t("users.account_active")}</label>
                 </div>
 
                 <div className="col-span-full pt-4 mt-2 border-t border-gray-200 dark:border-white/10">
                   <button type="submit" disabled={loading} className="w-full bg-primary text-[#050e0a] font-bold py-3.5 rounded-xl hover:bg-primary-focus hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all disabled:opacity-50">
-                    {loading ? "Saving..." : "Save User Account"}
+                    {loading ? t("users.saving") : t("users.save_user")}
                   </button>
                 </div>
               </form>

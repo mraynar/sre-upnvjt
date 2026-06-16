@@ -5,24 +5,33 @@ import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Users, FileText, CheckSquare, TrendingUp, AlertCircle, Calendar, Activity, 
-  ArrowRight, Clock, Plus, BarChart2, Star, Zap
+  ArrowRight, Clock, Plus, BarChart2, Star, Zap, Trophy
 } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 export default function DashboardClient({ stats, user }) {
   const { data: session } = useSession();
+  const { t, language } = useLanguage();
   const role = session?.user?.roleName;
   const [greeting, setGreeting] = useState("Welcome");
   const [currentDate, setCurrentDate] = useState("");
+  const [topLeaders, setTopLeaders] = useState([]);
 
   useEffect(() => {
     const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) setGreeting("Good morning");
-    else if (hour >= 12 && hour < 18) setGreeting("Good afternoon");
-    else if (hour >= 18 && hour < 22) setGreeting("Good evening");
-    else setGreeting("Good night");
+    if (hour >= 5 && hour < 12) setGreeting(t("dashboard.greeting.morning"));
+    else if (hour >= 12 && hour < 18) setGreeting(t("dashboard.greeting.afternoon"));
+    else if (hour >= 18 && hour < 22) setGreeting(t("dashboard.greeting.evening"));
+    else setGreeting(t("dashboard.greeting.night"));
     
-    setCurrentDate(new Date().toLocaleDateString("en-US", { weekday: 'long', month: 'long', day: 'numeric' }));
+    setCurrentDate(new Date().toLocaleDateString(language === 'id' ? "id-ID" : "en-US", { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }));
+    
+    fetch("/api/leaderboard")
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) setTopLeaders(data.slice(0, 5));
+      });
   }, []);
 
   const container = {
@@ -75,15 +84,17 @@ export default function DashboardClient({ stats, user }) {
   );
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto relative pb-20">
-      
+    <div className="w-full relative pb-20">
       {/* Background Ambience */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/5 dark:bg-primary/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen animate-pulse" style={{ animationDuration: '6s' }}></div>
+      <div
+        className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/5 dark:bg-primary/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen animate-pulse"
+        style={{ animationDuration: "6s" }}
+      ></div>
       <div className="absolute top-40 right-1/4 w-[400px] h-[400px] bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen"></div>
 
       {/* Header and ID Card */}
       <div className="flex flex-col xl:flex-row justify-between items-start gap-10 mb-12 relative z-10">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -100,7 +111,7 @@ export default function DashboardClient({ stats, user }) {
             </span>
           </h1>
           <p className="text-gray-500 dark:text-white/50 text-base md:text-lg max-w-xl font-light mb-8 leading-relaxed">
-            Welcome to your command center. Here's what's happening in the Society of Renewable Energy today. Let's make an impact.
+            {t("dashboard.welcome_msg")}
           </p>
         </motion.div>
 
@@ -109,11 +120,16 @@ export default function DashboardClient({ stats, user }) {
           <motion.div
             initial={{ opacity: 0, scale: 0.95, x: 20 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
-            transition={{ duration: 1, delay: 0.2, type: "spring", bounce: 0.4 }}
+            transition={{
+              duration: 1,
+              delay: 0.2,
+              type: "spring",
+              bounce: 0.4,
+            }}
             className="w-full xl:w-[420px] shrink-0"
             style={{ perspective: 1200 }}
           >
-            <motion.div 
+            <motion.div
               whileHover={{ rotateY: -10, rotateX: 10, scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400, damping: 30 }}
               className="relative w-full aspect-[1.586/1] rounded-3xl p-[1px] group cursor-default shadow-2xl dark:shadow-[0_30px_60px_rgba(0,0,0,0.6)]"
@@ -121,10 +137,9 @@ export default function DashboardClient({ stats, user }) {
             >
               {/* Premium Gradient Border */}
               <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-emerald-300 via-primary to-blue-600 opacity-60 group-hover:opacity-100 transition-opacity duration-700"></div>
-              
+
               {/* Card Body */}
               <div className="absolute inset-[1px] bg-gradient-to-br from-[#0a140f] to-[#040806] rounded-3xl overflow-hidden backdrop-blur-3xl">
-                
                 {/* Holographic Glare Effect */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 -translate-x-[150%] group-hover:translate-x-[150%] transition-all duration-[1.5s] ease-in-out pointer-events-none z-20"></div>
 
@@ -133,14 +148,23 @@ export default function DashboardClient({ stats, user }) {
                 <div className="absolute -bottom-20 -left-20 w-56 h-56 bg-blue-600/30 rounded-full blur-[60px] group-hover:bg-blue-500/50 transition-colors duration-500"></div>
 
                 {/* Noise Texture Overlay */}
-                <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+                <div
+                  className="absolute inset-0 opacity-[0.05] mix-blend-overlay pointer-events-none"
+                  style={{
+                    backgroundImage:
+                      'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")',
+                  }}
+                ></div>
 
                 {/* SRE Watermark */}
                 <div className="absolute -right-8 top-1/2 -translate-y-1/2 text-[160px] font-black text-white/[0.02] rotate-[-90deg] select-none pointer-events-none font-display leading-none tracking-tighter mix-blend-plus-lighter">
                   SRE
                 </div>
 
-                <div className="relative z-10 p-7 h-full flex flex-col justify-between" style={{ transform: "translateZ(40px)" }}>
+                <div
+                  className="relative z-10 p-7 h-full flex flex-col justify-between"
+                  style={{ transform: "translateZ(40px)" }}
+                >
                   {/* Card Header */}
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
@@ -148,8 +172,12 @@ export default function DashboardClient({ stats, user }) {
                         <Zap className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-white font-bold tracking-[0.25em] text-[11px] uppercase opacity-95 drop-shadow-sm">SRE UPNVJT</h3>
-                        <p className="text-emerald-400 text-[9px] tracking-[0.3em] uppercase font-black drop-shadow-sm mt-0.5">Official Access</p>
+                        <h3 className="text-white font-bold tracking-[0.25em] text-[11px] uppercase opacity-95 drop-shadow-sm">
+                          SRE UPNVJT
+                        </h3>
+                        <p className="text-emerald-400 text-[9px] tracking-[0.3em] uppercase font-black drop-shadow-sm mt-0.5">
+                          {t("dashboard.id_card.official_access")}
+                        </p>
                       </div>
                     </div>
                     {/* Smart Chip Graphic */}
@@ -162,22 +190,28 @@ export default function DashboardClient({ stats, user }) {
 
                   {/* Card Body / User Info */}
                   <div className="mt-auto">
-                    <p className="text-white/40 text-[9px] uppercase tracking-[0.3em] mb-1.5">Cardholder</p>
+                    <p className="text-white/40 text-[9px] uppercase tracking-[0.3em] mb-1.5">
+                      {t("dashboard.id_card.cardholder")}
+                    </p>
                     <h2 className="text-2xl font-display font-black text-white tracking-widest uppercase drop-shadow-md mb-3 line-clamp-1">
                       {user.name}
                     </h2>
-                    
+
                     <div className="flex flex-row items-end justify-between mt-5">
                       <div>
-                        <p className="text-white/40 text-[8px] uppercase tracking-[0.3em] mb-1.5">ID Number</p>
+                        <p className="text-white/40 text-[8px] uppercase tracking-[0.3em] mb-1.5">
+                          {t("dashboard.id_card.id_number")}
+                        </p>
                         <p className="text-emerald-300 font-mono text-sm tracking-[0.2em] bg-emerald-950/40 px-3 py-1.5 rounded-lg border border-emerald-500/20 shadow-inner">
                           {user.npm || "0000000000"}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-white/40 text-[8px] uppercase tracking-[0.3em] mb-1.5">Role / Dept</p>
+                        <p className="text-white/40 text-[8px] uppercase tracking-[0.3em] mb-1.5">
+                          {t("dashboard.id_card.role_dept")}
+                        </p>
                         <p className="text-white font-bold text-[12px] tracking-widest uppercase mb-1">
-                          {user.role?.name?.replace(/_/g, ' ') || "MEMBER"}
+                          {user.role?.name?.replace(/_/g, " ") || "MEMBER"}
                         </p>
                         <p className="text-white/60 text-[10px] tracking-widest uppercase truncate max-w-[130px]">
                           {user.department?.name || "General"}
@@ -185,7 +219,6 @@ export default function DashboardClient({ stats, user }) {
                       </div>
                     </div>
                   </div>
-
                 </div>
               </div>
             </motion.div>
@@ -196,7 +229,7 @@ export default function DashboardClient({ stats, user }) {
       {/* PENDING ACTIONS (Attendance) */}
       <AnimatePresence>
         {stats?.pendingAttendance?.length > 0 && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20, height: 0 }}
             animate={{ opacity: 1, y: 0, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
@@ -204,24 +237,32 @@ export default function DashboardClient({ stats, user }) {
           >
             <div className="bg-white dark:bg-[#08120e] rounded-[23px] p-6 relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 overflow-hidden">
               <div className="absolute -right-20 -top-20 w-64 h-64 bg-amber-500/10 rounded-full blur-[40px] pointer-events-none"></div>
-              
+
               <div className="flex items-center gap-5 relative z-10">
                 <div className="w-14 h-14 bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 rounded-2xl flex items-center justify-center shrink-0">
                   <AlertCircle className="w-7 h-7 animate-pulse" />
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 flex items-center gap-2">
-                    Action Required
-                    <span className="px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 text-[10px] uppercase tracking-widest font-bold">Urgent</span>
+                    {t("dashboard.pending_actions.action_required")}
+                    <span className="px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 text-[10px] uppercase tracking-widest font-bold">
+                      {t("dashboard.pending_actions.urgent")}
+                    </span>
                   </h3>
-                  <p className="text-sm text-gray-600 dark:text-white/60">You have <strong className="text-gray-900 dark:text-white">{stats.pendingAttendance.length}</strong> active session(s) requiring your attendance.</p>
+                  <p className="text-sm text-gray-600 dark:text-white/60">
+                    {t("dashboard.pending_actions.attendance_msg").replace(
+                      "{count}",
+                      stats.pendingAttendance.length,
+                    )}
+                  </p>
                 </div>
               </div>
-              <Link 
+              <Link
                 href="/attendance"
                 className="relative z-10 px-8 py-3.5 bg-gray-900 dark:bg-white text-white dark:text-black font-bold rounded-xl hover:scale-105 transition-transform shadow-[0_10px_20px_rgba(0,0,0,0.1)] dark:shadow-[0_10px_20px_rgba(255,255,255,0.2)] whitespace-nowrap flex items-center gap-2 group"
               >
-                Fill Attendance <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                {t("dashboard.pending_actions.fill_attendance")}{" "}
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </motion.div>
@@ -229,7 +270,7 @@ export default function DashboardClient({ stats, user }) {
       </AnimatePresence>
 
       {/* Role-based Widgets Grid */}
-      <motion.div 
+      <motion.div
         variants={container}
         initial="hidden"
         animate="show"
@@ -238,112 +279,236 @@ export default function DashboardClient({ stats, user }) {
         {/* SUPER_ADMIN View */}
         {role === "SUPER_ADMIN" && (
           <>
-            <Widget title="Total Members" value={stats?.totalUsers || "0"} subtitle="Active organization members" icon={Users} color="primary" trend="+New" />
-            <Widget title="Active Projects" value={stats?.activeProjects || "0"} subtitle={`Approved proker running`} icon={CheckSquare} color="blue-500" trend="Active" />
-            <Widget title="Published Articles" value={stats?.publishedArticles || "0"} subtitle="Live on public web" icon={FileText} color="emerald-500" trend="Content" />
-            <Widget title="Departments" value={stats?.totalDepartments || "0"} subtitle="Divisions & Departments" icon={Activity} color="amber-500" trend="Stable" />
+            <Widget
+              title={t("dashboard.widgets.total_members")}
+              value={stats?.totalUsers || "0"}
+              subtitle=""
+              icon={Users}
+              color="primary"
+              trend="+"
+            />
+            <Widget
+              title={t("dashboard.widgets.active_projects")}
+              value={stats?.activeProjects || "0"}
+              subtitle=""
+              icon={CheckSquare}
+              color="blue-500"
+              trend="Active"
+            />
+            <Widget
+              title={t("dashboard.widgets.published_articles")}
+              value={stats?.publishedArticles || "0"}
+              subtitle=""
+              icon={FileText}
+              color="emerald-500"
+              trend="Content"
+            />
+            <Widget
+              title={t("dashboard.widgets.departments")}
+              value={stats?.totalDepartments || "0"}
+              subtitle=""
+              icon={Activity}
+              color="amber-500"
+              trend="Stable"
+            />
           </>
         )}
 
         {/* DIRECTOR (Daily Officer) View */}
         {role === "DIRECTOR" && (
           <>
-            <Widget title="Dept Performance" value={stats?.deptPerformance || "94%"} subtitle="+2% from last month" icon={TrendingUp} color="primary" trend="+2%" />
-            <Widget title="Active Projects" value={stats?.activeProjects || "0"} subtitle="In execution phase" icon={FileText} color="blue-500" trend="On Track" />
-            <Widget title="Pending Approvals" value={stats?.pendingApprovals || "0"} subtitle="Requires your signature" icon={CheckSquare} color="amber-500" trend="Action" />
-            <Widget title="Upcoming Meetings" value={stats?.upcomingMeetings || "0"} subtitle="Next: Pleno at 15:00" icon={Calendar} color="purple-500" trend="Soon" />
+            <Widget
+              title={t("dashboard.widgets.dept_performance")}
+              value={stats?.deptPerformance || "94%"}
+              subtitle=""
+              icon={TrendingUp}
+              color="primary"
+              trend="+2%"
+            />
+            <Widget
+              title={t("dashboard.widgets.active_projects")}
+              value={stats?.activeProjects || "0"}
+              subtitle=""
+              icon={FileText}
+              color="blue-500"
+              trend="On Track"
+            />
+            <Widget
+              title={t("dashboard.widgets.pending_approvals")}
+              value={stats?.pendingApprovals || "0"}
+              subtitle=""
+              icon={CheckSquare}
+              color="amber-500"
+              trend="Action"
+            />
+            <Widget
+              title={t("dashboard.widgets.upcoming_meetings")}
+              value={stats?.upcomingMeetings || "0"}
+              subtitle=""
+              icon={Calendar}
+              color="purple-500"
+              trend="Soon"
+            />
           </>
         )}
 
         {/* MANAGER View */}
         {role === "MANAGER" && (
           <>
-            <Widget title="Team Tasks" value={stats?.teamTasks || "0"} subtitle="8 due this week" icon={CheckSquare} color="primary" trend="-1" />
-            <Widget title="Staff Attendance" value={stats?.staffAttendance || "92%"} subtitle="Last week's average" icon={Users} color="blue-500" trend="+4%" />
-            <Widget title="Project Progress" value={stats?.projectProgress || "0"} subtitle="SRE Mengajar 2026" icon={TrendingUp} color="emerald-500" trend="Good" />
-            <Widget title="Pending Reviews" value={stats?.pendingReviews || "0"} subtitle="Staff submissions" icon={AlertCircle} color="amber-500" trend="Action" />
+            <Widget
+              title={t("dashboard.widgets.team_tasks")}
+              value={stats?.teamTasks || "0"}
+              subtitle=""
+              icon={CheckSquare}
+              color="primary"
+              trend="-1"
+            />
+            <Widget
+              title={t("dashboard.widgets.staff_attendance")}
+              value={stats?.staffAttendance || "92%"}
+              subtitle=""
+              icon={Users}
+              color="blue-500"
+              trend="+4%"
+            />
+            <Widget
+              title={t("dashboard.widgets.project_progress")}
+              value={stats?.projectProgress || "0"}
+              subtitle=""
+              icon={TrendingUp}
+              color="emerald-500"
+              trend="Good"
+            />
+            <Widget
+              title={t("dashboard.widgets.pending_reviews")}
+              value={stats?.pendingReviews || "0"}
+              subtitle=""
+              icon={AlertCircle}
+              color="amber-500"
+              trend="Action"
+            />
           </>
         )}
 
         {/* STAFF View */}
         {role === "STAFF" && (
           <>
-            <Widget title="My Tasks" value={stats?.myTasks || "0"} subtitle="2 high priority" icon={CheckSquare} color="primary" trend="Focus" />
-            <Widget title="My Attendance" value={stats?.myAttendance || "100%"} subtitle="Perfect streak" icon={TrendingUp} color="emerald-500" trend="Great" />
-            <Widget title="Upcoming Events" value={stats?.upcomingEvents || "0"} subtitle="Divisional Meeting" icon={Calendar} color="blue-500" trend="Soon" />
-            <Widget title="Announcements" value={stats?.announcements || "0"} subtitle="Unread messages" icon={AlertCircle} color="purple-500" trend="New" />
+            <Widget
+              title={t("dashboard.widgets.my_tasks")}
+              value={stats?.myTasks || "0"}
+              subtitle=""
+              icon={CheckSquare}
+              color="primary"
+              trend="Focus"
+            />
+            <Widget
+              title={t("dashboard.widgets.my_attendance")}
+              value={stats?.myAttendance || "100%"}
+              subtitle=""
+              icon={TrendingUp}
+              color="emerald-500"
+              trend="Great"
+            />
+            <Widget
+              title={t("dashboard.widgets.upcoming_events")}
+              value={stats?.upcomingEvents || "0"}
+              subtitle=""
+              icon={Calendar}
+              color="blue-500"
+              trend="Soon"
+            />
+            <Widget
+              title={t("dashboard.widgets.announcements")}
+              value={stats?.announcements || "0"}
+              subtitle=""
+              icon={AlertCircle}
+              color="purple-500"
+              trend="New"
+            />
           </>
         )}
       </motion.div>
 
       {/* Main Content Area */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.8 }}
         className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10"
       >
-        {/* Analytics Section (Mock Chart) */}
-        <div className="lg:col-span-2 bg-white dark:bg-[#08120e] border border-gray-100 dark:border-white/5 rounded-3xl p-8 min-h-[440px] flex flex-col relative overflow-hidden shadow-sm dark:shadow-none">
-          <div className="absolute inset-0 bg-gradient-to-b from-gray-50/50 to-transparent dark:from-white/[0.02] dark:to-transparent pointer-events-none" />
-          
-          <div className="flex justify-between items-center mb-8 relative z-10">
-            <div>
-              <h3 className="font-display font-bold text-2xl tracking-tight text-gray-900 dark:text-white flex items-center gap-2 mb-1">
-                <BarChart2 className="w-6 h-6 text-primary" />
-                Organization Activities
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-white/40">Monthly projects, events, and article publications</p>
-            </div>
-            <div className="px-4 py-2 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-xs font-bold text-gray-600 dark:text-white/60">
-              This Year
-            </div>
+        {/* Top 5 Leaderboard */}
+        <div className="bg-white dark:bg-[#08120e] border border-gray-100 dark:border-white/5 rounded-3xl p-8 relative overflow-hidden shadow-sm dark:shadow-none">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-500/5 rounded-full blur-[60px] pointer-events-none" />
+
+          <div className="flex justify-between items-center mb-6 relative z-10">
+            <h3 className="font-display font-bold text-2xl tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
+              <Trophy className="w-6 h-6 text-yellow-500" />
+              {t("dashboard.leaderboard.title")}
+            </h3>
+            <Link
+              href="/leaderboard"
+              className="text-xs font-bold uppercase tracking-widest text-primary hover:text-emerald-600 transition-colors"
+            >
+              {t("dashboard.leaderboard.view_all")}
+            </Link>
           </div>
 
-          {/* CSS Mock Chart */}
-          <div className="flex-1 flex flex-col justify-end mt-4 relative z-10">
-            {/* Chart Grid Lines */}
-            <div className="absolute inset-0 flex flex-col justify-between pointer-events-none pb-8 opacity-40 dark:opacity-20">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="w-full border-b border-dashed border-gray-300 dark:border-white/20 h-0"></div>
-              ))}
-            </div>
-
-            <div className="flex items-end justify-between h-56 gap-1 sm:gap-2 w-full relative z-10 px-2 pb-2">
-              {chartData.map((val, i) => (
-                <div key={i} className="relative flex flex-col items-center flex-1 group h-full justify-end">
-                  {/* Tooltip on hover */}
-                  <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 dark:bg-white text-white dark:text-black text-[10px] font-bold py-1 px-2 rounded-md shadow-lg pointer-events-none z-20 whitespace-nowrap">
-                    {rawChartData[i]} events
+          <div className="flex flex-col gap-4 relative z-10">
+            {topLeaders.length > 0 ? (
+              topLeaders.map((u, idx) => (
+                <div
+                  key={u.id}
+                  className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 hover:border-primary/30 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <div className="w-12 h-12 rounded-full bg-white dark:bg-white/10 flex items-center justify-center font-bold shadow-sm overflow-hidden text-gray-500 dark:text-white/60 text-lg border border-gray-200 dark:border-white/10">
+                        {u.profilePictureUrl ? (
+                          <img
+                            src={u.profilePictureUrl}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          u.name.charAt(0)
+                        )}
+                      </div>
+                      {idx < 3 && (
+                        <div
+                          className={`absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-white dark:border-[#08120e] ${idx === 0 ? "bg-yellow-400 text-yellow-900" : idx === 1 ? "bg-gray-300 text-gray-800" : "bg-amber-600 text-white"}`}
+                        >
+                          {idx + 1}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900 dark:text-white text-sm">
+                        {u.name}
+                      </h4>
+                      <p className="text-xs text-gray-500 dark:text-white/40">
+                        {u.positionName || "Staff"}
+                      </p>
+                    </div>
                   </div>
-                  {/* Bar */}
-                  <div className="w-full sm:w-8 lg:w-10 bg-gray-100 dark:bg-white/5 rounded-t-xl relative overflow-hidden group-hover:bg-primary/10 transition-colors" style={{ height: '100%' }}>
-                    <motion.div 
-                      initial={{ height: 0 }}
-                      animate={{ height: `${val}%` }}
-                      transition={{ duration: 1.5, delay: i * 0.05, ease: "easeOut" }}
-                      className="absolute bottom-0 w-full bg-gradient-to-t from-primary to-emerald-400 rounded-t-xl opacity-80 group-hover:opacity-100"
-                    />
+                  <div className="flex items-center gap-1.5 text-yellow-600 dark:text-yellow-400 font-black bg-yellow-50 dark:bg-yellow-500/10 px-3 py-1.5 rounded-xl border border-yellow-100 dark:border-yellow-500/20">
+                    {u.totalPoints}{" "}
+                    <Star className="w-3.5 h-3.5 fill-current" />
                   </div>
-                  {/* Label */}
-                  <span className="text-[9px] font-bold text-gray-400 dark:text-white/30 mt-3 hidden sm:block">
-                    {months[i]}
-                  </span>
-                  <span className="text-[9px] font-bold text-gray-400 dark:text-white/30 mt-3 sm:hidden">
-                    {months[i].charAt(0)}
-                  </span>
                 </div>
-              ))}
-            </div>
+              ))
+            ) : (
+              <div className="flex items-center justify-center h-48 border border-dashed border-gray-200 dark:border-white/10 rounded-2xl text-sm font-medium text-gray-400">
+                {t("dashboard.leaderboard.loading")}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Recent Activity Timeline */}
-        <div className="bg-white dark:bg-[#08120e] border border-gray-100 dark:border-white/5 rounded-3xl p-8 min-h-[440px] flex flex-col relative overflow-hidden shadow-sm dark:shadow-none">
+        <div className="bg-white dark:bg-[#08120e] border border-gray-100 dark:border-white/5 rounded-3xl p-8 min-h-[440px] flex flex-col relative overflow-hidden shadow-sm dark:shadow-none lg:col-span-2">
           <div className="flex justify-between items-center mb-8">
             <h3 className="font-display font-bold text-2xl tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
               <Clock className="w-6 h-6 text-blue-500" />
-              Recent Activity
+              {t("dashboard.timeline.title")}
             </h3>
           </div>
 
@@ -351,27 +516,39 @@ export default function DashboardClient({ stats, user }) {
             {stats?.recentActivities?.length > 0 ? (
               <div className="relative border-l-2 border-gray-100 dark:border-white/5 ml-3 space-y-8 pb-4 pt-2">
                 {stats.recentActivities.map((activity, i) => (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5 + (i * 0.1) }}
-                    key={activity.id} 
+                    transition={{ delay: 0.5 + i * 0.1 }}
+                    key={activity.id}
                     className="relative pl-6 group"
                   >
                     {/* Timeline Node */}
                     <div className="absolute w-3.5 h-3.5 bg-white dark:bg-[#08120e] border-2 border-primary rounded-full -left-[8.5px] top-1 group-hover:scale-150 group-hover:bg-primary transition-all duration-300" />
-                    
+
                     <div className="bg-gray-50 dark:bg-white/[0.02] p-4 rounded-2xl border border-gray-100 dark:border-white/5 group-hover:border-primary/30 transition-colors">
                       <div className="flex justify-between items-start mb-1.5">
-                        <h4 className="text-sm font-bold text-gray-900 dark:text-white line-clamp-1 pr-2">{activity.title}</h4>
+                        <h4 className="text-sm font-bold text-gray-900 dark:text-white line-clamp-1 pr-2">
+                          {activity.title}
+                        </h4>
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-white/50 mb-3">{activity.desc}</p>
+                      <p className="text-xs text-gray-500 dark:text-white/50 mb-3">
+                        {activity.desc}
+                      </p>
                       <div className="flex items-center gap-2">
                         <span className="text-[9px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded-md">
                           {activity.type}
                         </span>
                         <span className="text-[10px] text-gray-400 dark:text-white/40 font-medium">
-                          {new Date(activity.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute:"2-digit" })}
+                          {new Date(activity.date).toLocaleDateString(
+                            language === "id" ? "id-ID" : "en-GB",
+                            {
+                              day: "numeric",
+                              month: "short",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            },
+                          )}
                         </span>
                       </div>
                     </div>
@@ -383,14 +560,19 @@ export default function DashboardClient({ stats, user }) {
                 <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3">
                   <Star className="w-6 h-6 text-gray-300 dark:text-white/20" />
                 </div>
-                <p className="text-gray-400 dark:text-white/30 font-bold text-sm tracking-wide">It's quiet here...</p>
-                <p className="text-xs text-gray-400 dark:text-white/20 mt-1">No recent activities found.</p>
+                <p className="text-gray-400 dark:text-white/30 font-bold text-sm tracking-wide">
+                  {t("dashboard.timeline.quiet")}
+                </p>
+                <p className="text-xs text-gray-400 dark:text-white/20 mt-1">
+                  {t("dashboard.timeline.no_activities")}
+                </p>
               </div>
             )}
           </div>
         </div>
       </motion.div>
 
+    
     </div>
   );
 }

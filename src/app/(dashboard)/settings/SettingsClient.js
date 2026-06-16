@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Cropper from "react-easy-crop";
 import getCroppedImg from "@/lib/cropImage";
@@ -17,9 +17,11 @@ import {
   Shield
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 export default function SettingsClient({ user }) {
   const router = useRouter();
+  const { t, language, setLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState("profile");
   
   const [profileData, setProfileData] = useState({
@@ -173,12 +175,58 @@ export default function SettingsClient({ user }) {
     }
   };
 
+  // System Settings Logic
+  const [systemData, setSystemData] = useState({ APP_LANGUAGE: "id", APP_TITLE: "SRE UPNVJT Portal" });
+  const [isSavingSystem, setIsSavingSystem] = useState(false);
+  const [systemMessage, setSystemMessage] = useState(null);
+
+  const fetchSystemSettings = async () => {
+    try {
+      const res = await fetch("/api/settings/system");
+      const data = await res.json();
+      if (!data.error) setSystemData((prev) => ({ ...prev, ...data }));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    if (user.roleName === "SUPER_ADMIN" && activeTab === "system") {
+      fetchSystemSettings();
+    }
+  }, [user.roleName, activeTab]);
+
+  const handleSystemSubmit = async (e) => {
+    e.preventDefault();
+    setIsSavingSystem(true);
+    setSystemMessage(null);
+    try {
+      const res = await fetch("/api/settings/system", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(systemData)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSystemMessage({ type: "success", text: "System settings updated!" });
+        if (systemData.APP_LANGUAGE) {
+          setLanguage(systemData.APP_LANGUAGE); // trigger language change instantly
+        }
+      } else {
+        setSystemMessage({ type: "error", text: data.error || "Failed" });
+      }
+    } catch (err) {
+      setSystemMessage({ type: "error", text: "Error saving system settings" });
+    }
+    setIsSavingSystem(false);
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-4xl font-display font-bold text-gray-900 dark:text-white mb-2 tracking-tight">Settings</h1>
-        <p className="text-gray-500 dark:text-white/60">Manage your account preferences and security.</p>
+        <h1 className="text-4xl font-display font-bold text-gray-900 dark:text-white mb-2 tracking-tight">{t("settings.title")}</h1>
+        <p className="text-gray-500 dark:text-white/60">{t("settings.subtitle")}</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
@@ -194,7 +242,7 @@ export default function SettingsClient({ user }) {
               }`}
             >
               <User className="w-4 h-4" />
-              Profile Details
+              {t("settings.profile_tab")}
             </button>
             <button
               onClick={() => setActiveTab("password")}
@@ -205,8 +253,21 @@ export default function SettingsClient({ user }) {
               }`}
             >
               <Lock className="w-4 h-4" />
-              Security & Password
+              {t("settings.password_tab")}
             </button>
+            {user.roleName === "SUPER_ADMIN" && (
+              <button
+                onClick={() => setActiveTab("system")}
+                className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold tracking-wide transition-all mt-4 border-t border-gray-200 dark:border-white/5 pt-4 ${
+                  activeTab === "system" 
+                    ? "bg-emerald-600 text-white" 
+                    : "text-gray-500 dark:text-white/50 hover:text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5"
+                }`}
+              >
+                <Settings className="w-4 h-4" />
+                {t("settings.system_tab")}
+              </button>
+            )}
           </div>
         </div>
 
@@ -225,8 +286,8 @@ export default function SettingsClient({ user }) {
                   transition={{ duration: 0.2 }}
                 >
                   <div className="mb-8">
-                    <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-2">Profile Details</h2>
-                    <p className="text-gray-500 dark:text-white/50 text-sm">Update your personal information and contact details.</p>
+                    <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-2">{t("settings.profile_tab")}</h2>
+                    <p className="text-gray-500 dark:text-white/50 text-sm">{t("settings.subtitle")}</p>
                   </div>
 
                   <form onSubmit={handleProfileSubmit} className="space-y-6 max-w-2xl">
@@ -244,13 +305,13 @@ export default function SettingsClient({ user }) {
                         </div>
                       </div>
                       <div className="flex flex-col items-center md:items-start gap-2">
-                        <h3 className="text-sm font-bold text-gray-900 dark:text-white">Foto Profil (Portrait)</h3>
+                        <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t("settings.profile.photo_title")}</h3>
                         <p className="text-xs text-gray-500 dark:text-white/50 text-center md:text-left max-w-xs">
-                          Unggah foto profesional untuk halaman "About Us". Disarankan rasio portrait (misalnya 600x900px).
+                          {t("settings.profile.photo_desc")}
                         </p>
                         <div className="mt-2">
                           <label className="cursor-pointer bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/10 text-gray-900 dark:text-white px-4 py-2 rounded-xl text-xs font-bold tracking-wide transition-colors">
-                            <span>Change Photo</span>
+                            <span>{t("settings.profile.change_photo")}</span>
                             <input 
                               type="file" 
                               accept="image/*" 
@@ -267,7 +328,7 @@ export default function SettingsClient({ user }) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">Full Name</label>
+                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">{t("settings.profile.full_name")}</label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 dark:text-white/40">
                             <User className="w-4 h-4" />
@@ -283,7 +344,7 @@ export default function SettingsClient({ user }) {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">Email Address</label>
+                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">{t("settings.profile.email")}</label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 dark:text-white/40">
                             <Mail className="w-4 h-4" />
@@ -301,7 +362,7 @@ export default function SettingsClient({ user }) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">NPM (Nomor Induk Mahasiswa)</label>
+                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">{t("settings.profile.npm")}</label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 dark:text-white/40">
                             <BadgeIcon className="w-4 h-4" />
@@ -310,7 +371,7 @@ export default function SettingsClient({ user }) {
                             type="text"
                             value={profileData.npm}
                             onChange={(e) => setProfileData({...profileData, npm: e.target.value})}
-                            placeholder="Optional"
+                            placeholder={t("settings.profile.npm_placeholder")}
                             className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
                           />
                         </div>
@@ -319,7 +380,7 @@ export default function SettingsClient({ user }) {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">Instagram URL</label>
+                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">{t("settings.profile.ig_url")}</label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 dark:text-white/40">
                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
@@ -335,7 +396,7 @@ export default function SettingsClient({ user }) {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">LinkedIn URL</label>
+                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">{t("settings.profile.linkedin_url")}</label>
                         <div className="relative">
                           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 dark:text-white/40">
                             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
@@ -353,17 +414,17 @@ export default function SettingsClient({ user }) {
 
                     <div className="bg-white dark:bg-white/5 shadow-sm dark:shadow-none rounded-2xl p-5 border border-gray-200 dark:border-white/10 mt-8">
                       <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-primary" /> Role Information
+                        <Shield className="w-4 h-4 text-primary" /> {t("settings.profile.role_info")}
                       </h4>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <p className="text-xs text-gray-500 dark:text-white/40 uppercase tracking-wider mb-1">Current Role</p>
+                          <p className="text-xs text-gray-500 dark:text-white/40 uppercase tracking-wider mb-1">{t("settings.profile.current_role")}</p>
                           <span className="inline-block px-3 py-1 bg-primary/20 text-primary rounded-md text-xs font-bold tracking-widest uppercase border border-primary/30">
                             {user.roleName}
                           </span>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 dark:text-white/40 uppercase tracking-wider mb-1">Department</p>
+                          <p className="text-xs text-gray-500 dark:text-white/40 uppercase tracking-wider mb-1">{t("settings.profile.department")}</p>
                           <p className="text-sm text-gray-900 dark:text-white font-medium">{user.departmentName}</p>
                         </div>
                       </div>
@@ -383,7 +444,7 @@ export default function SettingsClient({ user }) {
                         className="bg-primary hover:bg-primary-focus text-[#050e0a] px-8 py-3 rounded-xl font-bold tracking-wide flex items-center gap-2 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                       >
                         {isSavingProfile ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                        Save Changes
+                        {t("settings.profile.save_changes")}
                       </button>
                     </div>
                   </form>
@@ -400,13 +461,13 @@ export default function SettingsClient({ user }) {
                   transition={{ duration: 0.2 }}
                 >
                   <div className="mb-8">
-                    <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-2">Change Password</h2>
-                    <p className="text-gray-500 dark:text-white/50 text-sm">Ensure your account is using a long, random password to stay secure.</p>
+                    <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-2">{t("settings.password.title")}</h2>
+                    <p className="text-gray-500 dark:text-white/50 text-sm">{t("settings.password.subtitle")}</p>
                   </div>
 
                   <form onSubmit={handlePasswordSubmit} className="space-y-6 max-w-md">
                     <div className="space-y-2">
-                      <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">Current Password</label>
+                      <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">{t("settings.password.current")}</label>
                       <input
                         type="password"
                         required
@@ -417,7 +478,7 @@ export default function SettingsClient({ user }) {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">New Password</label>
+                      <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">{t("settings.password.new")}</label>
                       <input
                         type="password"
                         required
@@ -429,7 +490,7 @@ export default function SettingsClient({ user }) {
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">Confirm New Password</label>
+                      <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">{t("settings.password.confirm")}</label>
                       <input
                         type="password"
                         required
@@ -454,7 +515,67 @@ export default function SettingsClient({ user }) {
                         className="bg-primary hover:bg-primary-focus text-[#050e0a] px-8 py-3 rounded-xl font-bold tracking-wide flex items-center gap-2 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                       >
                         {isSavingPassword ? <Loader2 className="w-5 h-5 animate-spin" /> : <Lock className="w-5 h-5" />}
-                        Update Password
+                        {t("settings.password.update_btn")}
+                      </button>
+                    </div>
+                  </form>
+                </motion.div>
+              )}
+
+              {/* SYSTEM TAB */}
+              {user.roleName === "SUPER_ADMIN" && activeTab === "system" && (
+                <motion.div
+                  key="system"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="mb-8">
+                    <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-2">{t("settings.system.title")}</h2>
+                    <p className="text-gray-500 dark:text-white/50 text-sm">{t("settings.system.subtitle")}</p>
+                  </div>
+
+                  <form onSubmit={handleSystemSubmit} className="space-y-6 max-w-md">
+                    
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">{t("settings.system.app_title")}</label>
+                      <input
+                        type="text"
+                        required
+                        value={systemData.APP_TITLE || ""}
+                        onChange={(e) => setSystemData({...systemData, APP_TITLE: e.target.value})}
+                        className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">{t("settings.system.system_language")}</label>
+                      <select
+                        value={systemData.APP_LANGUAGE || "id"}
+                        onChange={(e) => setSystemData({...systemData, APP_LANGUAGE: e.target.value})}
+                        className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 transition-colors"
+                      >
+                        <option value="id" className="text-black">Indonesian (ID)</option>
+                        <option value="en" className="text-black">English (EN)</option>
+                      </select>
+                    </div>
+
+                    {systemMessage && (
+                      <div className={`p-4 rounded-xl flex items-center gap-3 text-sm font-medium ${systemMessage.type === 'success' ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
+                        {systemMessage.type === 'success' ? <CheckCircle2 className="w-5 h-5 shrink-0" /> : <ShieldAlert className="w-5 h-5 shrink-0" />}
+                        {systemMessage.text}
+                      </div>
+                    )}
+
+                    <div className="pt-4 flex justify-end border-t border-gray-200 dark:border-white/10">
+                      <button
+                        type="submit"
+                        disabled={isSavingSystem}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl font-bold tracking-wide flex items-center gap-2 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+                      >
+                        {isSavingSystem ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                        {t("settings.system.apply_btn")}
                       </button>
                     </div>
                   </form>
@@ -477,7 +598,7 @@ export default function SettingsClient({ user }) {
               className="bg-[#0a1612] border border-gray-200 dark:border-white/10 rounded-3xl overflow-hidden w-full max-w-lg flex flex-col shadow-2xl"
             >
               <div className="p-4 border-b border-gray-200 dark:border-white/10 bg-white/[0.02]">
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Sesuaikan Foto (Crop)</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">{t("settings.crop.title")}</h3>
               </div>
               <div className="relative w-full h-[400px] bg-black">
                 <Cropper
@@ -492,7 +613,7 @@ export default function SettingsClient({ user }) {
               </div>
               <div className="p-4 border-t border-gray-200 dark:border-white/10 bg-white/[0.02] flex flex-col gap-4">
                 <div className="flex items-center gap-4">
-                  <span className="text-xs text-gray-500 font-bold uppercase">Zoom</span>
+                  <span className="text-xs text-gray-500 font-bold uppercase">{t("settings.crop.zoom")}</span>
                   <input
                     type="range"
                     value={zoom}
@@ -512,13 +633,13 @@ export default function SettingsClient({ user }) {
                     }}
                     className="px-4 py-2 rounded-xl text-sm font-bold text-gray-500 hover:text-white hover:bg-white/10 transition-colors"
                   >
-                    Batal
+                    {t("settings.crop.cancel")}
                   </button>
                   <button
                     onClick={handleCropSave}
                     className="px-4 py-2 rounded-xl text-sm font-bold bg-primary text-[#050e0a] hover:bg-primary-focus transition-colors"
                   >
-                    Simpan Potongan
+                    {t("settings.crop.save")}
                   </button>
                 </div>
               </div>

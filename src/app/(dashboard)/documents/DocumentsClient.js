@@ -6,6 +6,7 @@ import {
   FolderOpen, Plus, Edit2, Trash2, X, Search, ChevronDown, FileText, Download, Link as LinkIcon, FileCheck, FileArchive
 } from "lucide-react";
 import { createDocument, updateDocument, deleteDocument } from "@/app/actions/documentActions";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, required }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -77,6 +78,7 @@ const getIconForType = (type) => {
 };
 
 export default function DocumentsClient({ initialDocs }) {
+  const { t } = useLanguage();
   const [docs, setDocs] = useState(initialDocs);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -119,13 +121,13 @@ export default function DocumentsClient({ initialDocs }) {
         });
 
         if (!uploadRes.ok) {
-          throw new Error("Gagal mengunggah dokumen.");
+          throw new Error(t("documents.fail_upload"));
         }
 
         const uploadData = await uploadRes.json();
         finalUrl = uploadData.url;
       } else if (!finalUrl && !modal.isEdit) {
-        throw new Error("Harap unggah file atau masukkan tautan dokumen.");
+        throw new Error(t("documents.req_file"));
       }
 
       if (modal.isEdit && !docFile?.size && !finalUrl) {
@@ -162,31 +164,31 @@ export default function DocumentsClient({ initialDocs }) {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Hapus dokumen ini dari bank data?")) return;
+    if (!confirm(t("documents.delete_confirm"))) return;
     const res = await deleteDocument(id);
     if (res.success) refreshData();
-    else alert("Gagal menghapus: " + res.error);
+    else alert(t("documents.fail_delete") + res.error);
   };
 
   const typeOptions = [
-    { value: "PROPOSAL", label: "Proposal Kegiatan" },
-    { value: "LPJ", label: "Lembar Pertanggungjawaban (LPJ)" },
-    { value: "SOP", label: "Standard Operating Procedure (SOP)" },
-    { value: "OTHER", label: "Lainnya / Umum" },
+    { value: "PROPOSAL", label: t("documents.type_prop") },
+    { value: "LPJ", label: t("documents.type_lpj") },
+    { value: "SOP", label: t("documents.type_sop") },
+    { value: "OTHER", label: t("documents.type_other") },
   ];
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto relative">
+    <div className="w-full relative">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-gray-900 dark:text-white">
             <FolderOpen className="w-8 h-8 text-primary" />
-            Bank Data & Dokumen
+            {t("documents.title")}
           </h1>
           <p className="text-gray-500 dark:text-white/50 max-w-xl">
-            Repositori terpusat untuk menyimpan dan mengakses dokumen penting SRE UPNVJT.
+            {t("documents.subtitle")}
           </p>
         </div>
         
@@ -195,7 +197,7 @@ export default function DocumentsClient({ initialDocs }) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-white/30" />
             <input 
               type="text"
-              placeholder="Cari dokumen..."
+              placeholder={t("documents.search")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-colors"
@@ -206,7 +208,7 @@ export default function DocumentsClient({ initialDocs }) {
             className="flex items-center gap-2 bg-primary text-[#050e0a] px-6 py-3 rounded-xl font-bold tracking-wide hover:bg-primary-focus hover:scale-105 transition-all shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
           >
             <Plus className="w-5 h-5" />
-            <span className="hidden sm:inline">Unggah Berkas</span>
+            <span className="hidden sm:inline">{t("documents.upload")}</span>
           </button>
         </div>
       </div>
@@ -216,8 +218,8 @@ export default function DocumentsClient({ initialDocs }) {
         {filteredDocs.length === 0 ? (
           <div className="col-span-full bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 rounded-3xl p-12 text-center flex flex-col items-center justify-center backdrop-blur-md shadow-sm">
             <FolderOpen className="w-16 h-16 text-gray-500 dark:text-white/10 mb-4" />
-            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">Bank Data Kosong</h3>
-            <p className="text-gray-500 dark:text-white/40">Belum ada dokumen yang diunggah.</p>
+            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">{t("documents.no_docs")}</h3>
+            <p className="text-gray-500 dark:text-white/40">{t("documents.no_docs_desc")}</p>
           </div>
         ) : (
           filteredDocs.map((doc) => (
@@ -255,7 +257,7 @@ export default function DocumentsClient({ initialDocs }) {
                   rel="noreferrer" 
                   className="w-full flex items-center justify-center gap-2 py-3 bg-white dark:bg-white/5 shadow-sm dark:shadow-none hover:bg-primary/20 border border-gray-200 dark:border-white/10 hover:border-primary/30 rounded-xl transition-all text-sm font-bold text-gray-900 dark:text-white hover:text-primary"
                 >
-                  <Download className="w-4 h-4" /> Unduh Berkas
+                  <Download className="w-4 h-4" /> {t("documents.download")}
                 </a>
               </div>
             </motion.div>
@@ -281,7 +283,7 @@ export default function DocumentsClient({ initialDocs }) {
               </button>
               
               <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white mb-6">
-                {modal.isEdit ? "Edit Berkas" : "Unggah Berkas Baru"}
+                {modal.isEdit ? t("documents.edit") : t("documents.new")}
               </h2>
               
               {error && <div className="p-3 mb-6 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-sm">{error}</div>}
@@ -289,54 +291,54 @@ export default function DocumentsClient({ initialDocs }) {
               <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-5 relative">
                 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Nama / Judul Dokumen</label>
-                  <input name="title" type="text" required defaultValue={modal.data?.title} placeholder="Misal: Proposal SRE Mengajar 2026" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("documents.doc_name")}</label>
+                  <input name="title" type="text" required defaultValue={modal.data?.title} placeholder={t("documents.doc_name_ph")} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                 </div>
 
                 <div className="relative z-[50]">
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Tipe Dokumen</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("documents.doc_type")}</label>
                   <CustomSelect 
                     name="type" 
                     options={typeOptions} 
                     value={selectedType} 
                     onChange={setSelectedType} 
-                    placeholder="Pilih Tipe..." 
+                    placeholder={t("documents.select_type")} 
                     required 
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Unggah Berkas Langsung</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("documents.upload_file")}</label>
                   <input name="docFile" type="file" className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer" />
                 </div>
                 
                 <div className="flex items-center gap-4">
                   <div className="h-[1px] flex-1 bg-gray-200 dark:bg-white/10"></div>
-                  <span className="text-xs font-bold text-gray-400">ATAU</span>
+                  <span className="text-xs font-bold text-gray-400">{t("documents.or")}</span>
                   <div className="h-[1px] flex-1 bg-gray-200 dark:bg-white/10"></div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Tautan Berkas (Link GDrive/DropBox)</label>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("documents.doc_link")}</label>
                   <div className="relative">
                     <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-white/30" />
                     <input name="url" type="url" defaultValue={modal.data?.url || ""} placeholder="https://drive.google.com/..." className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl pl-11 pr-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
                   </div>
                   {modal.isEdit && modal.data?.url && (
                     <div className="mt-3 text-xs text-gray-500 dark:text-white/40">
-                      File saat ini: <a href={modal.data.url} target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300 underline line-clamp-1">Lihat Dokumen</a>
+                      {t("documents.current_file")} <a href={modal.data.url} target="_blank" rel="noreferrer" className="text-blue-400 hover:text-blue-300 underline line-clamp-1">{t("documents.view_doc")}</a>
                     </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Deskripsi (Opsional)</label>
-                  <textarea name="description" rows="3" defaultValue={modal.data?.description} placeholder="Keterangan singkat..." className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors resize-none" />
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("documents.desc")}</label>
+                  <textarea name="description" rows="3" defaultValue={modal.data?.description} placeholder={t("documents.desc_ph")} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors resize-none" />
                 </div>
 
                 <div className="pt-4 mt-2 border-t border-gray-200 dark:border-white/10">
                   <button type="submit" disabled={loading} className="w-full bg-primary text-[#050e0a] font-bold py-3.5 rounded-xl hover:bg-primary-focus hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all disabled:opacity-50">
-                    {loading ? "Menyimpan..." : "Simpan Ke Bank Data"}
+                    {loading ? t("departments.saving") : t("documents.save")}
                   </button>
                 </div>
               </form>

@@ -11,7 +11,12 @@ export default defineConfig({
   out: './drizzle',
   dialect: 'mysql',
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    host: 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
+    port: 4000,
+    user: '4SZ41CSjcmaAJj9.root',
+    password: '46Jkzcss9qHdnXas',
+    database: 'test',
+    ssl: { rejectUnauthorized: true }
   },
   verbose: true,
   strict: true,

@@ -49,22 +49,43 @@ export async function getDashboardStats(role, departmentId, userId) {
       };
     }
 
-    const recentProjects = await db.query.project.findMany({
-      limit: 3,
-      orderBy: [desc(project.createdAt)],
-      with: { department: true }
-    });
-    
-    const recentArticles = await db.query.article.findMany({
-      limit: 2,
-      orderBy: [desc(article.createdAt)],
-      with: { author: true }
-    });
+    const rawProjects = await db.select({
+      id: project.id,
+      title: project.title,
+      createdAt: project.createdAt,
+      departmentName: department.name
+    })
+    .from(project)
+    .leftJoin(department, eq(project.departmentId, department.id))
+    .orderBy(desc(project.createdAt))
+    .limit(3);
 
-    const recentOrgActivities = await db.query.activity.findMany({
-      limit: 2,
-      orderBy: [desc(activity.createdAt)]
-    });
+    const recentProjects = rawProjects.map(p => ({
+      id: p.id,
+      title: p.title,
+      createdAt: p.createdAt,
+      department: { name: p.departmentName }
+    }));
+    
+    const rawArticles = await db.select({
+      id: article.id,
+      title: article.title,
+      createdAt: article.createdAt,
+      authorName: user.name
+    })
+    .from(article)
+    .leftJoin(user, eq(article.authorId, user.id))
+    .orderBy(desc(article.createdAt))
+    .limit(2);
+
+    const recentArticles = rawArticles.map(a => ({
+      id: a.id,
+      title: a.title,
+      createdAt: a.createdAt,
+      author: { name: a.authorName }
+    }));
+
+    const recentOrgActivities = await db.select().from(activity).orderBy(desc(activity.createdAt)).limit(2);
 
     const recentActivities = [
       ...recentProjects.map(p => ({

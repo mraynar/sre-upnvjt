@@ -11,8 +11,9 @@ import {
 } from "@/app/actions/projectActions";
 import { useSession } from "next-auth/react";
 import { hasAccess } from "@/lib/permissions";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
-const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, required }) => {
+const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, required, t }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -53,7 +54,7 @@ const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, r
           >
             <div className="max-h-60 overflow-y-auto p-1.5 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-white/10 scrollbar-track-transparent">
               {options.length === 0 ? (
-                <div className="px-4 py-3 text-gray-500 dark:text-white/40 text-sm text-center">No options available</div>
+                <div className="px-4 py-3 text-gray-500 dark:text-white/40 text-sm text-center">{t("projects.no_options")}</div>
               ) : (
                 options.map(option => (
                   <div 
@@ -77,17 +78,18 @@ const CustomSelect = ({ name, options, value, onChange, placeholder, disabled, r
   );
 };
 
-const getStatusConfig = (status) => {
+const getStatusConfig = (status, t) => {
   switch(status) {
-    case 'APPROVED': return { color: 'emerald', icon: CheckCircle2, text: 'Approved' };
-    case 'COMPLETED': return { color: 'blue', icon: Target, text: 'Completed' };
-    case 'REJECTED': return { color: 'red', icon: XCircle, text: 'Rejected' };
-    default: return { color: 'amber', icon: Clock, text: 'Pending' };
+    case 'APPROVED': return { color: 'emerald', icon: CheckCircle2, text: t("projects.status_approved") };
+    case 'COMPLETED': return { color: 'blue', icon: Target, text: t("projects.status_completed") };
+    case 'REJECTED': return { color: 'red', icon: XCircle, text: t("projects.status_rejected") };
+    default: return { color: 'amber', icon: Clock, text: t("projects.status_pending") };
   }
 };
 
 export default function ProjectsClient({ initialProjects = [], departments = [], users = [] }) {
   const { data: session } = useSession();
+  const { t } = useLanguage();
   const [projects, setProjects] = useState(initialProjects);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -151,10 +153,10 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this project? All associated committees, finances, and attendance will be deleted.")) return;
+    if (!confirm(t("projects.delete_confirm"))) return;
     const res = await deleteProject(id);
     if (res.success) refreshData();
-    else alert("Failed to delete project: " + res.error);
+    else alert(t("projects.fail_delete") + res.error);
   };
 
   const handleAddCommittee = async (e) => {
@@ -181,37 +183,37 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
   };
 
   const handleRemoveCommittee = async (id) => {
-    if (!confirm("Remove this user from the committee?")) return;
+    if (!confirm(t("projects.remove_member_confirm"))) return;
     const res = await removeCommitteeMember(id);
     if (res.success) refreshData();
-    else alert("Failed to remove member: " + res.error);
+    else alert(t("projects.fail_remove") + res.error);
   };
 
   const deptOptions = (departments || []).map(d => ({ value: d?.id, label: d?.name }));
   const statusOptions = [
-    { value: "PENDING", label: "Pending (Menunggu Persetujuan)" },
-    { value: "APPROVED", label: "Approved (Disetujui)" },
-    { value: "COMPLETED", label: "Completed (Selesai)" },
-    { value: "REJECTED", label: "Rejected (Ditolak)" },
+    { value: "PENDING", label: t("projects.status_opt_pending") },
+    { value: "APPROVED", label: t("projects.status_opt_approved") },
+    { value: "COMPLETED", label: t("projects.status_opt_completed") },
+    { value: "REJECTED", label: t("projects.status_opt_rejected") },
   ];
   
   const availableUsers = (users || []).filter(u => 
     u && committeeModal.project?.committees && !committeeModal.project.committees.some(c => c?.userId === u.id)
   );
-  const userOptions = availableUsers.map(u => ({ value: u?.id, label: `${u?.name} (${u?.role?.name?.replace("_", " ") ?? "No Role"})` }));
+  const userOptions = availableUsers.map(u => ({ value: u?.id, label: `${u?.name} (${u?.role?.name?.replace("_", " ") ?? t("projects.no_role")})` }));
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto relative">
+    <div className="w-full relative">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
           <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-gray-900 dark:text-white">
             <FolderKanban className="w-8 h-8 text-primary" />
-            Program Kerja (Projects)
+            {t("projects.title")}
           </h1>
           <p className="text-gray-500 dark:text-white/50 max-w-xl">
-            Pusat kendali kegiatan operasional SRE. Manajemen kepanitiaan dan timeline proker.
+            {t("projects.subtitle")}
           </p>
         </div>
         
@@ -220,7 +222,7 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-white/30" />
             <input 
               type="text"
-              placeholder="Search projects..."
+              placeholder={t("projects.search")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-colors"
@@ -232,7 +234,7 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
               className="flex items-center gap-2 bg-primary text-[#050e0a] px-6 py-3 rounded-xl font-bold tracking-wide hover:bg-primary-focus hover:scale-105 transition-all shrink-0 shadow-[0_0_20px_rgba(16,185,129,0.3)]"
             >
               <Plus className="w-5 h-5" />
-              <span className="hidden sm:inline">Add Project</span>
+              <span className="hidden sm:inline">{t("projects.add_project")}</span>
             </button>
           )}
         </div>
@@ -243,13 +245,13 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
         {filteredProjects.length === 0 ? (
           <div className="col-span-full bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-3xl p-12 text-center flex flex-col items-center justify-center backdrop-blur-md">
             <FolderKanban className="w-16 h-16 text-gray-500 dark:text-white/10 mb-4" />
-            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">No Projects Found</h3>
-            <p className="text-gray-500 dark:text-white/40">Mulai dengan membuat Program Kerja baru.</p>
+            <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">{t("projects.no_projects")}</h3>
+            <p className="text-gray-500 dark:text-white/40">{t("projects.no_projects_desc")}</p>
           </div>
         ) : (
           filteredProjects.map((project) => {
-            const StatusIcon = getStatusConfig(project.status).icon;
-            const statusColor = getStatusConfig(project.status).color;
+            const StatusIcon = getStatusConfig(project.status, t).icon;
+            const statusColor = getStatusConfig(project.status, t).color;
             
             return (
             <motion.div 
@@ -265,17 +267,17 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
               <div className="flex justify-between items-start mb-6 relative z-10">
                 <div className={`px-4 py-1.5 text-[10px] font-black tracking-widest uppercase rounded-full flex items-center gap-2 border backdrop-blur-sm bg-${statusColor}-500/10 text-${statusColor}-600 dark:text-${statusColor}-400 border-${statusColor}-500/20 shadow-[0_0_10px_rgba(var(--tw-color-${statusColor}-500),0.1)]`}>
                   <StatusIcon className={`w-3.5 h-3.5`} />
-                  {getStatusConfig(project.status).text}
+                  {getStatusConfig(project.status, t).text}
                 </div>
                 
                 <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity bg-white dark:bg-black/40 rounded-full shadow-sm dark:shadow-none border border-gray-100 dark:border-white/5 p-1">
                   {canUpdate && (
-                    <button onClick={() => handleOpenModal(true, project)} className="p-1.5 text-gray-400 hover:text-primary transition-colors" title="Edit Project">
+                    <button onClick={() => handleOpenModal(true, project)} className="p-1.5 text-gray-400 hover:text-primary transition-colors" title={t("projects.edit_project")}>
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                   )}
                   {canDelete && (
-                    <button onClick={() => handleDelete(project.id)} className="p-1.5 text-gray-400 hover:text-red-500 transition-colors" title="Delete Project">
+                    <button onClick={() => handleDelete(project.id)} className="p-1.5 text-gray-400 hover:text-red-500 transition-colors" title={t("projects.delete_project")}>
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   )}
@@ -291,7 +293,7 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
               {/* Meta Info */}
               <div className="flex flex-col gap-2 bg-gray-50/80 dark:bg-white/[0.03] p-4 rounded-2xl border border-gray-100 dark:border-white/5 mb-5 relative z-10">
                 <div className="flex items-center justify-between">
-                  <span className="uppercase font-bold tracking-widest text-[9px] text-gray-400 dark:text-gray-500">Timeline</span>
+                  <span className="uppercase font-bold tracking-widest text-[9px] text-gray-400 dark:text-gray-500">{t("projects.timeline")}</span>
                   <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-700 dark:text-gray-300 bg-white dark:bg-white/5 px-2 py-1 rounded-md shadow-sm border border-gray-100 dark:border-white/5">
                     <Calendar className="w-3 h-3 text-primary" />
                     <span>
@@ -301,7 +303,7 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
                   </div>
                 </div>
                 <div className="flex items-center justify-between mt-1.5">
-                  <span className="uppercase font-bold tracking-widest text-[9px] text-gray-400 dark:text-gray-500">Departemen</span>
+                  <span className="uppercase font-bold tracking-widest text-[9px] text-gray-400 dark:text-gray-500">{t("projects.department")}</span>
                   <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-700 dark:text-gray-300">
                     <Target className="w-3 h-3 text-primary" />
                     <span>{project.department?.name ?? "—"}</span>
@@ -317,7 +319,7 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
                 >
                   <div className="flex items-center gap-3 text-xs font-bold text-gray-600 dark:text-gray-300 group-hover/btn:text-gray-900 dark:group-hover/btn:text-white transition-colors">
                     <UsersRound className="w-4 h-4 text-primary group-hover/btn:scale-110 transition-transform" />
-                    Manajemen Kepanitiaan
+                    {t("projects.committee_mgmt")}
                   </div>
                   <div className="flex items-center gap-1.5 px-2.5 py-1 bg-white dark:bg-white/10 shadow-sm rounded-md text-[10px] font-black text-gray-900 dark:text-white">
                     {project._count?.committees || 0}
@@ -348,9 +350,9 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
               <div className="p-6 md:p-8 border-b border-gray-100 dark:border-white/10 flex justify-between items-center relative z-10 shrink-0">
                 <div>
                   <h2 className="text-2xl font-display font-black tracking-tight text-gray-900 dark:text-white mb-1">
-                    {modal.isEdit ? "Edit Program Kerja" : "Buat Program Kerja Baru"}
+                    {modal.isEdit ? t("projects.modal_edit") : t("projects.modal_create")}
                   </h2>
-                  <p className="text-sm font-medium text-gray-500 dark:text-white/50">Atur detail program kerja dan jadwal pelaksanaan.</p>
+                  <p className="text-sm font-medium text-gray-500 dark:text-white/50">{t("projects.modal_desc")}</p>
                 </div>
                 <button onClick={() => setModal({ isOpen: false, isEdit: false, data: null })} className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-gray-500 dark:text-white/50 hover:bg-gray-200 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white transition-all shrink-0">
                   <X className="w-5 h-5" />
@@ -363,46 +365,48 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
                 <form id="project-form" onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
                   
                   <div className="col-span-full">
-                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Nama Program Kerja</label>
-                    <input name="title" type="text" required defaultValue={modal.data?.title} placeholder="Misal: SRE Mengajar 2026" className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-5 py-4 text-gray-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-gray-400 dark:placeholder:text-white/20" />
+                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("projects.proj_name")}</label>
+                    <input name="title" type="text" required defaultValue={modal.data?.title} placeholder={t("projects.proj_name_placeholder")} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-5 py-4 text-gray-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-gray-400 dark:placeholder:text-white/20" />
                   </div>
                   
                   <div className="col-span-full">
-                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Deskripsi Kegiatan</label>
-                    <textarea name="description" rows="3" required defaultValue={modal.data?.description} placeholder="Jelaskan secara singkat tujuan proker ini..." className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-5 py-4 text-gray-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-gray-400 dark:placeholder:text-white/20 resize-none" />
+                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("projects.proj_desc")}</label>
+                    <textarea name="description" rows="3" required defaultValue={modal.data?.description} placeholder={t("projects.proj_desc_placeholder")} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-5 py-4 text-gray-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all placeholder:text-gray-400 dark:placeholder:text-white/20 resize-none" />
                   </div>
 
                   <div className="relative z-[60]">
-                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Departemen Penanggung Jawab</label>
+                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("projects.resp_dept")}</label>
                     <CustomSelect 
                       name="departmentId" 
                       options={deptOptions} 
                       value={selectedDeptId} 
                       onChange={setSelectedDeptId} 
-                      placeholder="Pilih Departemen..." 
+                      placeholder={t("projects.select_dept")} 
                       required 
+                      t={t}
                     />
                   </div>
 
                   <div className="relative z-[50]">
-                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Status Persetujuan</label>
+                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("projects.approval_status")}</label>
                     <CustomSelect 
                       name="status" 
                       options={statusOptions} 
                       value={selectedStatus} 
                       onChange={setSelectedStatus} 
-                      placeholder="Pilih Status..." 
+                      placeholder={t("projects.select_status")} 
                       required 
+                      t={t}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Tanggal Mulai</label>
+                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("projects.start_date")}</label>
                     <input name="startDate" type="date" required defaultValue={modal.data?.startDate ? new Date(modal.data.startDate).toISOString().split('T')[0] : ""} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-5 py-4 text-gray-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all dark:[color-scheme:dark]" />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Tanggal Selesai (Opsional)</label>
+                    <label className="block text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("projects.end_date")}</label>
                     <input name="endDate" type="date" defaultValue={modal.data?.endDate ? new Date(modal.data.endDate).toISOString().split('T')[0] : ""} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-5 py-4 text-gray-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all dark:[color-scheme:dark]" />
                   </div>
                 </form>
@@ -410,18 +414,18 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
 
               <div className="p-6 md:p-8 border-t border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02] flex flex-col sm:flex-row justify-end gap-3 shrink-0 relative z-10">
                 <button type="button" onClick={() => setModal({ isOpen: false, isEdit: false, data: null })} disabled={loading} className="px-6 py-3.5 rounded-2xl font-bold tracking-wide text-gray-500 dark:text-white/60 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all text-sm w-full sm:w-auto">
-                  Batal
+                  {t("projects.cancel")}
                 </button>
                 <button form="project-form" type="submit" disabled={loading} className="bg-primary hover:bg-primary/90 text-black px-8 py-3.5 rounded-2xl font-bold tracking-wide flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.3)] text-sm w-full sm:w-auto">
                   {loading ? (
                     <>
                       <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
-                      Menyimpan...
+                      {t("projects.saving")}
                     </>
                   ) : (
                     <>
                       <Save className="w-5 h-5" />
-                      {modal.isEdit ? "Simpan Perubahan" : "Buat Program Kerja"}
+                      {modal.isEdit ? t("projects.save_changes") : t("projects.create_btn")}
                     </>
                   )}
                 </button>
@@ -449,8 +453,8 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
 
               <div className="p-6 md:p-8 border-b border-gray-100 dark:border-white/10 flex justify-between items-center relative z-10 shrink-0">
                 <div>
-                  <h2 className="text-2xl font-display font-black tracking-tight text-gray-900 dark:text-white mb-1">Manajemen Kepanitiaan</h2>
-                  <p className="text-sm font-medium text-gray-500 dark:text-white/50">Proker: <span className="text-primary font-bold">{committeeModal.project.title}</span></p>
+                  <h2 className="text-2xl font-display font-black tracking-tight text-gray-900 dark:text-white mb-1">{t("projects.modal_committee")}</h2>
+                  <p className="text-sm font-medium text-gray-500 dark:text-white/50">{t("projects.proj_label")}<span className="text-primary font-bold">{committeeModal.project.title}</span></p>
                 </div>
                 <button onClick={() => setCommitteeModal({ isOpen: false, project: null })} className="w-10 h-10 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-gray-500 dark:text-white/50 hover:bg-gray-200 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white transition-all shrink-0">
                   <X className="w-5 h-5" />
@@ -463,7 +467,7 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
                 {/* Add Member Form */}
                 {canUpdate && (
                   <form onSubmit={handleAddCommittee} className="bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/10 rounded-2xl p-6 mb-8 relative z-50">
-                    <h3 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-white mb-4">Tambahkan Panitia Baru</h3>
+                    <h3 className="text-[11px] font-black uppercase tracking-widest text-gray-900 dark:text-white mb-4">{t("projects.add_new_member")}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                       <div className="md:col-span-5 relative z-50">
                         <CustomSelect 
@@ -471,16 +475,17 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
                           options={userOptions} 
                           value={selectedUserId} 
                           onChange={setSelectedUserId} 
-                          placeholder="Pilih Anggota..." 
+                          placeholder={t("projects.select_member")} 
                           required 
+                          t={t}
                         />
                       </div>
                       <div className="md:col-span-5">
-                        <input name="role" type="text" required placeholder="Posisi (e.g. Ketua Pelaksana)" className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all" />
+                        <input name="role" type="text" required placeholder={t("projects.position_placeholder")} className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all" />
                       </div>
                       <div className="md:col-span-2">
                         <button type="submit" disabled={loading} className="w-full h-full bg-primary/20 text-primary border border-primary/30 font-bold py-3.5 rounded-xl hover:bg-primary hover:text-black transition-all disabled:opacity-50 flex items-center justify-center">
-                          {loading ? <div className="w-5 h-5 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div> : "Tambah"}
+                          {loading ? <div className="w-5 h-5 border-2 border-primary/20 border-t-primary rounded-full animate-spin"></div> : t("projects.add_btn")}
                         </button>
                       </div>
                     </div>
@@ -489,13 +494,13 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
 
                 {/* Member List */}
                 <h3 className="text-[11px] font-black uppercase tracking-widest text-gray-500 dark:text-white/50 mb-4 flex items-center gap-2">
-                  <Users className="w-4 h-4 text-primary" /> Daftar Panitia Saat Ini
+                  <Users className="w-4 h-4 text-primary" /> {t("projects.current_committee")}
                 </h3>
                 
                 {committeeModal.project.committees.length === 0 ? (
                   <div className="py-12 text-center border-2 border-dashed border-gray-200 dark:border-white/10 rounded-3xl bg-gray-50/50 dark:bg-transparent">
                     <Users className="w-12 h-12 text-gray-300 dark:text-white/10 mx-auto mb-3" />
-                    <p className="text-gray-500 dark:text-white/40 text-sm font-medium">Belum ada panitia yang ditambahkan.</p>
+                    <p className="text-gray-500 dark:text-white/40 text-sm font-medium">{t("projects.no_committee")}</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -506,7 +511,7 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
                             {member.user?.name?.charAt(0)?.toUpperCase() ?? "?"}
                           </div>
                           <div>
-                            <p className="text-sm font-bold text-gray-900 dark:text-white leading-none mb-1.5">{member.user?.name ?? "Deleted User"}</p>
+                            <p className="text-sm font-bold text-gray-900 dark:text-white leading-none mb-1.5">{member.user?.name ?? t("projects.deleted_user")}</p>
                             <span className="px-2 py-0.5 bg-gray-100 dark:bg-white/10 rounded-md text-[10px] font-bold text-gray-600 dark:text-gray-300 tracking-wide uppercase">{member.role}</span>
                           </div>
                         </div>
@@ -514,7 +519,7 @@ export default function ProjectsClient({ initialProjects = [], departments = [],
                           <button 
                             onClick={() => handleRemoveCommittee(member.id)}
                             className="p-2 bg-red-50 dark:bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all scale-95 group-hover:scale-100"
-                            title="Hapus Anggota"
+                            title={t("projects.remove_member")}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
