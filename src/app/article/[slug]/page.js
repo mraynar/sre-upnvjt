@@ -8,6 +8,33 @@ import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
+// Generate Dynamic SEO Metadata
+export async function generateMetadata({ params }) {
+  const resolvedParams = await params;
+  const { slug } = resolvedParams;
+
+  const article = await db.query.article.findFirst({
+    where: eq(articleSchema.slug, slug),
+  });
+
+  if (!article || !article.isPublished) {
+    return {
+      title: "Article Not Found | SRE UPNVJT",
+    };
+  }
+
+  return {
+    title: `${article.title} | SRE UPNVJT`,
+    description: article.excerpt || "Baca artikel selengkapnya di portal SRE UPN Veteran Jawa Timur.",
+    openGraph: {
+      title: article.title,
+      description: article.excerpt,
+      images: article.thumbnailUrl ? [article.thumbnailUrl] : [],
+      type: "article",
+    },
+  };
+}
+
 // Server Component
 export default async function ArticleDetailPage({ params }) {
   const resolvedParams = await params;
