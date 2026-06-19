@@ -561,6 +561,19 @@ export default function SettingsClient({ user }) {
                       </select>
                     </div>
 
+                    <div className="space-y-2">
+                      <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">Public Self Registration</label>
+                      <select
+                        value={systemData.ENABLE_PUBLIC_REGISTRATION || "false"}
+                        onChange={(e) => setSystemData({...systemData, ENABLE_PUBLIC_REGISTRATION: e.target.value})}
+                        className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 transition-colors"
+                      >
+                        <option value="false" className="text-black">Disabled</option>
+                        <option value="true" className="text-black">Enabled</option>
+                      </select>
+                      <p className="text-xs text-gray-500 dark:text-white/40">If enabled, anyone can create an account from the login page.</p>
+                    </div>
+
                     {systemMessage && (
                       <div className={`p-4 rounded-xl flex items-center gap-3 text-sm font-medium ${systemMessage.type === 'success' ? 'bg-primary/20 text-primary border border-primary/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
                         {systemMessage.type === 'success' ? <CheckCircle2 className="w-5 h-5 shrink-0" /> : <ShieldAlert className="w-5 h-5 shrink-0" />}

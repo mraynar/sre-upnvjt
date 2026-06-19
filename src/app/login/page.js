@@ -15,6 +15,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isPublicRegistrationEnabled, setIsPublicRegistrationEnabled] = useState(false);
+
+  React.useEffect(() => {
+    fetch("/api/settings/system")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.ENABLE_PUBLIC_REGISTRATION === "true") {
+          setIsPublicRegistrationEnabled(true);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch system settings", err));
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -184,12 +196,14 @@ export default function LoginPage() {
 
           </form>
 
-          <div className="mt-10 text-center text-[13px] text-white/50">
-            Don't have an account?{' '}
-            <a href="#" className="text-[#e8ecc4] hover:text-white transition-colors font-bold tracking-wide">
-              Request access
-            </a>
-          </div>
+          {isPublicRegistrationEnabled && (
+            <div className="mt-10 text-center text-[13px] text-white/50">
+              Don't have an account?{' '}
+              <Link href="/register" className="text-[#e8ecc4] hover:text-white transition-colors font-bold tracking-wide">
+                Create Account
+              </Link>
+            </div>
+          )}
 
         </motion.div>
       </div>

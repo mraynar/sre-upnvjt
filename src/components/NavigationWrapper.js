@@ -4,8 +4,8 @@ import { usePathname } from "next/navigation";
 import Header from "./Header";
 import Footer from "./Footer";
 
-// Daftar path root yang merupakan bagian dari Dashboard
-const dashboardRoutes = [
+// Daftar path yang tidak akan menampilkan Header dan Footer publik
+const hiddenHeaderRoutes = [
   "/dashboard",
   "/tasks",
   "/projects",
@@ -26,21 +26,23 @@ const dashboardRoutes = [
   "/appraisals",
   "/achievements",
   "/achievements/verify",
+  "/login",
+  "/register",
 ];
 
-function isDashboardRoute(pathname) {
+function isHiddenHeaderRoute(pathname) {
   if (!pathname) return false;
-  return dashboardRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`));
+  return hiddenHeaderRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`));
 }
 
 export function HeaderWrapper() {
   const pathname = usePathname();
-  if (isDashboardRoute(pathname)) return null;
+  if (isHiddenHeaderRoute(pathname)) return null;
   return <Header />;
 }
 
 export function FooterWrapper() {
   const pathname = usePathname();
-  if (isDashboardRoute(pathname)) return null;
+  if (isHiddenHeaderRoute(pathname)) return null;
   return <Footer />;
 }
