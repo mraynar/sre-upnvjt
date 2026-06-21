@@ -30,15 +30,9 @@ export const config = {
     "/roles/:path*",
     "/users/:path*",
     "/departments/:path*",
-    "/projects/:path*",
-    "/attendance/:path*",
-    "/finance/:path*",
-    "/inventory/:path*",
-    "/documents/:path*",
     "/articles/:path*",
     "/activities/:path*",
     "/merch/:path*",
-    "/settings/:path*",
-    "/tasks/:path*"
+    "/settings/:path*"
   ],
 };

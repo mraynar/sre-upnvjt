@@ -7,7 +7,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   LayoutDashboard, Users, FileText, CheckSquare, Shield,
-  Settings, LogOut, Menu, X, CreditCard, Box, ChevronLeft, ChevronRight, FolderKanban, ClipboardCheck, FolderOpen, Newspaper, Presentation, ShoppingBag, Handshake, Activity, Trophy, Star, Target, ShieldCheck
+  Settings, LogOut, Menu, X, CreditCard, Box, ChevronLeft, ChevronRight, FolderKanban, ClipboardCheck, FolderOpen, Newspaper, Presentation, ShoppingBag, Handshake, Activity, Trophy, Star, Target, ShieldCheck, Link2
 } from "lucide-react";
 
 import { hasAccess } from "@/lib/permissions";
@@ -39,39 +39,24 @@ export default function DashboardLayout({ children }) {
 
   const navItems = [
     { name: t("sidebar.overview"), icon: LayoutDashboard, href: "/dashboard", module: "overview" },
-    { name: t("sidebar.tasks"), icon: CheckSquare, href: "/tasks", module: "tasks" },
     
     // Organization & Team
-    { name: t("sidebar.leaderboard"), icon: Trophy, href: "/leaderboard", module: "overview" },
-    { name: t("sidebar.appraisals"), icon: Star, href: "/appraisals", module: "overview" },
-    { name: t("sidebar.achievements"), icon: Target, href: "/achievements", module: "overview" },
-    { name: t("sidebar.verify_prestasi"), icon: ShieldCheck, href: "/achievements/verify", module: "verify" },
-    { name: t("sidebar.projects"), icon: FolderKanban, href: "/projects", module: "projects" },
-    { name: t("sidebar.attendance"), icon: ClipboardCheck, href: "/attendance", module: "attendance" },
     { name: t("sidebar.departments"), icon: FileText, href: "/departments", module: "departments" },
     { name: t("sidebar.users"), icon: Users, href: "/users", module: "users" },
     { name: t("sidebar.roles"), icon: Shield, href: "/roles", module: "roles" },
     
-    // Operations & Resources
-    { name: t("sidebar.finances"), icon: CreditCard, href: "/finance", module: "finance" },
-    { name: t("sidebar.inventory"), icon: Box, href: "/inventory", module: "inventory" },
-    { name: t("sidebar.documents"), icon: FolderOpen, href: "/documents", module: "documents" },
-    
     // Public & Media
-    { name: t("sidebar.articles"), icon: Newspaper, href: "/articles", module: "articles" },
-    { name: t("sidebar.activities"), icon: Activity, href: "/activities", module: "activities" },
+    { name: t("sidebar.articles") || "Content / Berita", icon: Newspaper, href: "/content", module: "content" },
     { name: t("sidebar.merch"), icon: ShoppingBag, href: "/merch", module: "merchandise" },
+    { name: "Shortlinks", icon: Link2, href: "/shortlinks", module: "shortlinks" },
     { name: t("sidebar.partners"), icon: Handshake, href: "/partners", module: "partners" },
     
     // System
-    { name: t("sidebar.logs"), icon: Activity, href: "/logs", module: "logs" },
     { name: t("sidebar.settings"), icon: Settings, href: "/settings", module: "settings" },
   ];
 
   const allowedNavItems = navItems.filter(item => {
-    if (item.module === "overview" || item.module === "settings" || item.module === "tasks") return true;
-    if (item.module === "verify") return ["SUPER_ADMIN", "PRESIDENT", "DIRECTOR"].includes(role);
-    if (item.module === "logs" && (role === "SUPER_ADMIN" || role === "ADMIN")) return true;
+    if (item.module === "overview" || item.module === "settings") return true;
     if (item.module === "partners") return role === "SUPER_ADMIN";
     return hasAccess(session?.user, item.module, "read");
   });

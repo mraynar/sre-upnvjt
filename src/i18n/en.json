@@ -418,6 +418,7 @@
     },
     "widgets": {
       "total_members": "Total Members",
+      "total_activities": "Total Activities",
       "active_projects": "Active Projects",
       "published_articles": "Published Articles",
       "departments": "Departments",
@@ -743,6 +744,7 @@
     },
     "widgets": {
       "total_members": "Total Members",
+      "total_activities": "Total Activities",
       "active_projects": "Active Projects",
       "published_articles": "Published Articles",
       "departments": "Departments",
@@ -811,5 +813,32 @@
       "cancel": "Cancel",
       "save": "Crop & Save"
     }
+  },
+  "shortlinks": {
+    "title": "Manage Shortlinks",
+    "subtitle": "Create branded, memorable links. Track clicks and measure your campaign impact instantly.",
+    "search": "Search shortlink...",
+    "create": "Create New",
+    "no_shortlinks": "No shortlinks found",
+    "no_shortlinks_desc": "Try adjusting your search or create a new one.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "original_url": "Original URL",
+    "clicks": "Clicks",
+    "create_title": "Create Shortlink",
+    "edit_title": "Edit Shortlink",
+    "modal_desc": "Generate a memorable link for your audience.",
+    "dest_url": "Destination URL",
+    "custom_slug": "Custom Slug",
+    "generate": "Generate Random",
+    "active_status": "Active Status",
+    "active_desc": "Toggle to enable or disable redirection.",
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "create_link": "Create Link",
+    "delete_title": "Delete Shortlink?",
+    "delete_desc": "Are you sure you want to delete ",
+    "delete_desc2": "? This link will immediately stop working. This action cannot be undone.",
+    "delete": "Delete"
   }
 }

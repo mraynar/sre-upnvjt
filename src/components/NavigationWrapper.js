@@ -7,9 +7,6 @@ import Footer from "./Footer";
 // Daftar path yang tidak akan menampilkan Header dan Footer publik
 const hiddenHeaderRoutes = [
   "/dashboard",
-  "/tasks",
-  "/projects",
-  "/attendance",
   "/departments",
   "/users",
   "/roles",
@@ -21,7 +18,8 @@ const hiddenHeaderRoutes = [
   "/merch",
   "/settings",
   "/partners",
-  "/logs",
+  "/content",
+  "/shortlinks",
   "/leaderboard",
   "/appraisals",
   "/achievements",

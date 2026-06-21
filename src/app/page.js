@@ -6,8 +6,7 @@ import {
   ArrowUpRight,
   Eye,
 } from "lucide-react";
-import { getPublicArticles } from "@/app/actions/articleActions";
-import { getPublicActivities } from "@/app/actions/activityActions";
+import { getPublicContent } from "@/app/actions/contentActions";
 
 export const dynamic = "force-dynamic";
 
@@ -77,15 +76,9 @@ export default function Home() {
         if (Array.isArray(data)) setPartnersList(data);
       })
       .catch(console.error);
-
-    getPublicActivities().then((res) => {
-      if (res.success && res.data.length > 0) {
-        setPublicActivitiesList(res.data);
-      }
-    }).catch(console.error);
-
-    getPublicArticles().then((res) => {
-      if (res.success) {
+    
+    getPublicContent().then(res => {
+      if (res.success && res.data) {
         const formatted = res.data.map((art, index) => ({
           id: art.id,
           title: art.title,
@@ -93,8 +86,8 @@ export default function Home() {
           date: new Date(art.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase(),
           author: art.author?.name || "SRE UPNVJT",
           readTime: "5 min read",
-          desc: art.excerpt || "Baca selengkapnya untuk mengetahui detail lebih lanjut mengenai artikel ini.",
-          image: art.thumbnailUrl || "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=1200&auto=format&fit=crop",
+          desc: art.body.substring(0, 150).replace(/<[^>]*>?/gm, '') + "...",
+          image: art.imageUrl || "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=1200&auto=format&fit=crop",
           featured: index === 0,
           slug: art.slug
         }));

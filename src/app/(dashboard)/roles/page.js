@@ -9,9 +9,8 @@ import { useLanguage } from "@/i18n/LanguageProvider";
 export const dynamic = "force-dynamic";
 
 const availableModules = [
-  "users", "roles", "departments", "projects", 
-  "attendance", "finance", "inventory", "documents", 
-  "articles", "activities", "merchandise", "tasks"
+  "dashboard", "users", "roles", "departments", 
+  "content", "merchandise", "partners", "shortlinks"
 ];
 const actions = ["create", "read", "update", "delete"];
 

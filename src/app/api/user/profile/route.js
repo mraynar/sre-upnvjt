@@ -14,7 +14,7 @@ export async function PUT(req) {
     }
 
     const body = await req.json();
-    const { name, email, npm, profilePictureUrl, instagramUrl, linkedinUrl } = body;
+    const { name, email, npm, profilePictureUrl } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "Name and email are required" }, { status: 400 });
@@ -47,12 +47,6 @@ export async function PUT(req) {
     if (profilePictureUrl !== undefined) {
       updateData.profilePictureUrl = profilePictureUrl;
     }
-    if (instagramUrl !== undefined) {
-      updateData.instagramUrl = instagramUrl;
-    }
-    if (linkedinUrl !== undefined) {
-      updateData.linkedinUrl = linkedinUrl;
-    }
 
     await db.update(user).set(updateData).where(eq(user.id, parseInt(session.user.id)));
 
@@ -64,8 +58,6 @@ export async function PUT(req) {
         email: true,
         npm: true,
         profilePictureUrl: true,
-        instagramUrl: true,
-        linkedinUrl: true,
       },
       with: {
         role: true,

@@ -221,7 +221,7 @@ export default function MerchClient({ initialMerchandise }) {
 
                   <div className="p-5 flex-1 flex flex-col">
                     <h3 className="text-[16px] font-bold text-gray-900 dark:text-white mb-1 leading-tight group-hover:text-primary transition-colors">{item.name}</h3>
-                    <div className="text-[14px] font-medium text-[#e8ecc4] mb-3">
+                    <div className="text-[14px] font-bold text-primary dark:text-[#e8ecc4] mb-3">
                       Rp {parseFloat(item.price || 0).toLocaleString("id-ID")}
                     </div>
                     <p className="text-[12px] text-gray-500 dark:text-white/50 line-clamp-2 mb-4 flex-1">

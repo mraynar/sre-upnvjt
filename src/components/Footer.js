@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 export default function Footer() {
   const pathname = usePathname();
 
-  const adminRoutes = ["/dashboard", "/roles", "/users", "/departments", "/projects", "/attendance", "/finance", "/inventory", "/documents", "/articles", "/activities", "/merch", "/settings", "/tasks"];
+  const adminRoutes = ["/dashboard", "/roles", "/users", "/departments", "/articles", "/activities", "/merch", "/settings"];
   const isDashboardRoute = adminRoutes.some(route => pathname === route || pathname.startsWith(route + "/"));
   if (pathname === "/login" || isDashboardRoute) return null;
 

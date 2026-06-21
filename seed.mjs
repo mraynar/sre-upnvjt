@@ -1,6 +1,8 @@
-import mysql from "mysql2/promise";
+import postgres from "postgres";
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
+import { drizzle } from 'drizzle-orm/postgres-js';
+import * as schema from './src/db/schema.js';
 
 // Load environment variables
 dotenv.config({ path: ".env.local" });
@@ -16,80 +18,88 @@ async function seed() {
     process.exit(1);
   }
 
-  const connection = await mysql.createConnection(process.env.DATABASE_URL);
+  const isLocal = process.env.DATABASE_URL.includes('localhost') || process.env.DATABASE_URL.includes('127.0.0.1');
+  const client = postgres(process.env.DATABASE_URL, { ssl: isLocal ? false : 'require' });
+  const db = drizzle(client, { schema });
 
   try {
     console.log("Seeding Database...");
 
     // 1. Check if SUPER_ADMIN role exists
-    const [roles] = await connection.query(
-      `SELECT id FROM \`Role\` WHERE name = 'SUPER_ADMIN'`,
-    );
-    let roleId;
+    let adminRole = await db.query.role.findFirst({
+      where: (roles, { eq }) => eq(roles.name, 'SUPER_ADMIN')
+    });
 
-    if (roles.length > 0) {
-      roleId = roles[0].id;
-      console.log("SUPER_ADMIN role already exists.");
-    } else {
+    if (!adminRole) {
       console.log("Creating SUPER_ADMIN role...");
-      const permissions = JSON.stringify({
+      const permissions = {
         all: ["create", "read", "update", "delete"],
+      };
+      await db.insert(schema.role).values({
+        name: 'SUPER_ADMIN',
+        permissions: permissions
       });
-      const [result] = await connection.query(
-        `INSERT INTO \`Role\` (name, permissions) VALUES (?, ?)`,
-        ["SUPER_ADMIN", permissions],
-      );
-      roleId = result.insertId;
+      adminRole = await db.query.role.findFirst({
+        where: (roles, { eq }) => eq(roles.name, 'SUPER_ADMIN')
+      });
+    } else {
+      console.log("SUPER_ADMIN role already exists.");
     }
 
-    // 2. Check if super admin user exists
-    const adminEmail = "admin@sreupnjatim.com";
-    const [users] = await connection.query(
-      `SELECT id FROM \`User\` WHERE email = ?`,
-      [adminEmail],
-    );
+    // 2. Check if default department exists
+    let dept = await db.query.department.findFirst({
+      where: (depts, { eq }) => eq(depts.code, 'PI')
+    });
+    if (!dept) {
+      await db.insert(schema.department).values({
+        name: 'Pengurus Inti',
+        code: 'PI'
+      });
+      dept = await db.query.department.findFirst({
+        where: (depts, { eq }) => eq(depts.code, 'PI')
+      });
+    }
 
-    if (users.length > 0) {
+    // 3. Check if default division exists
+    let div = await db.query.division.findFirst({
+      where: (divs, { and, eq }) => and(eq(divs.name, 'BPH'), eq(divs.departmentId, dept.id))
+    });
+    if (!div) {
+      await db.insert(schema.division).values({
+        name: 'BPH',
+        departmentId: dept.id
+      });
+      div = await db.query.division.findFirst({
+        where: (divs, { and, eq }) => and(eq(divs.name, 'BPH'), eq(divs.departmentId, dept.id))
+      });
+    }
+
+    // 4. Check if super admin user exists
+    const adminEmail = "admin@sreupnjatim.com";
+    const existingUser = await db.query.user.findFirst({
+      where: (users, { eq }) => eq(users.email, adminEmail)
+    });
+
+    if (existingUser) {
       console.log("Super Admin user already exists.");
     } else {
-      // 2. Check if default department exists
-      const [departments] = await connection.query(`SELECT id FROM \`Department\` WHERE code = 'PI'`);
-      let departmentId;
-      if (departments.length > 0) {
-        departmentId = departments[0].id;
-      } else {
-        const [deptResult] = await connection.query(
-          `INSERT INTO \`Department\` (name, code) VALUES (?, ?)`,
-          ['Pengurus Inti', 'PI']
-        );
-        departmentId = deptResult.insertId;
-      }
-
-      // 3. Check if default division exists
-      const [divisions] = await connection.query(`SELECT id FROM \`Division\` WHERE name = 'BPH' AND departmentId = ?`, [departmentId]);
-      let divisionId;
-      if (divisions.length > 0) {
-        divisionId = divisions[0].id;
-      } else {
-        const [divResult] = await connection.query(
-          `INSERT INTO \`Division\` (name, departmentId) VALUES (?, ?)`,
-          ['BPH', departmentId]
-        );
-        divisionId = divResult.insertId;
-      }
-
       console.log("Creating Super Admin user...");
       const hashedPassword = await bcrypt.hash("superadmin123", 10);
-
-      const now = new Date();
-      await connection.query(
-        `INSERT INTO \`User\` (name, email, password, npm, positionName, roleId, departmentId, divisionId, isActive, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        ["Super Admin", adminEmail, hashedPassword, "00000000000", "Super Admin", roleId, departmentId, divisionId, true, now, now],
-      );
+      await db.insert(schema.user).values({
+        name: "Super Admin",
+        email: adminEmail,
+        password: hashedPassword,
+        npm: "00000000000",
+        positionName: "Super Admin",
+        roleId: adminRole.id,
+        departmentId: dept.id,
+        divisionId: div.id,
+        isActive: true,
+      });
       console.log("Super Admin user created successfully!");
       console.log("-------------------------------------------");
       console.log("Email   : admin@sreupnjatim.com");
-      console.log("Password: password123");
+      console.log("Password: superadmin123");
       console.log("-------------------------------------------");
     }
 
@@ -97,7 +107,7 @@ async function seed() {
   } catch (error) {
     console.error("Error seeding database:", error);
   } finally {
-    await connection.end();
+    await client.end();
   }
 }
 

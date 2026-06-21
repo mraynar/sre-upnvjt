@@ -29,8 +29,6 @@ export default function SettingsClient({ user }) {
     email: user.email || "",
     npm: user.npm || "",
     profilePictureUrl: user.profilePictureUrl || "",
-    instagramUrl: user.instagramUrl || "",
-    linkedinUrl: user.linkedinUrl || "",
   });
   const [profilePictureFile, setProfilePictureFile] = useState(null);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
@@ -376,43 +374,7 @@ export default function SettingsClient({ user }) {
                           />
                         </div>
                       </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">{t("settings.profile.ig_url")}</label>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 dark:text-white/40">
-                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                          </div>
-                          <input
-                            type="url"
-                            value={profileData.instagramUrl}
-                            onChange={(e) => setProfileData({...profileData, instagramUrl: e.target.value})}
-                            placeholder="https://instagram.com/yourusername"
-                            className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest text-gray-500 dark:text-white/50 font-bold">{t("settings.profile.linkedin_url")}</label>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 dark:text-white/40">
-                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-                          </div>
-                          <input
-                            type="url"
-                            value={profileData.linkedinUrl}
-                            onChange={(e) => setProfileData({...profileData, linkedinUrl: e.target.value})}
-                            placeholder="https://linkedin.com/in/yourusername"
-                            className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-white dark:bg-white/5 shadow-sm dark:shadow-none rounded-2xl p-5 border border-gray-200 dark:border-white/10 mt-8">
+                    </div>                    <div className="bg-white dark:bg-white/5 shadow-sm dark:shadow-none rounded-2xl p-5 border border-gray-200 dark:border-white/10 mt-8">
                       <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                         <Shield className="w-4 h-4 text-primary" /> {t("settings.profile.role_info")}
                       </h4>

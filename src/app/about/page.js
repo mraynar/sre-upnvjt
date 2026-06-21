@@ -80,8 +80,6 @@ export default async function AboutPage() {
         role: u.positionName || u.role?.name || "Staff",
         dept: deptName,
         profilePictureUrl: u.profilePictureUrl,
-        instagramUrl: u.instagramUrl,
-        linkedinUrl: u.linkedinUrl,
       }));
 
     return {

@@ -127,45 +127,6 @@ export default function AboutClient({ divisionsData }) {
                         className="w-full h-full object-cover filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
                         onError={(e) => { e.target.src = "/images/default-avatar.svg"; }}
                       />
-                      <button 
-                        onClick={() => setOpenSocials(openSocials === i ? null : i)}
-                        className="absolute top-5 right-5 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white/70 hover:bg-black/80 hover:text-white transition-colors z-20 cursor-pointer"
-                      >
-                        <Plus className={`w-4 h-4 transition-transform ${openSocials === i ? 'rotate-45' : ''}`} />
-                      </button>
-
-                      <AnimatePresence>
-                        {openSocials === i && (member.instagramUrl || member.linkedinUrl) && (
-                          <motion.div 
-                            initial={{ opacity: 0, scale: 0.8, x: 20 }}
-                            animate={{ opacity: 1, scale: 1, x: 0 }}
-                            exit={{ opacity: 0, scale: 0.8, x: 20 }}
-                            className="absolute top-16 right-5 flex flex-col gap-2 z-20"
-                          >
-                            {member.instagramUrl && (
-                              <a href={member.instagramUrl} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-[#07130e]/80 backdrop-blur-md flex items-center justify-center text-white hover:bg-[#e8ecc4] hover:text-[#07130e] transition-colors border border-white/10 shadow-lg">
-                                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                              </a>
-                            )}
-                            {member.linkedinUrl && (
-                              <a href={member.linkedinUrl} target="_blank" rel="noreferrer" className="w-8 h-8 rounded-full bg-[#07130e]/80 backdrop-blur-md flex items-center justify-center text-white hover:bg-[#e8ecc4] hover:text-[#07130e] transition-colors border border-white/10 shadow-lg">
-                                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-                              </a>
-                            )}
-                          </motion.div>
-                        )}
-                        {openSocials === i && (!member.instagramUrl && !member.linkedinUrl) && (
-                          <motion.div 
-                            initial={{ opacity: 0, scale: 0.8, x: 20 }}
-                            animate={{ opacity: 1, scale: 1, x: 0 }}
-                            exit={{ opacity: 0, scale: 0.8, x: 20 }}
-                            className="absolute top-16 right-5 bg-black/60 backdrop-blur-md text-white text-[10px] px-3 py-1.5 rounded-lg whitespace-nowrap z-20 border border-white/10"
-                          >
-                            No links added
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-
                       <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#07130e] via-[#07130e]/60 to-transparent pointer-events-none" />
 
                       <div className="absolute bottom-6 left-6 right-6 text-white flex flex-col items-start pointer-events-none">

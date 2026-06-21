@@ -418,6 +418,7 @@
     },
     "widgets": {
       "total_members": "Total Anggota",
+      "total_activities": "Total Kegiatan",
       "active_projects": "Proyek Aktif",
       "published_articles": "Artikel Terbit",
       "departments": "Departemen",
@@ -743,6 +744,7 @@
     },
     "widgets": {
       "total_members": "Total Anggota",
+      "total_activities": "Total Kegiatan",
       "active_projects": "Proyek Aktif",
       "published_articles": "Artikel Terbit",
       "departments": "Departemen",
@@ -811,5 +813,32 @@
       "cancel": "Batal",
       "save": "Potong & Simpan"
     }
+  },
+  "shortlinks": {
+    "title": "Kelola Tautan Pendek",
+    "subtitle": "Buat tautan yang mudah diingat. Lacak jumlah klik dan pantau dampaknya secara langsung.",
+    "search": "Cari tautan...",
+    "create": "Buat Baru",
+    "no_shortlinks": "Tautan tidak ditemukan",
+    "no_shortlinks_desc": "Coba ubah kata kunci pencarian atau buat tautan baru.",
+    "active": "Aktif",
+    "inactive": "Nonaktif",
+    "original_url": "URL Asli",
+    "clicks": "Klik",
+    "create_title": "Buat Tautan Pendek",
+    "edit_title": "Edit Tautan Pendek",
+    "modal_desc": "Buat tautan khusus yang mudah diingat untuk audiens Anda.",
+    "dest_url": "URL Tujuan (Asli)",
+    "custom_slug": "Slug Khusus",
+    "generate": "Acak Otomatis",
+    "active_status": "Status Aktif",
+    "active_desc": "Nyalakan/matikan pengalihan tautan ini.",
+    "cancel": "Batal",
+    "save": "Simpan Perubahan",
+    "create_link": "Buat Tautan",
+    "delete_title": "Hapus Tautan?",
+    "delete_desc": "Apakah Anda yakin ingin menghapus ",
+    "delete_desc2": "? Tautan ini akan berhenti berfungsi seketika. Tindakan ini tidak dapat dibatalkan.",
+    "delete": "Hapus"
   }
 }

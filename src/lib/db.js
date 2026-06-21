@@ -1,22 +1,16 @@
-import { drizzle } from 'drizzle-orm/mysql2';
-import mysql from 'mysql2/promise';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
 import * as schema from '@/db/schema';
 
-let poolConnection;
+let client;
 
 if (process.env.NODE_ENV === 'production') {
-  poolConnection = mysql.createPool({
-    uri: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-  });
+  client = postgres(process.env.DATABASE_URL, { ssl: 'require' });
 } else {
-  if (!global.poolConnection) {
-    global.poolConnection = mysql.createPool({
-      uri: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false }
-    });
+  if (!global.postgresClient) {
+    global.postgresClient = postgres(process.env.DATABASE_URL);
   }
-  poolConnection = global.poolConnection;
+  client = global.postgresClient;
 }
 
-export const db = drizzle(poolConnection, { schema, mode: 'planetscale' });
+export const db = drizzle(client, { schema });

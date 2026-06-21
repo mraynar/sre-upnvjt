@@ -20,25 +20,25 @@ export default async function SettingsPage() {
     redirect("/login");
   }
 
-  const user = await db.query.user.findFirst({
-    where: eq(userSchema.id, parseInt(session.user.id)),
+  const currentUser = await db.query.user.findFirst({
+    where: eq(userSchema.email, session.user.email),
     with: {
       role: true,
       department: true,
     }
   });
 
-  if (!user) {
+  if (!currentUser) {
     redirect("/login");
   }
 
   const safeUser = {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    npm: user.npm || "",
-    roleName: user.role.name,
-    departmentName: user.department?.name || "-",
+    id: currentUser.id,
+    name: currentUser.name,
+    email: currentUser.email,
+    npm: currentUser.npm || "",
+    roleName: currentUser.role?.name || "USER",
+    departmentName: currentUser.department?.name || "-",
   };
 
   return <SettingsClient user={safeUser} />;

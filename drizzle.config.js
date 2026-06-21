@@ -9,15 +9,10 @@ if (!process.env.DATABASE_URL) {
 export default defineConfig({
   schema: './src/db/schema.js',
   out: './drizzle',
-  dialect: 'mysql',
+  dialect: 'postgresql',
   dbCredentials: {
-    host: 'gateway01.ap-southeast-1.prod.aws.tidbcloud.com',
-    port: 4000,
-    user: '4SZ41CSjcmaAJj9.root',
-    password: '46Jkzcss9qHdnXas',
-    database: 'test',
-    ssl: { rejectUnauthorized: true }
+    url: process.env.DATABASE_URL,
   },
   verbose: true,
-  strict: true,
+  strict: false,
 });
