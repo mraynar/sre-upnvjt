@@ -4,19 +4,19 @@ import { relations } from 'drizzle-orm';
 // ==========================================
 // 1. DYNAMIC RBAC & ORGANIZATION STRUCTURE
 // ==========================================
-export const department = pgTable('Department', {
+export const department = pgTable('department', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 255 }).unique().notNull(),
   code: varchar('code', { length: 255 }).unique().notNull(),
 });
 
-export const division = pgTable('Division', {
+export const division = pgTable('division', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   departmentId: integer('departmentId').references(() => department.id).notNull(),
 });
 
-export const role = pgTable('Role', {
+export const role = pgTable('role', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 255 }).unique().notNull(),
   permissions: jsonb('permissions').notNull(),
@@ -26,7 +26,7 @@ export const role = pgTable('Role', {
 // ==========================================
 // 2. USER & MEMBER PROFILES
 // ==========================================
-export const user = pgTable('User', {
+export const user = pgTable('user', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   email: varchar('email', { length: 255 }).unique().notNull(),
@@ -43,7 +43,7 @@ export const user = pgTable('User', {
   updatedAt: timestamp('updatedAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
 });
 
-export const memberProfile = pgTable('MemberProfile', {
+export const memberProfile = pgTable('memberProfile', {
   userId: integer('userId').references(() => user.id).primaryKey(),
   xp: integer('xp').default(0).notNull(),
   level: integer('level').default(1).notNull(),
@@ -52,7 +52,7 @@ export const memberProfile = pgTable('MemberProfile', {
 // ==========================================
 // 3. ANNOUNCEMENTS
 // ==========================================
-export const announcement = pgTable('Announcement', {
+export const announcement = pgTable('announcement', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   imageUrl: varchar('imageUrl', { length: 1000 }),
@@ -67,7 +67,7 @@ export const announcement = pgTable('Announcement', {
 // ==========================================
 // 4. CONTENTS (Articles)
 // ==========================================
-export const content = pgTable('Content', {
+export const content = pgTable('content', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   slug: varchar('slug', { length: 255 }).unique().notNull(),
@@ -81,7 +81,7 @@ export const content = pgTable('Content', {
 // ==========================================
 // 5. TASKS & SUBMISSIONS
 // ==========================================
-export const task = pgTable('Task', {
+export const task = pgTable('task', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description').notNull(),
@@ -91,7 +91,7 @@ export const task = pgTable('Task', {
   createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
 });
 
-export const taskSubmission = pgTable('TaskSubmission', {
+export const taskSubmission = pgTable('taskSubmission', {
   id: serial('id').primaryKey(),
   taskId: integer('taskId').references(() => task.id).notNull(),
   memberId: integer('memberId').references(() => user.id).notNull(),
@@ -105,7 +105,7 @@ export const taskSubmission = pgTable('TaskSubmission', {
 // ==========================================
 // 6. ATTENDANCES
 // ==========================================
-export const attendance = pgTable('Attendance', {
+export const attendance = pgTable('attendance', {
   id: serial('id').primaryKey(),
   memberId: integer('memberId').references(() => user.id).notNull(),
   date: timestamp('date', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
@@ -117,7 +117,7 @@ export const attendance = pgTable('Attendance', {
 // ==========================================
 // 7. EVENTS
 // ==========================================
-export const event = pgTable('Event', {
+export const event = pgTable('event', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description'),
@@ -132,7 +132,7 @@ export const event = pgTable('Event', {
 // ==========================================
 // 8. PARTNERS
 // ==========================================
-export const partner = pgTable('Partner', {
+export const partner = pgTable('partner', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   logoUrl: varchar('logoUrl', { length: 1000 }),
@@ -145,7 +145,7 @@ export const partner = pgTable('Partner', {
 // ==========================================
 // 9. SYSTEM SETTINGS
 // ==========================================
-export const systemSetting = pgTable('SystemSetting', {
+export const systemSetting = pgTable('systemSetting', {
   id: serial('id').primaryKey(),
   keyName: varchar('keyName', { length: 255 }).unique().notNull(),
   valueData: text('valueData').notNull(),
@@ -155,7 +155,7 @@ export const systemSetting = pgTable('SystemSetting', {
 // ==========================================
 // 10. MERCHANDISE
 // ==========================================
-export const merchandise = pgTable('Merchandise', {
+export const merchandise = pgTable('merchandise', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 255 }).notNull(),
   price: numeric('price', { precision: 10, scale: 2 }).notNull(),
@@ -170,7 +170,7 @@ export const merchandise = pgTable('Merchandise', {
 // ==========================================
 // 11. SHORTLINKS
 // ==========================================
-export const shortlink = pgTable('Shortlink', {
+export const shortlink = pgTable('shortlink', {
   id: serial('id').primaryKey(),
   slug: varchar('slug', { length: 255 }).unique().notNull(),
   originalUrl: varchar('originalUrl', { length: 2000 }).notNull(),
