@@ -1,32 +1,26 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { shortlink } from "@/db/schema";
-import { eq } from "drizzle-orm";
 
 export async function GET(request, { params }) {
-  const resolvedParams = await params;
-  const { slug } = resolvedParams;
+  // Di Next.js modern, 'params' sifatnya asinkronus, jadi wajib di-await
+  const { slug } = await params;
 
   try {
-    const linkData = await db.query.shortlink.findFirst({
-      where: eq(shortlink.slug, slug),
+    // 1. Tembak API ke server backend shortlink untuk cari link asli
+    const res = await fetch(`http://127.0.0.1:8000/api/resolve/${slug}`, {
+      cache: "no-store", // Wajib agar Next.js tidak nge-cache hasil shortlink lama
     });
 
-    if (linkData && linkData.isActive) {
-      // Increment clicks
-      await db.update(shortlink)
-        .set({ clicks: linkData.clicks + 1 })
-        .where(eq(shortlink.id, linkData.id));
+    if (res.ok) {
+      const data = await res.json();
 
-      // Redirect to original URL
-      // We use 302 Temporary Redirect so that clicks are always tracked.
-      // If we used 301, the browser would cache the redirect.
-      return NextResponse.redirect(linkData.originalUrl, 302);
+      // 2. Jika ketemu, langsung tembak redirect ke link tujuan (bisa web luar/GForm/Drive)
+      return NextResponse.redirect(new URL(data.long_url));
     }
   } catch (error) {
-    console.error("Error redirecting shortlink:", error);
+    console.error("Shortlink error di Next.js:", error);
   }
 
-  // If not found or inactive, redirect to home or a not-found page
-  return NextResponse.redirect(new URL("/", request.url));
+  // 3. Jika slug tidak terdaftar atau API error, lempar ke 404 web utama
+  const baseUrl = request.nextUrl.origin; // Mengambil domain utama (sre-upnjatim.com)
+  return NextResponse.redirect(new URL("/404", baseUrl));
 }

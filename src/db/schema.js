@@ -167,18 +167,6 @@ export const merchandise = pgTable('merchandise', {
   updatedAt: timestamp('updatedAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
 });
 
-// ==========================================
-// 11. SHORTLINKS
-// ==========================================
-export const shortlink = pgTable('shortlink', {
-  id: serial('id').primaryKey(),
-  slug: varchar('slug', { length: 255 }).unique().notNull(),
-  originalUrl: varchar('originalUrl', { length: 2000 }).notNull(),
-  clicks: integer('clicks').default(0).notNull(),
-  isActive: boolean('isActive').default(true).notNull(),
-  createdById: integer('createdById').references(() => user.id).notNull(),
-  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
-});
 
 // RELATIONS
 export const departmentRelations = relations(department, ({ many }) => ({
@@ -209,7 +197,6 @@ export const userRelations = relations(user, ({ one, many }) => ({
   taskSubmissions: many(taskSubmission, { relationName: 'MemberSubmissions' }),
   tasksReviewed: many(taskSubmission, { relationName: 'ReviewerSubmissions' }),
   attendances: many(attendance),
-  shortlinksCreated: many(shortlink),
 }));
 
 export const memberProfileRelations = relations(memberProfile, ({ one }) => ({
@@ -239,6 +226,3 @@ export const attendanceRelations = relations(attendance, ({ one }) => ({
   member: one(user, { fields: [attendance.memberId], references: [user.id] }),
 }));
 
-export const shortlinkRelations = relations(shortlink, ({ one }) => ({
-  createdBy: one(user, { fields: [shortlink.createdById], references: [user.id] }),
-}));

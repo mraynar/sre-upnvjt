@@ -48,7 +48,6 @@ export default function DashboardLayout({ children }) {
     // Public & Media
     { name: t("sidebar.articles") || "Content / Berita", icon: Newspaper, href: "/content", module: "content" },
     { name: t("sidebar.merch"), icon: ShoppingBag, href: "/merch", module: "merchandise" },
-    { name: "Shortlinks", icon: Link2, href: "/shortlinks", module: "shortlinks" },
     { name: t("sidebar.partners"), icon: Handshake, href: "/partners", module: "partners" },
     
     // System

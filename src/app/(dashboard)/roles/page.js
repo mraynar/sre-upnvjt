@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 const availableModules = [
   "dashboard", "users", "roles", "departments", 
-  "content", "merchandise", "partners", "shortlinks"
+  "content", "merchandise", "partners"
 ];
 const actions = ["create", "read", "update", "delete"];
 

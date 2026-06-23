@@ -19,7 +19,6 @@ const hiddenHeaderRoutes = [
   "/settings",
   "/partners",
   "/content",
-  "/shortlinks",
   "/leaderboard",
   "/appraisals",
   "/achievements",
