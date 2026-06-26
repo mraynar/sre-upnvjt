@@ -86,6 +86,22 @@ export const authOptions = {
       }
       return session;
     },
+    // Redirect users with unrecognized roles back to the homepage.
+    // Recognized roles: SUPER_ADMIN and any role that starts with a known prefix.
+    // Visitors who somehow log in with an unknown role see no special UI —
+    // they are simply dropped back at `/` as a regular visitor.
+    async redirect({ url, baseUrl, token }) {
+      const roleName = token?.roleName;
+      const KNOWN_ROLES = ["SUPER_ADMIN", "KETUA", "WAKIL_KETUA", "SEKRETARIS", "BENDAHARA", "ANGGOTA", "ALUMNI"];
+      const isKnownRole = roleName && KNOWN_ROLES.includes(roleName);
+
+      if (!isKnownRole) {
+        // Unknown role → treat as a visitor, go home
+        return baseUrl + "/";
+      }
+      // Known role → respect the intended callbackUrl, but stay within the app
+      return url.startsWith(baseUrl) ? url : baseUrl + "/dashboard";
+    },
   },
   pages: {
     signIn: "/login",

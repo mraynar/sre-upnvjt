@@ -26,19 +26,21 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { name, imageUrl, size } = body;
+    const { name, logoUrl, websiteUrl, tier, isActive } = body;
 
-    if (!name || !imageUrl) {
+    if (!name || !logoUrl) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
     const [result] = await db.insert(partner).values({
       name,
-      imageUrl,
-      size: size || "MEDIUM"
+      logoUrl,
+      websiteUrl: websiteUrl || null,
+      tier: tier || null,
+      isActive: isActive !== undefined ? isActive : true,
     });
 
-    return NextResponse.json({ success: true, partner: { id: result.insertId, name, imageUrl, size: size || "MEDIUM" } }, { status: 201 });
+    return NextResponse.json({ success: true, partner: { id: result.insertId, name, logoUrl, websiteUrl, tier } }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

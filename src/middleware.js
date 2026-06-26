@@ -24,15 +24,17 @@ export default async function middleware(req, event) {
 }
 
 export const config = {
+  // Only routes that REQUIRE authentication are listed here.
+  // Public routes (/articles, /about, /merchandise, etc.) must NOT appear here.
   matcher: [
     "/login",
     "/dashboard/:path*",
     "/roles/:path*",
     "/users/:path*",
     "/departments/:path*",
-    "/articles/:path*",
     "/activities/:path*",
     "/merch/:path*",
-    "/settings/:path*"
+    "/settings/:path*",
   ],
 };
+

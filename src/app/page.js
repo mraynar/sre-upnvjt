@@ -649,14 +649,14 @@ export default function Home() {
                 className="flex flex-wrap justify-center items-center gap-6 md:gap-12 opacity-80 mt-8"
               >
                 {partnersList.map((partner) => {
-                  let sizeClasses = "w-40 h-20 md:w-48 md:h-24"; // MEDIUM
-                  if (partner.size === "LARGE") sizeClasses = "w-56 h-28 md:w-72 md:h-36";
-                  if (partner.size === "SMALL") sizeClasses = "w-32 h-16 md:w-36 md:h-16";
+                  let sizeClasses = "w-40 h-20 md:w-48 md:h-24"; // MEDIUM (default)
+                  if (partner.tier === "LARGE") sizeClasses = "w-56 h-28 md:w-72 md:h-36";
+                  if (partner.tier === "SMALL") sizeClasses = "w-32 h-16 md:w-36 md:h-16";
 
                   return (
                     <div key={partner.id} className={`${sizeClasses} bg-[#0f3036]/2 rounded-2xl border border-[#0f3036]/5 p-4 flex items-center justify-center hover:bg-[#0f3036]/5 hover:-translate-y-1 transition-all duration-300 cursor-pointer group`}>
                       <img 
-                        src={partner.imageUrl} 
+                        src={partner.logoUrl} 
                         alt={partner.name} 
                         className="max-w-full max-h-full object-contain filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" 
                         title={partner.name} 

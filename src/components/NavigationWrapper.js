@@ -13,7 +13,6 @@ const hiddenHeaderRoutes = [
   "/finance",
   "/inventory",
   "/documents",
-  "/articles",
   "/activities",
   "/merch",
   "/settings",

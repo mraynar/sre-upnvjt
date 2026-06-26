@@ -17,19 +17,21 @@ export async function PUT(req, { params }) {
     const { id } = await params;
     const partnerId = parseInt(id);
     const body = await req.json();
-    const { name, imageUrl, size } = body;
+    const { name, logoUrl, websiteUrl, tier, isActive } = body;
 
-    if (!name || !imageUrl) {
+    if (!name || !logoUrl) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
     await db.update(partner).set({
-      name, 
-      imageUrl, 
-      size: size || "MEDIUM"
+      name,
+      logoUrl,
+      websiteUrl: websiteUrl || null,
+      tier: tier || null,
+      isActive: isActive !== undefined ? isActive : true,
     }).where(eq(partner.id, partnerId));
 
-    return NextResponse.json({ success: true, partner: { id: partnerId, name, imageUrl, size: size || "MEDIUM" } }, { status: 200 });
+    return NextResponse.json({ success: true, partner: { id: partnerId, name, logoUrl, websiteUrl, tier } }, { status: 200 });
   } catch (error) {
     if (error.code === 'P2025') {
       return NextResponse.json({ error: "Partner not found" }, { status: 404 });

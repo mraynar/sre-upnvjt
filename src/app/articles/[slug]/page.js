@@ -25,14 +25,9 @@ export async function generateMetadata({ params }) {
 export default async function ContentDetailPage({ params }) {
   const { slug } = params;
 
-  const article = await db.query.content.findFirst({
-    where: eq(content.slug, slug),
-    with: {
-      author: true, // we defined a relation in schema? Wait, we used leftJoin in actions because Drizzle relations might not be fully configured for updatedById in the new schema.
-    }
-  });
-
-  // Let's manually query to be safe if `with: { author: true }` is not set up correctly in relations
+  // Use a manual leftJoin select to safely fetch the article with its author.
+  // The Drizzle relation for `content` is named `updatedBy` (not `author`),
+  // but we alias the joined columns as `author` here to match the JSX below.
   const articleQuery = await db.select({
     id: content.id,
     title: content.title,

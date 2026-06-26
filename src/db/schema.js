@@ -226,3 +226,56 @@ export const attendanceRelations = relations(attendance, ({ one }) => ({
   member: one(user, { fields: [attendance.memberId], references: [user.id] }),
 }));
 
+// ==========================================
+// 11. ADDITIONAL TABLES & RELATIONS
+// ==========================================
+
+export const testimonial = pgTable('testimonial', {
+  id: serial('id').primaryKey(),
+  authorName: varchar('authorName', { length: 255 }).notNull(),
+  authorPosition: varchar('authorPosition', { length: 255 }).notNull(),
+  authorPhotoUrl: varchar('authorPhotoUrl', { length: 1000 }),
+  content: text('content').notNull(),
+  isPublished: boolean('isPublished').default(false).notNull(),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
+});
+
+export const memberApplication = pgTable('memberApplication', {
+  id: serial('id').primaryKey(),
+  fullName: varchar('fullName', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull(),
+  npm: varchar('npm', { length: 255 }).notNull(),
+  faculty: varchar('faculty', { length: 255 }).notNull(),
+  motivation: text('motivation').notNull(),
+  status: varchar('status', { length: 50 }).default('PENDING').notNull(),
+  reviewedById: integer('reviewedById').references(() => user.id),
+  appliedAt: timestamp('appliedAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: timestamp('updatedAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
+});
+
+export const eventRegistration = pgTable('eventRegistration', {
+  id: serial('id').primaryKey(),
+  eventId: integer('eventId').references(() => event.id).notNull(),
+  fullName: varchar('fullName', { length: 255 }).notNull(),
+  email: varchar('email', { length: 255 }).notNull(),
+  teamName: varchar('teamName', { length: 255 }),
+  registrationType: varchar('registrationType', { length: 50 }).notNull(),
+  status: varchar('status', { length: 50 }).default('PENDING').notNull(),
+  submittedAt: timestamp('submittedAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
+});
+
+export const memberApplicationRelations = relations(memberApplication, ({ one }) => ({
+  reviewedBy: one(user, {
+    fields: [memberApplication.reviewedById],
+    references: [user.id],
+  }),
+}));
+
+export const eventRegistrationRelations = relations(eventRegistration, ({ one }) => ({
+  event: one(event, {
+    fields: [eventRegistration.eventId],
+    references: [event.id],
+  }),
+}));
+
+

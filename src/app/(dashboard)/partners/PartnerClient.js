@@ -12,8 +12,9 @@ import { useLanguage } from "@/i18n/LanguageProvider";
 
 const EMPTY_PARTNER = {
   name: "",
-  imageUrl: "",
-  size: "MEDIUM",
+  logoUrl: "",
+  websiteUrl: "",
+  tier: null,
 };
 
 export default function PartnerClient({ initialPartners }) {
@@ -90,7 +91,7 @@ export default function PartnerClient({ initialPartners }) {
       const data = await res.json();
       
       if (res.ok && data.url) {
-        setCurrentPartner(prev => ({ ...prev, imageUrl: data.url }));
+        setCurrentPartner(prev => ({ ...prev, logoUrl: data.url }));
         showNotification("success", "Image uploaded successfully!");
       } else {
         showNotification("error", data.error || "Failed to upload image");
@@ -214,9 +215,9 @@ export default function PartnerClient({ initialPartners }) {
                   className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10 shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)] rounded-3xl overflow-hidden backdrop-blur-xl relative group hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(16,185,129,0.1)] transition-all duration-300 flex flex-col h-full"
                 >
                   <div className="relative aspect-video w-full overflow-hidden bg-white dark:bg-white/5 shadow-sm dark:shadow-none flex items-center justify-center p-4 border-b border-gray-200 dark:border-white/5">
-                    {partner.imageUrl ? (
+                    {partner.logoUrl ? (
                       <img
-                        src={partner.imageUrl}
+                        src={partner.logoUrl}
                         alt={partner.name}
                         className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500"
                       />
@@ -232,11 +233,11 @@ export default function PartnerClient({ initialPartners }) {
                     <div className="flex justify-between items-start mb-4">
                       <h3 className="text-[16px] font-bold text-gray-900 dark:text-white leading-tight group-hover:text-primary transition-colors">{partner.name}</h3>
                       <span className={`px-2 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider backdrop-blur-md border ${
-                        partner.size === "LARGE" ? "bg-purple-500/20 text-purple-300 border-purple-500/30" : 
-                        partner.size === "MEDIUM" ? "bg-blue-500/20 text-blue-300 border-blue-500/30" :
-                        "bg-white dark:bg-white/10 shadow-sm dark:shadow-none text-gray-500 dark:text-white/60 border-gray-200 dark:border-white/20"
+                        partner.tier === "LARGE" ? "bg-purple-500/20 text-purple-300 border-purple-500/30" : 
+                        partner.tier === "MEDIUM" ? "bg-blue-500/20 text-blue-300 border-blue-500/30" :
+                        partner.tier ? "bg-white dark:bg-white/10 shadow-sm dark:shadow-none text-gray-500 dark:text-white/60 border-gray-200 dark:border-white/20" : "hidden"
                       }`}>
-                        {partner.size}
+                        {partner.tier}
                       </span>
                     </div>
 
@@ -313,8 +314,8 @@ export default function PartnerClient({ initialPartners }) {
                       <input
                         type="text"
                         required
-                        value={currentPartner.imageUrl}
-                        onChange={(e) => setCurrentPartner(prev => ({ ...prev, imageUrl: e.target.value }))}
+                        value={currentPartner.logoUrl}
+                        onChange={(e) => setCurrentPartner(prev => ({ ...prev, logoUrl: e.target.value }))}
                         className="flex-1 h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
                         placeholder="https://..."
                       />
@@ -333,9 +334,9 @@ export default function PartnerClient({ initialPartners }) {
                         />
                       </label>
                     </div>
-                    {currentPartner.imageUrl && (
+                    {currentPartner.logoUrl && (
                       <div className="w-full h-32 rounded-lg overflow-hidden shrink-0 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/10 shadow-sm dark:shadow-none flex items-center justify-center p-4">
-                        <img src={currentPartner.imageUrl} alt="Preview" className="max-w-full max-h-full object-contain" />
+                        <img src={currentPartner.logoUrl} alt="Preview" className="max-w-full max-h-full object-contain" />
                       </div>
                     )}
                   </div>
@@ -343,10 +344,11 @@ export default function PartnerClient({ initialPartners }) {
                   <div>
                     <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">{t("partners.size")}</label>
                     <select
-                      value={currentPartner.size}
-                      onChange={(e) => setCurrentPartner(prev => ({ ...prev, size: e.target.value }))}
+                      value={currentPartner.tier || ""}
+                      onChange={(e) => setCurrentPartner(prev => ({ ...prev, tier: e.target.value || null }))}
                       className="w-full h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-all appearance-none"
                     >
+                      <option value="" className="bg-[#0a1612] text-gray-900 dark:text-white">— No Tier —</option>
                       <option value="LARGE" className="bg-[#0a1612] text-gray-900 dark:text-white">{t("partners.large")}</option>
                       <option value="MEDIUM" className="bg-[#0a1612] text-gray-900 dark:text-white">{t("partners.medium")}</option>
                       <option value="SMALL" className="bg-[#0a1612] text-gray-900 dark:text-white">{t("partners.small")}</option>

@@ -66,14 +66,13 @@ export default function Header() {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
-    { name: "Activity", path: "/activity" },
-    { name: "Article", path: "/article" },
+    { name: "Articles", path: "/articles" },
     { name: "Merchandise", path: "/merchandise" },
   ];
 
   const close = () => setMobileMenuOpen(false);
 
-  const adminRoutes = ["/dashboard", "/roles", "/users", "/departments", "/articles", "/activities", "/merch", "/settings"];
+  const adminRoutes = ["/dashboard", "/roles", "/users", "/departments", "/activities", "/merch", "/settings"];
   const isDashboardRoute = adminRoutes.some(route => pathname === route || pathname.startsWith(route + "/"));
   if (pathname === "/login" || isDashboardRoute) return null;
 
@@ -143,7 +142,7 @@ export default function Header() {
             })}
           </div>
 
-          {/* Desktop CTA */}
+          {/* Desktop CTA — Login */}
           <div className="hidden md:flex items-center gap-5">
             <Link href="/login">
               <motion.div
@@ -208,29 +207,25 @@ export default function Header() {
 
                 {/* Primary Links */}
                 <nav className="flex flex-col gap-1">
-                  {['Home', 'About', 'Activity', 'Article', 'Merchandise'].map((name, i) => {
-                    const item = navItems.find((n) => n.name === name);
-                    if (!item) return null;
-                    return (
-                      <Link key={name} href={item.path} onClick={close}>
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.15 + i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                          className="text-[48px] sm:text-[56px] font-display font-bold text-[#e8ecc4] tracking-tighter leading-[1.1] hover:text-white transition-colors cursor-pointer"
-                        >
-                          {name}
-                        </motion.div>
-                      </Link>
-                    )
-                  })}
+                  {navItems.map((item, i) => (
+                    <Link key={item.name} href={item.path} onClick={close}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.15 + i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                        className="text-[48px] sm:text-[56px] font-display font-bold text-[#e8ecc4] tracking-tighter leading-[1.1] hover:text-white transition-colors cursor-pointer"
+                      >
+                        {item.name}
+                      </motion.div>
+                    </Link>
+                  ))}
                 </nav>
 
-                {/* Login Button in Mobile Menu */}
+                {/* Login CTA — Mobile Menu */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 + 5 * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ delay: 0.15 + navItems.length * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="mt-10"
                 >
                   <Link href="/login" onClick={close} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-primary text-[#07130e] text-[15px] font-bold tracking-widest uppercase transition-all hover:bg-[#e8ecc4] hover:scale-105 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
@@ -238,6 +233,7 @@ export default function Header() {
                     Login
                   </Link>
                 </motion.div>
+
               </div>
 
               {/* Footer Section */}

@@ -14,7 +14,7 @@ export default function Footer() {
     if (pathname === "/") {
       return "bg-canvas";
     }
-    if (pathname.startsWith("/article")) {
+    if (pathname.startsWith("/articles")) {
       return "bg-[#07130e]";
     }
     return "bg-[#e8ecc4]";
