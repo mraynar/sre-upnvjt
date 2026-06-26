@@ -25,6 +25,8 @@ const hiddenHeaderRoutes = [
   "/achievements/verify",
   "/login",
   "/register",
+  "/forms",
+  
 ];
 
 function isHiddenHeaderRoute(pathname) {
