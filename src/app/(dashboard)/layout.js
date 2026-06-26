@@ -44,6 +44,7 @@ export default function DashboardLayout({ children }) {
     { name: t("sidebar.departments"), icon: FileText, href: "/departments", module: "departments" },
     { name: t("sidebar.users"), icon: Users, href: "/users", module: "users" },
     { name: t("sidebar.roles"), icon: Shield, href: "/roles", module: "roles" },
+    { name: "Form Builder", icon: ClipboardCheck, href: "/forms", module: "forms" },
     
     // Public & Media
     { name: t("sidebar.articles") || "Content / Berita", icon: Newspaper, href: "/content", module: "content" },
@@ -55,7 +56,7 @@ export default function DashboardLayout({ children }) {
   ];
 
   const allowedNavItems = navItems.filter(item => {
-    if (item.module === "overview" || item.module === "settings") return true;
+    if (item.module === "overview" || item.module === "settings" || item.module === "forms") return true;
     if (item.module === "partners") return role === "SUPER_ADMIN";
     return hasAccess(session?.user, item.module, "read");
   });

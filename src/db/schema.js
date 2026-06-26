@@ -81,11 +81,31 @@ export const content = pgTable('content', {
 // ==========================================
 // 5. TASKS & SUBMISSIONS
 // ==========================================
+export const formTemplate = pgTable('formTemplate', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  questions: jsonb('questions').notNull().default([]),
+  createdById: integer('createdById').references(() => user.id).notNull(),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: timestamp('updatedAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
+});
+
+export const formSubmission = pgTable('formSubmission', {
+  id: serial('id').primaryKey(),
+  formTemplateId: integer('formTemplateId').references(() => formTemplate.id).notNull(),
+  memberId: integer('memberId').references(() => user.id).notNull(),
+  answers: jsonb('answers').notNull().default([]),
+  score: integer('score'),
+  submittedAt: timestamp('submittedAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
+});
+
 export const task = pgTable('task', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description').notNull(),
   rewardXp: integer('rewardXp').default(0).notNull(),
+  formTemplateId: integer('formTemplateId').references(() => formTemplate.id),
   deadline: timestamp('deadline', { mode: 'date' }).notNull(),
   createdById: integer('createdById').references(() => user.id).notNull(),
   createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
@@ -96,6 +116,7 @@ export const taskSubmission = pgTable('taskSubmission', {
   taskId: integer('taskId').references(() => task.id).notNull(),
   memberId: integer('memberId').references(() => user.id).notNull(),
   fileUrl: varchar('fileUrl', { length: 1000 }),
+  formSubmissionId: integer('formSubmissionId').references(() => formSubmission.id),
   status: varchar('status', { length: 50 }).notNull(), // 'PENDING', 'APPROVED', 'REJECTED'
   feedback: text('feedback'),
   reviewedById: integer('reviewedById').references(() => user.id),
@@ -211,8 +232,21 @@ export const contentRelations = relations(content, ({ one }) => ({
   updatedBy: one(user, { fields: [content.updatedById], references: [user.id] }),
 }));
 
+export const formTemplateRelations = relations(formTemplate, ({ one, many }) => ({
+  createdBy: one(user, { fields: [formTemplate.createdById], references: [user.id] }),
+  submissions: many(formSubmission),
+  tasks: many(task),
+}));
+
+export const formSubmissionRelations = relations(formSubmission, ({ one, many }) => ({
+  formTemplate: one(formTemplate, { fields: [formSubmission.formTemplateId], references: [formTemplate.id] }),
+  member: one(user, { fields: [formSubmission.memberId], references: [user.id] }),
+  taskSubmissions: many(taskSubmission),
+}));
+
 export const taskRelations = relations(task, ({ one, many }) => ({
   createdBy: one(user, { fields: [task.createdById], references: [user.id] }),
+  formTemplate: one(formTemplate, { fields: [task.formTemplateId], references: [formTemplate.id] }),
   submissions: many(taskSubmission),
 }));
 
@@ -220,6 +254,7 @@ export const taskSubmissionRelations = relations(taskSubmission, ({ one }) => ({
   task: one(task, { fields: [taskSubmission.taskId], references: [task.id] }),
   member: one(user, { fields: [taskSubmission.memberId], references: [user.id], relationName: 'MemberSubmissions' }),
   reviewer: one(user, { fields: [taskSubmission.reviewedById], references: [user.id], relationName: 'ReviewerSubmissions' }),
+  formSubmission: one(formSubmission, { fields: [taskSubmission.formSubmissionId], references: [formSubmission.id] }),
 }));
 
 export const attendanceRelations = relations(attendance, ({ one }) => ({
