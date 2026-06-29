@@ -116,7 +116,6 @@ export const taskSubmission = pgTable('taskSubmission', {
   taskId: integer('taskId').references(() => task.id).notNull(),
   memberId: integer('memberId').references(() => user.id).notNull(),
   fileUrl: varchar('fileUrl', { length: 1000 }),
-  formSubmissionId: integer('formSubmissionId').references(() => formSubmission.id),
   status: varchar('status', { length: 50 }).notNull(), // 'PENDING', 'APPROVED', 'REJECTED'
   feedback: text('feedback'),
   reviewedById: integer('reviewedById').references(() => user.id),
@@ -254,7 +253,6 @@ export const taskSubmissionRelations = relations(taskSubmission, ({ one }) => ({
   task: one(task, { fields: [taskSubmission.taskId], references: [task.id] }),
   member: one(user, { fields: [taskSubmission.memberId], references: [user.id], relationName: 'MemberSubmissions' }),
   reviewer: one(user, { fields: [taskSubmission.reviewedById], references: [user.id], relationName: 'ReviewerSubmissions' }),
-  formSubmission: one(formSubmission, { fields: [taskSubmission.formSubmissionId], references: [formSubmission.id] }),
 }));
 
 export const attendanceRelations = relations(attendance, ({ one }) => ({
