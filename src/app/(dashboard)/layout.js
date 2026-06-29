@@ -50,13 +50,22 @@ export default function DashboardLayout({ children }) {
     { name: t("sidebar.articles") || "Content / Berita", icon: Newspaper, href: "/content", module: "content" },
     { name: t("sidebar.merch"), icon: ShoppingBag, href: "/merch", module: "merchandise" },
     { name: t("sidebar.partners"), icon: Handshake, href: "/partners", module: "partners" },
+
+    // Member Operations
+    { name: "Literature Bank", icon: FolderOpen, href: "/literature", module: "literature" },
+    { name: "PPT Modules", icon: Presentation, href: "/ppt", module: "ppt" },
+    { name: "Quiz", icon: Target, href: "/quiz", module: "quiz" },
+    { name: "Tasks", icon: FolderKanban, href: "/tasks", module: "tasks" },
+    { name: "Leaderboard", icon: Trophy, href: "/leaderboard", module: "leaderboard" },
+    { name: "Attendance", icon: ShieldCheck, href: "/attendance", module: "attendance" },
+    { name: "Events (Admin)", icon: Activity, href: "/events-admin", module: "events" },
     
     // System
     { name: t("sidebar.settings"), icon: Settings, href: "/settings", module: "settings" },
   ];
 
   const allowedNavItems = navItems.filter(item => {
-    if (item.module === "overview" || item.module === "settings" || item.module === "forms") return true;
+    if (item.module === "overview" || item.module === "settings") return true;
     if (item.module === "partners") return role === "SUPER_ADMIN";
     return hasAccess(session?.user, item.module, "read");
   });

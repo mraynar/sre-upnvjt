@@ -313,4 +313,184 @@ export const eventRegistrationRelations = relations(eventRegistration, ({ one })
   }),
 }));
 
+// ==========================================
+// 12. LITERATURE BANK
+// ==========================================
+export const literatureCategory = pgTable('literatureCategory', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  imageUrl: varchar('imageUrl', { length: 1000 }),
+  description: text('description'),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()),
+});
 
+export const literatureItem = pgTable('literatureItem', {
+  id: serial('id').primaryKey(),
+  categoryId: integer('categoryId').references(() => literatureCategory.id).notNull(),
+  title: varchar('title', { length: 255 }).notNull(),
+  author: varchar('author', { length: 255 }),
+  year: integer('year'),
+  driveUrl: varchar('driveUrl', { length: 1000 }).notNull(),
+  type: varchar('type', { length: 50 }),
+  isPublished: boolean('isPublished').default(false).notNull(),
+  uploadedById: integer('uploadedById').references(() => user.id).notNull(),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()),
+});
+
+// ==========================================
+// 13. PPT MODULES
+// ==========================================
+export const pptModule = pgTable('pptModule', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  coverImageUrl: varchar('coverImageUrl', { length: 1000 }),
+  isPublished: boolean('isPublished').default(false).notNull(),
+  createdById: integer('createdById').references(() => user.id).notNull(),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()),
+  updatedAt: timestamp('updatedAt', { mode: 'date' }).$defaultFn(() => new Date()),
+});
+
+export const pptSlide = pgTable('pptSlide', {
+  id: serial('id').primaryKey(),
+  moduleId: integer('moduleId').references(() => pptModule.id).notNull(),
+  order: integer('order').notNull(),
+  title: varchar('title', { length: 255 }),
+  driveUrl: varchar('driveUrl', { length: 1000 }).notNull(),
+  notes: text('notes'),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()),
+});
+
+// ==========================================
+// 14. QUIZ SYSTEM
+// ==========================================
+export const quiz = pgTable('quiz', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  timeLimitMinutes: integer('timeLimitMinutes'),
+  passingScore: integer('passingScore').default(70),
+  rewardXp: integer('rewardXp').default(0).notNull(),
+  isPublished: boolean('isPublished').default(false).notNull(),
+  createdById: integer('createdById').references(() => user.id).notNull(),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()),
+});
+
+export const quizQuestion = pgTable('quizQuestion', {
+  id: serial('id').primaryKey(),
+  quizId: integer('quizId').references(() => quiz.id).notNull(),
+  order: integer('order').notNull(),
+  type: varchar('type', { length: 50 }).notNull(), // 'MULTIPLE_CHOICE' | 'ESSAY'
+  question: text('question').notNull(),
+  options: jsonb('options').default([]),            // [{id, text}] for MCQ
+  correctOptionId: varchar('correctOptionId', { length: 50 }), // null for essay
+  points: integer('points').default(1).notNull(),
+});
+
+export const quizSubmission = pgTable('quizSubmission', {
+  id: serial('id').primaryKey(),
+  quizId: integer('quizId').references(() => quiz.id).notNull(),
+  memberId: integer('memberId').references(() => user.id).notNull(),
+  answers: jsonb('answers').notNull().default([]), // [{questionId, selectedOptionId?, essayText?}]
+  mcqScore: integer('mcqScore'),                   // auto-calculated on submit
+  essayScore: integer('essayScore'),               // manually set by grader
+  totalScore: integer('totalScore'),
+  isPassed: boolean('isPassed'),
+  gradedById: integer('gradedById').references(() => user.id),
+  submittedAt: timestamp('submittedAt', { mode: 'date' }).$defaultFn(() => new Date()),
+  gradedAt: timestamp('gradedAt', { mode: 'date' }),
+});
+
+// ==========================================
+// 15. XP TRANSACTION LOG
+// ==========================================
+export const xpTransaction = pgTable('xpTransaction', {
+  id: serial('id').primaryKey(),
+  userId: integer('userId').references(() => user.id).notNull(),
+  amount: integer('amount').notNull(),
+  reason: varchar('reason', { length: 255 }).notNull(),
+  sourceType: varchar('sourceType', { length: 50 }), // 'task' | 'quiz' | 'attendance' | 'manual'
+  sourceId: integer('sourceId'),
+  grantedById: integer('grantedById').references(() => user.id),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()),
+});
+
+// ==========================================
+// NEW RELATIONS (12–15)
+// ==========================================
+
+export const literatureCategoryRelations = relations(literatureCategory, ({ many }) => ({
+  items: many(literatureItem),
+}));
+
+export const literatureItemRelations = relations(literatureItem, ({ one }) => ({
+  category: one(literatureCategory, {
+    fields: [literatureItem.categoryId],
+    references: [literatureCategory.id],
+  }),
+  uploadedBy: one(user, {
+    fields: [literatureItem.uploadedById],
+    references: [user.id],
+  }),
+}));
+
+export const pptModuleRelations = relations(pptModule, ({ one, many }) => ({
+  createdBy: one(user, {
+    fields: [pptModule.createdById],
+    references: [user.id],
+  }),
+  slides: many(pptSlide),
+}));
+
+export const pptSlideRelations = relations(pptSlide, ({ one }) => ({
+  module: one(pptModule, {
+    fields: [pptSlide.moduleId],
+    references: [pptModule.id],
+  }),
+}));
+
+export const quizRelations = relations(quiz, ({ one, many }) => ({
+  createdBy: one(user, {
+    fields: [quiz.createdById],
+    references: [user.id],
+  }),
+  questions: many(quizQuestion),
+  submissions: many(quizSubmission),
+}));
+
+export const quizQuestionRelations = relations(quizQuestion, ({ one }) => ({
+  quiz: one(quiz, {
+    fields: [quizQuestion.quizId],
+    references: [quiz.id],
+  }),
+}));
+
+export const quizSubmissionRelations = relations(quizSubmission, ({ one }) => ({
+  quiz: one(quiz, {
+    fields: [quizSubmission.quizId],
+    references: [quiz.id],
+  }),
+  member: one(user, {
+    fields: [quizSubmission.memberId],
+    references: [user.id],
+    relationName: 'MemberQuizSubmissions',
+  }),
+  gradedBy: one(user, {
+    fields: [quizSubmission.gradedById],
+    references: [user.id],
+    relationName: 'GraderQuizSubmissions',
+  }),
+}));
+
+export const xpTransactionRelations = relations(xpTransaction, ({ one }) => ({
+  user: one(user, {
+    fields: [xpTransaction.userId],
+    references: [user.id],
+    relationName: 'UserXpTransactions',
+  }),
+  grantedBy: one(user, {
+    fields: [xpTransaction.grantedById],
+    references: [user.id],
+    relationName: 'GranterXpTransactions',
+  }),
+}));
