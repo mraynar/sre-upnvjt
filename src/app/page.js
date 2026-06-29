@@ -66,7 +66,8 @@ export default function Home() {
   const [activeProgram, setActiveProgram] = useState(0);
   const [partnersList, setPartnersList] = useState([]);
   const [publicArticlesList, setPublicArticlesList] = useState([]);
-  const [publicActivitiesList, setPublicActivitiesList] = useState([{}, {}, {}, {}, {}]); // Fallback array so layout doesn't break if empty
+  const [publicActivitiesList, setPublicActivitiesList] = useState([]);
+  const [publicTestimonialsList, setPublicTestimonialsList] = useState([]);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -74,6 +75,28 @@ export default function Home() {
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setPartnersList(data);
+      })
+      .catch(console.error);
+    
+    fetch('/api/events/public')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const formatted = data.map(ev => ({
+            id: ev.id,
+            title: ev.title,
+            description: ev.description,
+            imageUrl: ev.bannerUrl,
+          }));
+          setPublicActivitiesList(formatted);
+        }
+      })
+      .catch(console.error);
+
+    fetch('/api/testimonials')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setPublicTestimonialsList(data);
       })
       .catch(console.error);
     
@@ -559,7 +582,7 @@ export default function Home() {
                       <span>{art.readTime}</span>
                     </div>
                     <h3 className="text-[34px] font-display font-semibold tracking-tight text-ink leading-tight hover:text-primary transition-colors duration-200 line-clamp-3">
-                      <a href={`/article/${art.slug}`}>{art.title}</a>
+                      <a href={`/articles/${art.slug}`}>{art.title}</a>
                     </h3>
                     <p className="text-[17px] font-normal text-ink-muted-80 leading-relaxed line-clamp-4">
                       {art.desc}
@@ -575,7 +598,7 @@ export default function Home() {
                       </span>
                     </div>
                     <a
-                      href={`/article/${art.slug}`}
+                      href={`/articles/${art.slug}`}
                       className="bg-[#0f3036] hover:bg-[#1b434b] text-white text-[14px] font-semibold tracking-tight rounded-full px-5 py-2 transition-all duration-300 shrink-0"
                     >
                       Read Article
@@ -602,7 +625,7 @@ export default function Home() {
                       <span>{art.readTime}</span>
                     </div>
                     <h4 className="text-[21px] font-display font-semibold tracking-tight text-ink leading-snug hover:text-primary transition-colors duration-200 line-clamp-2">
-                      <a href={`/article/${art.slug}`}>{art.title}</a>
+                      <a href={`/articles/${art.slug}`}>{art.title}</a>
                     </h4>
                     <p className="text-[14px] font-normal text-ink-muted-80 line-clamp-2 leading-relaxed">
                       {art.desc}
@@ -612,7 +635,7 @@ export default function Home() {
                         {art.author}
                       </span>
                       <a
-                        href={`/article/${art.slug}`}
+                        href={`/articles/${art.slug}`}
                         className="text-[12px] font-semibold text-primary hover:underline flex items-center gap-0.5 shrink-0"
                       >
                         Read <ChevronRight className="w-3 h-3" />
@@ -624,6 +647,51 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Testimonials Section */}
+        {publicTestimonialsList.length > 0 && (
+          <section className="bg-canvas border-t border-divider-soft py-24 px-6 relative overflow-hidden">
+            <div className="w-full max-w-7xl mx-auto flex flex-col items-center">
+              <motion.div {...fadeInUp} className="mb-12 text-center">
+                <span className="text-[14px] font-semibold tracking-wider text-primary uppercase mb-3 block">
+                  Testimonials & Review
+                </span>
+                <h2 className="text-[36px] font-display font-black tracking-tight text-ink uppercase">
+                  What Members Say
+                </h2>
+                <p className="text-[15px] text-ink-muted-80 mt-4 max-w-lg mx-auto">
+                  Hear directly from members about their learning journey, growth, and team experiences at SRE UPNVJT.
+                </p>
+              </motion.div>
+              
+              <motion.div 
+                {...fadeInUp}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl"
+              >
+                {publicTestimonialsList.map((test) => (
+                  <div key={test.id} className="bg-canvas-parchment border border-divider-soft p-6 rounded-3xl flex flex-col justify-between shadow-sm relative group hover:-translate-y-1 transition-all duration-300">
+                    <p className="text-sm italic text-ink-muted-80 mb-6 leading-relaxed">
+                      "{test.content}"
+                    </p>
+                    <div className="flex items-center gap-3">
+                      {test.authorPhotoUrl ? (
+                        <img src={test.authorPhotoUrl} alt="" className="w-10 h-10 rounded-full object-cover border border-[#0f3036]/10" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                          {test.authorName?.charAt(0)}
+                        </div>
+                      )}
+                      <div>
+                        <div className="font-bold text-sm text-ink">{test.authorName}</div>
+                        <div className="text-[11px] text-ink-muted-48">{test.authorPosition}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+          </section>
+        )}
 
         {/* 7. [Partners] Section */}
         {partnersList.length > 0 && (

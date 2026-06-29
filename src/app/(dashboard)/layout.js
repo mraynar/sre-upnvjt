@@ -48,6 +48,7 @@ export default function DashboardLayout({ children }) {
     
     // Public & Media
     { name: t("sidebar.articles") || "Content / Berita", icon: Newspaper, href: "/content", module: "content" },
+    { name: "Testimonials", icon: Star, href: "/testimonials", module: "content" },
     { name: t("sidebar.merch"), icon: ShoppingBag, href: "/merch", module: "merchandise" },
     { name: t("sidebar.partners"), icon: Handshake, href: "/partners", module: "partners" },
 
@@ -59,6 +60,7 @@ export default function DashboardLayout({ children }) {
     { name: "Leaderboard", icon: Trophy, href: "/leaderboard", module: "leaderboard" },
     { name: "Attendance", icon: ShieldCheck, href: "/attendance", module: "attendance" },
     { name: "Events (Admin)", icon: Activity, href: "/events-admin", module: "events" },
+    { name: "Applications", icon: ShieldCheck, href: "/applications", module: "users" },
     
     // System
     { name: t("sidebar.settings"), icon: Settings, href: "/settings", module: "settings" },
@@ -260,7 +262,7 @@ export default function DashboardLayout({ children }) {
                     className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 font-bold transition-all text-sm"
                   >
                     <LogOut className="w-5 h-5 shrink-0" />
-                    {!isSidebarCollapsed && t("sidebar.logout")}
+                    {t("sidebar.logout")}
                   </button>
                 </div>
               </div>
