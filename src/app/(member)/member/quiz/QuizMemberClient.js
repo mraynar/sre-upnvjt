@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Target, Award, Clock, HelpCircle, AlertTriangle, ArrowRight,
   CheckCircle2, XCircle, ArrowLeft, Send, Sparkles, RefreshCw,
-  Trophy, BookmarkCheck,
+  Trophy, BookmarkCheck, ChevronLeft, ChevronRight, FileText
 } from "lucide-react";
 
 export default function QuizMemberClient({ initialQuizzes, initialSubmissions }) {
@@ -39,6 +39,12 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
     const bestScore = Math.max(...attempts.map(a => a.totalScore ?? a.mcqScore ?? 0));
     const passed = attempts.some(a => a.isPassed);
     return { count: attempts.length, bestScore, passed };
+  };
+
+  const getQuizDifficulty = (questionCount) => {
+    if (questionCount >= 10) return { label: "Hard", color: "text-red-400 bg-red-500/10 border-red-500/20" };
+    if (questionCount >= 5) return { label: "Medium", color: "text-amber-400 bg-amber-500/10 border-amber-500/20" };
+    return { label: "Easy", color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" };
   };
 
   // Start Quiz
@@ -158,6 +164,14 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
   const currentQ = questions[currentQuestionIdx];
   const progressPercent = questions.length > 0 ? ((currentQuestionIdx + 1) / questions.length) * 100 : 0;
 
+  const prevSlide = () => {
+    if (currentQuestionIdx > 0) setCurrentQuestionIdx(prev => prev - 1);
+  };
+
+  const nextSlide = () => {
+    if (currentQuestionIdx < questions.length - 1) setCurrentQuestionIdx(prev => prev + 1);
+  };
+
   // ═══════════════════════════════════════════════════════════════════════════
   //  VIEW 3: RESULTS SCREEN
   // ═══════════════════════════════════════════════════════════════════════════
@@ -165,40 +179,47 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
     const isPassed = result.isPassed;
     const rewardXp = activeQuiz.rewardXp;
     return (
-      <div className="min-h-[80vh] flex items-center justify-center py-10">
+      <div className="min-h-[80vh] flex items-center justify-center py-10 select-none">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 30 }}
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="w-full max-w-xl bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md shadow-2xl relative overflow-hidden text-center"
+          className="w-full max-w-xl bg-gradient-to-b from-[#0a1f15] to-[#07130e] border border-primary/20 rounded-3xl p-8 backdrop-blur-md shadow-2xl relative overflow-hidden text-center"
         >
           {/* Confetti Particles (pure HTML/CSS) */}
           {isPassed && (
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              {[...Array(12)].map((_, i) => (
-                <div
-                  key={i}
-                  className="absolute w-2.5 h-2.5 bg-primary rounded-full animate-ping"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                    animationDelay: `${Math.random() * 2}s`,
-                    animationDuration: `${1.5 + Math.random() * 2}s`,
-                  }}
-                />
-              ))}
+              {[...Array(24)].map((_, i) => {
+                const colors = ["bg-primary", "bg-emerald-400", "bg-amber-400", "bg-yellow-300", "bg-green-400"];
+                const color = colors[i % colors.length];
+                return (
+                  <div
+                    key={i}
+                    className={`absolute rounded-full animate-ping ${color}`}
+                    style={{
+                      width: `${4 + Math.random() * 8}px`,
+                      height: `${4 + Math.random() * 8}px`,
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                      animationDelay: `${Math.random() * 1.5}s`,
+                      animationDuration: `${1.5 + Math.random() * 2}s`,
+                    }}
+                  />
+                );
+              })}
             </div>
           )}
 
           <div className="w-20 h-20 rounded-full bg-primary/10 border-2 border-primary flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-            <Trophy className="w-10 h-10 text-primary" />
+            <Trophy className="w-10 h-10 text-primary animate-bounce" />
           </div>
 
           <h2 className="text-3xl font-display font-black tracking-tight text-white mb-2">
             {isPassed ? "Selamat! Kamu Lulus" : "Kuis Selesai"}
           </h2>
-          <p className="text-xs text-gray-400 mb-8 max-w-sm mx-auto">
+          
+          <p className="text-xs text-white/50 mb-8 max-w-sm mx-auto leading-relaxed">
             {result.hasEssay
-              ? "Jawaban essay kamu memerlukan penilaian manual oleh mentor. Nilai MCQ kamu telah terkalkulasi otomatis."
+              ? "Jawaban essay kamu memerlukan penilaian manual oleh mentor. Nilai MCQ kamu telah dikalkulasi otomatis."
               : isPassed
               ? `Kamu berhasil melewati nilai kelulusan kuis dan mengklaim bonus XP.`
               : `Hasil pengerjaan kamu belum memenuhi nilai kelulusan (${activeQuiz.passingScore}%). Silakan kerjakan kembali.`}
@@ -206,13 +227,13 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
 
           <div className="grid grid-cols-2 gap-4 mb-8">
             <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-              <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Nilai MCQ</div>
+              <div className="text-[10px] font-bold text-white/40 uppercase tracking-wider mb-1">Nilai MCQ</div>
               <div className="text-3xl font-black text-white">{result.mcqScore}%</div>
             </div>
             <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-              <div className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">XP Reward</div>
-              <div className="text-3xl font-black text-amber-500 flex items-center justify-center gap-1">
-                <Sparkles className="w-6 h-6 text-amber-500 fill-amber-500 shrink-0" />
+              <div className="text-[10px] font-bold text-white/40 uppercase tracking-wider mb-1">XP Reward</div>
+              <div className="text-3xl font-black text-amber-400 flex items-center justify-center gap-1">
+                <Sparkles className="w-6 h-6 text-amber-400 fill-amber-400 shrink-0" />
                 {isPassed ? `+${rewardXp}` : "+0"}
               </div>
             </div>
@@ -222,15 +243,15 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
             {!isPassed && !result.hasEssay && (
               <button
                 onClick={() => handleStartQuiz(activeQuiz)}
-                className="w-full py-4 bg-primary text-[#050e0a] rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-primary-focus transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                className="w-full py-4 bg-primary text-[#050e0a] rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-primary-focus transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:scale-105"
               >
-                <RefreshCw className="w-4 h-4" />
-                Coba Lagi
+                <RefreshCw className="w-4 h-4 animate-spin" style={{ animationDuration: "3s" }} />
+                Coba Mengerjakan Lagi
               </button>
             )}
             <button
               onClick={() => { setView("list"); setActiveQuiz(null); setResult(null); }}
-              className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl font-semibold text-white transition-all"
+              className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl font-bold text-white transition-all text-xs uppercase tracking-wider"
             >
               Kembali ke Daftar Kuis
             </button>
@@ -241,23 +262,24 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  //  VIEW 2: TAKING THE QUIZ (IMMERSIVE INTERFACE)
+  //  VIEW 2: TAKING THE QUIZ (IMMERSIVE E-LEARNING INTERFACE)
   // ═══════════════════════════════════════════════════════════════════════════
   if (view === "taking" && activeQuiz && currentQ) {
     const currentAns = answers.find(a => a.questionId === currentQ.id);
     return (
-      <div className="min-h-[85vh] flex flex-col justify-between py-6">
+      <div className="min-h-[85vh] flex flex-col justify-between py-6 select-none">
+        
         {/* Top Progress Bar & Timer */}
         <div className="w-full max-w-3xl mx-auto mb-10 shrink-0">
           <div className="flex justify-between items-center mb-3">
-            <span className="text-xs font-bold text-gray-400">Pertanyaan {currentQuestionIdx + 1} dari {questions.length}</span>
+            <span className="text-xs font-bold text-white/50">Pertanyaan {currentQuestionIdx + 1} dari {questions.length}</span>
             {activeQuiz.timeLimitMinutes ? (
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold">
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold">
                 <Clock className="w-3.5 h-3.5" />
                 <span>{formatTime(timeLeft)}</span>
               </div>
             ) : (
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 text-gray-400 border border-white/5 text-xs font-semibold">
+              <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 text-white/50 border border-white/5 text-xs font-bold">
                 <Clock className="w-3.5 h-3.5 text-primary" />
                 <span>Tanpa Waktu</span>
               </div>
@@ -282,10 +304,10 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
               transition={{ duration: 0.25 }}
               className="w-full"
             >
-              <div className="text-xs font-black text-primary tracking-widest uppercase mb-3">
+              <div className="text-[10px] font-black text-primary tracking-widest uppercase mb-3">
                 SOAL #{currentQ.order} ({currentQ.points} Poin)
               </div>
-              <h2 className="text-xl md:text-2xl font-bold text-white mb-8 leading-snug whitespace-pre-wrap">
+              <h2 className="text-xl md:text-2xl font-black text-white mb-8 leading-snug whitespace-pre-wrap tracking-tight">
                 {currentQ.question}
               </h2>
 
@@ -299,14 +321,14 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
                         key={opt.id}
                         type="button"
                         onClick={() => handleSelectOption(currentQ.id, opt.id)}
-                        className={`w-full text-left p-4.5 rounded-2xl border text-xs md:text-sm font-semibold transition-all flex items-center gap-4 cursor-pointer hover:bg-white/[0.03] ${
+                        className={`w-full text-left p-4.5 rounded-2xl border text-xs md:text-sm font-bold transition-all flex items-center gap-4 cursor-pointer hover:bg-white/[0.03] hover:scale-[1.01] ${
                           isSelected
-                            ? "bg-primary/10 border-primary text-primary font-bold shadow-[0_0_15px_rgba(16,185,129,0.15)]"
-                            : "bg-white/5 border-white/5 text-gray-300"
+                            ? "bg-primary/10 border-primary text-primary shadow-[0_0_20px_rgba(16,185,129,0.15)]"
+                            : "bg-[#08120e] border-white/5 text-white/70"
                         }`}
                       >
-                        <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold uppercase shrink-0 ${
-                          isSelected ? "bg-primary text-[#050e0a]" : "bg-white/10 text-gray-500"
+                        <span className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black uppercase shrink-0 ${
+                          isSelected ? "bg-primary text-[#050e0a]" : "bg-white/10 text-white/40"
                         }`}>
                           {opt.id}
                         </span>
@@ -324,10 +346,10 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
                     rows={6}
                     value={currentAns?.essayText || ""}
                     onChange={e => handleEssayChange(currentQ.id, e.target.value)}
-                    className="w-full p-5 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-primary/50 transition-all resize-none h-44 leading-relaxed"
+                    className="w-full p-5 bg-[#08120e] border border-white/5 rounded-2xl text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-primary/50 transition-all resize-none h-44 leading-relaxed"
                     placeholder="Tuliskan lembar jawaban essay Anda..."
                   />
-                  <div className="flex justify-end text-[10px] text-gray-500 mt-2 font-bold uppercase">
+                  <div className="flex justify-end text-[10px] text-white/30 mt-2 font-bold uppercase tracking-wider">
                     {(currentAns?.essayText || "").length} Karakter
                   </div>
                 </div>
@@ -337,11 +359,11 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
         </div>
 
         {/* Bottom Nav Bar */}
-        <div className="w-full max-w-3xl mx-auto mt-10 flex justify-between items-center shrink-0">
+        <div className="w-full max-w-3xl mx-auto mt-12 flex justify-between items-center shrink-0">
           <button
             onClick={prevSlide}
             disabled={currentQuestionIdx === 0}
-            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/5 text-gray-400 hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed text-xs font-bold uppercase tracking-wider"
+            className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/5 text-white/50 hover:text-white transition-all disabled:opacity-20 disabled:cursor-not-allowed text-xs font-bold uppercase tracking-wider"
           >
             <ChevronLeft className="w-4 h-4" /> Prev
           </button>
@@ -349,16 +371,16 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
           {currentQuestionIdx < questions.length - 1 ? (
             <button
               onClick={nextSlide}
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/5 text-gray-400 hover:text-white transition-all text-xs font-bold uppercase tracking-wider"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-white/5 border border-white/5 text-white/50 hover:text-white transition-all text-xs font-bold uppercase tracking-wider"
             >
               Next <ChevronRight className="w-4 h-4" />
             </button>
           ) : (
             <button
               onClick={() => setConfirmSubmitModal(true)}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-[#050e0a] hover:bg-primary-focus transition-all text-xs font-bold uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-[#050e0a] hover:bg-primary-focus hover:scale-105 transition-all text-xs font-bold uppercase tracking-wider shadow-[0_0_20px_rgba(16,185,129,0.3)]"
             >
-              <Send className="w-4 h-4" /> Kirim Kuis
+              <Send className="w-4 h-4 animate-pulse" /> Kirim Kuis
             </button>
           )}
         </div>
@@ -368,17 +390,17 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
           {confirmSubmitModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                onClick={() => setConfirmSubmitModal(false)} className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+                onClick={() => setConfirmSubmitModal(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                className="relative w-full max-w-sm bg-[#0a1612] border border-white/10 rounded-3xl p-8 text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 border border-primary/20">
+                className="relative w-full max-w-sm bg-[#08120e] border border-white/10 rounded-3xl p-8 text-center shadow-2xl z-10">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 border border-primary/25">
                   <BookmarkCheck className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">Selesai Mengerjakan?</h3>
-                <p className="text-xs text-gray-400 mb-8 leading-relaxed">Apakah Anda sudah yakin dengan semua jawaban Anda? Jawaban tidak dapat diubah setelah dikirim.</p>
+                <p className="text-xs text-white/40 mb-8 leading-relaxed">Apakah Anda sudah yakin dengan semua jawaban Anda? Jawaban tidak dapat diubah setelah dikirim.</p>
                 <div className="flex gap-3">
-                  <button onClick={() => setConfirmSubmitModal(false)} className="flex-1 py-3 rounded-xl border border-white/5 text-xs font-semibold text-gray-400 hover:bg-white/5">Batal</button>
-                  <button onClick={() => handleSubmitQuiz(false)} className="flex-1 py-3 rounded-xl bg-primary text-[#050e0a] text-xs font-bold hover:bg-primary-focus">Ya, Kirim</button>
+                  <button onClick={() => setConfirmSubmitModal(false)} className="flex-1 py-3 rounded-xl border border-white/5 text-xs font-bold text-white/50 hover:bg-white/5">Batal</button>
+                  <button onClick={() => handleSubmitQuiz(false)} className="flex-1 py-3 rounded-xl bg-primary text-[#050e0a] text-xs font-black hover:bg-primary-focus transition-all uppercase tracking-wider">Ya, Kirim</button>
                 </div>
               </motion.div>
             </div>
@@ -389,17 +411,25 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  //  VIEW 1: LIST OF PUBLISHED QUIZZES
+  //  VIEW 1: LIST OF PUBLISHED QUIZZES (E-LEARNING PORTAL)
   // ═══════════════════════════════════════════════════════════════════════════
   return (
-    <div className="w-full relative">
+    <div className="w-full relative select-none">
+      
+      {/* Background ambience */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
+
+      {/* Header */}
       <div className="mb-10">
-        <h1 className="text-3xl md:text-4xl font-display font-black tracking-tighter mb-2 flex items-center gap-3 text-white">
-          <Target className="w-8 h-8 text-primary animate-pulse" />
-          Quiz & Asesmen Pembelajaran
+        <span className="px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-bold text-primary tracking-wide uppercase">
+          E-Academy Quiz
+        </span>
+        <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-white mt-4 flex items-center gap-3">
+          <Target className="w-9 h-9 text-primary animate-pulse" />
+          Kuis & Evaluasi
         </h1>
-        <p className="text-gray-400 max-w-xl font-light">
-          Uji pemahaman Anda dari modul presentasi SRE dan dapatkan poin XP untuk mendominasi papan leaderboard.
+        <p className="text-white/50 max-w-xl font-medium text-sm mt-2 leading-relaxed">
+          Uji pemahaman Anda dari modul presentasi SRE dan dapatkan poin XP untuk bersaing di Hall of Fame.
         </p>
       </div>
 
@@ -417,65 +447,72 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
       )}
 
       {!isLoading && quizzes.length === 0 ? (
-        <div className="py-24 flex flex-col items-center justify-center text-center bg-white/5 border border-dashed border-white/10 rounded-3xl">
-          <HelpCircle className="w-12 h-12 text-gray-600 mb-4" />
-          <h3 className="text-lg font-bold text-white mb-1">Belum ada kuis tersedia</h3>
-          <p className="text-gray-500 text-sm">Pengurus/Mentor akan segera merilis kuis baru dalam waktu dekat.</p>
+        <div className="py-24 flex flex-col items-center justify-center text-center bg-[#08120e] border border-dashed border-white/5 rounded-3xl">
+          <HelpCircle className="w-12 h-12 text-white/10 mb-4 animate-pulse" />
+          <h3 className="text-lg font-black text-white mb-1">Belum ada kuis tersedia</h3>
+          <p className="text-white/40 text-xs max-w-xs leading-relaxed">Mentor atau pengurus Akademik akan merilis kuis baru untuk modul ini segera.</p>
         </div>
       ) : !isLoading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {quizzes.map(qz => {
             const status = getQuizAttempts(qz.id);
+            const difficulty = getQuizDifficulty(qz.questionsCount || 5);
             return (
               <div
                 key={qz.id}
-                className="bg-gradient-to-br from-white/10 to-white/5 border border-white/5 rounded-3xl p-6 hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between shadow-lg group"
+                className="bg-gradient-to-br from-white/10 to-[#08120e] border border-white/5 rounded-3xl p-6 hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between shadow-lg group relative overflow-hidden"
               >
-                <div>
+                <div className="absolute inset-0 bg-grid-pattern opacity-2 pointer-events-none" />
+                <div className="relative z-10">
                   <div className="flex justify-between items-start mb-4">
-                    <span className={`px-2.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${
+                    <span className={`px-2.5 py-0.5 rounded text-[9px] font-black uppercase tracking-widest border ${
                       status.passed
                         ? "bg-green-500/15 text-green-400 border-green-500/25"
                         : status.count > 0
                         ? "bg-amber-500/15 text-amber-400 border-amber-500/25"
-                        : "bg-white/5 text-gray-500 border-white/10"
+                        : "bg-white/5 text-white/40 border-white/5"
                     }`}>
                       {status.passed ? "Lulus" : status.count > 0 ? "Belum Lulus" : "Belum Dicoba"}
                     </span>
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-500">
-                      <Sparkles className="w-3.5 h-3.5 fill-amber-500" /> +{qz.rewardXp} XP
+                    <span className="inline-flex items-center gap-1 text-[11px] font-black text-amber-400 font-mono">
+                      <Sparkles className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" /> +{qz.rewardXp} XP
                     </span>
                   </div>
 
-                  <h3 className="font-bold text-white text-md mb-2 group-hover:text-primary transition-all line-clamp-1">{qz.title}</h3>
+                  <h3 className="font-black text-white text-md mb-2 group-hover:text-primary transition-all line-clamp-1">{qz.title}</h3>
                   {qz.description && (
-                    <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed mb-6">
+                    <p className="text-xs text-white/40 line-clamp-2 leading-relaxed mb-6">
                       {qz.description}
                     </p>
                   )}
 
                   <div className="space-y-2 mb-6">
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <Clock className="w-3.5 h-3.5 text-primary" />
+                    <div className="flex items-center gap-2.5 text-xs text-white/60 font-medium">
+                      <Clock className="w-4 h-4 text-primary" />
                       <span>{qz.timeLimitMinutes ? `${qz.timeLimitMinutes} Menit` : "Tanpa batas waktu"}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <BookmarkCheck className="w-3.5 h-3.5 text-primary" />
-                      <span>Passing Score: {qz.passingScore}%</span>
+                    <div className="flex items-center gap-2.5 text-xs text-white/60 font-medium">
+                      <BookmarkCheck className="w-4 h-4 text-primary" />
+                      <span>Kelulusan: {qz.passingScore}%</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs text-white/60 font-medium">
+                      <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider border ${difficulty.color}`}>
+                        {difficulty.label}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-white/5 flex flex-col gap-3">
+                <div className="pt-4 border-t border-white/5 flex flex-col gap-3 relative z-10">
                   {status.count > 0 && (
-                    <div className="flex justify-between text-[10px] text-gray-500 font-bold uppercase">
+                    <div className="flex justify-between text-[10px] text-white/40 font-bold uppercase tracking-wider">
                       <span>Terbaik: {status.bestScore}%</span>
                       <span>Percobaan: {status.count}x</span>
                     </div>
                   )}
                   <button
                     onClick={() => handleStartQuiz(qz)}
-                    className="w-full py-3.5 bg-primary text-[#050e0a] hover:bg-primary-focus transition-all rounded-xl font-bold flex items-center justify-center gap-2 text-xs uppercase tracking-wider"
+                    className="w-full py-3.5 bg-primary text-[#050e0a] hover:bg-primary-focus transition-all rounded-xl font-bold flex items-center justify-center gap-2 text-xs uppercase tracking-wider hover:scale-105"
                   >
                     <span>Mulai Kuis</span>
                     <ArrowRight className="w-4 h-4 shrink-0" />
@@ -489,18 +526,3 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
     </div>
   );
 }
-
-const inputCls =
-  "w-full h-12 px-4 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-primary/50 transition-all";
-
-const textareaCls =
-  "w-full p-4 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-primary/50 transition-all resize-none";
-
-const InputField = ({ label, children }) => (
-  <div>
-    <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">
-      {label}
-    </label>
-    {children}
-  </div>
-);

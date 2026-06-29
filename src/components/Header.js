@@ -73,12 +73,19 @@ export default function Header() {
   const close = () => setMobileMenuOpen(false);
 
   const adminRoutes = ["/dashboard", "/roles", "/users", "/departments", "/activities", "/merch", "/settings"];
-  const isDashboardRoute = adminRoutes.some(route => pathname === route || pathname.startsWith(route + "/"));
+  const isDashboardRoute = 
+    pathname.startsWith("/dashboard") || 
+    pathname.startsWith("/member") ||
+    adminRoutes.some(route => pathname === route || pathname.startsWith(route + "/"));
+
   if (pathname === "/login" || isDashboardRoute) return null;
 
   const isLightBackground = 
     (pathname.startsWith("/article") || pathname.startsWith("/merchandise/order")) && 
     !isScrolled;
+
+  const isHome = pathname === "/";
+  const shouldBeSolid = isScrolled || !isHome;
 
   return (
     <>
@@ -88,8 +95,8 @@ export default function Header() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         className={`fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 ${
-          isScrolled
-            ? "bg-[#0a1f18]/80 border-b border-white/5 text-white backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)]"
+          shouldBeSolid
+            ? "bg-[#0a1f18]/90 border-b border-white/5 text-white backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)]"
             : `bg-transparent border-b border-transparent ${isLightBackground ? "text-[#0a1f18]" : "text-white"}`
         }`}
       >

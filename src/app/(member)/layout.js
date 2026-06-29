@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { memberProfile, user } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import MemberSidebarClient from "./MemberSidebarClient";
+import MemberNavbarClient from "./MemberNavbarClient";
 
 export const dynamic = "force-dynamic";
 
@@ -32,12 +32,12 @@ export default async function MemberLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#07130e] text-white flex flex-col lg:flex-row">
-      <MemberSidebarClient
+    <div className="min-h-screen bg-[#07130e] text-white flex flex-col">
+      <MemberNavbarClient
         user={session.user}
         profile={profile}
       />
-      <main className="flex-1 p-6 lg:p-10 overflow-y-auto max-w-7xl mx-auto w-full">
+      <main className="flex-1 pt-28 px-4 sm:px-6 lg:px-8 pb-16 max-w-7xl mx-auto w-full">
         {children}
       </main>
     </div>
