@@ -220,7 +220,7 @@ export default function SettingsClient({ user }) {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="w-full relative space-y-8">
       {/* Header */}
       <div>
         <h1 className="text-4xl font-display font-bold text-gray-900 dark:text-white mb-2 tracking-tight">{t("settings.title")}</h1>

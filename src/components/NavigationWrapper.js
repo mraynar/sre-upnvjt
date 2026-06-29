@@ -26,6 +26,14 @@ const hiddenHeaderRoutes = [
   "/register",
   "/forms",
   "/member",
+  "/literature",
+  "/ppt",
+  "/quiz",
+  "/tasks",
+  "/attendance",
+  "/events-admin",
+  "/applications",
+  "/testimonials",
 ];
 
 function isHiddenHeaderRoute(pathname) {
