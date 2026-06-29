@@ -62,7 +62,7 @@ export default function EventsClient({ initialEvents }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#07130e] text-white p-6 md:p-12">
+    <div className="min-h-screen bg-[#07130e] text-white pt-32 pb-16 px-6 md:px-12">
       <div className="max-w-7xl mx-auto">
         {/* Top Title Section */}
         <div className="mb-12 text-center md:text-left">

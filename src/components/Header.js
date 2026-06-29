@@ -80,12 +80,12 @@ export default function Header() {
 
   if (pathname === "/login" || isDashboardRoute) return null;
 
-  const isLightBackground = 
-    (pathname.startsWith("/article") || pathname.startsWith("/merchandise/order")) && 
-    !isScrolled;
-
   const isHome = pathname === "/";
   const shouldBeSolid = isScrolled || !isHome;
+
+  const isLightBackground = 
+    (pathname.startsWith("/article") || pathname.startsWith("/merchandise/order")) && 
+    !shouldBeSolid;
 
   return (
     <>
