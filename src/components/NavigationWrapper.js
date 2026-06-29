@@ -25,7 +25,7 @@ const hiddenHeaderRoutes = [
   "/login",
   "/register",
   "/forms",
-  
+  "/member",
 ];
 
 function isHiddenHeaderRoute(pathname) {

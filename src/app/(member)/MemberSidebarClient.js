@@ -12,13 +12,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const SIDEBAR_ITEMS = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Materi PPT", href: "/materi", icon: Presentation },
-  { name: "Bank Literatur", href: "/literatur", icon: FolderOpen },
-  { name: "Tugas", href: "/tugas", icon: FolderKanban },
-  { name: "Quiz", href: "/quiz", icon: Target },
-  { name: "Leaderboard", href: "/leaderboard", icon: Trophy },
-  { name: "Absensi", href: "/absensi", icon: ClipboardCheck },
-  { name: "Profil", href: "/profil", icon: User },
+  { name: "Materi PPT", href: "/member/materi", icon: Presentation },
+  { name: "Bank Literatur", href: "/member/literatur", icon: FolderOpen },
+  { name: "Tugas", href: "/member/tugas", icon: FolderKanban },
+  { name: "Quiz", href: "/member/quiz", icon: Target },
+  { name: "Leaderboard", href: "/member/leaderboard", icon: Trophy },
+  { name: "Absensi", href: "/member/absensi", icon: ClipboardCheck },
+  { name: "Profil", href: "/member/profil", icon: User },
 ];
 
 export default function MemberSidebarClient({ user, profile }) {

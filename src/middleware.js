@@ -45,6 +45,7 @@ export const config = {
     "/leaderboard/:path*",
     "/attendance/:path*",
     "/events-admin/:path*",
+    "/member/:path*",
   ],
 };
 
