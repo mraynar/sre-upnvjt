@@ -1,26 +1,36 @@
 import { NextResponse } from "next/server";
 
 export async function GET(request, { params }) {
-  // Di Next.js modern, 'params' sifatnya asinkronus, jadi wajib di-await
   const { slug } = await params;
 
   try {
-    // 1. Tembak API ke server backend shortlink untuk cari link asli
+    // Kumpulkan header dari request pengunjung asli
+    const clientIp = request.ip || request.headers.get("x-forwarded-for") || "";
+    const userAgent = request.headers.get("user-agent") || "";
+    const referer = request.headers.get("referer") || "";
+
+    // 1. Tembak API ke server backend shortlink dengan meneruskan headers
     const res = await fetch(`http://127.0.0.1:8000/api/resolve/${slug}`, {
-      cache: "no-store", // Wajib agar Next.js tidak nge-cache hasil shortlink lama
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-Forwarded-For": clientIp, // Meneruskan IP pengunjung
+        "X-Forwarded-User-Agent": userAgent, // Meneruskan OS/Browser (Perangkat)
+        "X-Forwarded-Referer": referer, // Meneruskan asal lalu lintas (IG/WA)
+      },
     });
 
     if (res.ok) {
       const data = await res.json();
-
-      // 2. Jika ketemu, langsung tembak redirect ke link tujuan (bisa web luar/GForm/Drive)
+      // 2. Redirect ke link asli
       return NextResponse.redirect(new URL(data.long_url));
     }
   } catch (error) {
     console.error("Shortlink error di Next.js:", error);
   }
 
-  // 3. Jika slug tidak terdaftar atau API error, lempar ke 404 web utama
-  const baseUrl = request.nextUrl.origin; // Mengambil domain utama (sre-upnjatim.com)
+  // 3. 404
+  const baseUrl = request.nextUrl.origin;
   return NextResponse.redirect(new URL("/404", baseUrl));
 }
