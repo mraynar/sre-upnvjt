@@ -16,8 +16,8 @@
 
 ### 1. Clone Repo
 ```bash
-git clone https://github.com/mraynar/sre-upnjatim.git
-cd sre-upnjatim
+git clone https://github.com/mraynar/sre-upnvjt.git
+cd sre-upnvjt
 npm install
 ```
 
@@ -117,7 +117,7 @@ git push origin feature/[nama]-[modul]
 ```
 
 ### Pull Request
-1. Buka github.com/mraynar/sre-upnjatim
+1. Buka github.com/mraynar/sre-upnvjt
 2. Klik **Compare & pull request**
 3. Tulis deskripsi + screenshot
 4. **Jangan merge sendiri — tunggu review Raynar**
@@ -177,8 +177,4 @@ src/
 
 ---
 
-<<<<<<< HEAD
 *SRE UPNVJT Web Development Division — 2026*
-=======
-*SRE UPNVJT Web Development Division — 2026*
->>>>>>> 7baaca27a9bd9c117c6a7fcbc2eed370cb0644f8
