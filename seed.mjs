@@ -58,6 +58,65 @@ async function main() {
     console.log('Super admin already exists.');
   }
 
+  console.log('Seeding member...');
+
+  // Create member role if not exists
+  let memberRole = await db.query.role.findFirst({
+    where: (roles, { eq }) => eq(roles.name, 'MEMBER')
+  });
+
+  if (!memberRole) {
+    await db.insert(schema.role).values({
+      name: 'MEMBER',
+      permissions: {},
+    });
+    memberRole = await db.query.role.findFirst({
+      where: (roles, { eq }) => eq(roles.name, 'MEMBER')
+    });
+  }
+
+  // Check if member user exists
+  const existingMember = await db.query.user.findFirst({
+    where: (users, { eq }) => eq(users.email, 'member@sre.co.id')
+  });
+
+  if (!existingMember) {
+    const hashedMemberPassword = await bcrypt.hash('member123', 10);
+    await db.insert(schema.user).values({
+      name: 'Default Member',
+      email: 'member@sre.co.id',
+      password: hashedMemberPassword,
+      isActive: true,
+      roleId: memberRole.id,
+      departmentId: dept.id,
+    });
+    console.log('Member created: member@sre.co.id / member123');
+  } else {
+    console.log('Member already exists.');
+  }
+
+  // Ensure member profile exists
+  const memberUser = await db.query.user.findFirst({
+    where: (users, { eq }) => eq(users.email, 'member@sre.co.id')
+  });
+
+  if (memberUser) {
+    const existingProfile = await db.query.memberProfile.findFirst({
+      where: (profiles, { eq }) => eq(profiles.userId, memberUser.id)
+    });
+
+    if (!existingProfile) {
+      await db.insert(schema.memberProfile).values({
+        userId: memberUser.id,
+        xp: 0,
+        level: 1,
+      });
+      console.log('Member profile created.');
+    } else {
+      console.log('Member profile already exists.');
+    }
+  }
+
   console.log('Seeding finished.');
   await client.end();
   process.exit(0);
