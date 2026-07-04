@@ -177,4 +177,8 @@ src/
 
 ---
 
+<<<<<<< HEAD
 *SRE UPNVJT Web Development Division — 2026*
+=======
+*SRE UPNVJT Web Development Division — 2026*
+>>>>>>> 7baaca27a9bd9c117c6a7fcbc2eed370cb0644f8
