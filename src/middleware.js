@@ -6,12 +6,23 @@ export default async function middleware(req, event) {
   const token = await getToken({ req });
   const isAuth = !!token;
   const isAuthPage = req.nextUrl.pathname.startsWith("/login");
+  const isMemberRole = token?.roleName === "MEMBER";
 
   if (isAuthPage) {
     if (isAuth) {
+      if (isMemberRole) {
+        return NextResponse.redirect(new URL("/member", req.url));
+      }
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
     return NextResponse.next();
+  }
+
+  if (isAuth) {
+    // Redirect MEMBERs trying to access non-member protected routes (like /dashboard) to /member
+    if (isMemberRole && !req.nextUrl.pathname.startsWith("/member")) {
+      return NextResponse.redirect(new URL("/member", req.url));
+    }
   }
 
   const authMiddleware = withAuth({
