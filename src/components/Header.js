@@ -26,21 +26,21 @@ function HamburgerIcon({ isOpen, onClick, isLightBackground }) {
           initial={false}
           animate={isOpen ? { rotate: 45, y: 8, width: "100%" } : { rotate: 0, y: 0, width: "50%" }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className={`block h-[2px] rounded-full origin-center group-hover:w-full transition-all duration-300 group-hover:bg-primary drop-shadow-sm ${isLightBackground && !isOpen ? "bg-[#0a1f18]" : "bg-white"}`}
+          className={`block h-[2px] rounded-full origin-center group-hover:w-full transition-all duration-300 group-hover:bg-primary drop-shadow-sm ${isLightBackground && !isOpen ? "bg-[#0a1f18] dark:bg-white" : "bg-white"}`}
         />
         {/* Middle line - always full */}
         <motion.span
           initial={false}
           animate={isOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1, width: "100%" }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className={`block w-full h-[2px] rounded-full origin-center group-hover:bg-primary transition-colors drop-shadow-sm ${isLightBackground && !isOpen ? "bg-[#0a1f18]" : "bg-white"}`}
+          className={`block w-full h-[2px] rounded-full origin-center group-hover:bg-primary transition-colors drop-shadow-sm ${isLightBackground && !isOpen ? "bg-[#0a1f18] dark:bg-white" : "bg-white"}`}
         />
         {/* Bottom line - starts medium (75%) */}
         <motion.span
           initial={false}
           animate={isOpen ? { rotate: -45, y: -8, width: "100%" } : { rotate: 0, y: 0, width: "75%" }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className={`block h-[2px] rounded-full origin-center group-hover:w-full transition-all duration-300 group-hover:bg-primary drop-shadow-sm ${isLightBackground && !isOpen ? "bg-[#0a1f18]" : "bg-white"}`}
+          className={`block h-[2px] rounded-full origin-center group-hover:w-full transition-all duration-300 group-hover:bg-primary drop-shadow-sm ${isLightBackground && !isOpen ? "bg-[#0a1f18] dark:bg-white" : "bg-white"}`}
         />
       </div>
     </button>
@@ -73,12 +73,19 @@ export default function Header() {
   const close = () => setMobileMenuOpen(false);
 
   const adminRoutes = ["/dashboard", "/roles", "/users", "/departments", "/activities", "/merch", "/settings"];
-  const isDashboardRoute = adminRoutes.some(route => pathname === route || pathname.startsWith(route + "/"));
+  const isDashboardRoute = 
+    pathname.startsWith("/dashboard") || 
+    pathname.startsWith("/member") ||
+    adminRoutes.some(route => pathname === route || pathname.startsWith(route + "/"));
+
   if (pathname === "/login" || isDashboardRoute) return null;
+
+  const isHome = pathname === "/";
+  const shouldBeSolid = isScrolled || !isHome;
 
   const isLightBackground = 
     (pathname.startsWith("/article") || pathname.startsWith("/merchandise/order")) && 
-    !isScrolled;
+    !shouldBeSolid;
 
   return (
     <>
@@ -88,9 +95,9 @@ export default function Header() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         className={`fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 ${
-          isScrolled
-            ? "bg-[#0a1f18]/80 border-b border-white/5 text-white backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)]"
-            : `bg-transparent border-b border-transparent ${isLightBackground ? "text-[#0a1f18]" : "text-white"}`
+          shouldBeSolid
+            ? "bg-[#0a1f18]/90 border-b border-white/5 text-white backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)]"
+            : `bg-transparent border-b border-transparent ${isLightBackground ? "text-[#0a1f18] dark:text-white" : "text-white"}`
         }`}
       >
         <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
@@ -104,7 +111,7 @@ export default function Header() {
               <img 
                 src="/images/logo.png" 
                 alt="SRE Logo" 
-                className={`h-10 w-auto object-contain transition-all duration-300 ${isLightBackground ? "brightness-0" : ""}`} 
+                className={`h-10 w-auto object-contain transition-all duration-300 ${isLightBackground ? "brightness-0 dark:brightness-100" : ""}`} 
               />
             </motion.div>
           </Link>
@@ -124,15 +131,15 @@ export default function Header() {
                   {isActive && (
                     <motion.div
                       layoutId="nav-underline"
-                      className={`absolute -bottom-1 left-0 right-0 h-[2px] rounded-full ${isLightBackground ? "bg-[#0a1f18]" : "bg-white"}`}
+                      className={`absolute -bottom-1 left-0 right-0 h-[2px] rounded-full ${isLightBackground ? "bg-[#0a1f18] dark:bg-white" : "bg-white"}`}
                       transition={{ type: "spring", stiffness: 450, damping: 30 }}
                     />
                   )}
                   <span
                     className={`relative z-10 font-medium ${
                       isActive
-                        ? (isLightBackground ? "text-[#0a1f18] font-bold" : "text-white font-bold")
-                        : (isLightBackground ? "text-[#0a1f18]/70 hover:text-[#0a1f18] transition-colors" : "text-white/80 hover:text-white transition-colors")
+                        ? (isLightBackground ? "text-[#0a1f18] dark:text-white font-bold" : "text-white font-bold")
+                        : (isLightBackground ? "text-[#0a1f18]/70 hover:text-[#0a1f18] dark:text-white/80 dark:hover:text-white transition-colors" : "text-white/80 hover:text-white transition-colors")
                     }`}
                   >
                     {item.name}
@@ -146,9 +153,13 @@ export default function Header() {
           <div className="hidden md:flex items-center gap-5">
             <Link href="/login">
               <motion.div
-                whileHover={isLightBackground ? { scale: 1.05, backgroundColor: "#0a1f18", color: "#e8ecc4" } : { scale: 1.05, backgroundColor: "#ffffff", color: "#0a1f18" }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`border text-[14px] font-semibold tracking-tight rounded-full px-6 py-2.5 transition-all duration-300 flex items-center gap-2 group shadow-lg cursor-pointer ${isLightBackground ? "border-[#0a1f18]/30 text-[#0a1f18]" : "border-white/30 text-white"}`}
+                className={`border text-[14px] font-semibold tracking-tight rounded-full px-6 py-2.5 transition-all duration-300 flex items-center gap-2 group shadow-lg cursor-pointer ${
+                  isLightBackground 
+                    ? "border-[#0a1f18]/30 text-[#0a1f18] hover:bg-[#0a1f18] hover:text-[#e8ecc4] dark:border-white/30 dark:text-white dark:hover:bg-white dark:hover:text-[#0a1f18]" 
+                    : "border-white/30 text-white hover:bg-white hover:text-[#0a1f18]"
+                }`}
               >
                 Login
                 <ArrowRight className="w-4 h-4 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />

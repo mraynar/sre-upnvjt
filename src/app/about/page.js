@@ -64,9 +64,20 @@ export default async function AboutPage() {
     "Public Relations": "Focusing on external relations, strategic partnerships, and internal member development.",
   };
 
+  // System/admin roles and departments to exclude from public display
+  const SYSTEM_ROLES = ["super administrator", "system administrator", "super admin", "admin"];
+  const SYSTEM_DEPTS = ["system administration", "system admin", "administration"];
+
   // Convert grouped data to the format expected by AboutClient
-  const divisionsData = Object.keys(groupedData).map((deptName) => {
+  const divisionsData = Object.keys(groupedData)
+    .filter((deptName) => !SYSTEM_DEPTS.includes(deptName.toLowerCase()))
+    .map((deptName) => {
     const members = groupedData[deptName]
+      .filter((u) => {
+        // Exclude system/admin roles
+        const roleName = (u.role?.name || u.positionName || "").toLowerCase();
+        return !SYSTEM_ROLES.some(r => roleName.includes(r));
+      })
       .sort((a, b) => {
         const weightA = getRoleWeight(a.role?.name || a.positionName || '');
         const weightB = getRoleWeight(b.role?.name || b.positionName || '');
@@ -88,7 +99,7 @@ export default async function AboutPage() {
       desc: deptDescriptions[deptName] || "Driving innovation and operational success in SRE UPNVJT.",
       members: members,
     };
-  });
+  }).filter((div) => div.members.length > 0); // Only include departments that have real members
 
   return <AboutClient divisionsData={divisionsData} />;
 }

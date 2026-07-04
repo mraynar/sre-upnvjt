@@ -22,8 +22,8 @@ export default function MerchPublicClient({ merchandise }) {
   return (
     <div className="min-h-screen bg-[#07130e] text-white pt-32 pb-0 selection:bg-[#e8ecc4] selection:text-[#07130e]">
       
-      {/* 1. Hero Section (Streetwear Drop Style) */}
-      <section className="px-6 md:px-12 lg:px-20 max-w-[1400px] mx-auto mb-20 relative">
+      {/* 1. Hero Section */}
+      <section className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-20 relative">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 border-b border-white/10 pb-10">
           <div>
             <p className="text-[#e8ecc4] text-[12px] md:text-[14px] font-bold tracking-[0.2em] uppercase mb-4 flex items-center gap-2">
@@ -45,18 +45,24 @@ export default function MerchPublicClient({ merchandise }) {
       <div className="bg-[#e8ecc4] text-[#07130e] py-3 mb-20 overflow-hidden flex select-none">
         <motion.div 
           animate={{ x: ["0%", "-50%"] }}
-          transition={{ repeat: Infinity, duration: 15, ease: "linear" }}
+          transition={{ repeat: Infinity, duration: 18, ease: "linear" }}
           className="flex whitespace-nowrap gap-8 font-mono text-[13px] font-bold tracking-widest uppercase"
         >
-          {Array(10).fill("Exclusive Merch • Support Our Movement •").map((text, i) => (
-            <span key={i}>{text}</span>
+          {Array(20).fill("EXCLUSIVE MERCH • SUPPORT OUR MOVEMENT •").map((text, i) => (
+            <span key={i} className="shrink-0">{text}&nbsp;</span>
           ))}
         </motion.div>
       </div>
 
-      {/* 3. Product Grid */}
-      <section className="px-6 md:px-12 lg:px-20 max-w-[1400px] mx-auto mb-32">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+      {/* 3. Product Grid — auto-fill so 1 or 2 products center gracefully */}
+      <section className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-32">
+        <div
+          className="grid gap-x-8 gap-y-16"
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+            justifyItems: "stretch",
+          }}
+        >
           {displayProducts.map((product, index) => {
             const isSoldOut = product.isAvailable === false || product.status === "Sold Out";
             const statusLabel = product.status || (product.isAvailable ? "Available" : "Sold Out");
@@ -135,7 +141,7 @@ export default function MerchPublicClient({ merchandise }) {
       {/* 4. Footer CTA for Merchandise */}
       <section className="bg-[#e8ecc4] text-[#07130e] py-24 rounded-t-[40px] text-center px-6">
         <h2 className="text-[40px] md:text-[64px] font-display font-black leading-[0.9] tracking-tighter uppercase mb-6">
-          How to <br className="md:hidden"/> Order?
+          How to <br className="md:hidden"/>Order?
         </h2>
         <p className="text-[15px] md:text-[18px] text-[#07130e]/70 max-w-2xl mx-auto mb-10 font-medium">
           Untuk pemesanan seluruh merchandise resmi SRE UPNVJT, silakan hubungi narahubung kami via WhatsApp atau kunjungi stand kami saat event berlangsung.
@@ -146,9 +152,6 @@ export default function MerchPublicClient({ merchandise }) {
               Order via Web Form <ArrowUpRight className="w-4 h-4" />
             </span>
           </Link>
-          <a href="#" className="px-8 py-4 rounded-full border border-[#07130e]/20 text-[#07130e] font-bold uppercase tracking-widest text-[13px] hover:bg-black/5 transition-colors">
-            View Size Chart
-          </a>
         </div>
       </section>
 

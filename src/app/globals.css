@@ -15,6 +15,10 @@
   --color-divider-soft: #e6f0eb;
   --color-hairline: #d3e0d8;
   --color-canvas: #ffffff;
+  /* Brand cream/yellow — the warm off-white used in hero accent, merch marquee, and "How to Order" bg */
+  --color-canvas-warm: #e8ecc4;
+  /* Slightly darker cream for section alternation / depth */
+  --color-canvas-warm-deep: #dce0b0;
   --color-canvas-parchment: #f3f8f5;
   --color-surface-pearl: #f7fbf8;
   --color-surface-tile-1: #1b2621;
@@ -49,6 +53,41 @@ body {
 
 h1, h2, h3, h4, h5, h6, .font-display {
   font-family: var(--font-display);
+}
+
+/* ============================================================
+   SITE-WIDE LAYOUT UTILITIES
+   ============================================================ */
+
+/**
+ * .site-container — single shared page container.
+ * Apply to the inner div of every visitor-facing section.
+ * Do NOT use inside the hero section (which is intentionally full-bleed).
+ */
+.site-container {
+  width: 100%;
+  max-width: 1280px; /* matches Tailwind max-w-7xl */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;  /* px-6 */
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .site-container {
+    padding-left: 3rem;  /* px-12 */
+    padding-right: 3rem;
+  }
+}
+
+/**
+ * .section-warm — scoped cream background for light sections.
+ * Replaces bare white section backgrounds on visitor pages.
+ * This class is intentionally NOT applied to the hero section,
+ * which uses its own bg-[#0a1c15] dark treatment.
+ */
+.section-warm {
+  background-color: var(--color-canvas-warm);
 }
 
 /* Custom Grid Pattern for tech aesthetic */

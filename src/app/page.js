@@ -233,7 +233,7 @@ export default function Home() {
               key={i}
               className="animate-marquee flex items-center gap-16 px-8"
             >
-              {Array(6)
+              {Array(8)
                 .fill(PARTNERS)
                 .flat()
                 .map((p, idx) => (
@@ -248,49 +248,49 @@ export default function Home() {
           ))}
         </section>
 
-        {/* 3. [About] Section (Canvas: #ffffff) */}
+        {/* 3. [About] Section */}
         <section
           id="about"
-          className="bg-canvas text-ink py-28 px-6 md:px-12 border-b border-divider-soft relative"
+          className="bg-[#e8ecc4] text-ink py-24 border-b border-[#d0d6a8] relative overflow-hidden"
         >
-          <div className="absolute right-0 top-1/3 w-[300px] h-[300px] rounded-full bg-canvas-parchment blur-3xl opacity-60 pointer-events-none" />
+          <div className="absolute right-0 top-1/3 w-[300px] h-[300px] rounded-full bg-[#dce0b0] blur-3xl opacity-60 pointer-events-none" />
 
-          <div className="w-full relative z-10 flex flex-col gap-16">
-            <div className="relative w-full max-w-[1400px] mx-auto z-10 flex flex-col lg:flex-row gap-12 lg:gap-24 items-center lg:items-end mt-12">
+          <div className="site-container relative z-10">
+            <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 items-center py-6">
                
                <motion.div
                  initial={{ opacity: 0, x: -30 }}
                  whileInView={{ opacity: 1, x: 0 }}
                  viewport={{ once: true, margin: "-100px" }}
                  transition={{ duration: 0.8, ease: "easeOut" }}
-                 className="w-full lg:w-5/12 flex flex-col z-20 lg:pb-12"
+                 className="w-full lg:w-6/12 flex flex-col z-20"
                >
                   <div className="flex flex-wrap items-center gap-3 mb-8">
                     <span className="inline-block py-2 px-5 rounded-full bg-[#07130e] text-[#e8ecc4] border border-[#07130e] text-[11px] font-bold tracking-widest uppercase">
                       Who We Are
                     </span>
-                    <a href="https://sre.co.id" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2 rounded-full border border-ink/20 text-[11px] font-bold tracking-widest uppercase text-ink/70 hover:text-[#07130e] hover:bg-[#e8ecc4] hover:border-[#e8ecc4] transition-all cursor-pointer group">
+                    <a href="https://sre.co.id" target="_blank" rel="noreferrer" className="flex items-center gap-2 px-5 py-2 rounded-full border border-[#07130e]/25 text-[11px] font-bold tracking-widest uppercase text-[#07130e]/70 hover:text-[#e8ecc4] hover:bg-[#07130e] hover:border-[#07130e] transition-all cursor-pointer group">
                       Member of SRE INDONESIA <ArrowUpRight className="w-3 h-3 group-hover:rotate-45 transition-transform" />
                     </a>
                   </div>
                   
-                  <h2 className="text-[50px] sm:text-[70px] md:text-[80px] font-display font-black leading-[0.9] tracking-tighter uppercase mb-12">
+                  <h2 className="text-[50px] sm:text-[70px] md:text-[80px] font-display font-black leading-[0.9] tracking-tighter uppercase mb-10">
                     Sparking <br />
                     <span className="font-serif italic font-normal text-primary lowercase tracking-normal -ml-2">the</span> Future.
                   </h2>
 
-                  <p className="text-[18px] md:text-[22px] font-light text-ink leading-[1.6] tracking-tight mb-8">
-                     <strong className="font-semibold text-ink">Society of Renewable Energy (SRE)</strong> is a student-led organization that aims to spark student’s role in the field of new and renewable energy.
+                  <p className="text-[17px] md:text-[20px] font-light text-ink leading-[1.65] tracking-tight mb-8">
+                     <strong className="font-semibold text-ink">Society of Renewable Energy (SRE)</strong> is a student-led organization that aims to spark student's role in the field of new and renewable energy.
                   </p>
                   
-                  <div className="relative pl-6 border-l-2 border-primary/40 mb-12">
-                    <p className="text-[16px] md:text-[18px] text-ink-muted-80 font-light leading-relaxed">
+                  <div className="relative pl-6 border-l-2 border-[#07130e]/30 mb-10">
+                    <p className="text-[15px] md:text-[17px] text-[#07130e]/70 font-light leading-relaxed">
                       <strong className="font-medium text-ink">SRE UPN Veteran Jawa Timur</strong> was established to accelerate Indonesia's energy transition by providing high-fidelity learning programs, practical microgrid field projects, and institutional energy audits.
                     </p>
                   </div>
 
                   <a href="#activity" className="group flex items-center gap-5 w-fit cursor-pointer">
-                    <div className="w-14 h-14 rounded-full bg-[#07130e] text-white flex items-center justify-center group-hover:bg-primary group-hover:text-[#07130e] transition-all duration-500 ease-out shadow-lg group-hover:shadow-primary/30 group-hover:scale-110">
+                    <div className="w-14 h-14 rounded-full bg-[#07130e] text-[#e8ecc4] flex items-center justify-center group-hover:bg-primary group-hover:text-[#07130e] transition-all duration-500 ease-out shadow-lg group-hover:shadow-primary/30 group-hover:scale-110">
                        <ArrowUpRight className="w-6 h-6 group-hover:rotate-45 transition-transform duration-500" />
                     </div>
                     <span className="text-[13px] font-bold uppercase tracking-widest text-ink group-hover:text-primary transition-colors duration-300">
@@ -298,157 +298,181 @@ export default function Home() {
                     </span>
                   </a>
                </motion.div>
+
+               {/* Right Image Column to balance page width and fill empty space */}
+               <motion.div
+                 initial={{ opacity: 0, x: 30 }}
+                 whileInView={{ opacity: 1, x: 0 }}
+                 viewport={{ once: true, margin: "-100px" }}
+                 transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+                 className="w-full lg:w-6/12 flex justify-center lg:justify-end z-20 mt-12 lg:mt-0"
+               >
+                 <div className="relative w-full aspect-[4/3] max-w-lg rounded-3xl overflow-hidden border border-[#07130e]/15 shadow-2xl group bg-white/10">
+                   <img 
+                     src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800&auto=format&fit=crop" 
+                     alt="SRE UPNVJT Renewable Energy" 
+                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                     loading="lazy"
+                   />
+                   <div className="absolute inset-0 bg-[#07130e]/10 group-hover:bg-transparent transition-colors duration-500" />
+                 </div>
+               </motion.div>
             </div>
           </div>
 
-            <div className="w-[100vw] relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-32 bg-[#050e0a] text-white border-y border-white/5">
+          {/* Full-bleed dark vision/mission panel — intentional design, contained within section */}
+          <div className="w-full bg-[#050e0a] text-white border-y border-white/5 mt-24 relative overflow-hidden">
               
-              <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-                <motion.div 
-                  animate={{ rotate: 360, scale: [1, 1.2, 1] }} 
-                  transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                  className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full bg-primary/10 blur-[150px]"
-                />
-                <motion.div 
-                  animate={{ rotate: -360, scale: [1, 1.5, 1] }} 
-                  transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
-                  className="absolute top-[40%] -right-[20%] w-[60vw] h-[60vw] rounded-full bg-[#a8d3ba]/5 blur-[120px]"
-                />
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+              <motion.div 
+                animate={{ rotate: 360, scale: [1, 1.2, 1] }} 
+                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full bg-primary/10 blur-[150px]"
+              />
+              <motion.div 
+                animate={{ rotate: -360, scale: [1, 1.5, 1] }} 
+                transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+                className="absolute top-[40%] -right-[20%] w-[60vw] h-[60vw] rounded-full bg-[#a8d3ba]/5 blur-[120px]"
+              />
+            </div>
+
+            <div className="flex flex-col lg:flex-row w-full max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+              
+              <div className="w-full lg:w-5/12 lg:sticky lg:top-20 h-auto lg:h-[calc(100vh-80px)] flex flex-col justify-center py-24 lg:py-0 pr-0 lg:pr-16">
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.8 }}
+                  className="flex items-center gap-4 mb-10"
+                >
+                  <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center relative">
+                    <Eye className="w-5 h-5 text-primary" />
+                    <motion.div
+                      animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="absolute inset-0 rounded-full border border-primary/50"
+                    />
+                  </div>
+                  <span className="text-[12px] tracking-[0.3em] text-white/50 uppercase font-bold">Our Vision</span>
+                </motion.div>
+
+                <h2 className="text-[48px] sm:text-[60px] md:text-[70px] lg:text-[80px] font-display font-black leading-[0.9] tracking-tighter uppercase mb-8 drop-shadow-2xl">
+                   Leading <br />
+                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#e8ecc4]">Catalyst</span> <br />
+                   for Green <br />
+                   <span className="font-serif italic font-normal text-white/80 lowercase tracking-normal">transition.</span>
+                </h2>
+
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="text-[16px] md:text-[18px] font-light text-white/60 leading-relaxed max-w-md border-l-2 border-primary/40 pl-6"
+                >
+                  Fostering a generation of innovators dedicated to sustainable, equitable, and clean energy solutions across the archipelago.
+                </motion.p>
               </div>
 
-              <div className="flex flex-col lg:flex-row w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-20 relative z-10">
-                
-                <div className="w-full lg:w-5/12 lg:sticky lg:top-0 h-auto lg:h-screen flex flex-col justify-center py-24 lg:py-0 pr-0 lg:pr-16">
-                  <motion.div
-                    initial={{ opacity: 0, x: -30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.8 }}
-                    className="flex items-center gap-4 mb-10"
-                  >
-                    <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center relative">
-                      <Eye className="w-5 h-5 text-primary" />
-                      <motion.div
-                        animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                        className="absolute inset-0 rounded-full border border-primary/50"
-                      />
-                    </div>
-                    <span className="text-[12px] tracking-[0.3em] text-white/50 uppercase font-bold">Our Vision</span>
-                  </motion.div>
+              <div className="w-full lg:w-7/12 flex flex-col gap-8 lg:gap-32 py-12 lg:py-32">
+                 
+                 {[
+                    {
+                      num: "01",
+                      title: "Educate & Empower",
+                      desc: "Equipping students with high-fidelity learning programs and deep technical knowledge in renewable energy infrastructures.",
+                      img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=800&auto=format&fit=crop"
+                    },
+                    {
+                      num: "02",
+                      title: "Practical Action",
+                      desc: "Implementing operational microgrid and biofuel field projects directly to communities across Indonesia.",
+                      img: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=800&auto=format&fit=crop"
+                    },
+                    {
+                      num: "03",
+                      title: "Green Advocacy",
+                      desc: "Collaborating with state institutions for critical energy audits and policy advocacy at a national scale.",
+                      img: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?q=80&w=800&auto=format&fit=crop"
+                    }
+                 ].map((m, idx) => (
+                   <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 100 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-100px" }}
+                      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                      className="relative w-full rounded-[40px] bg-white/[0.02] border border-white/5 p-8 md:p-12 overflow-hidden group hover:bg-white/[0.08] hover:border-white/10 transition-all duration-500 shadow-2xl"
+                   >
+                      <div className="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-30 transition-opacity duration-700 z-0 mix-blend-screen">
+                         <img src={m.img} className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000 grayscale group-hover:grayscale-0" alt={m.title} />
+                         <div className="absolute inset-0 bg-[#050e0a]/40" />
+                      </div>
+                      
+                      <div className="relative z-10 flex flex-col justify-between h-full min-h-[250px] md:min-h-[350px]">
+                         <div className="flex justify-between items-start mb-12">
+                            <span className="text-[70px] md:text-[100px] font-display font-black leading-none tracking-tighter text-white/10 group-hover:text-primary/60 transition-colors duration-500 drop-shadow-lg">
+                              {m.num}
+                            </span>
+                            <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-[#07130e] group-hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] transition-all duration-500 group-hover:scale-110">
+                               <ArrowUpRight className="w-6 h-6 text-white/50 group-hover:text-[#07130e] group-hover:rotate-45 transition-all duration-500" />
+                            </div>
+                         </div>
+                         
+                         <div>
+                            <span className="text-[10px] md:text-[12px] font-bold tracking-[0.3em] uppercase text-primary mb-4 block opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
+                              Mission
+                            </span>
+                            <h3 className="text-[32px] md:text-[48px] font-display font-black uppercase tracking-tight text-white/90 mb-4 group-hover:text-white transition-colors duration-500 leading-[1.05]">
+                              {m.title}
+                            </h3>
+                            <p className="text-[15px] md:text-[18px] text-white/50 font-light leading-relaxed max-w-lg group-hover:text-white/90 transition-colors duration-500">
+                              {m.desc}
+                            </p>
+                         </div>
+                      </div>
+                   </motion.div>
+                 ))}
 
-                  <h2 className="text-[48px] sm:text-[60px] md:text-[70px] lg:text-[80px] font-display font-black leading-[0.9] tracking-tighter uppercase mb-8 drop-shadow-2xl">
-                     Leading <br />
-                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#e8ecc4]">Catalyst</span> <br />
-                     for Green <br />
-                     <span className="font-serif italic font-normal text-white/80 lowercase tracking-normal">transition.</span>
-                  </h2>
-
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                    className="text-[16px] md:text-[18px] font-light text-white/60 leading-relaxed max-w-md border-l-2 border-primary/40 pl-6"
-                  >
-                    Fostering a generation of innovators dedicated to sustainable, equitable, and clean energy solutions across the archipelago.
-                  </motion.p>
-                </div>
-
-                <div className="w-full lg:w-7/12 flex flex-col gap-8 lg:gap-32 py-12 lg:py-32">
-                   
-                   {[
-                      {
-                        num: "01",
-                        title: "Educate & Empower",
-                        desc: "Equipping students with high-fidelity learning programs and deep technical knowledge in renewable energy infrastructures.",
-                        img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=800&auto=format&fit=crop"
-                      },
-                      {
-                        num: "02",
-                        title: "Practical Action",
-                        desc: "Implementing operational microgrid and biofuel field projects directly to communities across Indonesia.",
-                        img: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?q=80&w=800&auto=format&fit=crop"
-                      },
-                      {
-                        num: "03",
-                        title: "Green Advocacy",
-                        desc: "Collaborating with state institutions for critical energy audits and policy advocacy at a national scale.",
-                        img: "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?q=80&w=800&auto=format&fit=crop"
-                      }
-                   ].map((m, idx) => (
-                     <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, y: 100 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: "-100px" }}
-                        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                        className="relative w-full rounded-[40px] bg-white/[0.02] border border-white/5 p-8 md:p-12 overflow-hidden group hover:bg-white/[0.08] hover:border-white/10 transition-all duration-500 shadow-2xl"
-                     >
-                        <div className="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-30 transition-opacity duration-700 z-0 mix-blend-screen">
-                           <img src={m.img} className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-1000 grayscale group-hover:grayscale-0" alt={m.title} />
-                           <div className="absolute inset-0 bg-[#050e0a]/40" />
-                        </div>
-                        
-                        <div className="relative z-10 flex flex-col justify-between h-full min-h-[250px] md:min-h-[350px]">
-                           <div className="flex justify-between items-start mb-12">
-                              <span className="text-[70px] md:text-[100px] font-display font-black leading-none tracking-tighter text-white/10 group-hover:text-primary/60 transition-colors duration-500 drop-shadow-lg">
-                                {m.num}
-                              </span>
-                              <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-[#07130e] group-hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] transition-all duration-500 group-hover:scale-110">
-                                 <ArrowUpRight className="w-6 h-6 text-white/50 group-hover:text-[#07130e] group-hover:rotate-45 transition-all duration-500" />
-                              </div>
-                           </div>
-                           
-                           <div>
-                              <span className="text-[10px] md:text-[12px] font-bold tracking-[0.3em] uppercase text-primary mb-4 block opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
-                                Mission
-                              </span>
-                              <h3 className="text-[32px] md:text-[48px] font-display font-black uppercase tracking-tight text-white/90 mb-4 group-hover:text-white transition-colors duration-500 leading-[1.05]">
-                                {m.title}
-                              </h3>
-                              <p className="text-[15px] md:text-[18px] text-white/50 font-light leading-relaxed max-w-lg group-hover:text-white/90 transition-colors duration-500">
-                                {m.desc}
-                              </p>
-                           </div>
-                        </div>
-                     </motion.div>
-                   ))}
-
-                </div>
               </div>
             </div>
+          </div>
         </section>
 
         {/* 5. [Activity] Section */}
         <section
           id="activity"
-          className="bg-canvas py-32 px-6 border-b border-divider-soft relative overflow-hidden"
+          className="bg-[#e8ecc4] py-24 border-b border-[#d0d6a8] relative overflow-hidden"
         >
           <div className="w-full relative z-10 flex flex-col items-center">
-            <motion.div 
-              variants={fadeInUp}
-              initial="initial"
-              whileInView="whileInView"
-              viewport={{ once: true }}
-              className="text-center mb-16 max-w-2xl flex flex-col items-center"
-            >
-              <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md mb-6">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                <span className="text-[12px] font-bold tracking-[0.2em] text-primary uppercase">
-                  WHAT WE DO
-                </span>
-              </div>
-              <h2 className="text-[40px] md:text-[56px] font-display font-black tracking-tight text-ink uppercase leading-[1.1] mb-6">
-                Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#86b598]">Programs</span>
-              </h2>
-              <p className="text-[16px] text-ink/60 max-w-xl mx-auto">
-                Explore our main initiatives designed to promote renewable energy awareness, empower communities, and drive sustainable innovation.
-              </p>
-            </motion.div>
+            {/* Header stays inside site-container for proper max-width text alignment */}
+            <div className="site-container">
+              <motion.div 
+                variants={fadeInUp}
+                initial="initial"
+                whileInView="whileInView"
+                viewport={{ once: true }}
+                className="text-center mb-16 max-w-2xl mx-auto flex flex-col items-center"
+              >
+                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md mb-6">
+                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                  <span className="text-[12px] font-bold tracking-[0.2em] text-primary uppercase">
+                    WHAT WE DO
+                  </span>
+                </div>
+                <h2 className="text-[40px] md:text-[56px] font-display font-black tracking-tight text-ink uppercase leading-[1.1] mb-6">
+                  Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#86b598]">Programs</span>
+                </h2>
+                <p className="text-[16px] text-ink/60 max-w-xl mx-auto">
+                  Explore our main initiatives designed to promote renewable energy awareness, empower communities, and drive sustainable innovation.
+                </p>
+              </motion.div>
+            </div>
 
+            {/* Carousel spans full width, outside of site-container for correct centering coordinates */}
             <div
-              className="w-screen relative -mx-6 md:-mx-12 lg:-mx-24 overflow-hidden mb-16"
+              className="w-screen relative overflow-hidden mb-16"
               style={{ height: cardDims.height + 60 }}
             >
               <motion.div
@@ -521,33 +545,32 @@ export default function Home() {
                     key={i}
                     onClick={() => setActiveProgram(i)}
                     aria-label={`Program ${i + 1}`}
-                    className={`h-1.5 rounded-full transition-all duration-500 ${
-                      i === activeProgram
-                        ? "w-7 bg-primary"
-                        : "w-1.5 bg-black/30 hover:bg-black/50"
-                    }`}
+                    className="h-1.5 rounded-full transition-all duration-500 w-1.5 bg-black/30 hover:bg-black/50"
                   />
                 ))}
               </div>
             </div>
 
-            <motion.div {...fadeInUp} className="mb-20">
-              <a
-                href="#all-activities"
-                className="border border-[#0f3036] hover:bg-[#0f3036] hover:text-white text-[#0f3036] text-[15px] font-semibold rounded-full px-8 py-3.5 transition-all duration-300 inline-flex items-center gap-2 transform active:scale-95"
-              >
-                See More of Our Activities
-              </a>
-            </motion.div>
+            {/* See More button inside site-container for center-alignment */}
+            <div className="site-container text-center">
+              <motion.div {...fadeInUp} className="mb-12">
+                <a
+                  href="#all-activities"
+                  className="border border-[#07130e] hover:bg-[#07130e] hover:text-[#e8ecc4] text-[#07130e] text-[15px] font-semibold rounded-full px-8 py-3.5 transition-all duration-300 inline-flex items-center gap-2 transform active:scale-95"
+                >
+                  See More of Our Activities
+                </a>
+              </motion.div>
+            </div>
           </div>
         </section>
 
         {/* 6. [Article] Section */}
         <section
           id="article"
-          className="bg-canvas pt-32 pb-24 px-6 relative overflow-hidden"
+          className="bg-[#e8ecc4] pt-24 pb-20 relative overflow-hidden border-b border-[#d0d6a8]"
         >
-          <div className="w-full">
+          <div className="site-container">
             <motion.div {...fadeInUp} className="mb-16">
               <span className="text-[14px] font-semibold tracking-wider text-primary uppercase mb-3 block">
                 EDITORIALS & DISCOVERIES
@@ -562,7 +585,7 @@ export default function Home() {
                 <motion.div
                   key={art.id}
                   {...fadeInUp}
-                  className="flex flex-col justify-between border-r-0 lg:border-r border-divider-soft pr-0 lg:pr-12 gap-8"
+                  className="flex flex-col justify-between border-r-0 lg:border-r border-[#d0d6a8] pr-0 lg:pr-12 gap-8"
                 >
                   <div className="flex flex-col gap-6">
                     <div className="w-full aspect-[16/9] rounded-[18px] overflow-hidden bg-white/5">
@@ -584,13 +607,13 @@ export default function Home() {
                     <h3 className="text-[34px] font-display font-semibold tracking-tight text-ink leading-tight hover:text-primary transition-colors duration-200 line-clamp-3">
                       <a href={`/articles/${art.slug}`}>{art.title}</a>
                     </h3>
-                    <p className="text-[17px] font-normal text-ink-muted-80 leading-relaxed line-clamp-4">
+                    <p className="text-[17px] font-normal text-[#07130e]/80 leading-relaxed line-clamp-4 font-light">
                       {art.desc}
                     </p>
                   </div>
-                  <div className="flex items-center justify-between pt-6 border-t border-divider-soft">
+                  <div className="flex items-center justify-between pt-6 border-t border-[#d0d6a8]">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-canvas-parchment border border-hairline flex items-center justify-center font-semibold text-[12px] text-ink uppercase shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-white/40 border border-[#d0d6a8] flex items-center justify-center font-semibold text-[12px] text-ink uppercase shrink-0">
                         SRE
                       </div>
                       <span className="text-[14px] font-semibold text-ink line-clamp-1">
@@ -599,7 +622,7 @@ export default function Home() {
                     </div>
                     <a
                       href={`/articles/${art.slug}`}
-                      className="bg-[#0f3036] hover:bg-[#1b434b] text-white text-[14px] font-semibold tracking-tight rounded-full px-5 py-2 transition-all duration-300 shrink-0"
+                      className="bg-[#07130e] hover:bg-primary hover:text-[#07130e] text-[#e8ecc4] text-[14px] font-semibold tracking-tight rounded-full px-5 py-2 transition-all duration-300 shrink-0"
                     >
                       Read Article
                     </a>
@@ -608,7 +631,7 @@ export default function Home() {
               ))}
 
               <div className="flex flex-col gap-8">
-                <span className="text-[12px] font-semibold tracking-wider text-ink-muted-48 uppercase border-b border-divider-soft pb-2">
+                <span className="text-[12px] font-semibold tracking-wider text-ink-muted-48 uppercase border-b border-[#d0d6a8] pb-2">
                   LATEST DISPATCHES
                 </span>
 
@@ -616,7 +639,7 @@ export default function Home() {
                   <motion.div
                     key={art.id}
                     {...fadeInUp}
-                    className="flex flex-col gap-4 pb-8 border-b border-divider-soft last:border-b-0"
+                    className="flex flex-col gap-4 pb-8 border-b border-[#d0d6a8] last:border-b-0"
                   >
                     <div className="flex items-center justify-between text-[12px] font-normal text-ink-muted-48">
                       <span className="text-primary font-semibold uppercase">
@@ -627,11 +650,11 @@ export default function Home() {
                     <h4 className="text-[21px] font-display font-semibold tracking-tight text-ink leading-snug hover:text-primary transition-colors duration-200 line-clamp-2">
                       <a href={`/articles/${art.slug}`}>{art.title}</a>
                     </h4>
-                    <p className="text-[14px] font-normal text-ink-muted-80 line-clamp-2 leading-relaxed">
+                    <p className="text-[14px] font-normal text-[#07130e]/70 line-clamp-2 leading-relaxed font-light">
                       {art.desc}
                     </p>
                     <div className="flex items-center justify-between pt-2">
-                      <span className="text-[12px] font-semibold text-ink-muted-80 line-clamp-1">
+                      <span className="text-[12px] font-semibold text-[#07130e]/70 line-clamp-1 font-light">
                         {art.author}
                       </span>
                       <a
@@ -650,8 +673,8 @@ export default function Home() {
 
         {/* Testimonials Section */}
         {publicTestimonialsList.length > 0 && (
-          <section className="bg-canvas border-t border-divider-soft py-24 px-6 relative overflow-hidden">
-            <div className="w-full max-w-7xl mx-auto flex flex-col items-center">
+          <section className="bg-[#e8ecc4] border-t border-[#d0d6a8] py-24 relative overflow-hidden">
+            <div className="site-container flex flex-col items-center">
               <motion.div {...fadeInUp} className="mb-12 text-center">
                 <span className="text-[14px] font-semibold tracking-wider text-primary uppercase mb-3 block">
                   Testimonials & Review
@@ -659,7 +682,7 @@ export default function Home() {
                 <h2 className="text-[36px] font-display font-black tracking-tight text-ink uppercase">
                   What Members Say
                 </h2>
-                <p className="text-[15px] text-ink-muted-80 mt-4 max-w-lg mx-auto">
+                <p className="text-[15px] text-ink/60 mt-4 max-w-lg mx-auto">
                   Hear directly from members about their learning journey, growth, and team experiences at SRE UPNVJT.
                 </p>
               </motion.div>
@@ -669,7 +692,7 @@ export default function Home() {
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl"
               >
                 {publicTestimonialsList.map((test) => (
-                  <div key={test.id} className="bg-canvas-parchment border border-divider-soft p-6 rounded-3xl flex flex-col justify-between shadow-sm relative group hover:-translate-y-1 transition-all duration-300">
+                  <div key={test.id} className="bg-white/60 border border-[#d0d6a8] p-6 rounded-3xl flex flex-col justify-between shadow-sm relative group hover:-translate-y-1 transition-all duration-300 backdrop-blur-sm">
                     <p className="text-sm italic text-ink-muted-80 mb-6 leading-relaxed">
                       "{test.content}"
                     </p>
@@ -697,9 +720,9 @@ export default function Home() {
         {partnersList.length > 0 && (
           <section
             id="partners"
-            className="bg-canvas pb-32 px-6 relative overflow-hidden"
+            className="bg-[#e8ecc4] pb-24 relative overflow-hidden"
           >
-            <div className="w-full max-w-7xl mx-auto flex flex-col items-center justify-center text-center">
+            <div className="site-container flex flex-col items-center justify-center text-center">
               <motion.div {...fadeInUp} className="mb-12">
                 <span className="text-[14px] font-semibold tracking-wider text-primary uppercase mb-3 block">
                   Collaboration & Synergy
@@ -722,7 +745,7 @@ export default function Home() {
                   if (partner.tier === "SMALL") sizeClasses = "w-32 h-16 md:w-36 md:h-16";
 
                   return (
-                    <div key={partner.id} className={`${sizeClasses} bg-[#0f3036]/2 rounded-2xl border border-[#0f3036]/5 p-4 flex items-center justify-center hover:bg-[#0f3036]/5 hover:-translate-y-1 transition-all duration-300 cursor-pointer group`}>
+                    <div key={partner.id} className={`${sizeClasses} bg-white/40 hover:bg-white/60 rounded-2xl border border-[#d0d6a8] p-4 flex items-center justify-center hover:border-[#07130e]/20 hover:-translate-y-1 transition-all duration-300 cursor-pointer group`}>
                       <img 
                         src={partner.logoUrl} 
                         alt={partner.name} 
