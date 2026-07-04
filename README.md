@@ -1,240 +1,180 @@
-# Developer Guide - SRE UPNVJT Website & Dashboard
-
-Dokumen ini berisi gambaran umum mengenai arsitektur sistem, struktur folder, serta panduan pengembangan (*development tutorial*) untuk SRE UPN Veteran Jawa Timur Website & Internal Dashboard. Dokumentasi ini ditujukan bagi developer atau tim IT selanjutnya yang akan mengelola dan mengembangkan proyek ini.
-
----
-
-## 1. Gambaran Sistem (System Overview)
-
-Proyek ini dibangun menggunakan arsitektur modern berbasis React dengan Next.js App Router. Sistem ini menggabungkan *Landing Page* publik dan *Dashboard Internal* (*Content Management System* / ERP sederhana) untuk pengurus organisasi.
-
-### Teknologi Utama (Tech Stack)
-* **Framework:** Next.js (App Router) + React
-* **Styling:** Tailwind CSS (dengan efek *Glassmorphism* premium)
-* **Animasi:** Framer Motion
-* **Autentikasi:** NextAuth.js (berbasis kredensial / NPM & Password)
-* **Database:** MySQL
-* **ORM:** Drizzle ORM
-* **Ikon:** Lucide React
+# SRE UPNVJT — Website & Dashboard
+**Society of Renewable Energy — UPN Veteran Jawa Timur**
 
 ---
 
-## 2. Struktur Folder & Penjelasan
-
-Berikut adalah struktur direktori utama beserta penjelasannya:
-
-```text
-sre-upnjatim/
-│
-├── public/                    # Aset statis yang dapat diakses publik
-│   ├── images/                # Gambar statis bawaan aplikasi
-│   └── uploads/               # Direktori hasil upload pengguna dari dashboard
-│       ├── activities/        # Foto dokumentasi program & aktivitas
-│       ├── articles/          # Sampul/thumbnail artikel publikasi
-│       ├── attendance_proofs/ # Bukti presensi absensi
-│       ├── documents/         # Berkas bank data & dokumen
-│       ├── finance_proofs/    # Bukti struk/nota buku kas digital
-│       ├── merchandise/       # Foto katalog produk merchandise
-│       ├── partners/          # Logo partner/sponsor
-│       └── profiles/          # Foto profil pengurus (untuk halaman About)
-│
-├── src/
-│   ├── app/                   # Next.js App Router
-│   │   ├── (dashboard)/       # Route group untuk Dashboard Internal (dilindungi middleware)
-│   │   │   ├── achievements/  # Modul Prestasi & Sertifikat
-│   │   │   ├── activities/    # Modul Programs & Activities
-│   │   │   ├── appraisals/    # Modul Penilaian Pengurus (Appraisals)
-│   │   │   ├── articles/      # Modul CMS Publikasi Artikel
-│   │   │   ├── attendance/    # Modul Presensi/Absensi
-│   │   │   ├── dashboard/     # Halaman utama (Overview) dashboard
-│   │   │   ├── departments/   # Modul Departemen & Divisi
-│   │   │   ├── documents/     # Modul Bank Data & Dokumen
-│   │   │   ├── finance/       # Modul Buku Kas Digital (Pemasukan & Pengeluaran)
-│   │   │   ├── inventory/     # Modul Manajemen Inventaris
-│   │   │   ├── leaderboard/   # Modul Papan Peringkat Poin Aktif
-│   │   │   ├── logs/          # Modul Sistem Log (Catatan Aktivitas)
-│   │   │   ├── merch/         # Modul Toko SRE (Merchandise)
-│   │   │   ├── partners/      # Modul Kelola Partners (Our Partners)
-│   │   │   ├── projects/      # Modul Kelola Proyek Kerja
-│   │   │   ├── roles/         # Modul Peran & Hak Akses
-│   │   │   ├── settings/      # Pengaturan Profil, Password & Sistem
-│   │   │   ├── tasks/         # Modul Tugas & Kanban Board
-│   │   │   ├── users/         # Manajemen Pengurus/Anggota
-│   │   │   └── layout.js      # Layout global dashboard (Sidebar & Header)
-│   │   │
-│   │   ├── api/               # API Routes (Backend)
-│   │   │   ├── upload/        # Endpoint sentral untuk upload file (menangani prefix & auto-folder)
-│   │   │   ├── auth/          # Endpoint NextAuth
-│   │   │   └── ...            # Endpoint REST API untuk masing-masing modul
-│   │   │
-│   │   ├── about/             # Landing page: About Us (Visi, Misi, Tim)
-│   │   ├── actions/           # Server Actions (Fungsi backend Next.js)
-│   │   ├── activity/          # Landing page: Daftar & Detail Kegiatan
-│   │   ├── article/           # Landing page: Daftar & Detail Artikel Publikasi
-│   │   ├── login/             # Halaman Autentikasi/Login
-│   │   ├── merchandise/       # Landing page: Katalog Toko Merch
-│   │   ├── status/            # Halaman publik untuk melacak status registrasi/sertifikat
-│   │   ├── error.js           # Penanganan error global (Global Error Boundary)
-│   │   ├── not-found.js       # Halaman 404 Kustom (Not Found)
-│   │   ├── globals.css        # Styling utama (Tailwind directives)
-│   │   ├── page.js            # Landing page: Beranda (Home)
-│   │   └── layout.js          # Root layout (Provider & Navbar publik)
-│   ├── components/            # Komponen React yang digunakan berulang (Reusable)
-│   │   ├── Footer.js          # Komponen Footer untuk public landing page
-│   │   ├── Header.js          # Komponen Header/Navbar untuk public landing page
-│   │   ├── NavigationWrapper.js # Komponen kondisional (menyembunyikan header di dashboard)
-│   │   ├── Providers.js       # Global state providers (Next-Auth, Theme, dll)
-│   │   └── ThemeToggle.js     # Tombol toggle Dark/Light Mode
-│   │
-│   ├── i18n/                  # Folder Dictionary (Kamus Translasi)
-│   │   ├── id.json            # Teks Bahasa Indonesia
-│   │   ├── en.json            # Teks English
-│   │   └── LanguageProvider.js # State manager untuk pergantian bahasa (Context API)
-│   │
-│   ├── db/                    # Konfigurasi Database (Drizzle ORM)
-│   │   └── schema.js          # Definisi skema tabel database
-│   │
-│   ├── lib/                   # Utilitas & Helper
-│   │   ├── permissions.js     # Logika Role-Based Access Control (RBAC)
-│   │   ├── cropImage.js       # Utilitas internal untuk pemotongan gambar (Canvas API)
-│   │   └── db.js              # Alternatif koneksi DB
-│   │
-│   └── middleware.js          # Konfigurasi NextAuth middleware untuk membatasi akses (dashboard vs public)
-│
-├── package.json               # Dependensi proyek
-└── tailwind.config.js         # Konfigurasi Tailwind & tema warna
-```
+## Tech Stack
+- **Framework:** Next.js 16 (App Router) + React 19
+- **Styling:** Tailwind CSS v4 + Framer Motion
+- **Database:** PostgreSQL via Supabase
+- **ORM:** Drizzle ORM v0.45
+- **Auth:** NextAuth.js v4
 
 ---
 
-## 3. Tutorial Menjalankan & Mengelola Web
+## Setup Awal
 
-### Menjalankan Proyek di Lokal
-1. Pastikan Anda telah menginstal **Node.js** (versi 18+) dan server **MySQL** yang berjalan lokal.
-2. Buat database di MySQL (misalnya `sre_upnjatim`).
-3. Konfigurasikan file `.env` di root direktori dengan format:
-   ```env
-   DATABASE_URL="mysql://username:password@localhost:3306/sre_upnjatim"
-   NEXTAUTH_SECRET="random_secret_string"
-   NEXTAUTH_URL="http://localhost:3000"
-   ```
-4. Jalankan perintah instalasi dependensi:
-   ```bash
-   npm install
-   ```
-5. Jalankan development server:
-   ```bash
-   npm run dev
-   ```
-6. Akses web melalui `http://localhost:3000`. Untuk login ke dashboard, gunakan `http://localhost:3000/login`.
-
-### Aturan Unggah Berkas (File Uploads)
-Sistem memiliki endpoint API tersentralisasi di `/api/upload`. 
-- Fungsi ini secara otomatis mengelompokkan file ke sub-direktori `/public/uploads/<folder-name>`.
-- Format penamaan file sudah dibuat profesional: `NAMAFOLDER_timestamp_random.ext` (Contoh: `MERCHANDISE_1623..._x1y2.jpg`).
-
-### Pengaturan Role dan Permission
-Hak akses diatur dalam file `src/lib/permissions.js`. Terdapat beberapa role utama: `SUPER_ADMIN`, `ADMIN`, `USER`.
-Modul seperti *Overview* dan *Settings* dapat diakses oleh semua pengguna. Namun, penambahan/penghapusan data di modul inti dikontrol oleh *permissions* (create, update, delete).
-
----
-
-## 4. Tutorial Database & Migrasi (SANGAT PENTING)
-
-Sistem database diakses menggunakan **Drizzle ORM**. File utama pendefinisian skema ada di `src/db/schema.js`.
-
-> [!WARNING]
-> **ATURAN KRITIS (CRITICAL RULE):** 
-> Sangat dilarang keras menggunakan perintah `npx drizzle-kit push` atau sinkronisasi langsung bawaan Drizzle pada environment proyek ini.
-
-### Cara Melakukan Perubahan Skema Database
-Jika Anda perlu menambahkan tabel baru, menambah kolom, atau mengubah tipe data, **JANGAN** menggunakan Drizzle Kit CLI secara langsung.
-
-1. **Ubah Skema di `schema.js`:**
-   Tambahkan kolom atau tabel baru pada file `src/db/schema.js`.
-2. **Gunakan Script `alter_db.js`:**
-   Untuk menerapkan perubahan secara aktual di database MySQL, gunakan script migrasi manual yang telah disediakan. Buka file `alter_db.js` dan tulis kueri DDL (Data Definition Language) SQL Anda secara manual.
-   
-   Contoh isi `alter_db.js` untuk menambah kolom:
-   ```javascript
-   import mysql from 'mysql2/promise';
-   import dotenv from 'dotenv';
-   dotenv.config();
-
-   async function alterDb() {
-     const connection = await mysql.createConnection(process.env.DATABASE_URL);
-     try {
-       // TULIS QUERY SQL MANUAL ANDA DI SINI
-       await connection.query('ALTER TABLE articles ADD COLUMN views INT DEFAULT 0');
-       console.log('Database altered successfully.');
-     } catch (err) {
-       console.error('Error altering database:', err);
-     } finally {
-       await connection.end();
-     }
-   }
-
-   alterDb();
-   ```
-3. **Eksekusi Script:**
-   Jalankan file tersebut menggunakan Node:
-   ```bash
-   node alter_db.js
-   ```
-
-Pendekatan ini memastikan stabilitas data dan meminimalisir kesalahan sinkronisasi tak terduga yang sering terjadi akibat Drizzle Kit di ekosistem database lokal yang datanya sudah terisi.
-
-### Inisialisasi Database di Server Baru (Fresh Install)
-Jika Anda baru saja memindahkan proyek ini ke *server production* baru dan **databasenya masih kosong sepenuhnya**, maka `alter_db.js` tentu tidak efisien karena Anda harus membuat semua tabel dari nol. 
-
-Untuk inisialisasi awal (*setup* pertama kali), Anda memiliki 2 opsi yang aman:
-
-**Opsi 1: Menggunakan Drizzle Push (Hanya Sekali di Awal)**
-Aturan larangan `drizzle-kit push` ditujukan untuk database yang sudah berisi data agar data tidak hilang. Namun, jika database **benar-benar baru dan kosong**, Anda **diperbolehkan** menjalankan perintah ini untuk membuat ulang seluruh skema secara otomatis:
+### 1. Clone Repo
 ```bash
-npx drizzle-kit push
+git clone https://github.com/mraynar/sre-upnjatim.git
+cd sre-upnjatim
+npm install
 ```
-*(Setelah tabel terbentuk, kembalilah mematuhi aturan penggunaan `alter_db.js` untuk perubahan-perubahan selanjutnya).*
 
-**Opsi 2: Menggunakan SQL Dump (Direkomendasikan)**
-Lakukan *export* dari database lokal Anda menggunakan `mysqldump` atau *tool* seperti phpMyAdmin / DBeaver, lalu *import* file `.sql` tersebut ke database di server *production*. Pendekatan ini lebih direkomendasikan karena akan membawa beserta data bawaan (seperti akun Super Admin pertama).
+### 2. Buat Project Supabase
+1. Buka https://supabase.com → login → **New Project**
+2. Isi nama project, buat password (simpan!)
+3. Region: Northeast Asia (Tokyo)
+4. Tunggu ~2 menit
 
-### Seeding Data Awal (Super Admin)
-Jika Anda menggunakan Opsi 1 (Drizzle Push) atau baru saja membersihkan database, Anda memerlukan akun awal untuk bisa masuk ke dalam sistem. Sebuah skrip *seeder* telah disediakan untuk membuat `Role` `SUPER_ADMIN` dan akun penggunanya.
+### 3. Ambil Connection String
+1. Supabase dashboard → klik **Connect**
+2. Tab **ORM** → copy `DATABASE_URL`
 
-Jalankan perintah berikut di terminal:
+### 4. Setup .env
+```bash
+cp .env.example .env
+```
+Isi file `.env`:
+DATABASE_URL="postgresql://postgres.xxxx:[PASSWORD]@aws-1-xxx.pooler.supabase.com:6543/postgres"
+NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_xxx
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="4f8a1c9b2d7e5f3a6b8c0d1e2f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a"
+> SUPABASE_URL dan PUBLISHABLE_KEY: Supabase → Settings → API Keys
+
+### 5. Buat Tabel Database
+Buka Supabase → **SQL Editor** → **New Query** → paste SQL di bawah → klik **Run**:
+
+```sql
+CREATE TABLE IF NOT EXISTS "role" ("id" serial PRIMARY KEY,"name" varchar(255) NOT NULL UNIQUE,"permissions" jsonb NOT NULL,"createdAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "department" ("id" serial PRIMARY KEY,"name" varchar(255) NOT NULL UNIQUE,"code" varchar(255) NOT NULL UNIQUE);
+CREATE TABLE IF NOT EXISTS "division" ("id" serial PRIMARY KEY,"name" varchar(255) NOT NULL,"departmentId" integer NOT NULL REFERENCES "department"("id"));
+CREATE TABLE IF NOT EXISTS "user" ("id" serial PRIMARY KEY,"name" varchar(255) NOT NULL,"email" varchar(255) NOT NULL UNIQUE,"password" varchar(255) NOT NULL,"npm" varchar(255) UNIQUE,"positionName" varchar(255),"isActive" boolean DEFAULT true NOT NULL,"roleId" integer NOT NULL REFERENCES "role"("id"),"departmentId" integer REFERENCES "department"("id"),"divisionId" integer REFERENCES "division"("id"),"profilePictureUrl" varchar(500),"totalPoints" integer DEFAULT 0 NOT NULL,"createdAt" timestamp NOT NULL,"updatedAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "memberProfile" ("userId" integer PRIMARY KEY REFERENCES "user"("id"),"xp" integer DEFAULT 0 NOT NULL,"level" integer DEFAULT 1 NOT NULL);
+CREATE TABLE IF NOT EXISTS "announcement" ("id" serial PRIMARY KEY,"title" varchar(255) NOT NULL,"imageUrl" varchar(1000),"actionLink" varchar(1000),"content" text NOT NULL,"targetAudience" varchar(255),"isActive" boolean DEFAULT true NOT NULL,"createdById" integer NOT NULL REFERENCES "user"("id"),"createdAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "content" ("id" serial PRIMARY KEY,"title" varchar(255) NOT NULL,"slug" varchar(255) NOT NULL UNIQUE,"body" text NOT NULL,"imageUrl" varchar(1000),"isPublished" boolean DEFAULT false NOT NULL,"updatedById" integer NOT NULL REFERENCES "user"("id"),"createdAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "event" ("id" serial PRIMARY KEY,"title" varchar(255) NOT NULL,"description" text,"bannerUrl" varchar(1000),"eventDate" timestamp NOT NULL,"location" varchar(255),"category" varchar(255),"registrationType" varchar(255),"createdAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "eventRegistration" ("id" serial PRIMARY KEY,"eventId" integer NOT NULL REFERENCES "event"("id"),"fullName" varchar(255) NOT NULL,"email" varchar(255) NOT NULL,"teamName" varchar(255),"registrationType" varchar(50) NOT NULL,"status" varchar(50) DEFAULT 'PENDING' NOT NULL,"submittedAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "memberApplication" ("id" serial PRIMARY KEY,"fullName" varchar(255) NOT NULL,"email" varchar(255) NOT NULL,"npm" varchar(255) NOT NULL,"faculty" varchar(255) NOT NULL,"motivation" text NOT NULL,"status" varchar(50) DEFAULT 'PENDING' NOT NULL,"reviewedById" integer REFERENCES "user"("id"),"appliedAt" timestamp NOT NULL,"updatedAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "merchandise" ("id" serial PRIMARY KEY,"name" varchar(255) NOT NULL,"price" numeric(10,2) NOT NULL,"description" text NOT NULL,"imageUrl" varchar(1000),"linkUrl" varchar(1000),"isAvailable" boolean DEFAULT true NOT NULL,"createdAt" timestamp NOT NULL,"updatedAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "partner" ("id" serial PRIMARY KEY,"name" varchar(255) NOT NULL,"logoUrl" varchar(1000),"websiteUrl" varchar(1000),"tier" varchar(50),"isActive" boolean DEFAULT true NOT NULL,"createdAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "task" ("id" serial PRIMARY KEY,"title" varchar(255) NOT NULL,"description" text NOT NULL,"rewardXp" integer DEFAULT 0 NOT NULL,"deadline" timestamp NOT NULL,"createdById" integer NOT NULL REFERENCES "user"("id"),"createdAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "taskSubmission" ("id" serial PRIMARY KEY,"taskId" integer NOT NULL REFERENCES "task"("id"),"memberId" integer NOT NULL REFERENCES "user"("id"),"fileUrl" varchar(1000),"status" varchar(50) NOT NULL,"feedback" text,"reviewedById" integer REFERENCES "user"("id"),"submittedAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "attendance" ("id" serial PRIMARY KEY,"memberId" integer NOT NULL REFERENCES "user"("id"),"date" timestamp NOT NULL,"status" varchar(50) NOT NULL,"notes" text,"createdAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "testimonial" ("id" serial PRIMARY KEY,"authorName" varchar(255) NOT NULL,"authorPosition" varchar(255) NOT NULL,"authorPhotoUrl" varchar(1000),"content" text NOT NULL,"isPublished" boolean DEFAULT false NOT NULL,"createdAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "systemSetting" ("id" serial PRIMARY KEY,"keyName" varchar(255) NOT NULL UNIQUE,"valueData" text NOT NULL,"updatedAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "literatureCategory" ("id" serial PRIMARY KEY,"name" varchar(255) NOT NULL,"imageUrl" varchar(1000),"description" text,"createdAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "literatureItem" ("id" serial PRIMARY KEY,"categoryId" integer NOT NULL REFERENCES "literatureCategory"("id"),"title" varchar(255) NOT NULL,"author" varchar(255),"year" integer,"driveUrl" varchar(1000) NOT NULL,"type" varchar(50),"isPublished" boolean DEFAULT false NOT NULL,"uploadedById" integer NOT NULL REFERENCES "user"("id"),"createdAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "pptModule" ("id" serial PRIMARY KEY,"title" varchar(255) NOT NULL,"description" text,"coverImageUrl" varchar(1000),"isPublished" boolean DEFAULT false NOT NULL,"createdById" integer NOT NULL REFERENCES "user"("id"),"createdAt" timestamp NOT NULL,"updatedAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "pptSlide" ("id" serial PRIMARY KEY,"moduleId" integer NOT NULL REFERENCES "pptModule"("id"),"order" integer NOT NULL,"title" varchar(255),"driveUrl" varchar(1000) NOT NULL,"notes" text,"createdAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "quiz" ("id" serial PRIMARY KEY,"title" varchar(255) NOT NULL,"description" text,"timeLimitMinutes" integer,"passingScore" integer DEFAULT 70,"rewardXp" integer DEFAULT 0 NOT NULL,"isPublished" boolean DEFAULT false NOT NULL,"createdById" integer NOT NULL REFERENCES "user"("id"),"createdAt" timestamp NOT NULL);
+CREATE TABLE IF NOT EXISTS "quizQuestion" ("id" serial PRIMARY KEY,"quizId" integer NOT NULL REFERENCES "quiz"("id"),"order" integer NOT NULL,"type" varchar(50) NOT NULL,"question" text NOT NULL,"options" jsonb DEFAULT '[]',"correctOptionId" varchar(50),"points" integer DEFAULT 1 NOT NULL);
+CREATE TABLE IF NOT EXISTS "quizSubmission" ("id" serial PRIMARY KEY,"quizId" integer NOT NULL REFERENCES "quiz"("id"),"memberId" integer NOT NULL REFERENCES "user"("id"),"answers" jsonb DEFAULT '[]' NOT NULL,"mcqScore" integer,"essayScore" integer,"totalScore" integer,"isPassed" boolean,"gradedById" integer REFERENCES "user"("id"),"submittedAt" timestamp NOT NULL,"gradedAt" timestamp);
+CREATE TABLE IF NOT EXISTS "xpTransaction" ("id" serial PRIMARY KEY,"userId" integer NOT NULL REFERENCES "user"("id"),"amount" integer NOT NULL,"reason" varchar(255) NOT NULL,"sourceType" varchar(50),"sourceId" integer,"grantedById" integer REFERENCES "user"("id"),"createdAt" timestamp NOT NULL);
+```
+
+### 6. Seed Data Awal
 ```bash
 node seed.mjs
 ```
 
-Setelah berhasil dijalankan, Anda bisa masuk menggunakan:
-- **Email:** `admin@sreupnjatim.com`
-- **Password:** `password123`
+Akun default:
 
-> [!TIP]
-> Sangat disarankan untuk segera mengganti password ini setelah Anda berhasil login ke lingkungan *production*!
+| Role | Email | Password |
+|---|---|---|
+| Super Admin | admin@sre.co.id | admin123 |
+| Member | member@sre.co.id | member123 |
 
----
+> Ganti password setelah pertama login!
 
-## 5. Fitur Tambahan & Panduan Khusus
-
-### Dukungan Multibahasa (i18n)
-Sistem dilengkapi fitur dwibahasa (Bahasa Indonesia & English).
-- Translasi disimpan di `src/i18n/id.json` dan `en.json`.
-- Pengguna (Super Admin) dapat mengganti bahasa bawaan (*default*) sistem melalui **Settings > System (Super Admin)**. 
-- Komponen menggunakan *hook* `useLanguage()` dan fungsi `t('key')` untuk menampilkan teks terjemahan yang menyesuaikan secara langsung (*real-time*).
-
-### Fleksibilitas Tautan Bukti (File & Link)
-Pada modul-modul pelaporan (seperti *Finance*, *Attendance*, *Achievements*, dan *Documents*), sistem memperbolehkan dua tipe pengumpulan bukti:
-1. **Upload File Langsung** (Sistem akan otomatis melemparnya ke `/api/upload` dan merapikan foldernya).
-2. **Tautan Eksternal (URL)** (Misalnya: Link Google Drive, Sertifikat Digital, Trello).
-
-Jika pengguna memilih kondisi tertentu (seperti Izin/Sakit pada *Attendance*), sistem akan otomatis melakukan validasi untuk memastikan salah satu dari tipe bukti ini terisi.
-
-### Optimalisasi *Connection Pool* di Development
-Sistem sudah menerapkan *singleton caching* pada objek koneksi Drizzle di `src/lib/db.js`. 
-Saat Anda menjalankan `npm run dev`, fitur *hot-reload* dari Next.js tidak akan membanjiri (*exhaust*) koneksi server database Anda, sehingga mencegah error `ER_CON_COUNT_ERROR` yang umum terjadi saat pengembangan.
+### 7. Jalankan Project
+```bash
+npm run dev
+```
+Buka: http://localhost:3000
 
 ---
 
-*Panduan ini dirancang untuk memastikan kesinambungan arsitektur, gaya kode, dan keamanan basis data untuk generasi developer SRE UPNVJT selanjutnya. Selamat berkarya!*
+## Git Workflow
+
+### Sebelum Mulai Kerja
+```bash
+git checkout main
+git pull origin main
+```
+
+### Buat Branch
+```bash
+git checkout -b feature/[nama]-[modul]
+```
+
+### Commit & Push
+```bash
+git add .
+git commit -m "feat: deskripsi singkat"
+git push origin feature/[nama]-[modul]
+```
+
+### Pull Request
+1. Buka github.com/mraynar/sre-upnjatim
+2. Klik **Compare & pull request**
+3. Tulis deskripsi + screenshot
+4. **Jangan merge sendiri — tunggu review Raynar**
+
+### Aturan
+- Dilarang push langsung ke `main`
+- Dilarang edit file milik staff lain tanpa konfirmasi
+- Satu branch = satu fitur
+- Jangan commit file `.env`
+- Update Progress Tracker setiap ada perubahan
+
+### Konvensi Branch
+| Nama | Format |
+|---|---|
+| Raynar | feature/raynar-[modul] |
+| Ghulam | feature/ghulam-[modul] |
+| Riko | feature/riko-[modul] |
+| Kaka | feature/kaka-[modul] |
+
+### Konvensi Commit
+| Prefix | Kegunaan |
+|---|---|
+| feat: | Fitur baru |
+| fix: | Perbaikan bug |
+| style: | Perubahan tampilan |
+| refactor: | Refactor kode |
+| docs: | Update dokumentasi |
+
+---
+
+## Role & Akses
+
+| Role | Akses |
+|---|---|
+| SUPER_ADMIN | Semua fitur admin |
+| STAFF_ACE | Bank Literatur, Quiz |
+| STAFF_HR | Tugas, PPT, Quiz, Leaderboard |
+| MEMBER | Materi, Quiz, Leaderboard, Absensi |
+| Visitor | Halaman publik |
+
+---
+
+## Struktur Folder
+src/
+├── app/
+│   ├── (dashboard)/    # Panel admin
+│   ├── (member)/       # Halaman member
+│   ├── api/            # API routes
+│   ├── actions/        # Server actions
+│   └── [halaman publik]
+├── components/         # Komponen global
+├── db/schema.js        # Schema database
+├── lib/
+│   ├── db.js           # Koneksi database
+│   └── permissions.js  # RBAC
+└── middleware.js        # Route protection
+
+---
+
+*SRE UPNVJT Web Development Division — 2026*
