@@ -58,6 +58,27 @@ const ARTICLES = [
 
 const PARTNERS = ["SRE Indonesia", "UPN Veteran Jawa Timur", "SRE UPNVJT"];
 
+const MOCK_ACTIVITIES = [
+  {
+    id: "mock-1",
+    title: "RENEWABLE ENERGY CAMP",
+    description: "A comprehensive training program on solar microgrids and local biogas system designs for youth leaders.",
+    imageUrl: "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800&auto=format&fit=crop"
+  },
+  {
+    id: "mock-2",
+    title: "CAMPUS ENERGY AUDIT",
+    description: "Conducting high-fidelity electrical consumption analysis and building-level energy efficiency audits across UPNVJT.",
+    imageUrl: "https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=800&auto=format&fit=crop"
+  },
+  {
+    id: "mock-3",
+    title: "ECO-INNOVATION COMPETITION",
+    description: "Student innovation challenge focused on designing low-cost, decentralized green energy solutions for rural farming communities.",
+    imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=800&auto=format&fit=crop"
+  }
+];
+
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
@@ -88,10 +109,14 @@ export default function Home() {
             description: ev.description,
             imageUrl: ev.bannerUrl,
           }));
-          setPublicActivitiesList(formatted);
+          setPublicActivitiesList(formatted.length > 0 ? formatted : MOCK_ACTIVITIES);
+        } else {
+          setPublicActivitiesList(MOCK_ACTIVITIES);
         }
       })
-      .catch(console.error);
+      .catch(() => {
+        setPublicActivitiesList(MOCK_ACTIVITIES);
+      });
 
     fetch('/api/testimonials')
       .then(res => res.json())
@@ -227,43 +252,42 @@ export default function Home() {
           <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#e8ecc4] z-20" />
         </section>
 
-        <section className="bg-surface-black border-y border-white/5 py-8 overflow-hidden z-10 select-none flex">
-          {[0, 1].map((i) => (
-            <div
-              key={i}
-              className="animate-marquee flex items-center gap-16 px-8"
-            >
-              {Array(8)
-                .fill(PARTNERS)
-                .flat()
-                .map((p, idx) => (
-                  <div key={`${i}-${idx}`} className="flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary-on-dark" />
-                    <span className="text-[13px] md:text-[14px] font-display font-semibold tracking-widest text-body-muted uppercase">
-                      {p}
-                    </span>
-                  </div>
-                ))}
-            </div>
-          ))}
-        </section>
+        <div className="bg-[#e8ecc4] border-y border-[#d0d6a8] py-5 overflow-hidden flex select-none relative z-10">
+          <motion.div
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
+            className="flex whitespace-nowrap gap-16 px-8 items-center shrink-0 min-w-full"
+          >
+            {Array(16)
+              .fill(PARTNERS)
+              .flat()
+              .map((p, idx) => (
+                <div key={idx} className="flex items-center gap-6 shrink-0">
+                  <span className="text-[13px] md:text-[14px] font-display font-semibold tracking-widest text-[#07130e] uppercase">
+                    {p}
+                  </span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#07130e] shrink-0" />
+                </div>
+              ))}
+          </motion.div>
+        </div>
 
         {/* 3. [About] Section */}
         <section
           id="about"
-          className="bg-[#e8ecc4] text-ink py-24 border-b border-[#d0d6a8] relative overflow-hidden"
+          className="scroll-mt-20 bg-[#e8ecc4] text-ink py-24 border-b border-[#d0d6a8] relative overflow-hidden"
         >
           <div className="absolute right-0 top-1/3 w-[300px] h-[300px] rounded-full bg-[#dce0b0] blur-3xl opacity-60 pointer-events-none" />
 
           <div className="site-container relative z-10">
-            <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 items-center py-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center py-6">
                
                <motion.div
                  initial={{ opacity: 0, x: -30 }}
                  whileInView={{ opacity: 1, x: 0 }}
                  viewport={{ once: true, margin: "-100px" }}
                  transition={{ duration: 0.8, ease: "easeOut" }}
-                 className="w-full lg:w-6/12 flex flex-col z-20"
+                 className="flex flex-col z-20"
                >
                   <div className="flex flex-wrap items-center gap-3 mb-8">
                     <span className="inline-block py-2 px-5 rounded-full bg-[#07130e] text-[#e8ecc4] border border-[#07130e] text-[11px] font-bold tracking-widest uppercase">
@@ -305,7 +329,7 @@ export default function Home() {
                  whileInView={{ opacity: 1, x: 0 }}
                  viewport={{ once: true, margin: "-100px" }}
                  transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                 className="w-full lg:w-6/12 flex justify-center lg:justify-end z-20 mt-12 lg:mt-0"
+                 className="flex justify-center lg:justify-end z-20"
                >
                  <div className="relative w-full aspect-[4/3] max-w-lg rounded-3xl overflow-hidden border border-[#07130e]/15 shadow-2xl group bg-white/10">
                    <img 
@@ -443,7 +467,7 @@ export default function Home() {
         {/* 5. [Activity] Section */}
         <section
           id="activity"
-          className="bg-[#e8ecc4] py-24 border-b border-[#d0d6a8] relative overflow-hidden"
+          className="scroll-mt-20 bg-[#e8ecc4] py-24 border-b border-[#d0d6a8] relative overflow-hidden"
         >
           <div className="w-full relative z-10 flex flex-col items-center">
             {/* Header stays inside site-container for proper max-width text alignment */}
@@ -568,7 +592,7 @@ export default function Home() {
         {/* 6. [Article] Section */}
         <section
           id="article"
-          className="bg-[#e8ecc4] pt-24 pb-20 relative overflow-hidden border-b border-[#d0d6a8]"
+          className="scroll-mt-20 bg-[#e8ecc4] pt-24 pb-20 relative overflow-hidden border-b border-[#d0d6a8]"
         >
           <div className="site-container">
             <motion.div {...fadeInUp} className="mb-16">
@@ -720,7 +744,7 @@ export default function Home() {
         {partnersList.length > 0 && (
           <section
             id="partners"
-            className="bg-[#e8ecc4] pb-24 relative overflow-hidden"
+            className="scroll-mt-20 bg-[#e8ecc4] pb-24 relative overflow-hidden"
           >
             <div className="site-container flex flex-col items-center justify-center text-center">
               <motion.div {...fadeInUp} className="mb-12">

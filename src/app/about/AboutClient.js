@@ -50,7 +50,7 @@ export default function AboutClient({ divisionsData }) {
     <div className="min-h-screen bg-[#07130e] text-white selection:bg-[#e8ecc4] selection:text-[#07130e] antialiased overflow-hidden">
       
       {/* 1. Hero Section — explicit bg prevents navbar overlap */}
-      <section className="relative pt-44 pb-24 px-6 overflow-hidden border-b border-white/5 bg-[#07130e]">
+      <section id="hero" className="scroll-mt-20 relative pt-44 pb-24 px-6 overflow-hidden border-b border-white/5 bg-[#07130e]">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
         
         <div className="max-w-7xl mx-auto relative z-10">
@@ -86,7 +86,7 @@ export default function AboutClient({ divisionsData }) {
       </section>
 
       {/* 2. Vision & Mission Section */}
-      <section className="py-24 px-6 md:px-12 lg:px-20 bg-[#050e0a] border-b border-white/5 relative">
+      <section id="vision" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#050e0a] border-b border-white/5 relative">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-24">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
@@ -144,7 +144,7 @@ export default function AboutClient({ divisionsData }) {
       </section>
 
       {/* 3. Our Structure Section */}
-      <section className="py-24 px-6 md:px-12 lg:px-20 bg-[#07130e] border-b border-white/5">
+      <section id="structure" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#07130e] border-b border-white/5">
         <div className="max-w-7xl mx-auto flex flex-col items-center">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -183,7 +183,7 @@ export default function AboutClient({ divisionsData }) {
 
       {/* 4. Meet the Team Section — hidden when only system/admin users exist */}
       {divisionsData.length > 0 && (
-        <section className="py-24 px-6 md:px-12 lg:px-20 bg-[#050e0a] border-b border-white/5">
+        <section id="divisions" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#050e0a] border-b border-white/5">
           <div className="max-w-7xl mx-auto flex flex-col items-center">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -257,7 +257,7 @@ export default function AboutClient({ divisionsData }) {
       )}
 
       {/* 5. Connect With Us Section — explicit bg-[#07130e] prevents transparency bleed into footer wave */}
-      <section className="py-24 px-6 md:px-12 lg:px-20 bg-[#07130e] text-center relative overflow-hidden">
+      <section id="connect" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#07130e] text-center relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none animate-pulse" />
         
         <div className="max-w-4xl mx-auto relative z-10 flex flex-col items-center gap-8">

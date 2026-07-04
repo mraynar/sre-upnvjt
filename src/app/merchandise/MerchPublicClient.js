@@ -23,7 +23,7 @@ export default function MerchPublicClient({ merchandise }) {
     <div className="min-h-screen bg-[#07130e] text-white pt-32 pb-0 selection:bg-[#e8ecc4] selection:text-[#07130e]">
       
       {/* 1. Hero Section */}
-      <section className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-20 relative">
+      <section id="hero" className="scroll-mt-20 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-20 relative">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 border-b border-white/10 pb-10">
           <div>
             <p className="text-[#e8ecc4] text-[12px] md:text-[14px] font-bold tracking-[0.2em] uppercase mb-4 flex items-center gap-2">
@@ -55,7 +55,7 @@ export default function MerchPublicClient({ merchandise }) {
       </div>
 
       {/* 3. Product Grid — auto-fill so 1 or 2 products center gracefully */}
-      <section className="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-32">
+      <section id="catalog" className="scroll-mt-20 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-32">
         <div
           className="grid gap-x-8 gap-y-16"
           style={{
@@ -139,7 +139,7 @@ export default function MerchPublicClient({ merchandise }) {
       </section>
 
       {/* 4. Footer CTA for Merchandise */}
-      <section className="bg-[#e8ecc4] text-[#07130e] py-24 rounded-t-[40px] text-center px-6">
+      <section id="order" className="scroll-mt-20 bg-[#e8ecc4] text-[#07130e] py-24 rounded-t-[40px] text-center px-6">
         <h2 className="text-[40px] md:text-[64px] font-display font-black leading-[0.9] tracking-tighter uppercase mb-6">
           How to <br className="md:hidden"/>Order?
         </h2>

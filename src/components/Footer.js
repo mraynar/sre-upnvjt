@@ -12,10 +12,13 @@ export default function Footer() {
   // Determine the background color of the wave container based on the page's last section
   const getWaveBgColor = () => {
     if (pathname === "/") {
-      return "bg-canvas";
+      return "bg-[#e8ecc4]";
+    }
+    if (pathname.startsWith("/about")) {
+      return "bg-[#07130e]";
     }
     if (pathname.startsWith("/articles")) {
-      return "bg-[#07130e]";
+      return "bg-[#dce0b0] dark:bg-[#050e0a]";
     }
     return "bg-[#e8ecc4]";
   };

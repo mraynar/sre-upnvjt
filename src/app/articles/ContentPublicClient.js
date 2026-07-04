@@ -39,7 +39,7 @@ export default function ContentPublicClient({ initialArticles }) {
     <div className="min-h-screen bg-[#e8ecc4] dark:bg-[#07130e] text-gray-900 dark:text-white font-sans selection:bg-primary/30">
       
       {/* Hero Section */}
-      <section className="pt-40 pb-20 px-6 relative overflow-hidden bg-[#e8ecc4] dark:bg-[#07130e]">
+      <section id="hero" className="scroll-mt-20 pt-40 pb-20 px-6 relative overflow-hidden bg-[#e8ecc4] dark:bg-[#07130e]">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
         
         <div className="max-w-7xl mx-auto px-0 md:px-6 relative z-10 text-center">
@@ -87,7 +87,7 @@ export default function ContentPublicClient({ initialArticles }) {
       </section>
 
       {/* Grid Section */}
-      <section className="py-20 px-6 bg-[#dce0b0] dark:bg-[#050e0a] border-t border-[#d0d6a8] dark:border-white/5 relative z-10">
+      <section id="grid" className="scroll-mt-20 py-20 px-6 bg-[#dce0b0] dark:bg-[#050e0a] border-t border-[#d0d6a8] dark:border-white/5 relative z-10">
         <div className="max-w-7xl mx-auto px-0 md:px-6">
           {filteredArticles.length === 0 ? (
             <div className="text-center py-20">
