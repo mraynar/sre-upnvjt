@@ -37,7 +37,7 @@ export default async function MemberLayout({ children }) {
         user={session.user}
         profile={profile}
       />
-      <main className="flex-1 pt-28 pb-16 w-full px-4 md:px-0">
+      <main className="flex-1 pt-28 pb-16 w-full px-6 sm:px-8 lg:px-10">
         {children}
       </main>
     </div>
