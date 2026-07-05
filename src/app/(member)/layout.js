@@ -32,7 +32,7 @@ export default async function MemberLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#07130e] text-white flex flex-col overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#07130e] text-slate-900 dark:text-white transition-colors duration-500 flex flex-col overflow-x-hidden">
       <MemberNavbarClient
         user={session.user}
         profile={profile}

@@ -11,6 +11,7 @@ import {
   ChevronDown, LogOut, Bell, User, Star, Settings, Award, Globe, Moon, Sun
 } from "lucide-react";
 import { getUserLevelData } from "@/lib/leveling";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 export default function MemberNavbarClient({ user, profile }) {
   const pathname = usePathname();
@@ -18,7 +19,7 @@ export default function MemberNavbarClient({ user, profile }) {
   const [academicDropdownOpen, setAcademicDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [lang, setLang] = useState("EN");
+  const { language, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -70,8 +71,8 @@ export default function MemberNavbarClient({ user, profile }) {
     <>
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled 
-        ? "bg-[#07130e]/80 border-b border-white/5 backdrop-blur-md shadow-xl" 
-        : "bg-[#07130e]/40 border-b border-transparent backdrop-blur-xs"
+        ? "bg-white/80 dark:bg-[#07130e]/80 border-b border-slate-200 dark:border-white/5 backdrop-blur-md shadow-xl" 
+        : "bg-white/40 dark:bg-[#07130e]/40 border-b border-transparent backdrop-blur-md"
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
@@ -106,7 +107,7 @@ export default function MemberNavbarClient({ user, profile }) {
               className={`px-4 py-2 rounded-xl text-sm font-bold tracking-wide transition-all duration-300 ${
                 pathname === "/member" 
                   ? "bg-primary/10 text-primary border border-primary/20" 
-                  : "text-white/60 hover:text-white hover:bg-white/5 border border-transparent"
+                  : "text-slate-500 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 border border-transparent"
               }`}
             >
               Beranda
@@ -119,7 +120,7 @@ export default function MemberNavbarClient({ user, profile }) {
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold tracking-wide transition-all duration-300 border ${
                   pathname.startsWith("/member/literatur") || pathname.startsWith("/member/materi")
                     ? "bg-primary/10 text-primary border-primary/20" 
-                    : "text-white/60 hover:text-white hover:bg-white/5 border-transparent"
+                    : "text-slate-500 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 border-transparent"
                 }`}
               >
                 Academic
@@ -139,7 +140,7 @@ export default function MemberNavbarClient({ user, profile }) {
                       className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold tracking-wide transition-all ${
                         pathname.startsWith("/member/literatur")
                           ? "bg-primary/20 text-primary"
-                          : "text-white/60 hover:bg-white/5 hover:text-white"
+                          : "text-slate-500 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
                       }`}
                     >
                       <BookOpen className="w-4 h-4" />
@@ -150,7 +151,7 @@ export default function MemberNavbarClient({ user, profile }) {
                       className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold tracking-wide transition-all ${
                         pathname.startsWith("/member/materi")
                           ? "bg-primary/20 text-primary"
-                          : "text-white/60 hover:bg-white/5 hover:text-white"
+                          : "text-slate-500 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
                       }`}
                     >
                       <FolderKanban className="w-4 h-4" />
@@ -171,7 +172,7 @@ export default function MemberNavbarClient({ user, profile }) {
                   className={`px-4 py-2 rounded-xl text-sm font-bold tracking-wide transition-all duration-300 ${
                     isActive 
                       ? "bg-primary/10 text-primary border border-primary/20" 
-                      : "text-white/60 hover:text-white hover:bg-white/5 border border-transparent"
+                      : "text-slate-500 dark:text-white/60 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 border border-transparent"
                   }`}
                 >
                   {link.name}
@@ -186,18 +187,18 @@ export default function MemberNavbarClient({ user, profile }) {
             {/* Language Toggle */}
             <motion.button
               whileTap={{ scale: 0.9 }}
-              onClick={() => setLang(lang === "ID" ? "EN" : "ID")}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/5 transition-colors text-xs font-bold"
+              onClick={() => setLanguage(language === "id" ? "en" : "id")}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/5 transition-colors text-xs font-bold"
             >
               <Globe className="w-4 h-4" />
-              {lang}
+              {language.toUpperCase()}
             </motion.button>
 
             {/* Theme Toggle */}
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="flex items-center justify-center p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/5 transition-colors"
+              className="flex items-center justify-center p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/5 transition-colors"
             >
               {!mounted ? null : theme === "dark" ? (
                 <Sun className="w-4 h-4" />
@@ -210,7 +211,7 @@ export default function MemberNavbarClient({ user, profile }) {
             <div className="relative" ref={profileRef}>
               <button
                 onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                className="flex items-center gap-3 bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl pl-3 pr-4 py-1.5 text-left transition-all"
+                className="flex items-center gap-3 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 rounded-2xl pl-3 pr-4 py-1.5 text-left transition-all"
               >
                 {user?.profilePictureUrl || user?.image ? (
                   <img
@@ -224,10 +225,10 @@ export default function MemberNavbarClient({ user, profile }) {
                   </div>
                 )}
                 <div className="max-w-[100px]">
-                  <p className="text-xs font-black text-white truncate">{user?.name?.split(" ")[0]}</p>
+                  <p className="text-xs font-black text-slate-900 dark:text-white truncate">{user?.name?.split(" ")[0]}</p>
                   <p className="text-[9px] font-bold text-primary tracking-wide">Lv. {levelData.currentLevel} {levelData.levelName}</p>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-white/50" />
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-white/50" />
               </button>
 
               <AnimatePresence>
@@ -236,15 +237,15 @@ export default function MemberNavbarClient({ user, profile }) {
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 mt-2 w-64 rounded-3xl bg-[#08120e] border border-white/5 shadow-2xl p-4 z-[60] overflow-hidden"
+                    className="absolute right-0 mt-2 w-64 rounded-3xl bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 shadow-2xl p-4 z-[60] overflow-hidden"
                   >
                     {/* User summary details */}
-                    <div className="pb-4 mb-4 border-b border-white/5 flex items-center gap-3">
+                    <div className="pb-4 mb-4 border-b border-slate-200 dark:border-white/5 flex items-center gap-3">
                       {user?.profilePictureUrl || user?.image ? (
                         <img
                           src={user.profilePictureUrl || user.image}
                           alt=""
-                          className="w-12 h-12 rounded-full object-cover border border-white/10"
+                          className="w-12 h-12 rounded-full object-cover border border-slate-200 dark:border-white/10"
                         />
                       ) : (
                         <div className="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-black text-lg text-primary">
@@ -252,18 +253,18 @@ export default function MemberNavbarClient({ user, profile }) {
                         </div>
                       )}
                       <div>
-                        <h4 className="text-sm font-black text-white leading-none mb-1">{user?.name}</h4>
-                        <p className="text-xs text-white/40 truncate w-40">{user?.email}</p>
+                        <h4 className="text-sm font-black text-slate-900 dark:text-white leading-none mb-1">{user?.name}</h4>
+                        <p className="text-xs text-slate-500 dark:text-white/40 truncate w-40">{user?.email}</p>
                       </div>
                     </div>
 
                     {/* XP Progress Bar */}
                     <div className="mb-4">
-                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider mb-1.5 text-white/60">
+                      <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider mb-1.5 text-slate-500 dark:text-white/60">
                         <span>XP: {levelData.totalXp}</span>
                         <span>Lvl {levelData.currentLevel}</span>
                       </div>
-                      <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                      <div className="h-2 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden border border-slate-200 dark:border-white/5">
                         <div 
                           className="h-full bg-gradient-to-r from-primary to-emerald-400 rounded-full"
                           style={{ width: `${levelData.progressPercentage}%` }}
@@ -275,7 +276,7 @@ export default function MemberNavbarClient({ user, profile }) {
                     <div className="flex flex-col gap-1 mb-4">
                       <Link
                         href="/member/profil"
-                        className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-white/70 hover:bg-white/5 hover:text-white transition-all"
+                        className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-white/70 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition-all"
                       >
                         <User className="w-4 h-4 text-primary" />
                         Detail Profil
@@ -301,17 +302,17 @@ export default function MemberNavbarClient({ user, profile }) {
             {/* Language Toggle (Mobile) */}
             <motion.button
               whileTap={{ scale: 0.9 }}
-              onClick={() => setLang(lang === "ID" ? "EN" : "ID")}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-white/5 text-white/70 hover:text-white transition-colors border border-white/5 font-bold text-xs"
+              onClick={() => setLanguage(language === "id" ? "en" : "id")}
+              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-white/70 hover:bg-slate-200 hover:text-slate-900 dark:hover:text-white transition-colors border border-slate-200 dark:border-white/5 font-bold text-xs"
             >
               <Globe className="w-4 h-4" />
-              <span>{lang}</span>
+              <span>{language.toUpperCase()}</span>
             </motion.button>
             
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="flex items-center justify-center p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/5 transition-colors"
+              className="flex items-center justify-center p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-white/5 transition-colors"
             >
               {!mounted ? null : theme === "dark" ? (
                 <Sun className="w-4 h-4" />
@@ -321,7 +322,7 @@ export default function MemberNavbarClient({ user, profile }) {
             </motion.button>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2.5 rounded-xl bg-white/5 text-white/70 hover:text-white transition-all border border-white/5"
+              className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-white/70 hover:bg-slate-200 hover:text-slate-900 dark:hover:text-white transition-all border border-slate-200 dark:border-white/5"
             >
               {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -350,14 +351,14 @@ export default function MemberNavbarClient({ user, profile }) {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="lg:hidden fixed top-0 right-0 h-[100dvh] w-[85%] sm:w-80 bg-[#07130e] border-l border-white/5 shadow-2xl z-[100] overflow-y-auto flex flex-col"
+            className="lg:hidden fixed top-0 right-0 h-[100dvh] w-[85%] sm:w-80 bg-white dark:bg-[#07130e] border-l border-slate-200 dark:border-white/5 shadow-2xl z-[100] overflow-y-auto flex flex-col"
           >
             {/* Header with close button */}
-            <div className="flex items-center justify-between p-6 border-b border-white/5">
-              <span className="text-sm font-black text-white/50 tracking-widest uppercase">Menu Utama</span>
+            <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-white/5">
+              <span className="text-sm font-black text-slate-400 dark:text-white/50 tracking-widest uppercase">Menu Utama</span>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 rounded-xl bg-white/5 text-white/70 hover:text-white transition-all"
+                className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-white/70 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-all"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -369,14 +370,14 @@ export default function MemberNavbarClient({ user, profile }) {
                 href="/member"
                 onClick={() => setIsOpen(false)}
                 className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl text-[15px] font-bold tracking-wide transition-all ${
-                  pathname === "/member" ? "bg-primary/10 text-primary" : "text-white/70 hover:bg-white/5 hover:text-white"
+                  pathname === "/member" ? "bg-primary/10 text-primary" : "text-slate-600 dark:text-white/70 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                <Award className={`w-5 h-5 ${pathname === "/member" ? "text-primary" : "text-white/40"}`} />
+                <Award className={`w-5 h-5 ${pathname === "/member" ? "text-primary" : "text-slate-400 dark:text-white/40"}`} />
                 Beranda
               </Link>
 
-              <div className="mt-4 mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-white/30">
+              <div className="mt-4 mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/30">
                 Academic Pages
               </div>
 
@@ -384,10 +385,10 @@ export default function MemberNavbarClient({ user, profile }) {
                 href="/member/literatur"
                 onClick={() => setIsOpen(false)}
                 className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl text-[15px] font-bold tracking-wide transition-all ${
-                  pathname.startsWith("/member/literatur") ? "bg-primary/10 text-primary" : "text-white/70 hover:bg-white/5 hover:text-white"
+                  pathname.startsWith("/member/literatur") ? "bg-primary/10 text-primary" : "text-slate-600 dark:text-white/70 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                <BookOpen className={`w-5 h-5 ${pathname.startsWith("/member/literatur") ? "text-primary" : "text-white/40"}`} />
+                <BookOpen className={`w-5 h-5 ${pathname.startsWith("/member/literatur") ? "text-primary" : "text-slate-400 dark:text-white/40"}`} />
                 Bank Literatur
               </Link>
 
@@ -395,14 +396,14 @@ export default function MemberNavbarClient({ user, profile }) {
                 href="/member/materi"
                 onClick={() => setIsOpen(false)}
                 className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl text-[15px] font-bold tracking-wide transition-all ${
-                  pathname.startsWith("/member/materi") ? "bg-primary/10 text-primary" : "text-white/70 hover:bg-white/5 hover:text-white"
+                  pathname.startsWith("/member/materi") ? "bg-primary/10 text-primary" : "text-slate-600 dark:text-white/70 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                <FolderKanban className={`w-5 h-5 ${pathname.startsWith("/member/materi") ? "text-primary" : "text-white/40"}`} />
+                <FolderKanban className={`w-5 h-5 ${pathname.startsWith("/member/materi") ? "text-primary" : "text-slate-400 dark:text-white/40"}`} />
                 Modul PPT
               </Link>
 
-              <div className="mt-4 mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-white/30">
+              <div className="mt-4 mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-white/30">
                 Activity
               </div>
 
@@ -415,10 +416,10 @@ export default function MemberNavbarClient({ user, profile }) {
                     href={link.href}
                     onClick={() => setIsOpen(false)}
                     className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl text-[15px] font-bold tracking-wide transition-all ${
-                      isActive ? "bg-primary/10 text-primary" : "text-white/70 hover:bg-white/5 hover:text-white"
+                      isActive ? "bg-primary/10 text-primary" : "text-slate-600 dark:text-white/70 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
-                    {Icon && <Icon className={`w-5 h-5 ${isActive ? "text-primary" : "text-white/40"}`} />}
+                    {Icon && <Icon className={`w-5 h-5 ${isActive ? "text-primary" : "text-slate-400 dark:text-white/40"}`} />}
                     {link.name}
                   </Link>
                 );
@@ -426,13 +427,13 @@ export default function MemberNavbarClient({ user, profile }) {
             </div>
 
             {/* User settings details (Bottom pinned) */}
-            <div className="p-6 border-t border-white/5 bg-white/[0.02]">
+            <div className="p-6 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-white/[0.02]">
               <div className="flex items-center gap-3 mb-6">
                 {user?.profilePictureUrl || user?.image ? (
                   <img
                     src={user.profilePictureUrl || user.image}
                     alt=""
-                    className="w-10 h-10 rounded-full object-cover border border-white/10"
+                    className="w-10 h-10 rounded-full object-cover border border-slate-200 dark:border-white/10"
                   />
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-black text-sm text-primary">
@@ -440,7 +441,7 @@ export default function MemberNavbarClient({ user, profile }) {
                   </div>
                 )}
                 <div className="flex-1">
-                  <h4 className="text-sm font-black text-white">{user?.name}</h4>
+                  <h4 className="text-sm font-black text-slate-900 dark:text-white">{user?.name}</h4>
                   <p className="text-[10px] font-bold text-primary uppercase tracking-wider mt-0.5">Level {levelData.currentLevel} • {levelData.levelName}</p>
                 </div>
               </div>
@@ -449,9 +450,9 @@ export default function MemberNavbarClient({ user, profile }) {
                 <Link
                   href="/member/profil"
                   onClick={() => setIsOpen(false)}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold text-white bg-white/5 hover:bg-white/10 transition-all"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold text-slate-600 dark:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 transition-all"
                 >
-                  <User className="w-4 h-4 text-emerald-400" />
+                  <User className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
                   Profil
                 </Link>
                 <button
