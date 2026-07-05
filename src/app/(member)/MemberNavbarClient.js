@@ -5,11 +5,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "next-themes";
 import { 
   BookOpen, Trophy, ClipboardCheck, FolderKanban, Menu, X, 
-  ChevronDown, LogOut, Bell, User, Star, Settings, Award, Globe
+  ChevronDown, LogOut, Bell, User, Star, Settings, Award, Globe, Moon, Sun
 } from "lucide-react";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { getUserLevelData } from "@/lib/leveling";
 
 export default function MemberNavbarClient({ user, profile }) {
   const pathname = usePathname();
@@ -17,7 +18,13 @@ export default function MemberNavbarClient({ user, profile }) {
   const [academicDropdownOpen, setAcademicDropdownOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [lang, setLang] = useState("ID");
+  const [lang, setLang] = useState("EN");
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const academicRef = useRef(null);
   const profileRef = useRef(null);
@@ -57,14 +64,7 @@ export default function MemberNavbarClient({ user, profile }) {
     { name: "Absensi", href: "/member/absensi", icon: ClipboardCheck },
   ];
 
-  const getLevelBadge = (level) => {
-    if (level >= 31) return { label: "Forest", color: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" };
-    if (level >= 16) return { label: "Tree", color: "bg-green-500/10 text-green-400 border-green-500/20" };
-    if (level >= 6) return { label: "Sapling", color: "bg-teal-500/10 text-teal-400 border-teal-500/20" };
-    return { label: "Seedling", color: "bg-blue-500/10 text-blue-400 border-blue-500/20" };
-  };
-
-  const badge = getLevelBadge(profile?.level || 1);
+  const levelData = getUserLevelData(profile?.xp || user?.totalPoints || 0);
 
   return (
     <>
@@ -184,19 +184,27 @@ export default function MemberNavbarClient({ user, profile }) {
           <div className="hidden lg:flex items-center gap-4">
             
             {/* Language Toggle */}
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={() => setLang(lang === "ID" ? "EN" : "ID")}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/5 transition-all text-xs font-bold"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/5 transition-colors text-xs font-bold"
             >
               <Globe className="w-4 h-4" />
               {lang}
-            </button>
+            </motion.button>
 
-            {/* Notification Bell (Visual only) */}
-            <button className="relative p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/5 transition-all">
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-primary" />
-            </button>
+            {/* Theme Toggle */}
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="flex items-center justify-center p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/5 transition-colors"
+            >
+              {!mounted ? null : theme === "dark" ? (
+                <Sun className="w-4 h-4" />
+              ) : (
+                <Moon className="w-4 h-4" />
+              )}
+            </motion.button>
 
             {/* Profile Dropdown */}
             <div className="relative" ref={profileRef}>
@@ -217,7 +225,7 @@ export default function MemberNavbarClient({ user, profile }) {
                 )}
                 <div className="max-w-[100px]">
                   <p className="text-xs font-black text-white truncate">{user?.name?.split(" ")[0]}</p>
-                  <p className="text-[9px] font-bold text-primary tracking-wide">Lv. {profile?.level || 1} {badge.label}</p>
+                  <p className="text-[9px] font-bold text-primary tracking-wide">Lv. {levelData.currentLevel} {levelData.levelName}</p>
                 </div>
                 <ChevronDown className="w-3.5 h-3.5 text-white/50" />
               </button>
@@ -252,13 +260,13 @@ export default function MemberNavbarClient({ user, profile }) {
                     {/* XP Progress Bar */}
                     <div className="mb-4">
                       <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider mb-1.5 text-white/60">
-                        <span>XP: {profile?.xp || 0}</span>
-                        <span>Lvl {profile?.level || 1}</span>
+                        <span>XP: {levelData.totalXp}</span>
+                        <span>Lvl {levelData.currentLevel}</span>
                       </div>
                       <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
                         <div 
                           className="h-full bg-gradient-to-r from-primary to-emerald-400 rounded-full"
-                          style={{ width: `${Math.min(((profile?.xp || 0) % 100), 100)}%` }}
+                          style={{ width: `${levelData.progressPercentage}%` }}
                         />
                       </div>
                     </div>
@@ -272,13 +280,6 @@ export default function MemberNavbarClient({ user, profile }) {
                         <User className="w-4 h-4 text-primary" />
                         Detail Profil
                       </Link>
-                      <div className="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold text-white/70">
-                        <span className="flex items-center gap-3">
-                          <Star className="w-4 h-4 text-emerald-400" />
-                          Tema
-                        </span>
-                        <ThemeToggle />
-                      </div>
                     </div>
 
                     {/* Sign out */}
@@ -298,15 +299,26 @@ export default function MemberNavbarClient({ user, profile }) {
           {/* Hamburger menu button (Mobile) */}
           <div className="flex items-center gap-2 lg:hidden">
             {/* Language Toggle (Mobile) */}
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={() => setLang(lang === "ID" ? "EN" : "ID")}
-              className="flex items-center gap-1 p-2 rounded-xl bg-white/5 text-white/70 hover:text-white transition-all border border-white/5 font-bold text-xs"
+              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-white/5 text-white/70 hover:text-white transition-colors border border-white/5 font-bold text-xs"
             >
               <Globe className="w-4 h-4" />
               <span>{lang}</span>
-            </button>
+            </motion.button>
             
-            <ThemeToggle />
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="flex items-center justify-center p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white/70 hover:text-white border border-white/5 transition-colors"
+            >
+              {!mounted ? null : theme === "dark" ? (
+                <Sun className="w-4 h-4" />
+              ) : (
+                <Moon className="w-4 h-4" />
+              )}
+            </motion.button>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2.5 rounded-xl bg-white/5 text-white/70 hover:text-white transition-all border border-white/5"
@@ -429,7 +441,7 @@ export default function MemberNavbarClient({ user, profile }) {
                 )}
                 <div className="flex-1">
                   <h4 className="text-sm font-black text-white">{user?.name}</h4>
-                  <p className="text-[10px] font-bold text-primary uppercase tracking-wider mt-0.5">Level {profile?.level || 1} • {badge.label}</p>
+                  <p className="text-[10px] font-bold text-primary uppercase tracking-wider mt-0.5">Level {levelData.currentLevel} • {levelData.levelName}</p>
                 </div>
               </div>
 
