@@ -840,5 +840,24 @@
     "delete_desc": "Apakah Anda yakin ingin menghapus ",
     "delete_desc2": "? Tautan ini akan berhenti berfungsi seketika. Tindakan ini tidak dapat dibatalkan.",
     "delete": "Hapus"
+  },
+  "leaderboard": {
+    "badge_hof": "Hall of Fame",
+    "title": "Peringkat Keaktifan",
+    "subtitle": "Daftar pengurus teraktif SRE UPNVJT dengan akumulasi perolehan poin keaktifan XP terbanyak sepanjang semester ini.",
+    "search": "Cari pengurus...",
+    "xp_points": "XP Points",
+    "table_rank": "Peringkat",
+    "table_member": "Anggota",
+    "table_division": "Divisi",
+    "table_badge": "Liga Badge",
+    "table_progress": "Kemajuan Relatif XP",
+    "empty": "Tidak ada anggota ditemukan",
+    "you": "Kamu",
+    "floating_rank": "Peringkat Anda",
+    "floating_level": "Level Saat Ini",
+    "floating_xp_needed": "XP lagi untuk menyusul",
+    "floating_top_1": "Anda berada di puncak!",
+    "staff": "SRE Staff"
   }
 }
