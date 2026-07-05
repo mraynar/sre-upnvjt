@@ -88,7 +88,12 @@
     "submit_success": "Task submission sent successfully!",
     "submit_error": "Failed to submit task",
     "submit_network_error": "A connection error occurred",
-    "start_mission": "Start Mission"
+    "start_mission": "Start Mission",
+    "type_link": "Submit URL",
+    "type_file": "Upload File",
+    "form_label_file": "Select Task Document",
+    "choose_file": "Click or Drag File Here",
+    "error_no_file": "Please select a file first"
   },
   "roles": {
     "title": "Roles & Permissions",

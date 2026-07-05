@@ -88,7 +88,12 @@
     "submit_success": "Jawaban tugas berhasil dikirim!",
     "submit_error": "Gagal mengirim jawaban",
     "submit_network_error": "Terjadi kesalahan koneksi",
-    "start_mission": "Mulai Misi"
+    "start_mission": "Mulai Misi",
+    "type_link": "Kirim Tautan",
+    "type_file": "Unggah File",
+    "form_label_file": "Pilih Dokumen Tugas",
+    "choose_file": "Klik atau Tarik File Kesini",
+    "error_no_file": "Pilih file terlebih dahulu"
   },
   "roles": {
     "title": "Peran & Izin",

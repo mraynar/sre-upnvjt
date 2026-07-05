@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FolderKanban, Calendar, Award, CheckCircle2, XCircle, Clock,
-  ExternalLink, Send, ArrowRight, X, AlertTriangle, Info, Sparkles, Zap, Flame
+  ExternalLink, Send, ArrowRight, X, AlertTriangle, Info, Sparkles, Zap, Flame, UploadCloud, Link as LinkIcon
 } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageProvider";
 
@@ -12,7 +12,9 @@ export default function TugasClient({ initialTasks, initialSubmissions }) {
   const [tasks] = useState(initialTasks || []);
   const [submissions, setSubmissions] = useState(initialSubmissions || []);
   const [activeTask, setActiveTask] = useState(null); // task for details view
+  const [submissionType, setSubmissionType] = useState("link"); // 'link' or 'file'
   const [fileUrl, setFileUrl] = useState("");
+  const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -59,6 +61,16 @@ export default function TugasClient({ initialTasks, initialSubmissions }) {
     const sub = submissions.find(s => s.taskId === tk.id);
     setActiveTask(tk);
     setFileUrl(sub?.fileUrl || "");
+    setFiles([]);
+    
+    if (tk.submissionType === 'FILE') {
+      setSubmissionType("file");
+    } else if (tk.submissionType === 'LINK') {
+      setSubmissionType("link");
+    } else {
+      setSubmissionType("link");
+    }
+    
     setError("");
     setSuccess("");
   };
@@ -71,10 +83,34 @@ export default function TugasClient({ initialTasks, initialSubmissions }) {
     setSuccess("");
 
     try {
+      const formData = new FormData();
+      formData.append("type", submissionType);
+      if (submissionType === "link") {
+        formData.append("fileUrl", fileUrl);
+      } else {
+        if (!files || files.length === 0) {
+          setError(t('member_tasks.error_no_file'));
+          setIsLoading(false);
+          return;
+        }
+
+        let totalSizeMb = 0;
+        files.forEach(f => { totalSizeMb += f.size / (1024 * 1024); });
+        const maxMb = activeTask.maxUploadSizeMb || 2;
+        if (totalSizeMb > maxMb) {
+          setError(`Total ukuran file melebihi batas maksimal (${maxMb} MB)`);
+          setIsLoading(false);
+          return;
+        }
+
+        files.forEach(f => {
+          formData.append("file", f);
+        });
+      }
+
       const res = await fetch(`/api/tasks/${activeTask.id}/submissions`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileUrl }),
+        body: formData,
       });
 
       const data = await res.json();
@@ -215,7 +251,7 @@ export default function TugasClient({ initialTasks, initialSubmissions }) {
                       </div>
                       <div className="flex flex-col">
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Deadline</span>
-                        <span className="text-xs font-bold text-slate-300">
+                        <span className="text-xs font-bold text-slate-300" suppressHydrationWarning>
                           {new Date(tk.deadline).toLocaleDateString(language === 'en' ? 'en-US' : 'id-ID', { day: "numeric", month: "long", year: "numeric" })}
                         </span>
                       </div>
@@ -247,7 +283,7 @@ export default function TugasClient({ initialTasks, initialSubmissions }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 30 }}
               transition={{ type: "spring", bounce: 0.4, duration: 0.6 }}
-              className="relative w-full max-w-2xl bg-white dark:bg-[#07130e] border border-slate-200 dark:border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+              className="relative w-full max-w-4xl bg-white dark:bg-[#07130e] border border-slate-200 dark:border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
               {/* Modal Colorful Header Background */}
               <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-br from-primary/20 via-emerald-500/10 to-transparent pointer-events-none" />
@@ -279,7 +315,7 @@ export default function TugasClient({ initialTasks, initialSubmissions }) {
                     </div>
                     <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-gray-300">
                       <Clock className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-bold">
+                      <span className="text-sm font-bold" suppressHydrationWarning>
                         <span className="opacity-60 font-medium mr-1">{t('member_tasks.deadline')}</span> 
                         {new Date(activeTask.deadline).toLocaleDateString(language === 'en' ? 'en-US' : 'id-ID', {
                           day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit"
@@ -353,22 +389,67 @@ export default function TugasClient({ initialTasks, initialSubmissions }) {
 
                         {/* Submission input form */}
                         {(visual.key === "NOT_STARTED" || visual.key === "REJECTED") && (
-                          <form onSubmit={handleSubmitTask} className="space-y-4 pt-4">
-                            <div>
-                              <label className="block text-xs font-black tracking-widest text-slate-700 dark:text-gray-300 uppercase mb-3 ml-1">{t('member_tasks.form_label')}</label>
-                              <div className="relative">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                  <ExternalLink className="w-5 h-5 text-slate-400" />
-                                </div>
-                                <input
-                                  type="url"
-                                  required
-                                  value={fileUrl}
-                                  onChange={e => setFileUrl(e.target.value)}
-                                  className="w-full h-14 pl-12 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-gray-600 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
-                                  placeholder="https://drive.google.com/..."
-                                />
+                          <form onSubmit={handleSubmitTask} className="space-y-5 pt-4">
+                            
+                            {/* Type Toggle */}
+                            {(!activeTask.submissionType || activeTask.submissionType === 'BOTH') && (
+                              <div className="flex bg-slate-100 dark:bg-white/5 p-1 rounded-xl">
+                                <button
+                                  type="button"
+                                  onClick={() => setSubmissionType("link")}
+                                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${submissionType === "link" ? "bg-white dark:bg-slate-800 text-primary shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-white"}`}
+                                >
+                                  <LinkIcon className="w-4 h-4" /> {t('member_tasks.type_link')}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setSubmissionType("file")}
+                                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${submissionType === "file" ? "bg-white dark:bg-slate-800 text-primary shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-white"}`}
+                                >
+                                  <UploadCloud className="w-4 h-4" /> {t('member_tasks.type_file')}
+                                </button>
                               </div>
+                            )}
+
+                            <div>
+                              <label className="block text-xs font-black tracking-widest text-slate-700 dark:text-gray-300 uppercase mb-3 ml-1">
+                                {submissionType === "link" ? t('member_tasks.form_label') : t('member_tasks.form_label_file')}
+                              </label>
+                              
+                              {submissionType === "link" ? (
+                                <div className="relative">
+                                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <ExternalLink className="w-5 h-5 text-slate-400" />
+                                  </div>
+                                  <input
+                                    type="url"
+                                    required
+                                    value={fileUrl}
+                                    onChange={e => setFileUrl(e.target.value)}
+                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-gray-600 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
+                                    placeholder="https://drive.google.com/..."
+                                  />
+                                </div>
+                              ) : (
+                                <div className="relative flex items-center justify-center w-full">
+                                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 dark:border-white/20 rounded-2xl cursor-pointer bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 hover:border-primary/50 transition-all">
+                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                      <UploadCloud className="w-8 h-8 mb-2 text-slate-400 group-hover:text-primary" />
+                                      <p className="mb-1 text-sm font-bold text-slate-600 dark:text-gray-300">
+                                        {files.length > 0 ? `${files.length} file dipilih` : t('member_tasks.choose_file')}
+                                      </p>
+                                      {!files.length && <p className="text-xs text-slate-500 dark:text-gray-500">Maks. {activeTask.maxUploadSizeMb || 2} MB</p>}
+                                    </div>
+                                    <input 
+                                      type="file" 
+                                      className="hidden" 
+                                      required={files.length === 0}
+                                      multiple={activeTask.allowMultipleFiles}
+                                      onChange={(e) => setFiles(Array.from(e.target.files))}
+                                    />
+                                  </label>
+                                </div>
+                              )}
                             </div>
 
                             {error && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-4 py-3 rounded-xl bg-red-500/10 text-xs font-bold text-red-500 dark:text-red-400 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {error}</motion.div>}
@@ -400,7 +481,7 @@ export default function TugasClient({ initialTasks, initialSubmissions }) {
         )}
       </AnimatePresence>
 
-      <style jsx global>{`
+      <style dangerouslySetInnerHTML={{__html: `
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
         }
@@ -414,7 +495,7 @@ export default function TugasClient({ initialTasks, initialSubmissions }) {
         .dark .custom-scrollbar::-webkit-scrollbar-thumb {
           background-color: rgba(255, 255, 255, 0.1);
         }
-      `}</style>
+      `}} />
     </div>
   );
 }
