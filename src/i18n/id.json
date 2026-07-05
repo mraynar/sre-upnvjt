@@ -840,5 +840,48 @@
     "delete_desc": "Apakah Anda yakin ingin menghapus ",
     "delete_desc2": "? Tautan ini akan berhenti berfungsi seketika. Tindakan ini tidak dapat dibatalkan.",
     "delete": "Hapus"
+  },
+  "member_dashboard": {
+    "greeting": {
+      "morning": "Selamat Pagi",
+      "afternoon": "Selamat Siang",
+      "evening": "Selamat Sore",
+      "night": "Selamat Malam"
+    },
+    "welcome_msg": "Pantau aktivitas organisasi, penugasan, dan kumpulkan poin XP sebanyak-banyaknya!",
+    "id_card": {
+      "title": "Kartu Identitas Anggota",
+      "npm": "NPM",
+      "role": "Peran/Posisi"
+    },
+    "tasks": {
+      "title": "Penugasan",
+      "view_all": "Semua Tugas",
+      "no_tasks": "Belum Ada Tugas",
+      "no_tasks_desc": "Saat ini belum ada tugas atau proyek baru dari pengurus. Tetap pantau dashboard Anda secara berkala!",
+      "status_not_started": "BELUM DIKERJAKAN",
+      "status_completed": "SELESAI",
+      "status_revising": "REVISI",
+      "status_reviewing": "REVIEW",
+      "deadline": "Deadline"
+    },
+    "xp_logs": {
+      "title": "Aktivitas XP Baru",
+      "no_xp": "Belum ada perolehan XP",
+      "no_xp_desc": "Ayo ikuti kuis, isi absensi, dan submit tugas untuk mengumpulkan XP pertama Anda!"
+    },
+    "stats": {
+      "total_xp": "Total Poin XP",
+      "tasks_approved": "Tugas Disetujui",
+      "rank": "Peringkat Rank",
+      "attendance": "Kehadiran (Absen)",
+      "energy_adventure": "Petualangan Energi"
+    },
+    "profile": {
+      "view_full": "Lihat Profil Lengkap",
+      "rank": "Rank",
+      "attendance": "Kehadiran",
+      "tasks": "Tugas"
+    }
   }
 }

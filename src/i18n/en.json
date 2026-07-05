@@ -840,5 +840,48 @@
     "delete_desc": "Are you sure you want to delete ",
     "delete_desc2": "? This link will immediately stop working. This action cannot be undone.",
     "delete": "Delete"
+  },
+  "member_dashboard": {
+    "greeting": {
+      "morning": "Good Morning",
+      "afternoon": "Good Afternoon",
+      "evening": "Good Evening",
+      "night": "Good Night"
+    },
+    "welcome_msg": "Monitor organization activities, tasks, and collect as much XP as you can!",
+    "id_card": {
+      "title": "Member Identity Card",
+      "npm": "NPM",
+      "role": "Role/Position"
+    },
+    "tasks": {
+      "title": "Tasks",
+      "view_all": "All Tasks",
+      "no_tasks": "No Tasks Yet",
+      "no_tasks_desc": "There are no new tasks or projects from the board yet. Keep checking your dashboard regularly!",
+      "status_not_started": "NOT STARTED",
+      "status_completed": "COMPLETED",
+      "status_revising": "REVISING",
+      "status_reviewing": "REVIEWING",
+      "deadline": "Deadline"
+    },
+    "xp_logs": {
+      "title": "Recent XP Activities",
+      "no_xp": "No XP earned yet",
+      "no_xp_desc": "Join quizzes, fill out attendance, and submit tasks to collect your first XP!"
+    },
+    "stats": {
+      "total_xp": "Total XP Points",
+      "tasks_approved": "Tasks Approved",
+      "rank": "Rank",
+      "attendance": "Attendance",
+      "energy_adventure": "Energy Adventure"
+    },
+    "profile": {
+      "view_full": "View Full Profile",
+      "rank": "Rank",
+      "attendance": "Attendance",
+      "tasks": "Tasks"
+    }
   }
 }

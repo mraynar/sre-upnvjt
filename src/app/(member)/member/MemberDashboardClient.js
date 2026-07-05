@@ -5,8 +5,10 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { 
   Award, Trophy, ClipboardCheck, FolderKanban, Flame, 
-  ArrowRight, Star, BookOpen, Clock, ChevronRight, Zap
+  ArrowRight, Star, BookOpen, Clock, ChevronRight, Zap, Shield, Medal
 } from "lucide-react";
+import { getUserLevelData } from "@/lib/leveling";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 export default function MemberDashboardClient({
   user,
@@ -20,37 +22,27 @@ export default function MemberDashboardClient({
   latestLiterature,
   xpLogs
 }) {
+  const { t } = useLanguage();
 
-  // Gamification badges details
-  const getLevelBadge = (level) => {
-    if (level >= 31) return { label: "Forest Elite", desc: "Penjaga Kelestarian Alam", color: "from-emerald-600 to-emerald-400 text-white shadow-emerald-500/20" };
-    if (level >= 16) return { label: "Ancient Tree", desc: "Inovator Energi Hijau", color: "from-green-600 to-green-400 text-white shadow-green-500/20" };
-    if (level >= 6) return { label: "Sprouting Sapling", desc: "Pecinta Inovasi Baru", color: "from-teal-600 to-teal-400 text-white shadow-teal-500/20" };
-    return { label: "Fresh Seedling", desc: "Pemula Transisi Energi", color: "from-blue-600 to-blue-400 text-white shadow-blue-500/20" };
-  };
+  // Compute next level XP using standardized utility
+  const levelData = getUserLevelData(profile?.xp || user?.totalPoints || 0);
+  const pointsRemaining = levelData.nextLevelXp ? levelData.nextLevelXp - levelData.totalXp : 0;
+  const levelProgressPercent = levelData.progressPercentage;
 
-  const badge = getLevelBadge(profile?.level || 1);
-
-  // Compute next level XP
-  const pointsCurrentLevel = (profile?.xp || 0) % 100;
-  const pointsRemaining = 100 - pointsCurrentLevel;
-  const levelProgressPercent = pointsCurrentLevel;
-
-  // Task Status mapper
   const getTaskStatus = (taskId) => {
     const sub = submissions.find(s => s.taskId === taskId);
-    if (!sub) return { label: "Belum Mulai", color: "bg-white/5 text-white/50 border-white/10" };
-    if (sub.status === "APPROVED") return { label: "Disetujui", color: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20" };
-    if (sub.status === "REJECTED") return { label: "Revisi", color: "bg-red-500/15 text-red-400 border-red-500/20" };
-    return { label: "Menunggu Review", color: "bg-amber-500/15 text-amber-400 border-amber-500/20" };
+    if (!sub) return { label: t('member_dashboard.tasks.status_not_started'), color: "bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-white/50 border-slate-200 dark:border-white/10" };
+    if (sub.status === "APPROVED") return { label: t('member_dashboard.tasks.status_completed'), color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" };
+    if (sub.status === "REJECTED") return { label: t('member_dashboard.tasks.status_revising'), color: "bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/20" };
+    return { label: t('member_dashboard.tasks.status_reviewing'), color: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20" };
   };
 
   return (
-    <div className="w-full relative space-y-8 select-none">
+    <div className="w-full relative space-y-8 select-none transition-colors duration-500">
       
       {/* Background Ambience */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none mix-blend-screen" />
-      <div className="absolute bottom-20 right-1/4 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none mix-blend-screen" />
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 dark:bg-primary/5 rounded-full blur-[120px] pointer-events-none mix-blend-multiply dark:mix-blend-screen" />
+      <div className="absolute bottom-20 right-1/4 w-[400px] h-[400px] bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-[100px] pointer-events-none mix-blend-multiply dark:mix-blend-screen" />
 
       {/* 1. Hero Welcomer & Gamified Progress Card */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
@@ -60,91 +52,121 @@ export default function MemberDashboardClient({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="lg:col-span-2 bg-[#08120e] border border-white/5 rounded-3xl p-6 md:p-8 flex flex-col justify-between relative overflow-hidden shadow-2xl"
+          className="lg:col-span-2 bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 rounded-3xl p-6 md:p-8 flex flex-col justify-between relative overflow-hidden shadow-xl dark:shadow-2xl transition-colors duration-500"
         >
-          <div className="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-primary/10 blur-[50px] pointer-events-none" />
+          <div className="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-primary/20 dark:bg-primary/10 blur-[50px] pointer-events-none" />
           
           <div className="relative z-10">
             <span className="px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-bold text-primary tracking-wide">
               E-Learning Member Portal
             </span>
-            <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-white mt-6 leading-none">
-              Selamat datang, <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-300">
+            <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-slate-900 dark:text-white mt-6 leading-none">
+              {t('member_dashboard.greeting.morning').split(" ")[0]} {t('member_dashboard.greeting.morning').split(" ")[1] || ""}, <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400 dark:to-emerald-300">
                 {user?.name?.split(" ")[0]}!
               </span>
             </h1>
-            <p className="text-white/60 text-sm md:text-base font-medium mt-3 max-w-lg leading-relaxed">
-              Siap melangkah hari ini? Selesaikan tugas harian, pelajari materi terbaru, dan kumpulkan poin XP untuk menaikkan peringkatmu di Hall of Fame!
+            <p className="text-slate-500 dark:text-white/60 text-sm md:text-base font-medium mt-3 max-w-lg leading-relaxed">
+              {t('member_dashboard.welcome_msg')}
             </p>
           </div>
 
           {/* Gamified level progress bar */}
-          <div className="mt-8 relative z-10 bg-white/5 border border-white/5 rounded-2xl p-4 md:p-6 backdrop-blur-md">
+          <div className="mt-8 relative z-10 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/5 rounded-2xl p-4 md:p-6 backdrop-blur-md transition-colors duration-500">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+                <div className="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center border border-primary/20 dark:border-primary/30">
                   <Star className="w-5 h-5 text-primary animate-pulse" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-black text-white">Level {profile?.level || 1} • {badge.label}</h4>
-                  <p className="text-[10px] text-white/40 font-bold uppercase tracking-wider">{badge.desc}</p>
+                  <h3 className="font-black text-sm text-slate-900 dark:text-white mt-1">Level {levelData.currentLevel} • {levelData.levelName}</h3>
+                  <p className="text-[10px] text-slate-400 dark:text-white/40 font-bold uppercase tracking-wider">{t('member_dashboard.stats.energy_adventure')}</p>
                 </div>
               </div>
-              <span className="text-xs font-bold text-white/60 sm:text-right">
-                {pointsRemaining} XP menuju level berikutnya
+              <span className="text-xs font-bold text-slate-500 dark:text-white/60 sm:text-right">
+                {pointsRemaining > 0 ? `${pointsRemaining} XP menuju level berikutnya` : 'Level Maksimal'}
               </span>
             </div>
             
             <div className="relative">
-              <div className="h-3 w-full bg-[#050d0a] rounded-full overflow-hidden border border-white/5 p-0.5">
+              <div className="h-3 w-full bg-slate-200 dark:bg-[#050d0a] rounded-full overflow-hidden border border-slate-300 dark:border-white/5 p-0.5">
                 <div 
-                  className="h-full bg-gradient-to-r from-primary to-emerald-400 rounded-full transition-all duration-1000"
+                  className="h-full bg-gradient-to-r from-primary to-emerald-500 dark:to-emerald-400 rounded-full transition-all duration-1000"
                   style={{ width: `${levelProgressPercent}%` }}
                 />
               </div>
-              <span className="absolute -top-6 right-2 text-[10px] font-black text-primary font-mono">{levelProgressPercent}/100 XP</span>
+              <span className="absolute -top-6 right-2 text-[10px] font-black text-primary font-mono">{levelData.totalXp} XP</span>
             </div>
           </div>
         </motion.div>
 
-        {/* Quick Profile Summary Card */}
+        {/* Quick Profile Summary Card (Hidden on Mobile) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="bg-gradient-to-b from-[#0a1f15] to-[#07130e] border border-primary/20 rounded-3xl p-6 md:p-8 flex flex-col justify-between items-center text-center relative overflow-hidden shadow-2xl group"
+          className="hidden lg:flex bg-gradient-to-b from-emerald-50 dark:from-[#0a1f15] to-white dark:to-[#07130e] border border-slate-200 dark:border-primary/20 rounded-3xl p-8 flex-col justify-between items-center text-center relative overflow-hidden shadow-xl dark:shadow-2xl group transition-colors duration-500"
         >
-          <div className="absolute inset-0 bg-grid-pattern opacity-10 group-hover:scale-105 transition-transform duration-700 pointer-events-none" />
+          {/* Decorative glowing background elements */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent opacity-50 group-hover:scale-110 transition-transform duration-700 pointer-events-none" />
+          <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-slate-100 dark:from-white/5 to-transparent pointer-events-none" />
           
-          <div className="relative z-10 flex flex-col items-center">
-            {user?.profilePictureUrl ? (
-              <img
-                src={user.profilePictureUrl}
-                alt=""
-                className="w-24 h-24 rounded-full object-cover border-4 border-primary/30 shadow-[0_0_30px_rgba(16,185,129,0.2)]"
-              />
-            ) : (
-              <div className="w-24 h-24 rounded-full bg-primary/10 border-2 border-primary/30 flex items-center justify-center font-black text-3xl text-primary shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-                {user?.name?.charAt(0).toUpperCase()}
+          <div className="relative z-10 flex flex-col items-center w-full">
+            {/* Avatar with spinning dashed border */}
+            <div className="relative">
+              <div className="absolute -inset-2 rounded-full border border-dashed border-primary/40 animate-[spin_10s_linear_infinite]" />
+              <div className="absolute -inset-3 rounded-full border border-dashed border-emerald-500/20 animate-[spin_15s_linear_infinite_reverse]" />
+              {user?.profilePictureUrl ? (
+                <img
+                  src={user.profilePictureUrl}
+                  alt=""
+                  className="w-28 h-28 rounded-full object-cover border-4 border-white dark:border-[#07130e] shadow-[0_0_40px_rgba(16,185,129,0.1)] dark:shadow-[0_0_40px_rgba(16,185,129,0.3)] relative z-10"
+                />
+              ) : (
+                <div className="w-28 h-28 rounded-full bg-primary/10 border-4 border-white dark:border-[#07130e] flex items-center justify-center font-black text-4xl text-primary shadow-[0_0_40px_rgba(16,185,129,0.1)] dark:shadow-[0_0_40px_rgba(16,185,129,0.3)] relative z-10">
+                  {user?.name?.charAt(0).toUpperCase()}
+                </div>
+              )}
+              {/* Rank Badge Indicator */}
+              <div className="absolute -bottom-2 -right-2 bg-amber-500 text-white dark:text-[#07130e] rounded-full p-1.5 border-4 border-white dark:border-[#07130e] z-20 shadow-lg" title="Top Member">
+                <Medal className="w-5 h-5 fill-current" />
               </div>
-            )}
+            </div>
             
-            <h3 className="text-xl font-black text-white mt-4">{user?.name}</h3>
-            <p className="text-xs text-white/50 mt-1">{user?.department?.name || "Pengurus SRE"}</p>
+            <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-6">{user?.name}</h3>
+            <p className="text-xs font-bold tracking-widest uppercase text-emerald-600 dark:text-primary/70 mt-1">{user?.department?.name || "Member"}</p>
             
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 mt-4 rounded-full bg-primary/20 border border-primary/30 text-[10px] font-black tracking-wider text-primary uppercase">
-              <Award className="w-3.5 h-3.5" />
-              Lvl {profile?.level || 1}
+            {/* Level & Title Pill */}
+            <div className={`inline-flex items-center gap-2 px-4 py-1.5 mt-4 rounded-full ${levelData.color} border text-[10px] font-black tracking-widest uppercase shadow-sm dark:shadow-inner`}>
+              <Award className="w-4 h-4" />
+              Lvl {levelData.currentLevel} • {levelData.levelName}
+            </div>
+
+            {/* Mini Stats Row to fill space */}
+            <div className="flex items-center justify-between w-full mt-6 px-4 py-3 bg-slate-50 dark:bg-black/20 rounded-2xl border border-slate-200 dark:border-white/5 transition-colors duration-500">
+              <div className="flex flex-col items-center">
+                <span className="text-[10px] text-slate-400 dark:text-white/40 font-bold uppercase">{t('member_dashboard.profile.rank')}</span>
+                <span className="text-sm font-black text-slate-900 dark:text-white">#{rank}</span>
+              </div>
+              <div className="w-px h-6 bg-slate-200 dark:bg-white/10" />
+              <div className="flex flex-col items-center">
+                <span className="text-[10px] text-slate-400 dark:text-white/40 font-bold uppercase">{t('member_dashboard.profile.attendance')}</span>
+                <span className="text-sm font-black text-emerald-500 dark:text-emerald-400">{presentCount}</span>
+              </div>
+              <div className="w-px h-6 bg-slate-200 dark:bg-white/10" />
+              <div className="flex flex-col items-center">
+                <span className="text-[10px] text-slate-400 dark:text-white/40 font-bold uppercase">{t('member_dashboard.profile.tasks')}</span>
+                <span className="text-sm font-black text-amber-500 dark:text-amber-400">{completedTasksCount}</span>
+              </div>
             </div>
           </div>
 
           <Link
             href="/member/profil"
-            className="w-full mt-6 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-white tracking-wide transition-all flex items-center justify-center gap-2"
+            className="w-full mt-6 py-3.5 rounded-2xl bg-gradient-to-r from-primary to-emerald-400 hover:from-primary-focus hover:to-emerald-500 text-xs font-black text-[#050e0a] tracking-widest uppercase transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)] group-hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transform hover:scale-[1.02]"
           >
-            Lihat Profil
-            <ChevronRight className="w-4 h-4" />
+            {t('member_dashboard.profile.view_full')}
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
 
@@ -158,14 +180,14 @@ export default function MemberDashboardClient({
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-[#08120e] border border-white/5 rounded-2xl p-5 flex items-center gap-4 relative overflow-hidden group"
+          className="bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 rounded-2xl p-5 flex items-center gap-4 relative overflow-hidden group shadow-sm dark:shadow-none transition-colors duration-500"
         >
-          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 group-hover:scale-110 transition-transform">
+          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500 dark:text-amber-400 group-hover:scale-110 transition-transform">
             <Trophy className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-2xl font-black text-white leading-none">{profile?.xp || 0}</h4>
-            <p className="text-xs text-white/40 font-bold uppercase tracking-wider mt-1">Total Poin XP</p>
+            <h4 className="text-2xl font-black text-slate-900 dark:text-white leading-none">{profile?.xp || 0}</h4>
+            <p className="text-xs text-slate-400 dark:text-white/40 font-bold uppercase tracking-wider mt-1">{t('member_dashboard.stats.total_xp')}</p>
           </div>
         </motion.div>
 
@@ -174,14 +196,14 @@ export default function MemberDashboardClient({
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.25 }}
-          className="bg-[#08120e] border border-white/5 rounded-2xl p-5 flex items-center gap-4 relative overflow-hidden group"
+          className="bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 rounded-2xl p-5 flex items-center gap-4 relative overflow-hidden group shadow-sm dark:shadow-none transition-colors duration-500"
         >
-          <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 group-hover:scale-110 transition-transform">
+          <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-500 dark:text-blue-400 group-hover:scale-110 transition-transform">
             <FolderKanban className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-2xl font-black text-white leading-none">{completedTasksCount}</h4>
-            <p className="text-xs text-white/40 font-bold uppercase tracking-wider mt-1">Tugas Disetujui</p>
+            <h4 className="text-2xl font-black text-slate-900 dark:text-white leading-none">{completedTasksCount}</h4>
+            <p className="text-xs text-slate-400 dark:text-white/40 font-bold uppercase tracking-wider mt-1">{t('member_dashboard.stats.tasks_approved')}</p>
           </div>
         </motion.div>
 
@@ -190,14 +212,14 @@ export default function MemberDashboardClient({
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="bg-[#08120e] border border-white/5 rounded-2xl p-5 flex items-center gap-4 relative overflow-hidden group"
+          className="bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 rounded-2xl p-5 flex items-center gap-4 relative overflow-hidden group shadow-sm dark:shadow-none transition-colors duration-500"
         >
-          <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 group-hover:scale-110 transition-transform">
+          <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-500 dark:text-purple-400 group-hover:scale-110 transition-transform">
             <Star className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-2xl font-black text-white leading-none">#{rank}</h4>
-            <p className="text-xs text-white/40 font-bold uppercase tracking-wider mt-1">Peringkat Rank</p>
+            <h4 className="text-2xl font-black text-slate-900 dark:text-white leading-none">#{rank}</h4>
+            <p className="text-xs text-slate-400 dark:text-white/40 font-bold uppercase tracking-wider mt-1">{t('member_dashboard.stats.rank')}</p>
           </div>
         </motion.div>
 
@@ -206,14 +228,14 @@ export default function MemberDashboardClient({
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.35 }}
-          className="bg-[#08120e] border border-white/5 rounded-2xl p-5 flex items-center gap-4 relative overflow-hidden group"
+          className="bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 rounded-2xl p-5 flex items-center gap-4 relative overflow-hidden group shadow-sm dark:shadow-none transition-colors duration-500"
         >
-          <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 group-hover:scale-110 transition-transform">
+          <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-500 dark:text-orange-400 group-hover:scale-110 transition-transform">
             <Flame className="w-6 h-6 animate-bounce" />
           </div>
           <div>
-            <h4 className="text-2xl font-black text-white leading-none">{presentCount}</h4>
-            <p className="text-xs text-white/40 font-bold uppercase tracking-wider mt-1">Kehadiran (Absen)</p>
+            <h4 className="text-2xl font-black text-slate-900 dark:text-white leading-none">{presentCount}</h4>
+            <p className="text-xs text-slate-400 dark:text-white/40 font-bold uppercase tracking-wider mt-1">{t('member_dashboard.stats.attendance')}</p>
           </div>
         </motion.div>
 
@@ -272,97 +294,137 @@ export default function MemberDashboardClient({
       )}
 
       {/* 4. Sub-grid: Tasks, Lit & Activity */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 items-stretch">
         
         {/* Active/Recent Tasks tracker */}
-        <div className="xl:col-span-2 space-y-6">
+        <div className="xl:col-span-2 flex flex-col space-y-6">
           <div className="flex justify-between items-center">
-            <h3 className="font-display font-black text-2xl tracking-tight text-white flex items-center gap-2.5">
+            <h3 className="font-display font-black text-2xl tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
               <FolderKanban className="w-6 h-6 text-primary" />
-              Tugas & Proyek Pengurus
+              {t('member_dashboard.tasks.title')}
             </h3>
-            <Link href="/member/tugas" className="text-xs font-bold text-primary hover:underline flex items-center gap-1 group">
-              Semua Tugas <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            <Link 
+              href="/member/tugas" 
+              className="group flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-xs font-black text-primary hover:bg-primary hover:text-white dark:hover:text-[#050e0a] hover:border-primary transition-all duration-300 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+            >
+              {t('member_dashboard.tasks.view_all')} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {tasks.slice(0, 4).map((tk) => {
-              const statusInfo = getTaskStatus(tk.id);
-              const deadlineDate = new Date(tk.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-              return (
-                <div 
-                  key={tk.id}
-                  className="bg-[#08120e] border border-white/5 hover:border-primary/20 rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 shadow-lg hover:-translate-y-1"
-                >
-                  <div>
-                    <div className="flex justify-between items-start gap-4">
-                      <span className={`px-2 py-0.5 border rounded-md text-[9px] font-black uppercase tracking-wider ${statusInfo.color}`}>
-                        {statusInfo.label}
-                      </span>
-                      <span className="flex items-center gap-1 text-[10px] font-bold text-amber-400 font-mono">
-                        +{tk.rewardXp} XP
-                      </span>
+          <div className="flex-1 bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 rounded-3xl p-5 flex flex-col space-y-3 shadow-xl dark:shadow-2xl transition-colors duration-500">
+            {tasks.length > 0 ? (
+              [...tasks]
+                .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
+                .slice(0, 5)
+                .map((tk) => {
+                const statusInfo = getTaskStatus(tk.id);
+                const deadlineDate = new Date(tk.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                return (
+                  <Link 
+                    href="/member/tugas"
+                    key={tk.id}
+                    className="group relative bg-slate-50 dark:bg-[#08120e] border border-slate-200 dark:border-white/5 hover:border-primary/30 rounded-2xl p-3 flex flex-row items-center justify-between gap-3 sm:gap-4 transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] hover:scale-[1.01] overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    
+                    {/* Left: Icon & Info */}
+                    <div className="relative z-10 flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/10 group-hover:border-primary/30 transition-colors">
+                        <FolderKanban className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 dark:text-white/50 group-hover:text-primary transition-colors" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-black text-slate-900 dark:text-white truncate group-hover:text-primary transition-colors">{tk.title}</h4>
+                        <div className="flex items-center gap-3 mt-1 sm:mt-1.5">
+                          <span className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[10px] font-medium text-slate-500 dark:text-white/50 bg-slate-200 dark:bg-white/5 px-1.5 sm:px-2 py-0.5 rounded-md">
+                            <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-primary/70" />
+                            {t('member_dashboard.tasks.deadline')}: {deadlineDate}
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
-                    <h4 className="text-base font-black text-white mt-4 line-clamp-1">{tk.title}</h4>
-                    <p className="text-white/40 text-xs mt-1.5 line-clamp-2 leading-relaxed">
-                      {tk.description || "Silakan cek detail instruksi tugas untuk pengerjaan lebih lengkap."}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between border-t border-white/5 mt-5 pt-3 text-[10px] font-medium text-white/50">
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-white/30" />
-                      DL: {deadlineDate}
-                    </span>
-                    <Link href="/member/tugas" className="text-primary hover:underline font-bold">
-                      Kumpulkan
-                    </Link>
-                  </div>
+                    {/* Right: Badges & Action */}
+                    <div className="relative z-10 flex items-center gap-2 sm:gap-4 flex-shrink-0">
+                      <div className="flex items-center gap-2">
+                        <span className={`hidden sm:flex px-2.5 py-1 border rounded-lg text-[9px] font-black uppercase tracking-widest ${statusInfo.color} shadow-sm`}>
+                          {statusInfo.label}
+                        </span>
+                        <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[9px] sm:text-[10px] font-black text-amber-400 font-mono shadow-sm">
+                          <Zap className="w-3 h-3" />
+                          +{tk.rewardXp} XP
+                        </span>
+                      </div>
+                      
+                      <div className="hidden sm:flex w-9 h-9 rounded-full bg-slate-200 dark:bg-white/5 border border-slate-300 dark:border-white/10 items-center justify-center group-hover:bg-primary group-hover:text-white dark:group-hover:text-[#050e0a] group-hover:border-primary text-slate-500 dark:text-white/50 transition-all flex-shrink-0">
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })
+            ) : (
+              <div className="flex flex-col items-center justify-center text-center py-10">
+                <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                  <FolderKanban className="w-8 h-8 text-primary/50" />
                 </div>
-              );
-            })}
+                <h4 className="text-base font-black text-slate-900 dark:text-white">{t('member_dashboard.tasks.no_tasks')}</h4>
+                <p className="text-xs text-slate-500 dark:text-white/40 mt-2 max-w-sm">{t('member_dashboard.tasks.no_tasks_desc')}</p>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Activity feed / XP logs */}
-        <div className="space-y-6">
-          <h3 className="font-display font-black text-2xl tracking-tight text-white flex items-center gap-2.5">
+        <div className="flex flex-col space-y-6">
+          <h3 className="font-display font-black text-2xl tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
             <Clock className="w-6 h-6 text-purple-400" />
-            Aktivitas XP Baru
+            {t('member_dashboard.xp_logs.title')}
           </h3>
 
-          <div className="bg-[#08120e] border border-white/5 rounded-3xl p-5 space-y-4 shadow-xl">
+          <div className="flex-1 bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 rounded-3xl p-5 flex flex-col space-y-3 shadow-xl dark:shadow-2xl transition-colors duration-500">
             {xpLogs.length > 0 ? (
-              <div className="space-y-4">
-                {xpLogs.map((log) => {
+              <div className="flex flex-col space-y-3">
+                {[...xpLogs]
+                  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                  .slice(0, 5)
+                  .map((log) => {
                   const dateString = new Date(log.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
                   return (
-                    <div key={log.id} className="flex items-center justify-between gap-4 pb-3 border-b border-white/5 last:pb-0 last:border-b-0">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary flex-shrink-0">
-                          {log.sourceType === "task" ? <FolderKanban className="w-4 h-4" /> : 
-                           log.sourceType === "quiz" ? <Star className="w-4 h-4" /> : 
-                           log.sourceType === "attendance" ? <Flame className="w-4 h-4" /> : <Award className="w-4 h-4" />}
+                    <div 
+                      key={log.id} 
+                      className="group flex flex-row items-center justify-between gap-3 sm:gap-4 p-3 rounded-2xl border border-transparent hover:border-slate-300 dark:hover:border-white/5 hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300 hover:shadow-lg cursor-default"
+                    >
+                      <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 flex items-center justify-center text-primary flex-shrink-0 group-hover:scale-110 group-hover:from-primary/20 transition-all duration-300 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+                          {log.sourceType === "task" ? <FolderKanban className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-rotate-12 transition-transform" /> : 
+                           log.sourceType === "quiz" ? <Star className="w-4 h-4 sm:w-5 sm:h-5 group-hover:animate-spin" /> : 
+                           log.sourceType === "attendance" ? <Flame className="w-4 h-4 sm:w-5 sm:h-5 group-hover:animate-bounce" /> : <Award className="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform" />}
                         </div>
-                        <div className="min-w-0">
-                          <p className="text-xs font-bold text-white truncate max-w-[150px]">{log.reason}</p>
-                          <p className="text-[10px] text-white/40 mt-0.5">{dateString}</p>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-black text-slate-900 dark:text-white truncate group-hover:text-primary transition-colors">{log.reason}</p>
+                          <div className="flex items-center gap-3 mt-1 sm:mt-1.5">
+                            <p className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[10px] font-medium text-slate-500 dark:text-white/50 bg-slate-100 dark:bg-white/5 px-1.5 sm:px-2 py-0.5 rounded-md">
+                              <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-primary/70" />
+                              {dateString}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                      <span className="text-xs font-black text-emerald-400 font-mono shrink-0">
-                        +{log.amount} XP
-                      </span>
+                      <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+                        <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[9px] sm:text-[10px] font-black text-emerald-400 font-mono shrink-0 shadow-sm group-hover:bg-emerald-500/20 transition-colors">
+                          <Zap className="w-3 h-3" />
+                          +{log.amount} XP
+                        </span>
+                      </div>
                     </div>
                   );
                 })}
               </div>
             ) : (
               <div className="text-center py-10 flex flex-col items-center justify-center">
-                <Star className="w-12 h-12 text-white/10 mb-3" />
-                <p className="text-xs font-bold text-white/40">Belum ada perolehan XP</p>
-                <p className="text-[10px] text-white/20 mt-1 max-w-[200px]">Ayo ikuti kuis, isi absensi, dan submit tugas untuk mengumpulkan XP pertama Anda!</p>
+                <Star className="w-12 h-12 text-slate-300 dark:text-white/10 mb-3" />
+                <p className="text-xs font-bold text-slate-500 dark:text-white/40">{t('member_dashboard.xp_logs.no_xp')}</p>
+                <p className="text-[10px] text-slate-400 dark:text-white/20 mt-1 max-w-[200px]">{t('member_dashboard.xp_logs.no_xp_desc')}</p>
               </div>
             )}
           </div>
