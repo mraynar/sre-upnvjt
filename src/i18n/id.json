@@ -66,6 +66,30 @@
       "save": "Simpan Potongan"
     }
   },
+  "member_tasks": {
+    "title": "Daftar Tugas & Penugasan",
+    "subtitle": "Pantau penugasan divisi dan kumpulkan laporan hasil pengerjaan tepat waktu untuk mengumpulkan XP.",
+    "status_not_started": "Belum Dikerjakan",
+    "status_approved": "Disetujui",
+    "status_rejected": "Perlu Perbaikan",
+    "status_pending": "Menunggu Review",
+    "empty_title": "Tidak ada tugas saat ini",
+    "empty_desc": "Kerja bagus! Semua tugas operasional Anda telah diselesaikan.",
+    "detail_btn": "Detail",
+    "modal_title": "Detail Tugas",
+    "reward": "Reward",
+    "deadline": "Deadline:",
+    "submission_status": "Status Pengumpulan",
+    "reviewer_note": "Catatan Peninjau:",
+    "submitted_file": "File yang dikirim:",
+    "view_submission": "Lihat File Submisi",
+    "form_label": "Link File Pengumpulan (Google Drive / GitHub / URL) *",
+    "form_submit": "Kumpulkan Tugas",
+    "submit_success": "Jawaban tugas berhasil dikirim!",
+    "submit_error": "Gagal mengirim jawaban",
+    "submit_network_error": "Terjadi kesalahan koneksi",
+    "start_mission": "Mulai Misi"
+  },
   "roles": {
     "title": "Peran & Izin",
     "subtitle": "Kelola tingkat akses dan izin modul untuk semua staf.",
