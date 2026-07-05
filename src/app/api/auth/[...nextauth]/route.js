@@ -92,7 +92,7 @@ export const authOptions = {
     // they are simply dropped back at `/` as a regular visitor.
     async redirect({ url, baseUrl, token }) {
       const roleName = token?.roleName;
-      const KNOWN_ROLES = ["SUPER_ADMIN", "KETUA", "WAKIL_KETUA", "SEKRETARIS", "BENDAHARA", "ANGGOTA", "ALUMNI"];
+      const KNOWN_ROLES = ["SUPER_ADMIN", "KETUA", "WAKIL_KETUA", "SEKRETARIS", "BENDAHARA", "MEMBER", "ALUMNI", "STAFF"];
       const isKnownRole = roleName && KNOWN_ROLES.includes(roleName);
 
       if (!isKnownRole) {
