@@ -28,5 +28,7 @@ export default async function MateriDetailPage({ params }) {
     slides: slidesData,
   };
 
-  return <MateriDetailClient initialData={fullData} />;
+  const r2Url = process.env.R2_PUBLIC_URL || '';
+
+  return <MateriDetailClient initialData={fullData} r2Url={r2Url} />;
 }

@@ -20,6 +20,37 @@ export default function MateriClient({ initialModules }) {
     router.push(`/member/materi/${mod.id}`);
   };
 
+  const [progressMap, setProgressMap] = useState({});
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const map = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('sre_materi_progress_')) {
+          try {
+            const moduleId = key.replace('sre_materi_progress_', '');
+            const data = JSON.parse(localStorage.getItem(key));
+            map[moduleId] = data;
+          } catch (e) {}
+        }
+      }
+      setProgressMap(map);
+    }
+  }, []);
+
+  const formatTimeAgo = (timestamp) => {
+    if (!timestamp) return null;
+    const diffMins = Math.floor((Date.now() - timestamp) / 60000);
+    if (diffMins < 1) return 'Baru saja';
+    if (diffMins < 60) return `${diffMins} menit lalu`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours} jam lalu`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays === 1) return 'Kemarin';
+    return `${diffDays} hari lalu`;
+  };
+
   // ═══════════════════════════════════════════════════════════════════════════
   //  VIEW 1: CARD MODULES GRID
   // ═══════════════════════════════════════════════════════════════════════════
@@ -60,34 +91,27 @@ export default function MateriClient({ initialModules }) {
               transition={{ type: "spring", stiffness: 100, delay: (index % 4) * 0.1 }}
               key={mod.id}
               onClick={() => handleOpenModule(mod)}
-              className="relative bg-white dark:bg-[#0d131f] border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden cursor-pointer group hover:border-emerald-500/30 transition-all duration-300 transform-gpu hover:-translate-y-1 flex flex-col h-full shadow-lg hover:shadow-xl"
+              className="relative bg-white dark:bg-[#090d14] border border-slate-200/60 dark:border-white/5 rounded-3xl overflow-hidden cursor-pointer group hover:border-emerald-500/30 transition-all duration-500 transform-gpu hover:-translate-y-2 flex flex-col h-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(16,185,129,0.1)]"
             >
               {/* Cover Banner (Keeping it but blending it into the dark theme) */}
-              <div className="relative aspect-[16/9] w-full overflow-hidden shrink-0 bg-slate-100 dark:bg-[#0a0f18] border-b border-slate-200 dark:border-white/5">
+              <div className="relative aspect-[16/9] w-full overflow-hidden shrink-0 bg-slate-100 dark:bg-[#090d14]">
                 {mod.coverImageUrl ? (
                   <img
                     src={mod.coverImageUrl}
                     alt={mod.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 dark:opacity-60 group-hover:opacity-100 dark:group-hover:opacity-80"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-90 dark:opacity-70 group-hover:opacity-100"
                   />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-emerald-500/20">
+                  <div className="w-full h-full flex flex-col items-center justify-center text-emerald-500/20 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-[#090d14]">
                     <Presentation className="w-14 h-14" />
                   </div>
                 )}
                 
-                <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#0d131f] via-transparent to-transparent" />
+                {/* Sleek Gradient Overlay for Text Readability & Seamless Blend */}
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/0 to-transparent dark:from-[#090d14] dark:from-[5%] dark:via-[#090d14]/80 dark:via-[35%] dark:to-transparent" />
 
-                {/* Badges mimicking the Tugas UI */}
-                <div className="absolute top-4 left-4 z-10">
-                  <span className="px-3 py-1.5 rounded-md bg-blue-500/10 border border-blue-500/20 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 text-blue-600 dark:text-blue-400 backdrop-blur-md">
-                    <BookOpen className="w-3.5 h-3.5" />
-                    {t('materi.badge_sre')}
-                  </span>
-                </div>
-                
                 <div className="absolute top-4 right-4 z-10">
-                  <span className="px-3.5 py-1.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-[10px] font-black uppercase tracking-widest flex items-center gap-1 text-amber-600 dark:text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.1)] dark:shadow-[0_0_15px_rgba(245,158,11,0.2)] backdrop-blur-md">
+                  <span className="px-3 py-1.5 rounded-full bg-emerald-500/90 border border-emerald-400/50 text-[10px] font-black uppercase tracking-widest flex items-center gap-1 text-white shadow-[0_0_15px_rgba(16,185,129,0.4)] backdrop-blur-md">
                     <Layers className="w-3.5 h-3.5" />
                     {mod.slideCount || 0} {t('materi.file_count')}
                   </span>
@@ -95,13 +119,13 @@ export default function MateriClient({ initialModules }) {
               </div>
 
               {/* Title & Desc */}
-              <div className="p-6 flex-1 flex flex-col justify-between z-10 bg-white dark:bg-[#0d131f]">
+              <div className="p-6 flex-1 flex flex-col justify-between z-10 bg-white dark:bg-[#090d14] -mt-[1px]">
                 <div>
-                  <h3 className="font-black text-slate-900 dark:text-white text-xl line-clamp-2 mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300 leading-snug tracking-tight">
+                  <h3 className="font-extrabold text-slate-900 dark:text-white text-xl line-clamp-2 mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300 leading-snug tracking-tight">
                     {mod.title}
                   </h3>
                   {mod.description ? (
-                    <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed">
+                    <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
                       {mod.description}
                     </p>
                   ) : (
@@ -109,15 +133,40 @@ export default function MateriClient({ initialModules }) {
                   )}
                 </div>
                 
-                {/* Footer mimicking Tugas UI (Mulai Misi button) */}
-                <div className="mt-6 pt-4 border-t border-slate-100 dark:border-[#1e293b] flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
-                    <Presentation className="w-4 h-4" />
-                    <span className="text-xs font-medium">{t('materi.open_module')}</span>
-                  </div>
+                {/* Progress & Footer */}
+                <div className="mt-8 flex flex-col gap-5">
                   
-                  <div className="px-4 py-1.5 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white dark:text-slate-900 font-bold text-[11px] uppercase tracking-wider flex items-center gap-1 transition-colors shadow-[0_4px_10px_rgba(16,185,129,0.2)] dark:shadow-[0_0_10px_rgba(16,185,129,0.3)]">
-                    {t('materi.view_slides')} <ChevronRight className="w-3.5 h-3.5" />
+                  {progressMap[mod.id] && (
+                    <div className="w-full">
+                      <div className="flex justify-between text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">
+                        <span className="flex items-center gap-1.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          {formatTimeAgo(progressMap[mod.id].lastAccessed) || 'Pernah dibuka'}
+                        </span>
+                        <span className="text-emerald-600 dark:text-emerald-400 font-black">
+                          {(mod.slideCount || 1) > 1 ? Math.round((progressMap[mod.id].currentSlideIdx / ((mod.slideCount || 1) - 1)) * 100) : (progressMap[mod.id].currentSlideIdx >= 0 ? 100 : 0)}%
+                        </span>
+                      </div>
+                      <div className="w-full h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden shadow-inner relative">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${(mod.slideCount || 1) > 1 ? (progressMap[mod.id].currentSlideIdx / ((mod.slideCount || 1) - 1)) * 100 : (progressMap[mod.id].currentSlideIdx >= 0 ? 100 : 0)}%` }}
+                          transition={{ duration: 1, ease: "easeOut" }}
+                          className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between pt-5 border-t border-slate-100 dark:border-white/5">
+                    <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500">
+                      <Presentation className="w-4 h-4" />
+                      <span className="text-xs font-semibold uppercase tracking-wider">{t('materi.open_module')}</span>
+                    </div>
+                    
+                    <div className="px-5 py-2 rounded-xl bg-slate-900 dark:bg-white group-hover:bg-emerald-500 dark:group-hover:bg-emerald-500 text-white dark:text-slate-900 group-hover:text-white font-bold text-[11px] uppercase tracking-wider flex items-center gap-1.5 transition-all duration-300 shadow-sm group-hover:shadow-[0_4px_15px_rgba(16,185,129,0.3)]">
+                      {progressMap[mod.id] ? 'Lanjutkan' : t('materi.view_slides')} <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
                   </div>
                 </div>
               </div>
