@@ -262,6 +262,22 @@
     "table_proof": "Permission Proof",
     "open_link": "Open Link"
   },
+  "materi": {
+    "badge_tag": "E-Academy",
+    "title": "SRE Learning Materials",
+    "subtitle": "Access PPT presentation modules prepared by mentors and board members of SRE UPNVJT.",
+    "empty_title": "No materials available yet",
+    "empty_desc": "Check back later for the next learning modules.",
+    "badge_sre": "SRE Material",
+    "file_count": "File(s)",
+    "no_description": "No description available.",
+    "open_module": "Open Module",
+    "view_slides": "View Slides",
+    "btn_back": "Back to Materials List",
+    "btn_open_tab": "Open in New Tab",
+    "no_title": "Untitled",
+    "no_notes": "No additional notes for this slide."
+  },
   "leaderboard": {
     "title": "SRE Leaderboard",
     "subtitle": "Ranking of the best staff and managers performance in SRE UPNVJT.",

@@ -262,6 +262,22 @@
     "table_proof": "Bukti Izin",
     "open_link": "Buka Tautan"
   },
+  "materi": {
+    "badge_tag": "E-Academy",
+    "title": "Materi Pembelajaran SRE",
+    "subtitle": "Akses modul materi presentasi PPT yang telah disusun oleh mentor dan pengurus SRE UPNVJT.",
+    "empty_title": "Belum ada materi tersedia",
+    "empty_desc": "Kembali lagi nanti untuk modul pembelajaran berikutnya.",
+    "badge_sre": "Materi SRE",
+    "file_count": "File",
+    "no_description": "Tidak ada deskripsi.",
+    "open_module": "Buka Modul",
+    "view_slides": "Lihat Slide",
+    "btn_back": "Kembali ke Daftar Materi",
+    "btn_open_tab": "Buka Tab Baru",
+    "no_title": "Tanpa Judul",
+    "no_notes": "Tidak ada catatan tambahan untuk slide ini."
+  },
   "leaderboard": {
     "title": "SRE Leaderboard",
     "subtitle": "Peringkat kinerja staf dan manajer terbaik SRE UPNVJT.",
