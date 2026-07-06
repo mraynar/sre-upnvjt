@@ -32,7 +32,7 @@ export async function PUT(req, { params }) {
     const resolvedParams = await params;
     const id = parseInt(resolvedParams.id);
     const body = await req.json();
-    const { title, description, coverImageUrl, isPublished } = body;
+    const { title, description, notes, coverImageUrl, isPublished } = body;
 
     if (!title) {
       return NextResponse.json({ error: "Judul modul wajib diisi" }, { status: 400 });
@@ -42,6 +42,7 @@ export async function PUT(req, { params }) {
       .set({
         title,
         description: description || null,
+        notes: notes || null,
         coverImageUrl: coverImageUrl || null,
         isPublished: Boolean(isPublished),
         updatedAt: new Date(),

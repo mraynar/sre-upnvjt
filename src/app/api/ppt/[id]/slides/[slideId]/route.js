@@ -13,17 +13,16 @@ export async function PUT(req, { params }) {
 
     const slideId = parseInt(params.slideId);
     const body = await req.json();
-    const { title, driveUrl, notes, order } = body;
+    const { title, fileUrl, order } = body;
 
-    if (!driveUrl) {
-      return NextResponse.json({ error: "Google Drive Embed URL wajib diisi" }, { status: 400 });
+    if (!fileUrl) {
+      return NextResponse.json({ error: "File URL wajib diisi" }, { status: 400 });
     }
 
     const [updated] = await db.update(pptSlide)
       .set({
         title: title || null,
-        driveUrl,
-        notes: notes || null,
+        fileUrl,
         ...(order !== undefined ? { order: parseInt(order) } : {}),
       })
       .where(eq(pptSlide.id, slideId))
