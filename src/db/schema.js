@@ -342,6 +342,7 @@ export const pptModule = pgTable('pptModule', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description'),
+  notes: text('notes'),
   coverImageUrl: varchar('coverImageUrl', { length: 1000 }),
   isPublished: boolean('isPublished').default(false).notNull(),
   createdById: integer('createdById').references(() => user.id).notNull(),
@@ -354,8 +355,7 @@ export const pptSlide = pgTable('pptSlide', {
   moduleId: integer('moduleId').references(() => pptModule.id).notNull(),
   order: integer('order').notNull(),
   title: varchar('title', { length: 255 }),
-  driveUrl: varchar('driveUrl', { length: 1000 }).notNull(),
-  notes: text('notes'),
+  fileUrl: varchar('fileUrl', { length: 1000 }).notNull(),
   createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()),
 });
 
