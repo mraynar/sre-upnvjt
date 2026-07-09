@@ -17,8 +17,8 @@ import { useSession } from "next-auth/react";
 import { hasAccess } from "@/lib/permissions";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const EMPTY_MODULE = { title: "", description: "", coverImageUrl: "", isPublished: false };
-const EMPTY_SLIDE  = { title: "", driveUrl: "", notes: "" };
+const EMPTY_MODULE = { title: "", description: "", notes: "", coverImageUrl: "", isPublished: false };
+const EMPTY_SLIDE  = { title: "", fileUrl: "" };
 
 // ─── Shared UI helpers ─────────────────────────────────────────────────────────
 const InputField = ({ label, children }) => (
@@ -355,7 +355,7 @@ export default function PptClient({ initialModules, currentUser }) {
                   {/* Drive preview iframe */}
                   <div className="w-40 h-28 bg-gray-100 dark:bg-black/30 border-r border-gray-200 dark:border-white/10 shrink-0 overflow-hidden relative">
                     <iframe
-                      src={slide.driveUrl}
+                      src={slide.fileUrl}
                       title={slide.title || `Slide ${slide.order}`}
                       className="w-full h-full border-0 pointer-events-none scale-[0.5] origin-top-left"
                       style={{ width: "200%", height: "200%" }}
@@ -374,7 +374,7 @@ export default function PptClient({ initialModules, currentUser }) {
                             {slide.title || <span className="text-gray-400 dark:text-white/30 italic font-normal">Tanpa judul</span>}
                           </h3>
                           <a
-                            href={slide.driveUrl}
+                            href={slide.fileUrl}
                             target="_blank"
                             rel="noreferrer"
                             className="text-[11px] text-primary hover:underline flex items-center gap-1 mt-0.5"
@@ -383,11 +383,6 @@ export default function PptClient({ initialModules, currentUser }) {
                           </a>
                         </div>
                       </div>
-                      {slide.notes && (
-                        <p className="text-[12px] text-gray-500 dark:text-white/40 mt-2 line-clamp-2 leading-relaxed">
-                          {slide.notes}
-                        </p>
-                      )}
                     </div>
                   </div>
 
@@ -459,20 +454,14 @@ export default function PptClient({ initialModules, currentUser }) {
                         onChange={e => setSlideForm(p => ({ ...p, title: e.target.value }))}
                         className={inputCls} placeholder="e.g. Pengantar Mekanika Fluida" />
                     </InputField>
-                    <InputField label="Google Drive Embed URL *">
-                      <input type="url" required value={slideForm.driveUrl}
-                        onChange={e => setSlideForm(p => ({ ...p, driveUrl: e.target.value }))}
+                    <InputField label="File URL (WebP / R2) *">
+                      <input type="url" required value={slideForm.fileUrl || ''}
+                        onChange={e => setSlideForm(p => ({ ...p, fileUrl: e.target.value }))}
                         className={inputCls}
-                        placeholder="https://docs.google.com/presentation/d/ID/embed" />
+                        placeholder="https://..." />
                       <p className="mt-1.5 text-[11px] text-gray-400 dark:text-white/30 leading-relaxed">
-                        Gunakan format Publish → Embed dari Google Slides. File → Share → Publish to web → Embed.
+                        Masukkan tautan file dari Cloudflare R2 atau storage lainnya.
                       </p>
-                    </InputField>
-                    <InputField label="Catatan / Notes">
-                      <textarea rows={4} value={slideForm.notes}
-                        onChange={e => setSlideForm(p => ({ ...p, notes: e.target.value }))}
-                        className={`${textareaCls} h-28`}
-                        placeholder="Catatan untuk slide ini..." />
                     </InputField>
                   </form>
                 </div>
@@ -721,9 +710,15 @@ function ModuleModal({ open, onClose, form, setForm, onSubmit, isEditing, isLoad
                 </InputField>
 
                 <InputField label="Deskripsi">
-                  <textarea rows={3} value={form.description}
+                  <textarea rows={3} value={form.description || ''}
                     onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
                     className={`${textareaCls} h-24`} placeholder="Deskripsi singkat modul..." />
+                </InputField>
+
+                <InputField label="Catatan / Notes">
+                  <textarea rows={6} value={form.notes || ''}
+                    onChange={e => setForm(p => ({ ...p, notes: e.target.value }))}
+                    className={`${textareaCls} h-32`} placeholder="Catatan materi untuk modul ini..." />
                 </InputField>
 
                 <InputField label="Cover Image (URL atau Upload)">

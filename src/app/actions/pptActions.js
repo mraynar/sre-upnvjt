@@ -48,10 +48,11 @@ export async function getPptModule(id) {
 
 export async function createPptModule(data, createdById) {
   try {
-    const { title, description, coverImageUrl, isPublished } = data;
+    const { title, description, notes, coverImageUrl, isPublished } = data;
     const [result] = await db.insert(pptModule).values({
       title,
       description: description || null,
+      notes: notes || null,
       coverImageUrl: coverImageUrl || null,
       isPublished: Boolean(isPublished),
       createdById,
@@ -66,11 +67,12 @@ export async function createPptModule(data, createdById) {
 
 export async function updatePptModule(id, data) {
   try {
-    const { title, description, coverImageUrl, isPublished } = data;
+    const { title, description, notes, coverImageUrl, isPublished } = data;
     const [result] = await db.update(pptModule)
       .set({
         title,
         description: description || null,
+        notes: notes || null,
         coverImageUrl: coverImageUrl || null,
         isPublished: Boolean(isPublished),
         updatedAt: new Date(),
@@ -99,7 +101,7 @@ export async function deletePptModule(id) {
 
 export async function createPptSlide(moduleId, data) {
   try {
-    const { title, driveUrl, notes } = data;
+    const { title, fileUrl } = data;
 
     // Get current max order
     const existing = await db.query.pptSlide.findMany({
@@ -113,8 +115,7 @@ export async function createPptSlide(moduleId, data) {
       moduleId,
       order: nextOrder,
       title: title || null,
-      driveUrl,
-      notes: notes || null,
+      fileUrl,
     }).returning();
 
     revalidatePath(`/ppt`);
@@ -127,12 +128,11 @@ export async function createPptSlide(moduleId, data) {
 
 export async function updatePptSlide(slideId, data) {
   try {
-    const { title, driveUrl, notes, order } = data;
+    const { title, fileUrl, order } = data;
     const [result] = await db.update(pptSlide)
       .set({
         title: title || null,
-        driveUrl,
-        notes: notes || null,
+        fileUrl,
         ...(order !== undefined ? { order: parseInt(order) } : {}),
       })
       .where(eq(pptSlide.id, slideId))
