@@ -177,4 +177,43 @@ src/
 
 ---
 
+## Panduan Konfigurasi Google Drive OAuth 2.0 (Upload File Tugas)
+
+Aplikasi ini menggunakan **Google Drive OAuth 2.0 (Refresh Token)** untuk mengunggah file tugas secara langsung tanpa terkena limitasi kuota 0 GB milik *Service Account*. Sistem ini memanfaatkan kuota Drive pribadi / Workspace Anda yang lega (misal: 15 GB atau 5 TB).
+
+Berikut adalah cara mendapatkan **Client ID**, **Client Secret**, dan **Refresh Token** untuk mengisi file `.env`:
+
+### Langkah 1: Mendapatkan Client ID & Secret
+1. Buka [Google Cloud Console](https://console.cloud.google.com/).
+2. Buat proyek baru atau pilih proyek yang sudah ada.
+3. Di menu sebelah kiri, masuk ke **APIs & Services** > **Credentials**.
+4. Klik tombol **+ CREATE CREDENTIALS** > pilih **OAuth client ID**. 
+   *(Jika Anda belum pernah mengatur OAuth, sistem akan meminta Anda mengatur **Consent Screen** terlebih dahulu. Pilih tipe "External", isi nama aplikasi, dan yang paling penting: **tambahkan email Anda sendiri ke bagian "Test users"**. Setelah itu kembali ke halaman Credentials).*
+5. Pilih **Application type:** `Web application`.
+6. Pada kolom **Authorized redirect URIs**, wajib masukkan URL ini secara persis:
+   `https://developers.google.com/oauthplayground`
+7. Klik **Create/Simpan**.
+8. Anda akan mendapatkan **Client ID** dan **Client Secret**. Salin dan masukkan kedua kode tersebut ke dalam variabel `GOOGLE_CLIENT_ID` dan `GOOGLE_CLIENT_SECRET` di file `.env` Anda.
+
+### Langkah 2: Mendapatkan Refresh Token
+1. Buka halaman resmi [Google OAuth 2.0 Playground](https://developers.google.com/oauthplayground/).
+2. Di pojok kanan atas layar, klik ikon **Gear (Pengaturan)**.
+3. Centang kotak **Use your own OAuth credentials**.
+4. Masukkan **Client ID** dan **Client Secret** Anda ke dalam kotak yang tersedia, lalu klik *Close*.
+5. Di panel sebelah kiri (Step 1), cari dan klik grup **Drive API v3**.
+6. Centang *scope* (izin) yang bertuliskan: `https://www.googleapis.com/auth/drive`.
+7. Klik tombol biru **Authorize APIs** di bagian bawah.
+8. Anda akan diarahkan ke halaman *Login* Google. Silakan *login* menggunakan akun Google (email) yang ingin Anda gunakan sebagai penampung data tugas (yang kapasitasnya lega).
+9. Jika ada peringatan *"Google hasn't verified this app"*, hiraukan saja (karena ini aplikasi Anda sendiri). Klik **Continue / Lanjutkan**.
+10. Setelah diarahkan kembali ke OAuth Playground, perhatikan panel **Step 2**.
+11. Klik tombol biru **Exchange authorization code for tokens**.
+12. Halaman akan menampilkan **Refresh token**. Salin kode *Refresh token* tersebut dan masukkan ke dalam variabel `GOOGLE_REFRESH_TOKEN` di file `.env` Anda!
+
+**Selesai!** 
+Aplikasi SRE Anda kini memiliki akses mutlak ke Google Drive Anda secara permanen. *Access Token* yang berdurasi 1 jam akan otomatis diperbarui (*auto-refresh*) oleh server Next.js di balik layar setiap kali kedaluwarsa. 
+
+> **PENTING:** Jika aplikasi Anda di Google Cloud Console berstatus **"Testing"** (di halaman *OAuth consent screen*), maka **Refresh Token hanya akan bertahan selama 7 HARI**. Agar *Refresh Token* bersifat abadi/permanen selamanya, pastikan Anda mengeklik tombol **PUBLISH APP** (Ubah statusnya menjadi *"In production"*) di halaman *OAuth consent screen* tersebut!
+
+---
+
 *SRE UPNVJT Web Development Division — 2026*
