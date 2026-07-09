@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ChevronLeft, ChevronRight, Download, Play, Lightbulb, ArrowLeft, Layers, Presentation, Maximize, Minimize, Loader2
+  ChevronLeft, ChevronRight, Download, Play, Lightbulb, ArrowLeft, Layers, Presentation, Maximize, Minimize, Loader2, Timer, CheckCircle2, Award
 } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageProvider";
 
@@ -43,22 +43,49 @@ export default function MateriDetailClient({ initialData, r2Url }) {
   
   const [moduleData] = useState(initialData);
   const [slides] = useState(initialData?.slides || []);
-  const [currentSlideIdx, setCurrentSlideIdx] = useState(() => {
-    if (typeof window !== 'undefined' && initialData?.id) {
+  const [currentSlideIdx, setCurrentSlideIdx] = useState(0);
+  const [maxSlideIdx, setMaxSlideIdx] = useState(0);
+  const [notesFontSize, setNotesFontSize] = useState('md');
+  const [direction, setDirection] = useState(0); // 1 for next, -1 for prev
+  const [timeLeft, setTimeLeft] = useState(10);
+  
+  const [isCompleting, setIsCompleting] = useState(false);
+  const [xpGained, setXpGained] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [hasCompleted, setHasCompleted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    if (initialData?.id) {
       try {
         const savedProgress = localStorage.getItem(`sre_materi_progress_${initialData.id}`);
         if (savedProgress) {
           const parsed = JSON.parse(savedProgress);
+          let cIdx = 0;
+          let mIdx = 0;
+          
           if (parsed.currentSlideIdx !== undefined && parsed.currentSlideIdx >= 0 && parsed.currentSlideIdx < (initialData.slides?.length || 0)) {
-            return parsed.currentSlideIdx;
+            cIdx = parsed.currentSlideIdx;
+          }
+          if (parsed.maxSlideIdx !== undefined) {
+            mIdx = parsed.maxSlideIdx;
+          } else {
+            mIdx = cIdx || 0;
+          }
+          
+          setCurrentSlideIdx(cIdx);
+          setMaxSlideIdx(mIdx);
+          
+          if (cIdx < mIdx) {
+            setTimeLeft(0);
           }
         }
       } catch (e) {}
     }
-    return 0;
-  });
-  const [notesFontSize, setNotesFontSize] = useState('md');
-  const [direction, setDirection] = useState(0); // 1 for next, -1 for prev
+  }, [initialData]);
+
+
   
   // Custom font sizes based on user preference
   const fontSizeStyles = {
@@ -79,10 +106,10 @@ export default function MateriDetailClient({ initialData, r2Url }) {
   // Save progress to localStorage when it changes
   useEffect(() => {
     if (typeof window !== 'undefined' && moduleData?.id) {
-      const progressData = { currentSlideIdx, lastAccessed: Date.now() };
+      const progressData = { currentSlideIdx, maxSlideIdx, lastAccessed: Date.now() };
       localStorage.setItem(`sre_materi_progress_${moduleData.id}`, JSON.stringify(progressData));
     }
-  }, [currentSlideIdx, moduleData?.id]);
+  }, [currentSlideIdx, maxSlideIdx, moduleData?.id]);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -142,6 +169,37 @@ export default function MateriDetailClient({ initialData, r2Url }) {
     loadImage(currentSlideIdx + 1); // preload next
   }, [currentSlideIdx, slides, r2Url]);
 
+  useEffect(() => {
+    if (timeLeft > 0) {
+      const timer = setTimeout(() => setTimeLeft(prev => prev - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [timeLeft]);
+
+  useEffect(() => {
+    // If they reached the last slide, immediately try to claim (ignore timeLeft)
+    if (slides.length > 0 && maxSlideIdx === slides.length - 1 && !isCompleting && !hasCompleted) {
+      const claimXp = async () => {
+        setIsCompleting(true);
+        try {
+          const res = await fetch(`/api/materi/${moduleData.id}/complete`, { method: "POST" });
+          const data = await res.json();
+          if (data.success && data.gainedXp) {
+            setXpGained(data.gainedXp);
+            setShowModal(true);
+          }
+          setHasCompleted(true);
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setIsCompleting(false);
+        }
+      };
+      claimXp();
+    }
+  }, [maxSlideIdx, slides.length, isCompleting, hasCompleted, moduleData?.id]);
+
+
 
   const toggleFullscreen = async () => {
     if (!document.fullscreenElement) {
@@ -169,6 +227,44 @@ export default function MateriDetailClient({ initialData, r2Url }) {
     }
   };
 
+  if (!isMounted) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh] w-full text-center relative overflow-hidden">
+        {/* Background Ambient Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-500/10 blur-[80px] rounded-full pointer-events-none" />
+        
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="relative z-10 flex flex-col items-center justify-center"
+        >
+          <div className="relative flex items-center justify-center w-24 h-24 mb-8">
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
+              className="absolute inset-0 rounded-full border-[3px] border-emerald-500/20 border-t-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+            />
+            <motion.div 
+              animate={{ rotate: -360 }}
+              transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+              className="absolute inset-2 rounded-full border-[3px] border-teal-500/20 border-b-teal-400"
+            />
+            <Layers className="w-8 h-8 text-emerald-500 drop-shadow-md animate-pulse" />
+          </div>
+          
+          <h2 className="text-xl font-black text-slate-800 dark:text-white tracking-wide mb-2">Memuat Modul</h2>
+          <div className="flex items-center gap-1.5 text-sm font-bold text-slate-500 dark:text-slate-400">
+            <span>Sinkronisasi Progres</span>
+            <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0 }}>.</motion.span>
+            <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.3 }}>.</motion.span>
+            <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.6 }}>.</motion.span>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (!moduleData) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
@@ -181,16 +277,30 @@ export default function MateriDetailClient({ initialData, r2Url }) {
   const currentSlide = slides[currentSlideIdx];
 
   const handleNext = () => {
-    if (currentSlideIdx < slides.length - 1) {
+    if (currentSlideIdx < slides.length - 1 && timeLeft === 0) {
+      const nextIdx = currentSlideIdx + 1;
       setDirection(1);
-      setCurrentSlideIdx(prev => prev + 1);
+      setCurrentSlideIdx(nextIdx);
+      if (nextIdx > maxSlideIdx) {
+        setMaxSlideIdx(nextIdx);
+        setTimeLeft(10);
+      } else {
+        setTimeLeft(0);
+      }
     }
   };
 
   const handlePrev = () => {
     if (currentSlideIdx > 0) {
+      const prevIdx = currentSlideIdx - 1;
       setDirection(-1);
-      setCurrentSlideIdx(prev => prev - 1);
+      setCurrentSlideIdx(prevIdx);
+      if (prevIdx > maxSlideIdx) {
+        setMaxSlideIdx(prevIdx);
+        setTimeLeft(10);
+      } else {
+        setTimeLeft(0);
+      }
     }
   };
 
@@ -297,10 +407,37 @@ export default function MateriDetailClient({ initialData, r2Url }) {
                   
                   <button 
                     onClick={handleNext} 
-                    disabled={currentSlideIdx === slides.length - 1} 
-                    className="w-10 h-10 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 disabled:opacity-30 transition-colors"
+                    disabled={currentSlideIdx === slides.length - 1 || timeLeft > 0} 
+                    className="relative w-10 h-10 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:hover:bg-emerald-500/20 border border-emerald-200 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 disabled:opacity-70 disabled:cursor-not-allowed transition-colors"
                   >
-                    <ChevronRight className="w-5 h-5" />
+                    {timeLeft > 0 && currentSlideIdx !== slides.length - 1 ? (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <svg className="w-[38px] h-[38px] transform -rotate-90 drop-shadow-[0_0_2px_rgba(16,185,129,0.3)]" viewBox="0 0 40 40">
+                          <circle cx="20" cy="20" r="16" fill="none" stroke="currentColor" strokeWidth="2" className="text-emerald-500/20" />
+                          <motion.circle 
+                            cx="20" cy="20" r="16" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            strokeWidth="3" 
+                            strokeDasharray="100" 
+                            animate={{ strokeDashoffset: 100 - ((10 - timeLeft) / 10) * 100 }}
+                            transition={{ duration: 1, ease: "linear" }}
+                            strokeLinecap="round"
+                            className="text-emerald-500" 
+                          />
+                        </svg>
+                        <motion.span 
+                          key={timeLeft}
+                          initial={{ scale: 1.5, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          className="absolute text-[11px] font-black text-emerald-600 dark:text-emerald-400"
+                        >
+                          {timeLeft}
+                        </motion.span>
+                      </div>
+                    ) : (
+                      <ChevronRight className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
 
@@ -380,21 +517,175 @@ export default function MateriDetailClient({ initialData, r2Url }) {
               <div className="flex justify-between text-xs font-semibold mb-2">
                 <span className="text-slate-500 dark:text-slate-400">{t('materi.completion') || 'Penyelesaian'}</span>
                 <span className="text-emerald-600 dark:text-emerald-400">
-                  {slides?.length > 1 ? Math.round((currentSlideIdx / (slides.length - 1)) * 100) : (currentSlideIdx >= 0 ? 100 : 0)}%
+                  {slides?.length > 1 ? Math.round((maxSlideIdx / (slides.length - 1)) * 100) : (maxSlideIdx >= 0 ? 100 : 0)}%
                 </span>
               </div>
-              <div className="w-full h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden mb-4">
                 <div 
                   className="h-full bg-emerald-500 rounded-full transition-all duration-300"
-                  style={{ width: `${slides?.length > 1 ? (currentSlideIdx / (slides.length - 1)) * 100 : (currentSlideIdx >= 0 ? 100 : 0)}%` }}
+                  style={{ width: `${slides?.length > 1 ? (maxSlideIdx / (slides.length - 1)) * 100 : (maxSlideIdx >= 0 ? 100 : 0)}%` }}
                 />
               </div>
+
+              {/* XP Claim / Timer section */}
+              {xpGained ? (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  className="relative overflow-hidden flex items-center justify-between p-4 bg-gradient-to-r from-emerald-600 to-teal-500 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.4)] border border-emerald-400/50"
+                >
+                  {/* Animated Background Rays/Glow */}
+                  <motion.div 
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+                    className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_0_340deg,rgba(255,255,255,0.2)_360deg)] pointer-events-none"
+                  />
+                  
+                  <div className="flex items-center gap-3 relative z-10">
+                    <motion.div 
+                      initial={{ rotate: -180, scale: 0 }}
+                      animate={{ rotate: 0, scale: 1 }}
+                      transition={{ type: "spring", delay: 0.2 }}
+                      className="flex items-center justify-center w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full shadow-inner border border-white/30"
+                    >
+                      <Award className="w-5 h-5 text-yellow-300 drop-shadow-[0_0_5px_rgba(253,224,71,0.8)]" />
+                    </motion.div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-bold text-emerald-100 uppercase tracking-widest drop-shadow-sm">Pencapaian</span>
+                      <span className="text-base font-black text-white drop-shadow-md">Modul Selesai!</span>
+                    </div>
+                  </div>
+                  
+                  <motion.div 
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.4, type: "spring" }}
+                    className="relative z-10 flex flex-col items-center justify-center bg-black/30 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/20"
+                  >
+                    <span className="text-xl font-black text-yellow-300 drop-shadow-[0_0_8px_rgba(253,224,71,0.8)]">
+                      +{xpGained}
+                    </span>
+                    <span className="text-[9px] font-bold text-white/80 uppercase tracking-widest -mt-1">XP Points</span>
+                  </motion.div>
+                </motion.div>
+              ) : hasCompleted ? (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="relative overflow-hidden flex items-center justify-between p-4 bg-slate-900 dark:bg-black/40 border border-emerald-500/30 rounded-xl group shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-transparent opacity-50" />
+                  
+                  <div className="flex items-center gap-3 relative z-10">
+                    <div className="flex items-center justify-center w-10 h-10 bg-emerald-500/20 rounded-full shadow-inner border border-emerald-500/30">
+                      <Award className="w-5 h-5 text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-bold text-emerald-400/80 uppercase tracking-widest">Status</span>
+                      <span className="text-base font-black text-emerald-400 drop-shadow-md">Tuntas!</span>
+                    </div>
+                  </div>
+                  
+                  <div className="relative z-10 flex items-center justify-center bg-emerald-500/20 backdrop-blur-md px-3 py-1.5 rounded-lg border border-emerald-500/30">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 drop-shadow-[0_0_5px_rgba(52,211,153,0.8)]" />
+                  </div>
+                </motion.div>
+              ) : null}
             </div>
 
           </div>
 
         </div>
       </div>
+
+      {/* Modal Hadiah XP */}
+      <AnimatePresence>
+        {xpGained && showModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.8, y: 50, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              transition={{ type: "spring", damping: 12, stiffness: 200 }}
+              className="bg-white dark:bg-[#0d131f] border border-emerald-500/40 rounded-[2rem] p-8 max-w-sm w-full shadow-[0_20px_50px_rgba(16,185,129,0.2)] flex flex-col items-center text-center relative overflow-hidden"
+            >
+              {/* Confetti Particles */}
+              <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                {[...Array(20)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 1, x: 0, y: 0, scale: 0 }}
+                    animate={{ 
+                      x: (Math.random() - 0.5) * 400, 
+                      y: (Math.random() - 0.5) * 400, 
+                      scale: Math.random() * 1.5 + 0.5,
+                      opacity: 0,
+                      rotate: Math.random() * 360
+                    }}
+                    transition={{ duration: 1.5, ease: "easeOut", delay: 0.1 }}
+                    className={`absolute left-1/2 top-1/2 w-2 h-2 rounded-sm ${['bg-yellow-400', 'bg-emerald-400', 'bg-teal-400', 'bg-white'][i % 4]}`}
+                  />
+                ))}
+              </div>
+
+              {/* Background Glow */}
+              <div className="absolute -top-20 -left-20 w-48 h-48 bg-emerald-500/30 blur-[60px] rounded-full pointer-events-none" />
+              <div className="absolute -bottom-20 -right-20 w-48 h-48 bg-teal-500/30 blur-[60px] rounded-full pointer-events-none" />
+
+              <motion.div 
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", delay: 0.2, damping: 10 }}
+                className="relative z-10 w-24 h-24 bg-gradient-to-br from-yellow-300 via-amber-400 to-amber-600 rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(253,224,71,0.6)] mb-6 border-4 border-white dark:border-[#0d131f] overflow-hidden"
+              >
+                {/* Shine effect across the medal */}
+                <motion.div 
+                  animate={{ x: ['-150%', '250%'] }}
+                  transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut", delay: 1 }}
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent skew-x-12 w-full"
+                />
+                <Award className="w-12 h-12 text-white drop-shadow-md relative z-10" />
+              </motion.div>
+              
+              <motion.h3 
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+                className="text-2xl font-black text-slate-800 dark:text-white mb-2 z-10 tracking-tight"
+              >
+                Pencapaian Baru!
+              </motion.h3>
+              <motion.p 
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+                className="text-slate-500 dark:text-slate-400 text-sm mb-6 z-10 leading-relaxed"
+              >
+                Hebat! Kamu telah menyelesaikan modul pembelajaran ini dan mendapatkan hadiah.
+              </motion.p>
+              
+              <motion.div 
+                initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", delay: 0.6 }}
+                className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 rounded-2xl py-3 px-8 mb-8 z-10 shadow-inner relative overflow-hidden group"
+              >
+                <div className="absolute inset-0 bg-emerald-400/20 w-0 group-hover:w-full transition-all duration-500 ease-out" />
+                <span className="relative text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300 drop-shadow-sm">
+                  +{xpGained} XP
+                </span>
+              </motion.div>
+              
+              <motion.button 
+                initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.7 }}
+                onClick={() => setShowModal(false)}
+                className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-black uppercase tracking-wider text-sm rounded-xl transition-all z-10 shadow-[0_10px_20px_rgba(16,185,129,0.3)] hover:shadow-[0_15px_30px_rgba(16,185,129,0.4)] active:scale-95"
+              >
+                Lanjutkan Misi
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
