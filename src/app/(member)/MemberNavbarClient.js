@@ -62,7 +62,7 @@ export default function MemberNavbarClient({ user, profile }) {
     { name: "Beranda", href: "/member" },
     { name: "Tugas", href: "/member/tugas", icon: FolderKanban },
     { name: "Leaderboard", href: "/member/leaderboard", icon: Trophy },
-    { name: "Absensi", href: "/member/absensi", icon: ClipboardCheck },
+    { name: "Presensi", href: "/member/absensi", icon: ClipboardCheck },
   ];
 
   const levelData = getUserLevelData(profile?.xp || user?.totalPoints || 0);
@@ -133,7 +133,7 @@ export default function MemberNavbarClient({ user, profile }) {
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute left-0 mt-2 w-56 rounded-2xl bg-[#08120e] border border-white/5 shadow-2xl p-2 z-[60] overflow-hidden"
+                    className="absolute left-0 mt-2 w-56 rounded-2xl bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 shadow-2xl p-2 z-[60] overflow-hidden"
                   >
                     <Link
                       href="/member/literatur"
