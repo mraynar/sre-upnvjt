@@ -125,10 +125,25 @@ export const taskSubmission = pgTable('taskSubmission', {
 // ==========================================
 // 6. ATTENDANCES
 // ==========================================
+export const attendanceSession = pgTable('attendanceSession', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  date: timestamp('date', { mode: 'date' }).notNull(),
+  startTime: timestamp('startTime', { mode: 'date' }),
+  endTime: timestamp('endTime', { mode: 'date' }),
+  isForAllRoles: boolean('isForAllRoles').default(false).notNull(),
+  targetRoleIds: jsonb('targetRoleIds').default([]).notNull(),
+  token: varchar('token', { length: 50 }),
+  isActive: boolean('isActive').default(true).notNull(),
+  createdById: integer('createdById').references(() => user.id).notNull(),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
+});
+
 export const attendance = pgTable('attendance', {
   id: serial('id').primaryKey(),
+  sessionId: integer('sessionId').references(() => attendanceSession.id).notNull(),
   memberId: integer('memberId').references(() => user.id).notNull(),
-  date: timestamp('date', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
   status: varchar('status', { length: 50 }).notNull(), // 'PRESENT', 'ABSENT', etc.
   notes: text('notes'),
   createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
@@ -255,7 +270,13 @@ export const taskSubmissionRelations = relations(taskSubmission, ({ one }) => ({
   reviewer: one(user, { fields: [taskSubmission.reviewedById], references: [user.id], relationName: 'ReviewerSubmissions' }),
 }));
 
+export const attendanceSessionRelations = relations(attendanceSession, ({ one, many }) => ({
+  createdBy: one(user, { fields: [attendanceSession.createdById], references: [user.id] }),
+  attendances: many(attendance),
+}));
+
 export const attendanceRelations = relations(attendance, ({ one }) => ({
+  session: one(attendanceSession, { fields: [attendance.sessionId], references: [attendanceSession.id] }),
   member: one(user, { fields: [attendance.memberId], references: [user.id] }),
 }));
 

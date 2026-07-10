@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { attendance } from "@/db/schema";
-import { desc } from "drizzle-orm";
+import { attendance, attendanceSession, user, memberProfile, xpTransaction } from "@/db/schema";
+import { desc, eq, and, sql } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 
@@ -10,8 +10,9 @@ export async function GET() {
     const records = await db.query.attendance.findMany({
       with: {
         member: { columns: { id: true, name: true, npm: true } },
+        session: true,
       },
-      orderBy: [desc(attendance.date)],
+      orderBy: [desc(attendance.createdAt)],
     });
 
     return NextResponse.json(records);
@@ -28,23 +29,90 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { memberId, date, status, notes } = body;
+    const { sessionId, status, notes, token } = body;
+    const memberIdInt = parseInt(session.user.id);
 
-    if (!memberId || !status || !date) {
-      return NextResponse.json({ error: "Anggota, tanggal, dan status absensi wajib diisi" }, { status: 400 });
+    if (!sessionId || !status) {
+      return NextResponse.json({ error: "Sesi dan status absensi wajib diisi" }, { status: 400 });
     }
 
+    // Check if the session exists
+    const sessionRecord = await db.query.attendanceSession.findFirst({
+      where: eq(attendanceSession.id, parseInt(sessionId)),
+    });
+
+    if (!sessionRecord) {
+      return NextResponse.json({ error: "Sesi presensi tidak ditemukan" }, { status: 404 });
+    }
+
+    // Check if user already submitted
+    const existing = await db.query.attendance.findFirst({
+      where: and(
+        eq(attendance.sessionId, parseInt(sessionId)),
+        eq(attendance.memberId, memberIdInt)
+      )
+    });
+
+    if (existing) {
+      return NextResponse.json({ error: "Anda sudah mengisi presensi untuk sesi ini" }, { status: 400 });
+    }
+
+    // Validate Token if status is PRESENT
+    if (status === "PRESENT") {
+      if (sessionRecord.token) {
+        if (!token || token.trim() !== sessionRecord.token) {
+          return NextResponse.json({ error: "Token presensi tidak valid!" }, { status: 403 });
+        }
+      }
+    }
+
+    // If status is ABSENT or EXCUSED, maybe notes is required, but let's just save it.
+
     const [result] = await db.insert(attendance).values({
-      memberId: parseInt(memberId),
-      date: new Date(date),
+      sessionId: parseInt(sessionId),
+      memberId: memberIdInt,
       status,
       notes: notes || null,
     }).returning();
 
+    // Give 10 XP if PRESENT or LATE
+    if (status === "PRESENT" || status === "LATE") {
+      const xpAmount = 10;
+      
+      // 1. Update legacy totalPoints
+      await db.update(user)
+        .set({ totalPoints: sql`${user.totalPoints} + ${xpAmount}` })
+        .where(eq(user.id, memberIdInt));
+
+      // 2. Upsert memberProfile
+      await db.insert(memberProfile)
+        .values({
+          userId: memberIdInt,
+          xp: xpAmount,
+          level: 1,
+        })
+        .onConflictDoUpdate({
+          target: memberProfile.userId,
+          set: { xp: sql`${memberProfile.xp} + ${xpAmount}` }
+        });
+
+      // 3. Log XP transaction
+      await db.insert(xpTransaction).values({
+        userId: memberIdInt,
+        amount: xpAmount,
+        reason: status === "PRESENT" ? "Presensi (Hadir)" : "Presensi (Terlambat)",
+        sourceType: "attendance",
+        sourceId: result.id,
+      });
+    }
+
     // fetch relation for return value
     const full = await db.query.attendance.findFirst({
-      where: (t, { eq }) => eq(t.id, result.id),
-      with: { member: { columns: { id: true, name: true, npm: true } } },
+      where: eq(attendance.id, result.id),
+      with: { 
+        member: { columns: { id: true, name: true, npm: true } },
+        session: true
+      },
     });
 
     return NextResponse.json({ success: true, attendance: full }, { status: 201 });
