@@ -70,7 +70,7 @@ export default async function MemberDashboardPage() {
   // Calculate attendance logs and streak
   const attendanceLogs = await db.query.attendance.findMany({
     where: eq(attendance.memberId, userIdInt),
-    orderBy: [desc(attendance.date)],
+    orderBy: [desc(attendance.createdAt)],
   });
 
   const presentCount = attendanceLogs.filter(a => a.status === "PRESENT" || a.status === "LATE").length;

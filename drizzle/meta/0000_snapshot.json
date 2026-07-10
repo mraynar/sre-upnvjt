@@ -1,5 +1,6 @@
 {
   "id": "9542f9e2-72b5-4029-8d26-803c4cc682f6",
+  "id": "f3eb8ff8-f930-4382-b7e4-3f9323aa55f2",
   "prevId": "136aafc5-aed2-4d86-93ff-686fe4dd79a6",
   "version": "7",
   "dialect": "postgresql",
@@ -96,15 +97,15 @@
           "primaryKey": true,
           "notNull": true
         },
-        "memberId": {
-          "name": "memberId",
+        "sessionId": {
+          "name": "sessionId",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "date": {
-          "name": "date",
-          "type": "timestamp",
+        "memberId": {
+          "name": "memberId",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -129,12 +130,121 @@
       },
       "indexes": {},
       "foreignKeys": {
+        "attendance_sessionId_attendanceSession_id_fk": {
+          "name": "attendance_sessionId_attendanceSession_id_fk",
+          "tableFrom": "attendance",
+          "tableTo": "attendanceSession",
+          "columnsFrom": [
+            "sessionId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
         "attendance_memberId_user_id_fk": {
           "name": "attendance_memberId_user_id_fk",
           "tableFrom": "attendance",
           "tableTo": "user",
           "columnsFrom": [
             "memberId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.attendanceSession": {
+      "name": "attendanceSession",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "startTime": {
+          "name": "startTime",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "endTime": {
+          "name": "endTime",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isForAllRoles": {
+          "name": "isForAllRoles",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "targetRoleIds": {
+          "name": "targetRoleIds",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "isActive": {
+          "name": "isActive",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "createdById": {
+          "name": "createdById",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "attendanceSession_createdById_user_id_fk": {
+          "name": "attendanceSession_createdById_user_id_fk",
+          "tableFrom": "attendanceSession",
+          "tableTo": "user",
+          "columnsFrom": [
+            "createdById"
           ],
           "columnsTo": [
             "id"
