@@ -1,36 +1,30 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { shortlink } from '@/db/schema';
+import { eq, sql } from 'drizzle-orm';
 
-export async function GET(request, { params }) {
+export async function GET(req, { params }) {
   const { slug } = await params;
 
   try {
-    // Kumpulkan header dari request pengunjung asli
-    const clientIp = request.ip || request.headers.get("x-forwarded-for") || "";
-    const userAgent = request.headers.get("user-agent") || "";
-    const referer = request.headers.get("referer") || "";
+    const link = await db.select().from(shortlink).where(eq(shortlink.slug, slug)).limit(1);
 
-    // 1. Tembak API ke server backend shortlink dengan meneruskan headers
-    const res = await fetch(`http://127.0.0.1:8000/api/resolve/${slug}`, {
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        "X-Forwarded-For": clientIp, // Meneruskan IP pengunjung
-        "X-Forwarded-User-Agent": userAgent, // Meneruskan OS/Browser (Perangkat)
-        "X-Forwarded-Referer": referer, // Meneruskan asal lalu lintas (IG/WA)
-      },
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      // 2. Redirect ke link asli
-      return NextResponse.redirect(new URL(data.long_url));
+    if (link.length === 0) {
+      // If not found, redirect to a 404 page or home
+      return NextResponse.redirect(new URL('/404', req.url));
     }
-  } catch (error) {
-    console.error("Shortlink error di Next.js:", error);
-  }
 
-  // 3. 404
-  const baseUrl = request.nextUrl.origin;
-  return NextResponse.redirect(new URL("/404", baseUrl));
+    const { originalUrl, id } = link[0];
+
+    // Increment clicks
+    await db.update(shortlink)
+      .set({ clicks: sql`COALESCE(${shortlink.clicks}, 0) + 1` })
+      .where(eq(shortlink.id, id));
+
+    // Redirect to original URL
+    return NextResponse.redirect(originalUrl);
+  } catch (error) {
+    console.error('Error redirecting shortlink:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
 }
