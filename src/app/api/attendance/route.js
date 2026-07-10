@@ -77,33 +77,41 @@ export async function POST(req) {
 
     // Give 10 XP if PRESENT or LATE
     if (status === "PRESENT" || status === "LATE") {
-      const xpAmount = 10;
-      
-      // 1. Update legacy totalPoints
-      await db.update(user)
-        .set({ totalPoints: sql`${user.totalPoints} + ${xpAmount}` })
-        .where(eq(user.id, memberIdInt));
-
-      // 2. Upsert memberProfile
-      await db.insert(memberProfile)
-        .values({
-          userId: memberIdInt,
-          xp: xpAmount,
-          level: 1,
-        })
-        .onConflictDoUpdate({
-          target: memberProfile.userId,
-          set: { xp: sql`${memberProfile.xp} + ${xpAmount}` }
-        });
-
-      // 3. Log XP transaction
-      await db.insert(xpTransaction).values({
-        userId: memberIdInt,
-        amount: xpAmount,
-        reason: status === "PRESENT" ? "Presensi (Hadir)" : "Presensi (Terlambat)",
-        sourceType: "attendance",
-        sourceId: result.id,
+      const userRoleRecord = await db.query.user.findFirst({
+        where: eq(user.id, memberIdInt),
+        with: { role: true }
       });
+
+      // Prevent Staff from gaining XP
+      if (userRoleRecord && userRoleRecord.role?.name !== "Staff") {
+        const xpAmount = 10;
+        
+        // 1. Update legacy totalPoints
+        await db.update(user)
+          .set({ totalPoints: sql`${user.totalPoints} + ${xpAmount}` })
+          .where(eq(user.id, memberIdInt));
+
+        // 2. Upsert memberProfile
+        await db.insert(memberProfile)
+          .values({
+            userId: memberIdInt,
+            xp: xpAmount,
+            level: 1,
+          })
+          .onConflictDoUpdate({
+            target: memberProfile.userId,
+            set: { xp: sql`${memberProfile.xp} + ${xpAmount}` }
+          });
+
+        // 3. Log XP transaction
+        await db.insert(xpTransaction).values({
+          userId: memberIdInt,
+          amount: xpAmount,
+          reason: status === "PRESENT" ? "Presensi (Hadir)" : "Presensi (Terlambat)",
+          sourceType: "attendance",
+          sourceId: result.id,
+        });
+      }
     }
 
     // fetch relation for return value

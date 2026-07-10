@@ -32,8 +32,12 @@ export default async function MemberAbsensiPage() {
 
   const validSessions = allSessions.filter(s => {
     if (s.isForAllRoles) return true;
-    const roles = s.targetRoleIds || [];
-    return roles.includes(userRecord.roleId);
+    let roles = s.targetRoleIds || [];
+    if (typeof roles === 'string') {
+      try { roles = JSON.parse(roles); } catch (e) {}
+    }
+    if (!Array.isArray(roles)) roles = [roles];
+    return roles.map(r => String(r)).includes(String(userRecord.roleId));
   });
 
   // Fetch only this member's attendance history
