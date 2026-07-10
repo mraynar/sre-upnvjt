@@ -236,6 +236,8 @@ export const userRelations = relations(user, ({ one, many }) => ({
   taskSubmissions: many(taskSubmission, { relationName: 'MemberSubmissions' }),
   tasksReviewed: many(taskSubmission, { relationName: 'ReviewerSubmissions' }),
   attendances: many(attendance),
+  documentItemsUploaded: many(documentItem),
+  shortlinksCreated: many(shortlink),
 }));
 
 export const memberProfileRelations = relations(memberProfile, ({ one }) => ({
@@ -439,7 +441,40 @@ export const xpTransaction = pgTable('xpTransaction', {
 });
 
 // ==========================================
-// NEW RELATIONS (12–15)
+// 16. DOCUMENTS
+// ==========================================
+export const documentCategory = pgTable('documentCategory', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  description: text('description'),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()),
+});
+
+export const documentItem = pgTable('documentItem', {
+  id: serial('id').primaryKey(),
+  categoryId: integer('categoryId').references(() => documentCategory.id).notNull(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  fileUrl: varchar('fileUrl', { length: 1000 }).notNull(),
+  uploadedById: integer('uploadedById').references(() => user.id).notNull(),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()),
+});
+
+// ==========================================
+// 17. SHORTLINKS
+// ==========================================
+export const shortlink = pgTable('shortlink', {
+  id: serial('id').primaryKey(),
+  slug: varchar('slug', { length: 255 }).unique().notNull(),
+  originalUrl: text('originalUrl').notNull(),
+  description: varchar('description', { length: 255 }),
+  clicks: integer('clicks').default(0).notNull(),
+  createdById: integer('createdById').references(() => user.id).notNull(),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
+});
+
+// ==========================================
+// NEW RELATIONS (12–17)
 // ==========================================
 
 export const literatureCategoryRelations = relations(literatureCategory, ({ many }) => ({
@@ -515,5 +550,27 @@ export const xpTransactionRelations = relations(xpTransaction, ({ one }) => ({
     fields: [xpTransaction.grantedById],
     references: [user.id],
     relationName: 'GranterXpTransactions',
+  }),
+}));
+
+export const documentCategoryRelations = relations(documentCategory, ({ many }) => ({
+  items: many(documentItem),
+}));
+
+export const documentItemRelations = relations(documentItem, ({ one }) => ({
+  category: one(documentCategory, {
+    fields: [documentItem.categoryId],
+    references: [documentCategory.id],
+  }),
+  uploadedBy: one(user, {
+    fields: [documentItem.uploadedById],
+    references: [user.id],
+  }),
+}));
+
+export const shortlinkRelations = relations(shortlink, ({ one }) => ({
+  createdBy: one(user, {
+    fields: [shortlink.createdById],
+    references: [user.id],
   }),
 }));
