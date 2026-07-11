@@ -119,30 +119,7 @@ export default function StaffDashboardClient({
       </div>
 
       {/* Gamified Stat/Action Cards Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        
-        {/* Stat Item: Attendance (Orange) */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="group cursor-default relative h-full"
-        >
-          <div className="absolute inset-0 bg-emerald-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <div className="h-full bg-white/80 dark:bg-[#08120e]/80 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-3xl p-6 relative overflow-hidden flex items-center gap-6 shadow-sm dark:shadow-none hover:shadow-lg dark:hover:shadow-none transition-all duration-500">
-            <div className="absolute -right-10 -bottom-10 opacity-5 dark:opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-700">
-              <ClipboardCheck className="w-40 h-40 text-emerald-500" />
-            </div>
-            <div className="relative z-10 p-4 bg-emerald-500/10 text-emerald-500 rounded-2xl border border-emerald-500/20">
-              <ClipboardCheck className="w-8 h-8" />
-            </div>
-            <div className="relative z-10">
-              <h4 className="text-3xl font-black text-slate-900 dark:text-white leading-none">{presentCount}</h4>
-              <p className="text-xs font-bold text-slate-500 dark:text-white/40 uppercase tracking-widest mt-2">{t('staff_dashboard.log_hadir')}</p>
-            </div>
-          </div>
-        </motion.div>
-        
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {/* Shortcut to Documents (Indigo Gamified) */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}

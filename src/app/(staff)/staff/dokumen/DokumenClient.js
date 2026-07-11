@@ -22,36 +22,35 @@ export default function DokumenClient({ initialCategories, initialDocuments, use
 
   return (
     <div className="w-full relative space-y-8 select-none transition-colors duration-500 pb-20">
-      
       {/* Background Ambience */}
       <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none mix-blend-multiply dark:mix-blend-screen" />
-      
+
       {/* Header Section */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         className="bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-end justify-between relative overflow-hidden shadow-xl dark:shadow-2xl gap-6"
       >
         <div className="absolute -left-16 -top-16 w-48 h-48 rounded-full bg-emerald-500/20 dark:bg-emerald-500/10 blur-[50px] pointer-events-none" />
-        
+
         <div className="relative z-10 flex-1">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
               <FileText className="w-6 h-6" />
             </div>
             <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-bold text-emerald-500 uppercase tracking-widest">
-              {t('documents.kb')}
+              RE-Core
             </span>
           </div>
           <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-slate-900 dark:text-white leading-tight">
-            {t('documents.title_doc')} <br/>
+            {t("documents.title_doc")} <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-emerald-500">
-              {t('documents.title_sre')}
+              {t("documents.title_sre")}
             </span>
           </h1>
           <p className="text-slate-500 dark:text-white/60 text-sm md:text-base font-medium mt-4 max-w-lg leading-relaxed">
-            {t('documents.desc')}
+            {t("documents.desc")}
           </p>
         </div>
 
@@ -61,7 +60,7 @@ export default function DokumenClient({ initialCategories, initialDocuments, use
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-white/30" />
             <input
               type="text"
-              placeholder={t('documents.search_ph')}
+              placeholder={t("documents.search_ph")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-white dark:bg-[#0a1610] border border-slate-200 dark:border-white/10 rounded-2xl pl-12 pr-4 py-3.5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all shadow-sm"
@@ -79,24 +78,26 @@ export default function DokumenClient({ initialCategories, initialDocuments, use
       >
         <div className="flex items-center gap-2 pr-4 border-r border-slate-200 dark:border-white/10">
           <Filter className="w-4 h-4 text-slate-400" />
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Filter</span>
+          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            Filter
+          </span>
         </div>
-        
+
         <button
           onClick={() => setActiveCategory("all")}
           className={`w-full md:w-auto flex items-center justify-between p-4 px-6 rounded-2xl border transition-all ${
-            activeCategory === "all" 
-              ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/25" 
+            activeCategory === "all"
+              ? "bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/25"
               : "bg-slate-50 dark:bg-[#0a1610] border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/60 hover:border-emerald-500/50 hover:bg-emerald-50 dark:hover:bg-emerald-500/10"
           }`}
         >
           <div className="flex items-center gap-3">
             <FolderOpen className="w-5 h-5" />
-            <span className="font-bold">{t('documents.all_doc')}</span>
+            <span className="font-bold">{t("documents.all_doc")}</span>
           </div>
         </button>
-        
-        {initialCategories.map(cat => (
+
+        {initialCategories.map((cat) => (
           <button
             key={cat.id}
             onClick={() => setActiveCategory(cat.id)}
@@ -136,7 +137,7 @@ export default function DokumenClient({ initialCategories, initialDocuments, use
                         {doc.category?.name || "Uncategorized"}
                       </span>
                     </div>
-                    
+
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white leading-tight mb-2 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">
                       {doc.title}
                     </h3>
@@ -144,31 +145,31 @@ export default function DokumenClient({ initialCategories, initialDocuments, use
                       {doc.description || "Tidak ada deskripsi."}
                     </p>
                   </div>
-                  
+
                   <div className="pt-4 border-t border-slate-100 dark:border-white/5 flex items-center justify-between">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-4 text-xs font-medium text-slate-500 dark:text-white/40">
-                      <div className="flex items-center gap-1.5">
-                        <User className="w-4 h-4" />
-                        {t('documents.by')} {doc.authorName || "Staff"}
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="w-4 h-4" />
-                        {new Date(doc.createdAt).toLocaleDateString("id-ID")}
+                        <div className="flex items-center gap-1.5">
+                          <User className="w-4 h-4" />
+                          {t("documents.by")} {doc.authorName || "Staff"}
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="w-4 h-4" />
+                          {new Date(doc.createdAt).toLocaleDateString("id-ID")}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  {/* Download Action */}
-                  <a 
-                    href={doc.fileUrl} 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-4 bg-slate-50 dark:bg-white/5 border-l border-slate-200 dark:border-white/5 hover:bg-emerald-50 dark:hover:bg-emerald-500/20 hover:text-emerald-500 transition-colors flex flex-col items-center justify-center gap-2"
-                    title={t('documents.download')}
-                  >
-                    <Download className="w-6 h-6" />
-                  </a>
+
+                    {/* Download Action */}
+                    <a
+                      href={doc.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-4 bg-slate-50 dark:bg-white/5 border-l border-slate-200 dark:border-white/5 hover:bg-emerald-50 dark:hover:bg-emerald-500/20 hover:text-emerald-500 transition-colors flex flex-col items-center justify-center gap-2"
+                      title={t("documents.download")}
+                    >
+                      <Download className="w-6 h-6" />
+                    </a>
                   </div>
                 </div>
               </motion.div>
@@ -176,16 +177,18 @@ export default function DokumenClient({ initialCategories, initialDocuments, use
           </AnimatePresence>
         </div>
       ) : (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="w-full p-12 flex flex-col items-center justify-center bg-white/50 dark:bg-white/5 border border-dashed border-slate-300 dark:border-white/10 rounded-3xl"
         >
           <FileText className="w-12 h-12 text-slate-300 dark:text-white/20 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{t('documents.empty')}</h3>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
+            {t("documents.empty")}
+          </h3>
           <p className="text-sm text-slate-500 dark:text-white/50 text-center max-w-sm">
-            {searchQuery 
-              ? "Tidak ada dokumen yang cocok dengan pencarian Anda." 
+            {searchQuery
+              ? "Tidak ada dokumen yang cocok dengan pencarian Anda."
               : "Belum ada dokumen yang diunggah dalam kategori ini."}
           </p>
         </motion.div>

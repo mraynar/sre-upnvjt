@@ -233,7 +233,7 @@ export default function ShortlinkClient({ initialLinks = [] }) {
         
         <div className="relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-bold text-emerald-500 uppercase tracking-widest mb-4">
-              SRE Shortener
+              RE-Direct
           </div>
           <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-slate-900 dark:text-white leading-tight">
             {t('shortlinks.link_center')}

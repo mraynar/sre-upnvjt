@@ -68,7 +68,7 @@ export default function LiteraturStaffClient({ initialItems, categories }) {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
           <span className="px-3.5 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-xs font-bold text-emerald-600 dark:text-emerald-500 tracking-wide uppercase">
-            {t('literatur.subtitle')}
+            RE-Search
           </span>
           <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-slate-900 dark:text-white mt-4 flex items-center gap-3">
             <FolderOpen className="w-9 h-9 text-emerald-500 animate-pulse" />
