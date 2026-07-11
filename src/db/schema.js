@@ -136,8 +136,6 @@ export const attendanceSession = pgTable('attendanceSession', {
   date: timestamp('date', { mode: 'date' }).notNull(),
   startTime: timestamp('startTime', { mode: 'date' }),
   endTime: timestamp('endTime', { mode: 'date' }),
-  isForAllRoles: boolean('isForAllRoles').default(false).notNull(),
-  targetRoleIds: jsonb('targetRoleIds').default([]).notNull(),
   token: varchar('token', { length: 50 }),
   isActive: boolean('isActive').default(true).notNull(),
   createdById: integer('createdById').references(() => user.id).notNull(),
