@@ -79,6 +79,9 @@ export default async function MemberDashboardPage() {
   const latestPpt = await db.query.pptModule.findFirst({
     where: eq(pptModule.isPublished, true),
     orderBy: [desc(pptModule.createdAt)],
+    with: {
+      slides: true
+    }
   });
 
   // Fetch latest literature item

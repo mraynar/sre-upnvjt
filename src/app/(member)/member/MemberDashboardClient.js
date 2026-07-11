@@ -1,11 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { 
   Award, Trophy, ClipboardCheck, FolderKanban, Flame, 
-  ArrowRight, Star, BookOpen, Clock, ChevronRight, Zap, Shield, Medal
+  ArrowRight, Star, BookOpen, Clock, ChevronRight, Zap, Shield, Medal, Play, Activity
 } from "lucide-react";
 import { getUserLevelData } from "@/lib/leveling";
 import { useLanguage } from "@/i18n/LanguageProvider";
@@ -23,6 +23,28 @@ export default function MemberDashboardClient({
   xpLogs
 }) {
   const { t } = useLanguage();
+
+  const [pptProgress, setPptProgress] = useState(0);
+
+  useEffect(() => {
+    if (latestPpt) {
+      const savedProgress = localStorage.getItem(`sre_materi_progress_${latestPpt.id}`);
+      if (savedProgress) {
+        try {
+          const parsed = JSON.parse(savedProgress);
+          const maxIdx = parsed.maxSlideIdx || 0;
+          const currentIdx = parsed.currentSlideIdx || 0;
+          const totalSlides = latestPpt.slides?.length || maxIdx + 1 || 10;
+          
+          if (totalSlides > 1) {
+            setPptProgress(Math.round((currentIdx / (totalSlides - 1)) * 100));
+          } else if (currentIdx >= 0) {
+            setPptProgress(100);
+          }
+        } catch (e) {}
+      }
+    }
+  }, [latestPpt]);
 
   // Compute next level XP using standardized utility
   const levelData = getUserLevelData(profile?.xp || user?.totalPoints || 0);
@@ -241,53 +263,94 @@ export default function MemberDashboardClient({
 
       </div>
 
-      {/* 3. Lanjutkan Belajar Section */}
+      {/* 3. Lanjutkan Belajar Section - GAMIFIED */}
       {latestPpt && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 20, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="bg-gradient-to-r from-[#081b12] to-[#07130e] border border-primary/10 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-8 relative overflow-hidden shadow-2xl group"
+          className="relative rounded-[2rem] p-[2px] overflow-hidden group shadow-[0_20px_40px_rgba(16,185,129,0.1)]"
         >
-          <div className="flex-1">
-            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-wider">
-              Lanjutkan Belajar
-            </span>
-            <h2 className="text-2xl md:text-3xl font-display font-black text-white mt-4 tracking-tight">
-              {latestPpt.title}
-            </h2>
-            <p className="text-white/60 text-xs md:text-sm mt-2 max-w-xl leading-relaxed line-clamp-2">
-              {latestPpt.description || "Modul PPT pembelajaran resmi dari Divisi Academic SRE UPN Veteran Jawa Timur."}
-            </p>
-            <div className="flex items-center gap-6 mt-6">
-              <Link 
-                href="/member/materi"
-                className="inline-flex items-center gap-2 bg-primary hover:bg-primary-focus hover:scale-105 text-[#050e0a] font-bold px-6 py-3 rounded-2xl text-xs tracking-wider uppercase transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
-              >
-                Mulai Belajar
-                <Zap className="w-4 h-4 fill-current" />
-              </Link>
-            </div>
-          </div>
+          {/* Animated Gradient Border */}
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500 bg-[length:200%_auto] animate-gradient opacity-80" />
           
-          {/* Decorative Carousel representation */}
-          <div className="w-full md:w-80 aspect-video rounded-2xl bg-white/5 border border-white/10 overflow-hidden relative shadow-lg">
-            {latestPpt.coverImageUrl ? (
-              <img 
-                src={latestPpt.coverImageUrl} 
-                alt=""
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90"
-              />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-primary/40">
-                <BookOpen className="w-10 h-10 mb-2 animate-bounce" />
-                <span className="text-xs font-bold tracking-widest uppercase">Slide Modul</span>
+          <div className="relative bg-[#050e0a]/95 backdrop-blur-xl rounded-[2rem] p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-8 h-full">
+            
+            {/* Gamified Background Ambient */}
+            <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none transition-transform duration-1000 group-hover:scale-150" />
+            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-teal-500/20 rounded-full blur-[100px] pointer-events-none transition-transform duration-1000 group-hover:scale-150" />
+
+            <div className="flex-1 relative z-10">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+                  <Activity className="w-3 h-3" />
+                  Quest Aktif
+                </span>
+                <span className="px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/50 text-amber-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+                  <Zap className="w-3 h-3 fill-current" />
+                  +10 XP
+                </span>
               </div>
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center text-[10px] font-black text-white uppercase tracking-wider">
-              <span>SRE E-Academy</span>
-              <span>10 Slide</span>
+              
+              <h2 className="text-3xl md:text-4xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60 tracking-tight">
+                {latestPpt.title}
+              </h2>
+              
+              <p className="text-white/50 text-sm mt-3 max-w-xl font-medium leading-relaxed line-clamp-2">
+                {latestPpt.description || "Modul PPT pembelajaran resmi dari Divisi Academic SRE UPN Veteran Jawa Timur."}
+              </p>
+
+              {/* Real Progress Bar */}
+              <div className="mt-6 max-w-md">
+                <div className="flex justify-between items-end mb-2">
+                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Progress</span>
+                  <span className="text-xs font-black text-emerald-400">{pptProgress}%</span>
+                </div>
+                <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden border border-white/5 relative">
+                  <div 
+                    className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full relative overflow-hidden transition-all duration-1000" 
+                    style={{ width: `${pptProgress}%` }}
+                  >
+                    <div className="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite]" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 mt-8">
+                <Link 
+                  href="/member/materi"
+                  className="relative group/btn inline-flex items-center gap-3 bg-emerald-500 text-[#050e0a] font-black px-8 py-4 rounded-2xl text-sm tracking-widest uppercase overflow-hidden transition-transform active:scale-95 shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)]"
+                >
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out" />
+                  <span className="relative z-10 flex items-center gap-2">
+                    <Play className="w-5 h-5 fill-current" />
+                    Mulai Eksekusi
+                  </span>
+                </Link>
+              </div>
+            </div>
+            
+            {/* Gamified Thumbnail */}
+            <div className="w-full md:w-80 aspect-[4/3] rounded-[1.5rem] bg-black/50 border-2 border-white/10 overflow-hidden relative shadow-[0_0_30px_rgba(16,185,129,0.15)] group-hover:border-emerald-500/50 transition-colors duration-500 z-10">
+              {latestPpt.coverImageUrl ? (
+                <img 
+                  src={latestPpt.coverImageUrl} 
+                  alt=""
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center text-emerald-500/40 group-hover:text-emerald-500/60 transition-colors">
+                  <BookOpen className="w-12 h-12 mb-3 animate-pulse" />
+                  <span className="text-sm font-black tracking-widest uppercase">Target File</span>
+                </div>
+              )}
+              
+              {/* Scanline Effect */}
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#050e0a] via-[#050e0a]/20 to-transparent opacity-90" />
+              
+              <div className="absolute bottom-5 left-5 right-5 flex justify-between items-center text-[10px] font-black text-white/80 uppercase tracking-widest">                <span className="px-2 py-1 bg-white/10 rounded backdrop-blur-md border border-white/10">{latestPpt.slides?.length || 10} Slide</span>
+              </div>
             </div>
           </div>
         </motion.div>

@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageProvider";
 
-export default function TugasClient({ initialTasks, initialSubmissions }) {
+export default function TugasClient({ user, initialTasks, initialSubmissions }) {
   const [tasks] = useState(initialTasks || []);
   const [submissions, setSubmissions] = useState(initialSubmissions || []);
   const [activeTask, setActiveTask] = useState(null); // task for details view
@@ -104,7 +104,19 @@ export default function TugasClient({ initialTasks, initialSubmissions }) {
         }
 
         files.forEach(f => {
-          formData.append("file", f);
+          const originalName = f.name;
+          const lastDotIdx = originalName.lastIndexOf('.');
+          const extension = lastDotIdx !== -1 ? originalName.substring(lastDotIdx) : '';
+          const oldNameNoExt = lastDotIdx !== -1 ? originalName.substring(0, lastDotIdx) : originalName;
+          
+          const safeTaskTitle = activeTask.title.replace(/[^a-zA-Z0-9]/g, '_');
+          const safeUserName = (user?.name || 'User').replace(/[^a-zA-Z0-9]/g, '_');
+          const safeOriginalName = oldNameNoExt.replace(/[^a-zA-Z0-9]/g, '_');
+          
+          const newFileName = `${safeTaskTitle}_${safeUserName}_${safeOriginalName}${extension}`;
+          const renamedFile = new File([f], newFileName, { type: f.type });
+          
+          formData.append("file", renamedFile);
         });
       }
 

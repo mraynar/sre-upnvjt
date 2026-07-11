@@ -33,6 +33,7 @@ export default async function MemberTugasPage() {
 
   return (
     <TugasClient
+      user={session.user}
       initialTasks={tasks}
       initialSubmissions={submissions}
     />

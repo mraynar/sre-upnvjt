@@ -5,11 +5,9 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ExternalLink, Calendar, User, FileText, FolderOpen, Info } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { useRouter } from "next/navigation";
-import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
+import dynamic from 'next/dynamic';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+const PDFViewerWrapper = dynamic(() => import('@/components/ui/PDFViewerWrapper'), { ssr: false });
 
 const TYPE_COLORS = {
   PDF:    "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20",
@@ -76,24 +74,23 @@ export default function LiteraturDetailClient({ item }) {
                 <span className="text-sm font-bold text-slate-400 dark:text-white/40 tracking-widest uppercase animate-pulse">Memuat Dokumen...</span>
               </div>
             )}
-            
             {item.type === 'PDF' ? (
               <div className="w-full h-full overflow-y-auto bg-slate-100 dark:bg-slate-900/50 custom-scrollbar relative z-20">
-                <Document
+                <PDFViewerWrapper
                   file={pdfUrl}
                   onLoadSuccess={onDocumentLoadSuccess}
-                  loading={null}
-                  className="flex flex-col items-center py-8 gap-6"
-                >
-                  {numPages && Array.from(new Array(numPages), (el, index) => (
+                  numPages={numPages}
+                  renderPageWrapper={(Page, index) => (
                     <Page 
                       key={`page_${index + 1}`} 
                       pageNumber={index + 1} 
                       width={800}
+                      renderTextLayer={true}
+                      renderAnnotationLayer={true}
                       className="shadow-md"
                     />
-                  ))}
-                </Document>
+                  )}
+                />
               </div>
             ) : (
               <iframe 

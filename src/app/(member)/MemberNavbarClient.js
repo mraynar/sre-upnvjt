@@ -62,7 +62,7 @@ export default function MemberNavbarClient({ user, profile }) {
     { name: "Beranda", href: "/member" },
     { name: "Tugas", href: "/member/tugas", icon: FolderKanban },
     { name: "Leaderboard", href: "/member/leaderboard", icon: Trophy },
-    { name: "Absensi", href: "/member/absensi", icon: ClipboardCheck },
+    { name: "Presensi", href: "/member/absensi", icon: ClipboardCheck },
   ];
 
   const levelData = getUserLevelData(profile?.xp || user?.totalPoints || 0);
