@@ -4,6 +4,7 @@ import { user } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
+import bcrypt from "bcryptjs";
 
 export async function PUT(req) {
   try {
@@ -14,7 +15,7 @@ export async function PUT(req) {
     }
 
     const body = await req.json();
-    const { name, email, npm, profilePictureUrl } = body;
+    const { name, email, npm, profilePictureUrl, currentPassword, newPassword } = body;
 
     if (!name || !email) {
       return NextResponse.json({ error: "Name and email are required" }, { status: 400 });
@@ -40,12 +41,32 @@ export async function PUT(req) {
 
     const updateData = {
       name,
-      email,
       npm: npm || null,
-    };
+    }; // We do not update email
 
     if (profilePictureUrl !== undefined) {
       updateData.profilePictureUrl = profilePictureUrl;
+    }
+
+    if (newPassword) {
+      if (!currentPassword) {
+        return NextResponse.json({ error: "Current password is required to set a new password" }, { status: 400 });
+      }
+
+      const currentUser = await db.query.user.findFirst({
+        where: eq(user.id, parseInt(session.user.id)),
+      });
+
+      if (!currentUser || !currentUser.password) {
+        return NextResponse.json({ error: "User not found or no password set" }, { status: 400 });
+      }
+
+      const isValid = await bcrypt.compare(currentPassword, currentUser.password);
+      if (!isValid) {
+        return NextResponse.json({ error: "Password saat ini salah!" }, { status: 400 });
+      }
+
+      updateData.password = await bcrypt.hash(newPassword, 10);
     }
 
     await db.update(user).set(updateData).where(eq(user.id, parseInt(session.user.id)));

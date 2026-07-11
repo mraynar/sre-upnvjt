@@ -82,8 +82,8 @@ export async function POST(req) {
         with: { role: true }
       });
 
-      // Prevent Staff from gaining XP
-      if (userRoleRecord && userRoleRecord.role?.name !== "Staff") {
+      // Prevent Staff/Admin from gaining XP, only MEMBER gets XP
+      if (userRoleRecord && userRoleRecord.role?.name?.toUpperCase() === "MEMBER") {
         const xpAmount = 10;
         
         // 1. Update legacy totalPoints
