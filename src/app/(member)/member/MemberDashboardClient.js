@@ -80,15 +80,15 @@ export default function MemberDashboardClient({
           
           <div className="relative z-10">
             <span className="px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-bold text-primary tracking-wide">
-              E-Learning Member Portal
+              Member Portal
             </span>
             <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-slate-900 dark:text-white mt-6 leading-none">
               {t('member_dashboard.greeting.morning').split(" ")[0]} {t('member_dashboard.greeting.morning').split(" ")[1] || ""}, <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400 dark:to-emerald-300">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400 dark:to-emerald-300 inline-block max-w-full truncate align-bottom">
                 {user?.name?.split(" ")[0]}!
               </span>
             </h1>
-            <p className="text-slate-500 dark:text-white/60 text-sm md:text-base font-medium mt-3 max-w-lg leading-relaxed">
+            <p className="text-slate-500 dark:text-white/60 text-sm md:text-base font-medium mt-3 max-w-lg leading-relaxed break-words">
               {t('member_dashboard.welcome_msg')}
             </p>
           </div>
@@ -155,8 +155,10 @@ export default function MemberDashboardClient({
               </div>
             </div>
             
-            <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-6">{user?.name}</h3>
-            <p className="text-xs font-bold tracking-widest uppercase text-emerald-600 dark:text-primary/70 mt-1">{user?.department?.name || "Member"}</p>
+            <div className="w-full px-4">
+              <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mt-6 truncate">{user?.name}</h3>
+              <p className="text-xs md:text-sm font-bold tracking-widest uppercase text-emerald-600 dark:text-primary/70 mt-1 truncate">{user?.department?.name || "Member"}</p>
+            </div>
             
             {/* Level & Title Pill */}
             <div className={`inline-flex items-center gap-2 px-4 py-1.5 mt-4 rounded-full ${levelData.color} border text-[10px] font-black tracking-widest uppercase shadow-sm dark:shadow-inner`}>
@@ -292,11 +294,11 @@ export default function MemberDashboardClient({
                 </span>
               </div>
               
-              <h2 className="text-3xl md:text-4xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60 tracking-tight">
+              <h2 className="text-2xl md:text-4xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60 tracking-tight line-clamp-2 md:line-clamp-none break-words">
                 {latestPpt.title}
               </h2>
               
-              <p className="text-white/50 text-sm mt-3 max-w-xl font-medium leading-relaxed line-clamp-2">
+              <p className="text-white/50 text-xs md:text-sm mt-3 max-w-xl font-medium leading-relaxed line-clamp-2 break-words">
                 {latestPpt.description || "Modul PPT pembelajaran resmi dari Divisi Academic SRE UPN Veteran Jawa Timur."}
               </p>
 

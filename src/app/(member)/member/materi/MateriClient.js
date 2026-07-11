@@ -65,7 +65,7 @@ export default function MateriClient({ initialModules }) {
       {/* Header */}
       <div className="mb-10">
         <span className="px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-bold text-primary tracking-wide uppercase">
-          {t('materi.badge_tag')}
+          Re-mind
         </span>
         <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-slate-900 dark:text-white mt-4 flex items-center gap-3">
           <Presentation className="w-9 h-9 text-primary animate-pulse" />

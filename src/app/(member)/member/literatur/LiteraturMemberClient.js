@@ -68,7 +68,7 @@ export default function LiteraturMemberClient({ initialItems, categories }) {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
           <span className="px-3.5 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-xs font-bold text-emerald-600 dark:text-emerald-500 tracking-wide uppercase">
-            {t('literatur.subtitle')}
+            RE-Search
           </span>
           <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-slate-900 dark:text-white mt-4 flex items-center gap-3">
             <FolderOpen className="w-9 h-9 text-emerald-500 animate-pulse" />
@@ -139,8 +139,8 @@ export default function LiteraturMemberClient({ initialItems, categories }) {
                  )}
                  <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#090d14] dark:from-[5%] via-white/80 dark:via-[#090d14]/60 to-transparent" />
                  <div className="absolute bottom-6 left-6 right-6">
-                    <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-tight">{cat.name}</h3>
-                    <p className="text-slate-500 dark:text-white/60 text-sm line-clamp-2 leading-relaxed">{cat.description || t('literatur.category_desc_fallback')}</p>
+                    <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-tight break-words">{cat.name}</h3>
+                    <p className="text-slate-500 dark:text-white/60 text-sm line-clamp-2 leading-relaxed break-words">{cat.description || t('literatur.category_desc_fallback')}</p>
                  </div>
                  <div className="absolute top-4 right-4 bg-emerald-500/90 backdrop-blur-md text-white text-[10px] font-black uppercase px-3 py-1.5 rounded-full shadow-sm">
                     {getCategoryCount(cat.id)} {t('literatur.literatur_count')}
@@ -368,7 +368,7 @@ export default function LiteraturMemberClient({ initialItems, categories }) {
                   {/* Title & metadata */}
                   <div className="p-6 flex-1 flex flex-col justify-between z-10 bg-white dark:bg-[#090d14] -mt-[1px]">
                     <div>
-                      <h3 className="font-extrabold text-slate-900 dark:text-white text-lg line-clamp-2 mb-4 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300 leading-snug tracking-tight">
+                      <h3 className="font-extrabold text-slate-900 dark:text-white text-lg line-clamp-2 mb-4 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300 leading-snug tracking-tight break-words">
                         {item.title}
                       </h3>
                       <div className="space-y-2.5 mb-6">

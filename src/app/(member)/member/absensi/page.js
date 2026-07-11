@@ -10,7 +10,7 @@ import AbsensiClient from "./AbsensiClient";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Absensi & Kehadiran | SRE Portal",
+  title: "Presensi | SRE Portal",
   description: "Pantau riwayat absensi dan statistik kehadiran Anda di SRE UPNVJT.",
 };
 
@@ -30,15 +30,7 @@ export default async function MemberAbsensiPage() {
     orderBy: [desc(attendanceSession.date)],
   });
 
-  const validSessions = allSessions.filter(s => {
-    if (s.isForAllRoles) return true;
-    let roles = s.targetRoleIds || [];
-    if (typeof roles === 'string') {
-      try { roles = JSON.parse(roles); } catch (e) {}
-    }
-    if (!Array.isArray(roles)) roles = [roles];
-    return roles.map(r => String(r)).includes(String(userRecord.roleId));
-  });
+  const validSessions = allSessions;
 
   // Fetch only this member's attendance history
   const records = await db.query.attendance.findMany({

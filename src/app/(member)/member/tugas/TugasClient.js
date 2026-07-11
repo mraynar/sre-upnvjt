@@ -145,7 +145,6 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
 
   return (
     <div className="w-full relative transition-colors duration-500 min-h-[70vh] flex flex-col">
-      
       {/* Colorful Background Ambience */}
       <div className="absolute top-0 left-0 w-full h-[500px] overflow-hidden pointer-events-none -z-10">
         <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen opacity-50 animate-[pulse_10s_ease-in-out_infinite]" />
@@ -155,50 +154,66 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
 
       {/* Header */}
       <div className="mb-12 relative z-10">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm mb-6"
         >
           <Sparkles className="w-4 h-4 text-purple-500" />
-          <span className="text-xs font-black tracking-widest uppercase text-slate-600 dark:text-gray-300">Penugasan SRE</span>
+          <span className="text-xs font-black tracking-widest uppercase text-slate-600 dark:text-gray-300">
+            RE-Port
+          </span>
         </motion.div>
-        
-        <motion.h1 
+
+        <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tighter mb-4 text-slate-900 dark:text-white"
         >
-          {t('member_tasks.title').split(' ').map((word, i) => (
-            <span key={i} className={i % 2 === 1 ? "text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400" : ""}>
-              {word}{" "}
-            </span>
-          ))}
+          {t("member_tasks.title")
+            .split(" ")
+            .map((word, i) => (
+              <span
+                key={i}
+                className={
+                  i % 2 === 1
+                    ? "text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400"
+                    : ""
+                }
+              >
+                {word}{" "}
+              </span>
+            ))}
         </motion.h1>
-        
-        <motion.p 
+
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-slate-500 dark:text-gray-400 max-w-2xl text-lg font-medium"
         >
-          {t('member_tasks.subtitle')}
+          {t("member_tasks.subtitle")}
         </motion.p>
       </div>
 
       {/* Task Cards Grid */}
       {tasks.length === 0 ? (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
           className="py-24 flex flex-col items-center justify-center text-center bg-white/50 dark:bg-white/5 border border-dashed border-slate-300 dark:border-white/10 rounded-3xl backdrop-blur-sm shadow-xl"
         >
           <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mb-6">
             <CheckCircle2 className="w-10 h-10 text-emerald-500" />
           </div>
-          <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">{t('member_tasks.empty_title')}</h3>
-          <p className="text-slate-500 dark:text-gray-400 text-base max-w-sm leading-relaxed">{t('member_tasks.empty_desc')}</p>
+          <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
+            {t("member_tasks.empty_title")}
+          </h3>
+          <p className="text-slate-500 dark:text-gray-400 text-base max-w-sm leading-relaxed">
+            {t("member_tasks.empty_desc")}
+          </p>
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8 relative z-10">
@@ -218,40 +233,47 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
                 `}
               >
                 {/* Cyberpunk/RPG Animated Border Glow */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${visual.gradient} opacity-0 group-hover:opacity-100 transition-duration-500`} />
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${visual.gradient} opacity-0 group-hover:opacity-100 transition-duration-500`}
+                />
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-[pulse_2s_ease-in-out_infinite]" />
-                
+
                 {/* Tech Grid Background */}
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none" />
-                
+
                 <div className="relative z-10 flex flex-col h-full">
-                  
                   {/* Floating Hexagon XP Badge */}
                   <div className="absolute -top-3 -right-3">
                     <div className="relative">
                       <div className="absolute inset-0 bg-amber-500 blur-md opacity-40 rounded-full animate-pulse group-hover:opacity-80 transition-opacity" />
                       <div className="relative bg-gradient-to-b from-amber-300 to-amber-600 border border-amber-200/50 rounded-xl px-4 py-2 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.5)] transform rotate-3 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
                         <Zap className="w-4 h-4 text-amber-900 mr-1 fill-amber-900" />
-                        <span className="font-black text-amber-900 text-sm tracking-widest">{tk.rewardXp} XP</span>
+                        <span className="font-black text-amber-900 text-sm tracking-widest">
+                          {tk.rewardXp} XP
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   {/* Quest Type / Status Label */}
                   <div className="mb-6">
-                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest border-l-[3px] ${visual.badge}`}>
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest border-l-[3px] ${visual.badge}`}
+                    >
                       <Flame className="w-3 h-3" />
                       {visual.label}
                     </span>
                   </div>
 
-                  {/* Quest Title */}
-                  <h3 className="text-xl md:text-2xl font-black text-white line-clamp-3 mb-3 leading-snug group-hover:text-primary transition-colors" title={tk.title}>
+                  <h3
+                    className="text-xl md:text-2xl font-black text-white line-clamp-3 mb-3 leading-snug group-hover:text-primary transition-colors break-words"
+                    title={tk.title}
+                  >
                     {tk.title}
                   </h3>
-                  
+
                   {/* Quest Description */}
-                  <p className="text-sm text-slate-400 line-clamp-3 leading-relaxed mb-6 font-medium flex-1">
+                  <p className="text-xs md:text-sm text-slate-400 line-clamp-3 leading-relaxed mb-6 font-medium flex-1 break-words">
                     {tk.description}
                   </p>
 
@@ -262,15 +284,24 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
                         <Clock className="w-4 h-4 text-slate-400 group-hover:text-primary transition-colors" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Deadline</span>
-                        <span className="text-xs font-bold text-slate-300" suppressHydrationWarning>
-                          {new Date(tk.deadline).toLocaleDateString(language === 'en' ? 'en-US' : 'id-ID', { day: "numeric", month: "long", year: "numeric" })}
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                          Deadline
+                        </span>
+                        <span
+                          className="text-xs font-bold text-slate-300"
+                          suppressHydrationWarning
+                        >
+                          {new Date(tk.deadline).toLocaleDateString(
+                            language === "en" ? "en-US" : "id-ID",
+                            { day: "numeric", month: "long", year: "numeric" },
+                          )}
                         </span>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center justify-center px-4 py-2 rounded-md bg-primary text-[#050e0a] font-black text-[10px] uppercase tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.4)] group-hover:shadow-[0_0_25px_rgba(16,185,129,0.7)] group-hover:bg-primary-focus transition-all duration-300 transform group-hover:scale-105">
-                      {t('member_tasks.start_mission')} <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                      {t("member_tasks.start_mission")}{" "}
+                      <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
                 </div>
@@ -284,12 +315,14 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
       <AnimatePresence>
         {activeTask && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
-            <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              onClick={() => setActiveTask(null)} 
-              className="absolute inset-0 bg-slate-900/60 dark:bg-black/60 backdrop-blur-md" 
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveTask(null)}
+              className="absolute inset-0 bg-slate-900/60 dark:bg-black/60 backdrop-blur-md"
             />
-            
+
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -306,32 +339,57 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
                     <FolderKanban className="w-6 h-6" />
                   </div>
                   <div>
-                    <h2 className="text-sm font-black text-slate-500 dark:text-gray-400 uppercase tracking-widest">{t('member_tasks.modal_title')}</h2>
-                    <p className="text-xs font-bold text-primary mt-0.5">SRE UPNVJT</p>
+                    <h2 className="text-sm font-black text-slate-500 dark:text-gray-400 uppercase tracking-widest">
+                      {t("member_tasks.modal_title")}
+                    </h2>
+                    <p className="text-xs font-bold text-primary mt-0.5">
+                      SRE UPNVJT
+                    </p>
                   </div>
                 </div>
-                <button onClick={() => setActiveTask(null)} className="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors">
+                <button
+                  onClick={() => setActiveTask(null)}
+                  className="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <div className="relative p-6 md:p-8 pt-0 overflow-y-auto flex-1 space-y-8 custom-scrollbar">
-                
                 {/* Title and Meta */}
                 <div>
-                  <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-6 leading-tight">{activeTask.title}</h3>
+                  <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-6 leading-tight break-words">
+                    {activeTask.title}
+                  </h3>
                   <div className="flex flex-wrap gap-4">
                     <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400">
                       <Zap className="w-4 h-4 fill-current" />
-                      <span className="text-sm font-black">+{activeTask.rewardXp} <span className="font-bold text-xs uppercase opacity-70">{t('member_tasks.reward')}</span></span>
+                      <span className="text-sm font-black">
+                        +{activeTask.rewardXp}{" "}
+                        <span className="font-bold text-xs uppercase opacity-70">
+                          {t("member_tasks.reward")}
+                        </span>
+                      </span>
                     </div>
                     <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-gray-300">
                       <Clock className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-bold" suppressHydrationWarning>
-                        <span className="opacity-60 font-medium mr-1">{t('member_tasks.deadline')}</span> 
-                        {new Date(activeTask.deadline).toLocaleDateString(language === 'en' ? 'en-US' : 'id-ID', {
-                          day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit"
-                        })}
+                      <span
+                        className="text-sm font-bold"
+                        suppressHydrationWarning
+                      >
+                        <span className="opacity-60 font-medium mr-1">
+                          {t("member_tasks.deadline")}
+                        </span>
+                        {new Date(activeTask.deadline).toLocaleDateString(
+                          language === "en" ? "en-US" : "id-ID",
+                          {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )}
                       </span>
                     </div>
                   </div>
@@ -339,8 +397,10 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
 
                 {/* Description */}
                 <div>
-                  <h4 className="text-xs font-black tracking-widest uppercase text-slate-400 dark:text-gray-500 mb-3">Instruksi Tugas</h4>
-                  <div className="p-5 md:p-6 rounded-3xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 text-sm text-slate-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap font-medium">
+                  <h4 className="text-xs font-black tracking-widest uppercase text-slate-400 dark:text-gray-500 mb-3">
+                    Instruksi Tugas
+                  </h4>
+                  <div className="p-4 md:p-6 rounded-3xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 text-xs md:text-sm text-slate-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap font-medium break-words max-w-full overflow-hidden">
                     {activeTask.description}
                   </div>
                 </div>
@@ -349,29 +409,45 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
                 <div className="pt-8 border-t border-slate-200 dark:border-white/10">
                   {(() => {
                     const visual = getTaskVisuals(activeTask.id);
-                    const sub = submissions.find(s => s.taskId === activeTask.id);
+                    const sub = submissions.find(
+                      (s) => s.taskId === activeTask.id,
+                    );
 
                     return (
                       <div className="space-y-6">
                         <div className="flex justify-between items-end">
                           <div>
-                            <h4 className="text-xs font-black tracking-widest uppercase text-slate-400 dark:text-gray-500 mb-1">{t('member_tasks.submission_status')}</h4>
-                            <p className="text-xs text-slate-500 dark:text-gray-400 font-medium max-w-[200px]">Periksa status peninjauan hasil kerja Anda</p>
+                            <h4 className="text-xs font-black tracking-widest uppercase text-slate-400 dark:text-gray-500 mb-1">
+                              {t("member_tasks.submission_status")}
+                            </h4>
+                            <p className="text-xs text-slate-500 dark:text-gray-400 font-medium max-w-[200px]">
+                              Periksa status peninjauan hasil kerja Anda
+                            </p>
                           </div>
-                          <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider border shadow-sm ${visual.badge}`}>
+                          <span
+                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider border shadow-sm ${visual.badge}`}
+                          >
                             {visual.label}
                           </span>
                         </div>
 
                         {/* Admin Feedback */}
                         {sub?.feedback && (
-                          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex gap-4">
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex gap-4"
+                          >
                             <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
                               <Info className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                             </div>
                             <div>
-                              <div className="font-black text-sm text-amber-700 dark:text-amber-400 mb-1">{t('member_tasks.reviewer_note')}</div>
-                              <p className="text-sm text-amber-600/80 dark:text-amber-400/80 font-medium italic">"{sub.feedback}"</p>
+                              <div className="font-black text-sm text-amber-700 dark:text-amber-400 mb-1">
+                                {t("member_tasks.reviewer_note")}
+                              </div>
+                              <p className="text-sm text-amber-600/80 dark:text-amber-400/80 font-medium italic">
+                                "{sub.feedback}"
+                              </p>
                             </div>
                           </motion.div>
                         )}
@@ -384,8 +460,12 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
                                 <ExternalLink className="w-4 h-4 text-slate-500 dark:text-gray-400" />
                               </div>
                               <div className="flex flex-col">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">{t('member_tasks.submitted_file')}</span>
-                                <span className="text-xs font-bold text-slate-700 dark:text-gray-300 truncate max-w-[150px] sm:max-w-[250px]">{sub.fileUrl}</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">
+                                  {t("member_tasks.submitted_file")}
+                                </span>
+                                <span className="text-xs font-bold text-slate-700 dark:text-gray-300 truncate max-w-[150px] sm:max-w-[250px]">
+                                  {sub.fileUrl}
+                                </span>
                               </div>
                             </div>
                             <a
@@ -394,40 +474,48 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
                               rel="noreferrer"
                               className="px-4 py-2 rounded-xl bg-white dark:bg-[#07130e] border border-slate-200 dark:border-white/10 text-primary font-bold text-xs hover:border-primary transition-colors flex items-center gap-2"
                             >
-                              {t('member_tasks.view_submission')}
+                              {t("member_tasks.view_submission")}
                             </a>
                           </div>
                         )}
 
                         {/* Submission input form */}
-                        {(visual.key === "NOT_STARTED" || visual.key === "REJECTED") && (
-                          <form onSubmit={handleSubmitTask} className="space-y-5 pt-4">
-                            
+                        {(visual.key === "NOT_STARTED" ||
+                          visual.key === "REJECTED") && (
+                          <form
+                            onSubmit={handleSubmitTask}
+                            className="space-y-5 pt-4"
+                          >
                             {/* Type Toggle */}
-                            {(!activeTask.submissionType || activeTask.submissionType === 'BOTH') && (
+                            {(!activeTask.submissionType ||
+                              activeTask.submissionType === "BOTH") && (
                               <div className="flex bg-slate-100 dark:bg-white/5 p-1 rounded-xl">
                                 <button
                                   type="button"
                                   onClick={() => setSubmissionType("link")}
                                   className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${submissionType === "link" ? "bg-white dark:bg-slate-800 text-primary shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-white"}`}
                                 >
-                                  <LinkIcon className="w-4 h-4" /> {t('member_tasks.type_link')}
+                                  <LinkIcon className="w-4 h-4" />{" "}
+                                  {t("member_tasks.type_link")}
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => setSubmissionType("file")}
                                   className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${submissionType === "file" ? "bg-white dark:bg-slate-800 text-primary shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-white"}`}
                                 >
-                                  <UploadCloud className="w-4 h-4" /> {t('member_tasks.type_file')}
+                                  <UploadCloud className="w-4 h-4" />{" "}
+                                  {t("member_tasks.type_file")}
                                 </button>
                               </div>
                             )}
 
                             <div>
                               <label className="block text-xs font-black tracking-widest text-slate-700 dark:text-gray-300 uppercase mb-3 ml-1">
-                                {submissionType === "link" ? t('member_tasks.form_label') : t('member_tasks.form_label_file')}
+                                {submissionType === "link"
+                                  ? t("member_tasks.form_label")
+                                  : t("member_tasks.form_label_file")}
                               </label>
-                              
+
                               {submissionType === "link" ? (
                                 <div className="relative">
                                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -437,7 +525,7 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
                                     type="url"
                                     required
                                     value={fileUrl}
-                                    onChange={e => setFileUrl(e.target.value)}
+                                    onChange={(e) => setFileUrl(e.target.value)}
                                     className="w-full h-14 pl-12 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-gray-600 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
                                     placeholder="https://drive.google.com/..."
                                   />
@@ -448,24 +536,49 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
                                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                       <UploadCloud className="w-8 h-8 mb-2 text-slate-400 group-hover:text-primary" />
                                       <p className="mb-1 text-sm font-bold text-slate-600 dark:text-gray-300">
-                                        {files.length > 0 ? `${files.length} file dipilih` : t('member_tasks.choose_file')}
+                                        {files.length > 0
+                                          ? `${files.length} file dipilih`
+                                          : t("member_tasks.choose_file")}
                                       </p>
-                                      {!files.length && <p className="text-xs text-slate-500 dark:text-gray-500">Maks. {activeTask.maxUploadSizeMb || 2} MB</p>}
+                                      {!files.length && (
+                                        <p className="text-xs text-slate-500 dark:text-gray-500">
+                                          Maks.{" "}
+                                          {activeTask.maxUploadSizeMb || 2} MB
+                                        </p>
+                                      )}
                                     </div>
-                                    <input 
-                                      type="file" 
-                                      className="hidden" 
+                                    <input
+                                      type="file"
+                                      className="hidden"
                                       required={files.length === 0}
                                       multiple={activeTask.allowMultipleFiles}
-                                      onChange={(e) => setFiles(Array.from(e.target.files))}
+                                      onChange={(e) =>
+                                        setFiles(Array.from(e.target.files))
+                                      }
                                     />
                                   </label>
                                 </div>
                               )}
                             </div>
 
-                            {error && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-4 py-3 rounded-xl bg-red-500/10 text-xs font-bold text-red-500 dark:text-red-400 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {error}</motion.div>}
-                            {success && <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-4 py-3 rounded-xl bg-emerald-500/10 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> {success}</motion.div>}
+                            {error && (
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="px-4 py-3 rounded-xl bg-red-500/10 text-xs font-bold text-red-500 dark:text-red-400 flex items-center gap-2"
+                              >
+                                <AlertTriangle className="w-4 h-4" /> {error}
+                              </motion.div>
+                            )}
+                            {success && (
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="px-4 py-3 rounded-xl bg-emerald-500/10 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2"
+                              >
+                                <CheckCircle2 className="w-4 h-4" /> {success}
+                              </motion.div>
+                            )}
 
                             <button
                               type="submit"
@@ -477,7 +590,7 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
                               ) : (
                                 <>
                                   <Send className="w-4 h-4" />
-                                  <span>{t('member_tasks.form_submit')}</span>
+                                  <span>{t("member_tasks.form_submit")}</span>
                                 </>
                               )}
                             </button>
@@ -493,7 +606,9 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
         )}
       </AnimatePresence>
 
-      <style dangerouslySetInnerHTML={{__html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
         }
@@ -507,7 +622,9 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
         .dark .custom-scrollbar::-webkit-scrollbar-thumb {
           background-color: rgba(255, 255, 255, 0.1);
         }
-      `}} />
+      `,
+        }}
+      />
     </div>
   );
 }
