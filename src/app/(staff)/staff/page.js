@@ -37,18 +37,14 @@ export default async function StaffDashboardPage() {
 
   const presentCount = attendanceLogs.filter(a => a.status === "PRESENT" || a.status === "LATE").length;
 
-  // Fetch latest literature item
-  const latestLiterature = await db.query.literatureItem.findFirst({
+  // Fetch 5 latest literature items
+  const latestLiterature = await db.query.literatureItem.findMany({
     where: eq(literatureItem.isPublished, true),
     orderBy: [desc(literatureItem.createdAt)],
+    limit: 5,
     with: {
       category: true
     }
-  });
-
-  // Fetch latest document
-  const latestDocument = await db.query.documentItem.findFirst({
-    orderBy: [desc(documentItem.createdAt)],
   });
 
   return (
@@ -56,7 +52,6 @@ export default async function StaffDashboardPage() {
       user={currentUser}
       presentCount={presentCount}
       latestLiterature={latestLiterature}
-      latestDocument={latestDocument}
     />
   );
 }

@@ -55,7 +55,7 @@ export default function StaffNavbarClient({ user }) {
     { name: "Beranda", href: "/staff", icon: LayoutDashboard },
     { name: "SRE Links", href: "/staff/links", icon: LinkIcon },
     { name: "Literatur", href: "/staff/literatur", icon: BookOpen },
-    { name: "Absensi", href: "/staff/absensi", icon: ClipboardCheck },
+    { name: "Presensi", href: "/staff/absensi", icon: ClipboardCheck },
     { name: "Dokumen", href: "/staff/dokumen", icon: FileText },
   ];
 

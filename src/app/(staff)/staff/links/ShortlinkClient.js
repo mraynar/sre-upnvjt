@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Link as LinkIcon, Plus, Copy, ExternalLink, Activity, 
-  Search, ArrowRight, Loader2, Check, AlertCircle, Clock, X
+  Search, ArrowRight, Loader2, Check, AlertCircle, Clock, X,
+  Trash2, Edit3
 } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/i18n/LanguageProvider";
@@ -15,10 +16,15 @@ export default function ShortlinkClient({ initialLinks = [] }) {
   const [searchQuery, setSearchQuery] = useState("");
   
   // Form State
-  const [isCreating, setIsCreating] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({ slug: "", originalUrl: "", description: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
+  // Delete State
+  const [deleteId, setDeleteId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   // Realtime Slug Check State
   const [isSlugAvailable, setIsSlugAvailable] = useState(null); // null = unknown/typing, true = available, false = taken
@@ -46,6 +52,15 @@ export default function ShortlinkClient({ initialLinks = [] }) {
       return;
     }
 
+    // If editing and slug hasn't changed from original, consider it available
+    if (editingId) {
+      const originalLink = links.find(l => l.id === editingId);
+      if (originalLink && originalLink.slug === formData.slug) {
+        setIsSlugAvailable(true);
+        return;
+      }
+    }
+
     const checkAvailability = async () => {
       setIsCheckingSlug(true);
       try {
@@ -66,6 +81,26 @@ export default function ShortlinkClient({ initialLinks = [] }) {
     return () => clearTimeout(delayDebounceFn);
   }, [formData.slug]);
 
+  const handleOpenForm = (link = null) => {
+    if (link) {
+      setEditingId(link.id);
+      setFormData({ slug: link.slug, originalUrl: link.originalUrl, description: link.description || "" });
+      setIsSlugAvailable(true); // Assuming keeping the same slug is fine
+    } else {
+      setEditingId(null);
+      setFormData({ slug: "", originalUrl: "", description: "" });
+      setIsSlugAvailable(null);
+    }
+    setIsFormOpen(true);
+    setError(null);
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+    setEditingId(null);
+    setFormData({ slug: "", originalUrl: "", description: "" });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -78,15 +113,18 @@ export default function ShortlinkClient({ initialLinks = [] }) {
       return;
     }
 
-    if (isSlugAvailable === false) {
+    if (isSlugAvailable === false && !editingId) {
       setError("Slug ini sudah dipakai! Silakan pilih yang lain.");
       setLoading(false);
       return;
     }
 
     try {
-      const res = await fetch("/api/shortlink", {
-        method: "POST",
+      const url = editingId ? `/api/shortlink/${editingId}` : "/api/shortlink";
+      const method = editingId ? "PUT" : "POST";
+      
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
       });
@@ -94,13 +132,18 @@ export default function ShortlinkClient({ initialLinks = [] }) {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Gagal membuat shortlink");
+        throw new Error(data.error || "Gagal menyimpan shortlink");
       }
 
-      // Add to beginning of list
-      setLinks([data, ...links]);
-      setIsCreating(false);
-      setFormData({ slug: "", originalUrl: "", description: "" });
+      if (editingId) {
+        // Update list
+        setLinks(links.map(l => l.id === editingId ? { ...l, ...data } : l));
+      } else {
+        // Add to list
+        setLinks([data, ...links]);
+      }
+      
+      handleCloseForm();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -108,9 +151,75 @@ export default function ShortlinkClient({ initialLinks = [] }) {
     }
   };
 
+  const handleDelete = (id) => {
+    setDeleteId(id);
+  };
+
+  const confirmDelete = async (id) => {
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/shortlink/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Gagal menghapus shortlink");
+      
+      setLinks(links.filter(l => l.id !== id));
+      setDeleteId(null);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="w-full relative space-y-8 transition-colors duration-500 select-none pb-20">
       
+      {/* Custom Delete Confirmation Modal */}
+      <AnimatePresence>
+        {deleteId && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 dark:bg-black/60 backdrop-blur-md"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white dark:bg-[#0a1610] border border-slate-200 dark:border-white/10 rounded-[32px] p-8 max-w-sm w-full shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="relative z-10 flex flex-col items-center text-center">
+                <div className="w-20 h-20 rounded-full bg-red-50 dark:bg-red-500/10 text-red-500 flex items-center justify-center mb-6 shadow-inner border border-red-100 dark:border-red-500/20">
+                  <Trash2 className="w-10 h-10" />
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Hapus Tautan?</h3>
+                <p className="text-slate-500 dark:text-white/60 font-medium mb-8 text-sm leading-relaxed">
+                  Tindakan ini permanen. Tautan dan seluruh data analitik kliknya akan terhapus.
+                </p>
+                
+                <div className="flex w-full gap-3">
+                  <button 
+                    onClick={() => setDeleteId(null)}
+                    disabled={isDeleting}
+                    className="flex-1 py-3.5 px-4 rounded-2xl font-bold text-slate-600 dark:text-white/70 hover:bg-slate-100 dark:hover:bg-white/5 transition-all"
+                  >
+                    Batal
+                  </button>
+                  <button 
+                    onClick={() => confirmDelete(deleteId)}
+                    disabled={isDeleting}
+                    className="flex-1 flex justify-center items-center py-3.5 px-4 rounded-2xl font-bold bg-red-500 hover:bg-red-600 text-white shadow-[0_4px_0_rgb(185,28,28)] hover:shadow-[0_2px_0_rgb(185,28,28)] hover:translate-y-[2px] active:shadow-none active:translate-y-[4px] transition-all disabled:opacity-50"
+                  >
+                    {isDeleting ? <Loader2 className="w-5 h-5 animate-spin" /> : "Hapus!"}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Background Ambience */}
       <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none mix-blend-multiply dark:mix-blend-screen" />
         
@@ -140,7 +249,7 @@ export default function ShortlinkClient({ initialLinks = [] }) {
           transition={{ delay: 0.2 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => setIsCreating(true)}
+          onClick={() => handleOpenForm()}
           className="w-full md:w-auto flex items-center justify-center gap-2 p-4 px-6 rounded-2xl bg-emerald-500 text-white font-bold shadow-[0_6px_0_0_#047857] hover:shadow-[0_2px_0_0_#047857] hover:translate-y-[4px] transition-all active:shadow-none active:translate-y-[6px]"
         >
           <Plus className="w-5 h-5" />
@@ -150,7 +259,7 @@ export default function ShortlinkClient({ initialLinks = [] }) {
 
         {/* Create Form (Expandable) */}
         <AnimatePresence>
-          {isCreating && (
+          {isFormOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0, marginBottom: 0 }}
               animate={{ opacity: 1, height: 'auto', marginBottom: 32 }}
@@ -161,11 +270,13 @@ export default function ShortlinkClient({ initialLinks = [] }) {
                 <div className="absolute inset-0 bg-emerald-500/5 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                 <div className="relative z-10">
                   <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-2xl font-black text-slate-900 dark:text-white">{t('shortlinks.new_link_title')}</h3>
+                    <h2 className="text-2xl font-black text-slate-900 dark:text-white">
+                      {editingId ? "Edit Tautan SRE" : t('shortlinks.create_new')}
+                    </h2>
                     <button 
                       type="button"
-                      onClick={() => setIsCreating(false)}
-                      className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-500 hover:bg-rose-500 hover:text-white transition-colors"
+                      onClick={handleCloseForm}
+                      className="p-2 bg-slate-100 dark:bg-white/5 hover:bg-red-50 dark:hover:bg-red-500/10 text-slate-400 hover:text-red-500 rounded-full transition-colors"
                     >
                       <X className="w-5 h-5" />
                     </button>
@@ -246,7 +357,7 @@ export default function ShortlinkClient({ initialLinks = [] }) {
                 <div className="flex justify-end gap-3">
                   <button
                     type="button"
-                    onClick={() => setIsCreating(false)}
+                    onClick={handleCloseForm}
                     className="px-6 py-3 rounded-2xl font-bold text-slate-600 dark:text-white/60 hover:bg-slate-100 dark:hover:bg-white/5 transition-all"
                   >
                     Batal
@@ -335,9 +446,9 @@ export default function ShortlinkClient({ initialLinks = [] }) {
                         <p className="text-[10px] font-bold tracking-wider text-slate-400 dark:text-white/30 uppercase mb-1">{t('shortlinks.creator')}</p>
                         <div className="flex items-center gap-1.5">
                           <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center text-[10px] font-bold">
-                            {link.createdByName?.charAt(0) || "U"}
+                            {link.creatorName?.charAt(0) || "U"}
                           </div>
-                          <span className="text-xs font-bold text-slate-700 dark:text-white/70 truncate">{link.createdByName || "User"}</span>
+                          <span className="text-xs font-bold text-slate-700 dark:text-white/70 truncate">{link.creatorName || "User"}</span>
                         </div>
                       </div>
                     </div>
@@ -347,6 +458,24 @@ export default function ShortlinkClient({ initialLinks = [] }) {
                       <p className="text-xs text-slate-400 dark:text-white/40 truncate max-w-[60%] font-medium">
                         {link.description || t('shortlinks.no_desc')}
                       </p>
+                      
+                      {/* Actions: Edit & Delete */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleOpenForm(link)}
+                          className="p-2 text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 rounded-lg transition-colors"
+                          title="Edit Shortlink"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(link.id)}
+                          className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                          title="Delete Shortlink"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                 </div>
                 </div>

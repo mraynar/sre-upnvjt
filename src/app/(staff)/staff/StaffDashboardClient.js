@@ -10,9 +10,8 @@ import { useLanguage } from "@/i18n/LanguageProvider";
 
 export default function StaffDashboardClient({
   user,
-  presentCount,
-  latestLiterature,
-  latestDocument
+  presentCount = 0,
+  latestLiterature
 }) {
   const { t } = useLanguage();
   const [mounted, setMounted] = useState(false);
@@ -230,38 +229,7 @@ export default function StaffDashboardClient({
 
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Latest Document */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="bg-white/60 dark:bg-[#08120e]/60 backdrop-blur-md border border-slate-200 dark:border-white/5 rounded-3xl p-6 relative shadow-xl dark:shadow-none"
-        >
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500"><Zap className="w-5 h-5" /></div>
-            <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">{t('staff_dashboard.latest_doc')}</h3>
-          </div>
-          
-          {latestDocument ? (
-            <div className="group cursor-pointer p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 hover:border-emerald-500/50 transition-colors">
-              <h4 className="font-bold text-slate-900 dark:text-white truncate mb-1 group-hover:text-emerald-500 transition-colors">{latestDocument.title}</h4>
-              <p className="text-xs text-slate-500 dark:text-white/50 line-clamp-2 mb-3">{latestDocument.description}</p>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold px-2 py-1 bg-slate-100 dark:bg-white/5 text-slate-500 rounded-md">ID: #{latestDocument.id}</span>
-                <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-                  <Clock className="w-3 h-3" />
-                  {new Date(latestDocument.createdAt).toLocaleDateString()}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="p-8 text-center text-slate-400 text-sm font-medium border border-dashed border-slate-200 dark:border-white/10 rounded-2xl">
-              {t('staff_dashboard.empty_doc')}
-            </div>
-          )}
-        </motion.div>
-
+      <div className="mt-6">
         {/* Latest Literature */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -274,17 +242,25 @@ export default function StaffDashboardClient({
             <h3 className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">{t('staff_dashboard.latest_lit')}</h3>
           </div>
           
-          {latestLiterature ? (
-            <div className="group cursor-pointer p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 hover:border-emerald-500/50 transition-colors">
-              <h4 className="font-bold text-slate-900 dark:text-white truncate mb-1 group-hover:text-emerald-500 transition-colors">{latestLiterature.title}</h4>
-              <p className="text-xs text-slate-500 dark:text-white/50 mb-3">{t('staff_dashboard.by')} {latestLiterature.author}</p>
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold px-2 py-1 bg-slate-100 dark:bg-white/5 text-slate-500 rounded-md">ID: #{latestLiterature.id}</span>
-                <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-                  <Clock className="w-3 h-3" />
-                  {new Date(latestLiterature.createdAt).toLocaleDateString()}
-                </div>
-              </div>
+          {latestLiterature && latestLiterature.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              {latestLiterature.map((lit) => (
+                <Link key={lit.id} href={`/staff/literatur/${lit.id}`} className="block">
+                  <div className="group cursor-pointer p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 hover:border-emerald-500/50 transition-colors h-full">
+                    <h4 className="font-bold text-slate-900 dark:text-white truncate mb-1 group-hover:text-emerald-500 transition-colors">{lit.title}</h4>
+                    <p className="text-xs text-slate-500 dark:text-white/50 mb-3">{t('staff_dashboard.by')} {lit.author}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold px-2 py-1 bg-slate-100 dark:bg-white/5 text-slate-500 rounded-md">
+                        Tahun Terbit: {lit.year || "Tidak diketahui"}
+                      </span>
+                      <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
+                        <Clock className="w-3 h-3" />
+                        {new Date(lit.createdAt).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
             </div>
           ) : (
             <div className="p-8 text-center text-slate-400 text-sm font-medium border border-dashed border-slate-200 dark:border-white/10 rounded-2xl">

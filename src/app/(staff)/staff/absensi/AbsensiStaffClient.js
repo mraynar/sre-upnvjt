@@ -90,7 +90,7 @@ export default function AbsensiStaffClient({ initialAttendance, validSessions = 
         throw new Error(data.error || "Gagal mengirim presensi");
       }
 
-      setSuccessMsg(t("attendance_member.modal_success_msg"));
+      setSuccessMsg("Presensi berhasil dicatat!");
       setRecords(prev => [data.attendance, ...prev]);
       
       setTimeout(() => {
