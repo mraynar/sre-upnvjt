@@ -1,7 +1,6 @@
 {
-  "id": "9542f9e2-72b5-4029-8d26-803c4cc682f6",
-  "id": "f3eb8ff8-f930-4382-b7e4-3f9323aa55f2",
-  "prevId": "136aafc5-aed2-4d86-93ff-686fe4dd79a6",
+  "id": "0ed7a610-9a3d-4ced-abec-448dc7a1cc86",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -203,19 +202,11 @@
           "primaryKey": false,
           "notNull": false
         },
-        "isForAllRoles": {
-          "name": "isForAllRoles",
-          "type": "boolean",
+        "token": {
+          "name": "token",
+          "type": "varchar(50)",
           "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "targetRoleIds": {
-          "name": "targetRoleIds",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'[]'::jsonb"
+          "notNull": false
         },
         "isActive": {
           "name": "isActive",
@@ -420,6 +411,125 @@
           "tableTo": "department",
           "columnsFrom": [
             "departmentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.documentCategory": {
+      "name": "documentCategory",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.documentItem": {
+      "name": "documentItem",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "categoryId": {
+          "name": "categoryId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fileUrl": {
+          "name": "fileUrl",
+          "type": "varchar(1000)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uploadedById": {
+          "name": "uploadedById",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "documentItem_categoryId_documentCategory_id_fk": {
+          "name": "documentItem_categoryId_documentCategory_id_fk",
+          "tableFrom": "documentItem",
+          "tableTo": "documentCategory",
+          "columnsFrom": [
+            "categoryId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "documentItem_uploadedById_user_id_fk": {
+          "name": "documentItem_uploadedById_user_id_fk",
+          "tableFrom": "documentItem",
+          "tableTo": "user",
+          "columnsFrom": [
+            "uploadedById"
           ],
           "columnsTo": [
             "id"
@@ -1598,6 +1708,84 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.shortlink": {
+      "name": "shortlink",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "originalUrl": {
+          "name": "originalUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "clicks": {
+          "name": "clicks",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "createdById": {
+          "name": "createdById",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "shortlink_createdById_user_id_fk": {
+          "name": "shortlink_createdById_user_id_fk",
+          "tableFrom": "shortlink",
+          "tableTo": "user",
+          "columnsFrom": [
+            "createdById"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "shortlink_slug_unique": {
+          "name": "shortlink_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.systemSetting": {
       "name": "systemSetting",
       "schema": "",
@@ -1677,6 +1865,32 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "folderId": {
+          "name": "folderId",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "maxUploadSizeMb": {
+          "name": "maxUploadSizeMb",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "allowMultipleFiles": {
+          "name": "allowMultipleFiles",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "submissionType": {
+          "name": "submissionType",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'BOTH'"
         },
         "deadline": {
           "name": "deadline",
