@@ -205,13 +205,7 @@ export default function QuizMemberClient({ initialQuizzes, initialSubmissions })
                           <span>
                             {t("member_quiz.best_score")}:{" "}
                             <span className="text-primary">
-                              {status.bestScore}%
-                            </span>
-                          </span>
-                          <span>
-                            {t("member_quiz.attempts")}:{" "}
-                            <span className="text-primary">
-                              {status.count}x
+                              {status.bestScore}
                             </span>
                           </span>
                         </div>
