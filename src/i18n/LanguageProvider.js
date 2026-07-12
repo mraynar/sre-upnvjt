@@ -13,8 +13,18 @@ export function LanguageProvider({ children, initialLanguage = "id" }) {
 
   useEffect(() => {
     // Apabila prop language berubah dari server, perbarui state
-    setLanguage(initialLanguage);
+    // Tetapi prioritaskan localStorage jika ada
+    const stored = localStorage.getItem("app_lang");
+    if (stored && (stored === "id" || stored === "en")) {
+      setLanguage(stored);
+    } else {
+      setLanguage(initialLanguage);
+    }
   }, [initialLanguage]);
+
+  useEffect(() => {
+    localStorage.setItem("app_lang", language);
+  }, [language]);
 
   const t = (key) => {
     // Fungsi translasi sederhana (e.g. t('sidebar.menu'))

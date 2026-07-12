@@ -32,7 +32,7 @@ export default async function MemberLiteraturPage() {
 
   // Fetch all categories
   const categories = await db.query.literatureCategory.findMany({
-    orderBy: [asc(literatureCategory.name)],
+    orderBy: [asc(literatureCategory.id)],
   });
 
   return (

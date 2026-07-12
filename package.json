@@ -15,6 +15,7 @@
     "bcryptjs": "^3.0.3",
     "drizzle-orm": "^0.45.2",
     "framer-motion": "^12.40.0",
+    "googleapis": "^173.0.0",
     "lucide-react": "^1.17.0",
     "mysql2": "^3.22.5",
     "next": "16.2.6",
@@ -23,7 +24,8 @@
     "postgres": "^3.4.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-easy-crop": "^6.0.2"
+    "react-easy-crop": "^6.0.2",
+    "react-pdf": "^10.4.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

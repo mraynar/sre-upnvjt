@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import { FolderOpen, Search, ExternalLink, Calendar, User, FileText, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { FolderOpen, Search, ExternalLink, Calendar, User, FileText, Sparkles, Filter, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/i18n/LanguageProvider";
 
 const TYPE_COLORS = {
   PDF:    "bg-red-500/10 text-red-400 border-red-500/20",
@@ -13,160 +14,393 @@ const TYPE_COLORS = {
 };
 
 export default function LiteraturMemberClient({ initialItems, categories }) {
+  const { t } = useLanguage();
   const [items] = useState(initialItems || []);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null); // null = categories view, "all" = all items, id = specific category
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [filterType, setFilterType] = useState("ALL");
+  const [minYear, setMinYear] = useState("");
+  const [maxYear, setMaxYear] = useState("");
+  const [sortOrder, setSortOrder] = useState("newest"); // newest, oldest, a-z
+
+  const isCategoriesView = selectedCategoryId === null && searchQuery.trim() === "";
 
   const filteredItems = items.filter(item => {
     const q = searchQuery.toLowerCase();
     const matchSearch = !q ||
       (item.title || "").toLowerCase().includes(q) ||
       (item.author || "").toLowerCase().includes(q);
-    const matchCat = activeCategory === "all" || item.categoryId?.toString() === activeCategory ||
-      item.category?.id?.toString() === activeCategory;
-    return matchSearch && matchCat;
+    const matchCat = (selectedCategoryId === null || selectedCategoryId === "all") 
+      ? true 
+      : (item.categoryId?.toString() === selectedCategoryId || item.category?.id?.toString() === selectedCategoryId);
+    
+    const matchType = filterType === "ALL" || item.type === filterType;
+    
+    const year = item.year || 0;
+    const matchMin = minYear === "" || year >= parseInt(minYear);
+    const matchMax = maxYear === "" || year <= parseInt(maxYear);
+    const matchYear = matchMin && matchMax;
+
+    return matchSearch && matchCat && matchType && matchYear;
+  }).sort((a, b) => {
+    if (sortOrder === "newest") return (b.year || 0) - (a.year || 0);
+    if (sortOrder === "oldest") return (a.year || 0) - (b.year || 0);
+    if (sortOrder === "a-z") return (a.title || "").localeCompare(b.title || "");
+    return 0;
   });
+
+  const getCategoryCount = (catId) => items.filter(i => i.categoryId === catId || i.category?.id === catId).length;
+
+  const resolveImageUrl = (url) => {
+    if (!url) return null;
+    if (url.startsWith('http') || url.startsWith('/')) return url;
+    return `/images/${url}`;
+  };
 
   return (
     <div className="w-full relative select-none">
       
       {/* Glow Ambience */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-[80px] pointer-events-none" />
 
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
         <div>
-          <span className="px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-bold text-primary tracking-wide uppercase">
-            E-Learning Library
+          <span className="px-3.5 py-1.5 rounded-full bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-xs font-bold text-emerald-600 dark:text-emerald-500 tracking-wide uppercase">
+            RE-Search
           </span>
-          <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-white mt-4 flex items-center gap-3">
-            <FolderOpen className="w-9 h-9 text-primary animate-pulse" />
-            Bank Literatur & Referensi
+          <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-slate-900 dark:text-white mt-4 flex items-center gap-3">
+            <FolderOpen className="w-9 h-9 text-emerald-500 animate-pulse" />
+            {t('literatur.title')}
           </h1>
-          <p className="text-white/50 max-w-xl font-medium text-sm mt-2 leading-relaxed">
-            Cari dan baca berbagai modul, jurnal akademik, buku referensi, serta artikel eksternal pilihan.
+          <p className="text-slate-500 dark:text-white/50 max-w-xl font-medium text-sm mt-2 leading-relaxed">
+            {t('literatur.desc')}
           </p>
         </div>
         
         <div className="relative w-full md:w-64">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-white/40" />
           <input
             type="text"
-            placeholder="Cari judul / penulis..."
+            placeholder={t('literatur.search_placeholder')}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full bg-[#08120e] border border-white/5 rounded-2xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-primary/50 shadow-inner"
+            className="w-full bg-slate-50 dark:bg-[#08120e] border border-slate-200 dark:border-white/5 rounded-2xl pl-10 pr-4 py-3 text-sm text-slate-700 dark:text-white focus:outline-none focus:border-emerald-500/50 shadow-inner placeholder:text-slate-400 dark:placeholder:text-white/40"
           />
         </div>
       </div>
 
-      {/* Category Tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-4 mb-10 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        <button
-          onClick={() => setActiveCategory("all")}
-          className={`px-5 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider shrink-0 transition-all border ${
-            activeCategory === "all"
-              ? "bg-primary text-[#050e0a] border-primary shadow-[0_0_15px_rgba(16,185,129,0.2)]"
-              : "bg-[#08120e] text-white/50 border-white/5 hover:text-white hover:bg-white/5"
-          }`}
-        >
-          Semua Kategori
-        </button>
-        {categories.map(cat => (
-          <button
-            key={cat.id}
-            onClick={() => setActiveCategory(cat.id.toString())}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider shrink-0 transition-all border ${
-              activeCategory === cat.id.toString()
-                ? "bg-primary text-[#050e0a] border-primary shadow-[0_0_15px_rgba(16,185,129,0.2)]"
-                : "bg-[#08120e] text-white/50 border-white/5 hover:text-white hover:bg-white/5"
-            }`}
+      {/* Category or Items View */}
+      {isCategoriesView ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            onClick={() => setSelectedCategoryId("all")}
+            className="cursor-pointer group relative overflow-hidden rounded-3xl border border-slate-200 dark:border-white/5 bg-white dark:bg-[#090d14] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(16,185,129,0.1)] hover:-translate-y-2 transition-all duration-500"
           >
-            {cat.name}
-          </button>
-        ))}
-      </div>
+            <div className="aspect-[4/3] w-full overflow-hidden relative">
+               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-100 dark:from-emerald-900/20 to-slate-50 dark:to-[#090d14]">
+                 <FolderOpen className="w-20 h-20 text-emerald-500/40 group-hover:scale-110 group-hover:text-emerald-500/70 transition-all duration-500" />
+               </div>
+               <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 dark:from-[#090d14] dark:via-[#090d14]/40 to-transparent" />
+               <div className="absolute bottom-6 left-6 right-6">
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">{t('literatur.all_categories')}</h3>
+                  <p className="text-slate-500 dark:text-white/60 text-sm line-clamp-2">{t('literatur.all_categories_desc')}</p>
+               </div>
+               <div className="absolute top-4 right-4 bg-emerald-500/90 backdrop-blur-md text-white text-[10px] font-black uppercase px-3 py-1.5 rounded-full shadow-sm">
+                  {items.length} {t('literatur.total_literatur')}
+               </div>
+            </div>
+          </motion.div>
 
-      {/* Grid List */}
-      {filteredItems.length === 0 ? (
-        <div className="py-24 flex flex-col items-center justify-center text-center bg-[#08120e] border border-dashed border-white/5 rounded-3xl">
-          <FolderOpen className="w-12 h-12 text-white/10 mb-4 animate-pulse" />
-          <h3 className="text-lg font-black text-white mb-1">Tidak ada literatur ditemukan</h3>
-          <p className="text-white/40 text-xs max-w-xs leading-relaxed mt-1">Coba cari dengan kata kunci lain atau pilih kategori berbeda.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredItems.map((item, index) => (
-            <motion.a
+          {categories.map((cat, index) => (
+            <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: (index % 4) * 0.05 }}
-              key={item.id}
-              href={item.driveUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="bg-gradient-to-b from-white/10 to-[#08120e] border border-white/5 rounded-3xl overflow-hidden hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 flex flex-col group shadow-lg"
+              transition={{ duration: 0.4, delay: (index + 1) * 0.05 }}
+              key={cat.id}
+              onClick={() => setSelectedCategoryId(cat.id.toString())}
+              className="cursor-pointer group relative overflow-hidden rounded-3xl border border-slate-200 dark:border-white/5 bg-white dark:bg-[#090d14] shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgba(16,185,129,0.1)] hover:-translate-y-2 transition-all duration-500"
             >
-              {/* Category Cover */}
-              <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-primary/10 to-[#08120e] border-b border-white/5">
-                <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
-                {item.category?.imageUrl ? (
-                  <img
-                    src={item.category.imageUrl}
-                    alt=""
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85 group-hover:opacity-100"
-                  />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-primary/30">
-                    <FolderOpen className="w-10 h-10 animate-pulse" />
-                  </div>
-                )}
-                
-                {/* Badges */}
-                <div className="absolute top-3 left-3 right-3 flex justify-between items-center z-10">
-                  <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border ${
-                    TYPE_COLORS[item.type] || TYPE_COLORS.OTHER
-                  }`}>
-                    {item.type || "OTHER"}
-                  </span>
-                  <span className="px-2 py-0.5 rounded bg-black/60 text-white/80 text-[8px] font-black uppercase tracking-widest border border-white/5">
-                    {item.category?.name}
-                  </span>
-                </div>
+              <div className="aspect-[4/3] w-full overflow-hidden relative">
+                 {cat.imageUrl ? (
+                   <img 
+                     src={resolveImageUrl(cat.imageUrl)} 
+                     alt={cat.name}
+                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90 dark:opacity-70 group-hover:opacity-100" 
+                   />
+                 ) : (
+                   <div className="w-full h-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center text-slate-300 dark:text-white/20">
+                     <FileText className="w-16 h-16" />
+                   </div>
+                 )}
+                 <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-[#090d14] dark:from-[5%] via-white/80 dark:via-[#090d14]/60 to-transparent" />
+                 <div className="absolute bottom-6 left-6 right-6">
+                    <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors leading-tight break-words">{cat.name}</h3>
+                    <p className="text-slate-500 dark:text-white/60 text-sm line-clamp-2 leading-relaxed break-words">{cat.description || t('literatur.category_desc_fallback')}</p>
+                 </div>
+                 <div className="absolute top-4 right-4 bg-emerald-500/90 backdrop-blur-md text-white text-[10px] font-black uppercase px-3 py-1.5 rounded-full shadow-sm">
+                    {getCategoryCount(cat.id)} {t('literatur.literatur_count')}
+                 </div>
               </div>
-
-              {/* Title & metadata */}
-              <div className="p-5 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="font-black text-white text-sm line-clamp-2 leading-snug mb-4 group-hover:text-primary transition-all tracking-tight">
-                    {item.title}
-                  </h3>
-                  <div className="space-y-2 mb-6">
-                    {item.author && (
-                      <div className="flex items-center gap-2 text-xs text-white/50 font-medium">
-                        <User className="w-4 h-4 text-primary shrink-0" />
-                        <span className="truncate">{item.author}</span>
-                      </div>
-                    )}
-                    {item.year && (
-                      <div className="flex items-center gap-2 text-xs text-white/50 font-medium">
-                        <Calendar className="w-4 h-4 text-primary shrink-0" />
-                        <span>Tahun {item.year}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-auto">
-                  <span className="text-[10px] font-black text-primary tracking-widest uppercase flex items-center gap-1">
-                    Buka Literatur
-                  </span>
-                  <ExternalLink className="w-4 h-4 text-white/40 group-hover:text-primary group-hover:scale-110 transition-all" />
-                </div>
-              </div>
-            </motion.a>
+            </motion.div>
           ))}
         </div>
+      ) : (
+        <>
+          {/* Header & Filters for Items View */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => { 
+                  setSelectedCategoryId(null); 
+                  setSearchQuery(""); 
+                  setFilterType("ALL"); 
+                  setMinYear(""); 
+                  setMaxYear("");
+                  setSortOrder("newest");
+                }}
+                className="px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all bg-white dark:bg-white/5 text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10 flex items-center gap-2 border border-slate-200 dark:border-white/10 shadow-sm"
+              >
+                ← {t('literatur.back')}
+              </button>
+              <div className="w-px h-6 bg-slate-300 dark:bg-white/10" />
+              <h2 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                {searchQuery ? t('literatur.search_result').replace('{query}', searchQuery) : 
+                  (selectedCategoryId === "all" ? t('literatur.all_categories') : 
+                    (categories.find(c => c.id.toString() === selectedCategoryId)?.name || t('literatur.category')))}
+              </h2>
+            </div>
+            
+            {/* Filter Button */}
+            <button
+              onClick={() => setIsFilterModalOpen(true)}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 text-xs font-bold uppercase tracking-wider hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all shadow-sm"
+            >
+              <Filter className="w-4 h-4" />
+              {t('literatur.filter_sort')}
+            </button>
+          </div>
+
+          {/* Filter Modal */}
+          <AnimatePresence>
+            {isFilterModalOpen && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setIsFilterModalOpen(false)}
+                  className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+                />
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                  className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-white dark:bg-[#090d14] border border-slate-200 dark:border-white/10 rounded-3xl p-6 md:p-8 z-50 shadow-2xl"
+                >
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+                      <Filter className="w-5 h-5 text-emerald-500" />
+                      {t('literatur.filter_title')}
+                    </h3>
+                    <button 
+                      onClick={() => setIsFilterModalOpen(false)}
+                      className="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors p-2"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-6">
+                    {/* Jenis Filter */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 dark:text-white/50 uppercase tracking-wider mb-3">
+                        {t('literatur.filter_type')}
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          { value: "ALL", label: t('literatur.type_all') },
+                          { value: "PDF", label: t('literatur.type_pdf') },
+                          { value: "DOC", label: t('literatur.type_doc') },
+                          { value: "SLIDES", label: t('literatur.type_slides') },
+                          { value: "VIDEO", label: t('literatur.type_video') },
+                          { value: "OTHER", label: t('literatur.type_other') }
+                        ].map(tObj => (
+                          <button
+                            key={tObj.value}
+                            onClick={() => setFilterType(tObj.value)}
+                            className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border ${
+                              filterType === t.value 
+                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 shadow-sm" 
+                                : "bg-slate-50 dark:bg-black/20 text-slate-500 dark:text-white/50 border-slate-200 dark:border-white/5 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 hover:border-slate-300 dark:hover:border-white/10"
+                            }`}
+                          >
+                            {tObj.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Tahun Range */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 dark:text-white/50 uppercase tracking-wider mb-2">
+                        {t('literatur.filter_year')}
+                      </label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="number"
+                          placeholder="Min (Cth: 2010)"
+                          value={minYear}
+                          onChange={e => setMinYear(e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-black/20 text-slate-700 dark:text-white border border-slate-200 dark:border-white/10 text-sm font-medium rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors shadow-inner placeholder:text-slate-400 dark:placeholder:text-white/20"
+                        />
+                        <span className="text-slate-400 font-bold">-</span>
+                        <input
+                          type="number"
+                          placeholder="Max (Cth: 2024)"
+                          value={maxYear}
+                          onChange={e => setMaxYear(e.target.value)}
+                          className="w-full bg-slate-50 dark:bg-black/20 text-slate-700 dark:text-white border border-slate-200 dark:border-white/10 text-sm font-medium rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500 transition-colors shadow-inner placeholder:text-slate-400 dark:placeholder:text-white/20"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Urutkan */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 dark:text-white/50 uppercase tracking-wider mb-3">
+                        {t('literatur.filter_sort_by')}
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          { value: "newest", label: t('literatur.sort_newest') },
+                          { value: "oldest", label: t('literatur.sort_oldest') },
+                          { value: "a-z", label: t('literatur.sort_az') }
+                        ].map(s => (
+                          <button
+                            key={s.value}
+                            onClick={() => setSortOrder(s.value)}
+                            className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border ${
+                              sortOrder === s.value 
+                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 shadow-sm" 
+                                : "bg-slate-50 dark:bg-black/20 text-slate-500 dark:text-white/50 border-slate-200 dark:border-white/5 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 hover:border-slate-300 dark:hover:border-white/10"
+                            }`}
+                          >
+                            {s.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-8 flex gap-3">
+                    <button
+                      onClick={() => {
+                        setFilterType("ALL");
+                        setMinYear("");
+                        setMaxYear("");
+                        setSortOrder("newest");
+                      }}
+                      className="flex-1 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-white/70 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
+                    >
+                      {t('literatur.reset')}
+                    </button>
+                    <button
+                      onClick={() => setIsFilterModalOpen(false)}
+                      className="flex-1 py-3.5 rounded-xl font-bold text-xs uppercase tracking-wider bg-emerald-500 text-white hover:bg-emerald-600 transition-colors shadow-lg shadow-emerald-500/20"
+                    >
+                      {t('literatur.apply')}
+                    </button>
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+
+          {/* Grid List for Items */}
+          {filteredItems.length === 0 ? (
+            <div className="py-24 flex flex-col items-center justify-center text-center bg-white dark:bg-[#08120e] border border-dashed border-slate-200 dark:border-white/5 rounded-3xl">
+              <FolderOpen className="w-12 h-12 text-slate-300 dark:text-white/10 mb-4 animate-pulse" />
+              <h3 className="text-lg font-black text-slate-900 dark:text-white mb-1">{t('literatur.not_found')}</h3>
+              <p className="text-slate-500 dark:text-white/40 text-xs max-w-xs leading-relaxed mt-1">{t('literatur.not_found_desc')}</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredItems.map((item, index) => (
+                <motion.a
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: (index % 4) * 0.05 }}
+                  key={item.id}
+                  href={`/member/literatur/${item.id}`}
+                  className="relative bg-white dark:bg-[#090d14] border border-slate-200/60 dark:border-white/5 rounded-3xl overflow-hidden cursor-pointer group hover:border-emerald-500/30 transition-all duration-500 transform-gpu hover:-translate-y-2 flex flex-col h-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(16,185,129,0.1)]"
+                >
+                  {/* Category Cover */}
+                  <div className="relative aspect-[16/9] w-full overflow-hidden shrink-0 bg-slate-100 dark:bg-[#090d14]">
+                    {item.category?.imageUrl ? (
+                      <img
+                        src={resolveImageUrl(item.category.imageUrl)}
+                        alt=""
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-90 dark:opacity-70 group-hover:opacity-100"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-emerald-500/20 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-[#090d14]">
+                        <FolderOpen className="w-14 h-14" />
+                      </div>
+                    )}
+                    
+                    {/* Sleek Gradient Overlay for Text Readability & Seamless Blend */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-white via-white/0 to-transparent dark:from-[#090d14] dark:from-[5%] dark:via-[#090d14]/60 dark:via-[35%] dark:to-transparent" />
+                    
+                    {/* Badges */}
+                    <div className="absolute top-4 left-4 z-10 flex gap-2">
+                      <span className={`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 backdrop-blur-md shadow-sm border bg-white/90 dark:bg-black/50 ${
+                        TYPE_COLORS[item.type] || TYPE_COLORS.OTHER
+                      }`}>
+                        {item.type || "OTHER"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Title & metadata */}
+                  <div className="p-6 flex-1 flex flex-col justify-between z-10 bg-white dark:bg-[#090d14] -mt-[1px]">
+                    <div>
+                      <h3 className="font-extrabold text-slate-900 dark:text-white text-lg line-clamp-2 mb-4 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300 leading-snug tracking-tight break-words">
+                        {item.title}
+                      </h3>
+                      <div className="space-y-2.5 mb-6">
+                        {item.author && (
+                          <div className="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                            <User className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                            <span className="truncate">{item.author}</span>
+                          </div>
+                        )}
+                        {item.year && (
+                          <div className="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                            <Calendar className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                            <span>{t('literatur.year')} {item.year}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-5 border-t border-slate-100 dark:border-white/5">
+                      <span className="text-[10px] font-black text-slate-500 dark:text-slate-400 tracking-widest uppercase flex items-center gap-1.5 group-hover:text-emerald-500 transition-colors">
+                        {t('literatur.open')}
+                      </span>
+                      <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white text-slate-400 dark:text-slate-500 transition-all duration-300 group-hover:scale-110 shadow-sm">
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </div>
+                    </div>
+                  </div>
+                </motion.a>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

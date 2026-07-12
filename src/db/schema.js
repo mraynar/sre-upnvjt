@@ -106,6 +106,10 @@ export const task = pgTable('task', {
   description: text('description').notNull(),
   rewardXp: integer('rewardXp').default(0).notNull(),
   formTemplateId: integer('formTemplateId').references(() => formTemplate.id),
+  folderId: varchar('folderId', { length: 255 }),
+  maxUploadSizeMb: integer('maxUploadSizeMb'),
+  allowMultipleFiles: boolean('allowMultipleFiles').default(false),
+  submissionType: varchar('submissionType', { length: 50 }).default('BOTH'),
   deadline: timestamp('deadline', { mode: 'date' }).notNull(),
   createdById: integer('createdById').references(() => user.id).notNull(),
   createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
@@ -125,10 +129,23 @@ export const taskSubmission = pgTable('taskSubmission', {
 // ==========================================
 // 6. ATTENDANCES
 // ==========================================
+export const attendanceSession = pgTable('attendanceSession', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  date: timestamp('date', { mode: 'date' }).notNull(),
+  startTime: timestamp('startTime', { mode: 'date' }),
+  endTime: timestamp('endTime', { mode: 'date' }),
+  token: varchar('token', { length: 50 }),
+  isActive: boolean('isActive').default(true).notNull(),
+  createdById: integer('createdById').references(() => user.id).notNull(),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
+});
+
 export const attendance = pgTable('attendance', {
   id: serial('id').primaryKey(),
+  sessionId: integer('sessionId').references(() => attendanceSession.id).notNull(),
   memberId: integer('memberId').references(() => user.id).notNull(),
-  date: timestamp('date', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
   status: varchar('status', { length: 50 }).notNull(), // 'PRESENT', 'ABSENT', etc.
   notes: text('notes'),
   createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
@@ -217,6 +234,8 @@ export const userRelations = relations(user, ({ one, many }) => ({
   taskSubmissions: many(taskSubmission, { relationName: 'MemberSubmissions' }),
   tasksReviewed: many(taskSubmission, { relationName: 'ReviewerSubmissions' }),
   attendances: many(attendance),
+  documentItemsUploaded: many(documentItem),
+  shortlinksCreated: many(shortlink),
 }));
 
 export const memberProfileRelations = relations(memberProfile, ({ one }) => ({
@@ -255,7 +274,13 @@ export const taskSubmissionRelations = relations(taskSubmission, ({ one }) => ({
   reviewer: one(user, { fields: [taskSubmission.reviewedById], references: [user.id], relationName: 'ReviewerSubmissions' }),
 }));
 
+export const attendanceSessionRelations = relations(attendanceSession, ({ one, many }) => ({
+  createdBy: one(user, { fields: [attendanceSession.createdById], references: [user.id] }),
+  attendances: many(attendance),
+}));
+
 export const attendanceRelations = relations(attendance, ({ one }) => ({
+  session: one(attendanceSession, { fields: [attendance.sessionId], references: [attendanceSession.id] }),
   member: one(user, { fields: [attendance.memberId], references: [user.id] }),
 }));
 
@@ -342,6 +367,7 @@ export const pptModule = pgTable('pptModule', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description'),
+  notes: text('notes'),
   coverImageUrl: varchar('coverImageUrl', { length: 1000 }),
   isPublished: boolean('isPublished').default(false).notNull(),
   createdById: integer('createdById').references(() => user.id).notNull(),
@@ -354,8 +380,7 @@ export const pptSlide = pgTable('pptSlide', {
   moduleId: integer('moduleId').references(() => pptModule.id).notNull(),
   order: integer('order').notNull(),
   title: varchar('title', { length: 255 }),
-  driveUrl: varchar('driveUrl', { length: 1000 }).notNull(),
-  notes: text('notes'),
+  fileUrl: varchar('fileUrl', { length: 1000 }).notNull(),
   createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()),
 });
 
@@ -414,7 +439,40 @@ export const xpTransaction = pgTable('xpTransaction', {
 });
 
 // ==========================================
-// NEW RELATIONS (12–15)
+// 16. DOCUMENTS
+// ==========================================
+export const documentCategory = pgTable('documentCategory', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  description: text('description'),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()),
+});
+
+export const documentItem = pgTable('documentItem', {
+  id: serial('id').primaryKey(),
+  categoryId: integer('categoryId').references(() => documentCategory.id).notNull(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  fileUrl: varchar('fileUrl', { length: 1000 }).notNull(),
+  uploadedById: integer('uploadedById').references(() => user.id).notNull(),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()),
+});
+
+// ==========================================
+// 17. SHORTLINKS
+// ==========================================
+export const shortlink = pgTable('shortlink', {
+  id: serial('id').primaryKey(),
+  slug: varchar('slug', { length: 255 }).unique().notNull(),
+  originalUrl: text('originalUrl').notNull(),
+  description: varchar('description', { length: 255 }),
+  clicks: integer('clicks').default(0).notNull(),
+  createdById: integer('createdById').references(() => user.id).notNull(),
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
+});
+
+// ==========================================
+// NEW RELATIONS (12–17)
 // ==========================================
 
 export const literatureCategoryRelations = relations(literatureCategory, ({ many }) => ({
@@ -490,5 +548,27 @@ export const xpTransactionRelations = relations(xpTransaction, ({ one }) => ({
     fields: [xpTransaction.grantedById],
     references: [user.id],
     relationName: 'GranterXpTransactions',
+  }),
+}));
+
+export const documentCategoryRelations = relations(documentCategory, ({ many }) => ({
+  items: many(documentItem),
+}));
+
+export const documentItemRelations = relations(documentItem, ({ one }) => ({
+  category: one(documentCategory, {
+    fields: [documentItem.categoryId],
+    references: [documentCategory.id],
+  }),
+  uploadedBy: one(user, {
+    fields: [documentItem.uploadedById],
+    references: [user.id],
+  }),
+}));
+
+export const shortlinkRelations = relations(shortlink, ({ one }) => ({
+  createdBy: one(user, {
+    fields: [shortlink.createdById],
+    references: [user.id],
   }),
 }));

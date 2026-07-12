@@ -6,12 +6,30 @@ export default async function middleware(req, event) {
   const token = await getToken({ req });
   const isAuth = !!token;
   const isAuthPage = req.nextUrl.pathname.startsWith("/login");
+  const isMemberRole = token?.roleName === "MEMBER";
+  const isStaffRole = token?.roleName === "STAFF";
 
   if (isAuthPage) {
     if (isAuth) {
+      if (isMemberRole) {
+        return NextResponse.redirect(new URL("/member", req.url));
+      } else if (isStaffRole) {
+        return NextResponse.redirect(new URL("/staff", req.url));
+      }
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
     return NextResponse.next();
+  }
+
+  if (isAuth) {
+    // Redirect MEMBERs trying to access non-member protected routes (like /dashboard) to /member
+    if (isMemberRole && !req.nextUrl.pathname.startsWith("/member")) {
+      return NextResponse.redirect(new URL("/member", req.url));
+    }
+    // Redirect STAFFs trying to access non-staff protected routes to /staff
+    if (isStaffRole && !req.nextUrl.pathname.startsWith("/staff")) {
+      return NextResponse.redirect(new URL("/staff", req.url));
+    }
   }
 
   const authMiddleware = withAuth({
@@ -46,6 +64,7 @@ export const config = {
     "/attendance/:path*",
     "/events-admin/:path*",
     "/member/:path*",
+    "/staff/:path*",
   ],
 };
 
