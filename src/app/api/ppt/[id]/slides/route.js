@@ -26,10 +26,10 @@ export async function POST(req, { params }) {
 
     const moduleId = parseInt(params.id);
     const body = await req.json();
-    const { title, driveUrl, notes } = body;
+    const { title, fileUrl } = body;
 
-    if (!driveUrl) {
-      return NextResponse.json({ error: "Google Drive Embed URL wajib diisi" }, { status: 400 });
+    if (!fileUrl) {
+      return NextResponse.json({ error: "File URL wajib diisi" }, { status: 400 });
     }
 
     // Auto-assign order as max+1
@@ -44,8 +44,7 @@ export async function POST(req, { params }) {
       moduleId,
       order: nextOrder,
       title: title || null,
-      driveUrl,
-      notes: notes || null,
+      fileUrl,
     }).returning();
 
     return NextResponse.json({ success: true, slide: result }, { status: 201 });

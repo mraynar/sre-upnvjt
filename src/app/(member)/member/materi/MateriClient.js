@@ -6,202 +6,56 @@ import {
   Presentation, Layers, ChevronRight, ChevronLeft, ArrowLeft, 
   ExternalLink, FileText, AlertCircle, HelpCircle, Star, BookOpen
 } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageProvider";
+import { useRouter } from "next/navigation";
 
 export default function MateriClient({ initialModules }) {
+  const { t } = useLanguage();
   const [modules] = useState(initialModules || []);
   const [activeModule, setActiveModule] = useState(null); // module details with slides
   const [slides, setSlides] = useState([]);
-  const [currentSlideIdx, setCurrentSlideIdx] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const router = useRouter();
 
-  const handleOpenModule = async (mod) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/ppt/${mod.id}`);
-      if (!res.ok) throw new Error("Gagal memuat detail modul");
-      const data = await res.json();
-      setActiveModule(data);
-      setSlides(data.slides || []);
-      setCurrentSlideIdx(0);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleOpenModule = (mod) => {
+    router.push(`/member/materi/${mod.id}`);
   };
 
-  const handleClosePlayer = () => {
-    setActiveModule(null);
-    setSlides([]);
-    setCurrentSlideIdx(0);
-  };
+  const [progressMap, setProgressMap] = useState({});
 
-  const nextSlide = useCallback(() => {
-    if (slides.length === 0) return;
-    setCurrentSlideIdx(prev => (prev + 1) % slides.length);
-  }, [slides]);
-
-  const prevSlide = useCallback(() => {
-    if (slides.length === 0) return;
-    setCurrentSlideIdx(prev => (prev - 1 + slides.length) % slides.length);
-  }, [slides]);
-
-  // Handle keyboard arrows
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (!activeModule || slides.length === 0) return;
-      if (e.key === "ArrowRight") {
-        nextSlide();
-      } else if (e.key === "ArrowLeft") {
-        prevSlide();
-      } else if (e.key === "Escape") {
-        handleClosePlayer();
+    if (typeof window !== 'undefined') {
+      const map = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('sre_materi_progress_')) {
+          try {
+            const moduleId = key.replace('sre_materi_progress_', '');
+            const data = JSON.parse(localStorage.getItem(key));
+            map[moduleId] = data;
+          } catch (e) {}
+        }
       }
-    };
+      setProgressMap(map);
+    }
+  }, []);
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeModule, slides, nextSlide, prevSlide]);
-
-  const currentSlide = slides[currentSlideIdx];
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  //  VIEW 2: EMBEDDED SLIDES PLAYER (NOT FULLSCREEN)
-  // ═══════════════════════════════════════════════════════════════════════════
-  if (activeModule) {
-    return (
-      <div className="w-full relative select-none">
-        
-        {/* Back and Breadcrumb */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-          <button
-            onClick={handleClosePlayer}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/5 text-white/70 hover:text-white hover:bg-white/10 transition-all font-bold text-xs uppercase tracking-wider"
-          >
-            <ArrowLeft className="w-4 h-4 text-primary" />
-            Kembali ke Modul
-          </button>
-          <div className="text-right">
-            <span className="text-[10px] font-black text-primary tracking-widest uppercase block">Materi PPT Terbuka</span>
-            <span className="text-xs text-white/50">{activeModule.title}</span>
-          </div>
-        </div>
-
-        {/* Content Viewer Layout */}
-        <div className="bg-[#08120e] border border-white/5 rounded-3xl p-4 md:p-8 shadow-2xl relative">
-          <div className="absolute inset-0 bg-grid-pattern opacity-2 rounded-3xl pointer-events-none" />
-
-          {isLoading ? (
-            <div className="py-24 flex items-center justify-center">
-              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-            </div>
-          ) : error ? (
-            <div className="py-20 flex flex-col items-center justify-center text-center">
-              <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-              <p className="font-bold text-white mb-4">{error}</p>
-              <button onClick={handleClosePlayer} className="px-5 py-2.5 bg-primary text-[#050e0a] rounded-xl font-bold">Kembali</button>
-            </div>
-          ) : slides.length === 0 ? (
-            <div className="py-20 flex flex-col items-center justify-center text-center">
-              <HelpCircle className="w-12 h-12 text-white/20 mb-4 animate-bounce" />
-              <p className="font-bold text-white/50 text-sm">Belum ada slide ditambahkan ke modul ini.</p>
-            </div>
-          ) : (
-            <div className="flex flex-col lg:flex-row gap-8">
-              
-              {/* Left Column: Embed Slide Player */}
-              <div className="flex-1 flex flex-col">
-                <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black">
-                  <iframe
-                    src={currentSlide.driveUrl}
-                    title={currentSlide.title || "Slide Presentation"}
-                    className="w-full h-full border-0"
-                    allowFullScreen
-                  />
-                </div>
-
-                {/* Navigation and Slide Counter */}
-                <div className="flex items-center justify-between mt-6 px-2">
-                  <button
-                    onClick={prevSlide}
-                    className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 flex items-center justify-center text-white/70 hover:text-white transition-all"
-                    aria-label="Previous Slide"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <span className="text-xs font-black text-white/60 font-mono">
-                    Slide {currentSlideIdx + 1} / {slides.length}
-                  </span>
-                  <button
-                    onClick={nextSlide}
-                    className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 flex items-center justify-center text-white/70 hover:text-white transition-all"
-                    aria-label="Next Slide"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
-
-                {/* Horizontal thumbnail navigator/strip below */}
-                <div className="mt-8 pt-6 border-t border-white/5">
-                  <h4 className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-3 px-1">Navigasi Halaman Slide</h4>
-                  <div className="flex items-center gap-2 overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-                    {slides.map((sl, idx) => (
-                      <button
-                        key={sl.id}
-                        onClick={() => setCurrentSlideIdx(idx)}
-                        className={`w-10 h-10 shrink-0 rounded-xl text-xs font-mono font-black flex items-center justify-center border transition-all ${
-                          currentSlideIdx === idx
-                            ? "bg-primary/20 border-primary text-primary shadow-[0_0_12px_rgba(16,185,129,0.25)]"
-                            : "bg-[#050d0a] border-white/5 text-white/40 hover:text-white hover:border-white/10"
-                        }`}
-                      >
-                        {idx + 1}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Slide Title & Teacher Notes */}
-              <div className="w-full lg:w-80 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-white/5 lg:pl-8 pt-8 lg:pt-0 shrink-0">
-                <div className="space-y-4">
-                  <div>
-                    <span className="text-[10px] font-black text-primary tracking-widest uppercase block mb-1">Slide #{currentSlide.order}</span>
-                    <h3 className="text-lg font-black text-white leading-tight tracking-tight">
-                      {currentSlide.title || <span className="italic text-white/30 font-normal">Tanpa Judul</span>}
-                    </h3>
-                  </div>
-
-                  <div className="p-4.5 rounded-2xl bg-white/5 border border-white/5 text-xs text-white/60 leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto">
-                    {currentSlide.notes || "Tidak ada catatan tambahan untuk slide ini."}
-                  </div>
-                </div>
-
-                <div className="pt-6 border-t border-white/5 mt-8 lg:mt-0">
-                  <a
-                    href={currentSlide.driveUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-full py-3.5 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold transition-all hover:scale-105"
-                  >
-                    <ExternalLink className="w-4 h-4" /> Buka Tab Baru
-                  </a>
-                </div>
-              </div>
-
-            </div>
-          )}
-
-        </div>
-      </div>
-    );
-  }
+  const formatTimeAgo = (timestamp) => {
+    if (!timestamp) return null;
+    const diffMins = Math.floor((Date.now() - timestamp) / 60000);
+    if (diffMins < 1) return 'Baru saja';
+    if (diffMins < 60) return `${diffMins} menit lalu`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours} jam lalu`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays === 1) return 'Kemarin';
+    return `${diffDays} hari lalu`;
+  };
 
   // ═══════════════════════════════════════════════════════════════════════════
   //  VIEW 1: CARD MODULES GRID
   // ═══════════════════════════════════════════════════════════════════════════
+
+
   return (
     <div className="w-full relative select-none">
       
@@ -211,71 +65,109 @@ export default function MateriClient({ initialModules }) {
       {/* Header */}
       <div className="mb-10">
         <span className="px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-bold text-primary tracking-wide uppercase">
-          E-Academy Materi
+          Re-mind
         </span>
-        <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-white mt-4 flex items-center gap-3">
+        <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-slate-900 dark:text-white mt-4 flex items-center gap-3">
           <Presentation className="w-9 h-9 text-primary animate-pulse" />
-          Materi Pembelajaran SRE
+          {t('materi.title')}
         </h1>
-        <p className="text-white/50 max-w-xl font-medium text-sm mt-2 leading-relaxed">
-          Akses modul materi presentasi PPT yang telah disusun oleh mentor dan pengurus SRE UPNVJT.
+        <p className="text-slate-600 dark:text-white/50 max-w-xl font-medium text-sm mt-2 leading-relaxed">
+          {t('materi.subtitle')}
         </p>
       </div>
 
       {modules.length === 0 ? (
-        <div className="py-24 flex flex-col items-center justify-center text-center bg-[#08120e] border border-dashed border-white/5 rounded-3xl">
-          <BookOpen className="w-12 h-12 text-white/10 mb-4 animate-pulse" />
-          <h3 className="text-lg font-black text-white mb-1">Belum ada materi tersedia</h3>
-          <p className="text-white/40 text-xs max-w-xs leading-relaxed mt-1">Kembali lagi nanti untuk modul pembelajaran berikutnya.</p>
+        <div className="py-24 flex flex-col items-center justify-center text-center bg-slate-50 dark:bg-[#08120e] border border-dashed border-slate-200 dark:border-white/5 rounded-3xl">
+          <BookOpen className="w-12 h-12 text-slate-300 dark:text-white/10 mb-4 animate-pulse" />
+          <h3 className="text-lg font-black text-slate-900 dark:text-white mb-1">{t('materi.empty_title')}</h3>
+          <p className="text-slate-500 dark:text-white/40 text-xs max-w-xs leading-relaxed mt-1">{t('materi.empty_desc')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {modules.map((mod, index) => (
             <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: (index % 4) * 0.05 }}
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: "spring", stiffness: 100, delay: (index % 4) * 0.1 }}
               key={mod.id}
               onClick={() => handleOpenModule(mod)}
-              className="bg-gradient-to-b from-white/10 to-[#08120e] border border-white/5 rounded-3xl overflow-hidden hover:border-primary/20 hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer group shadow-lg"
+              className="relative bg-white dark:bg-[#090d14] border border-slate-200/60 dark:border-white/5 rounded-3xl overflow-hidden cursor-pointer group hover:border-emerald-500/30 transition-all duration-500 transform-gpu hover:-translate-y-2 flex flex-col h-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_20px_40px_rgb(16,185,129,0.1)]"
             >
-              {/* Cover Banner */}
-              <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-primary/10 to-[#08120e] border-b border-white/5">
-                <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
+              {/* Cover Banner (Keeping it but blending it into the dark theme) */}
+              <div className="relative aspect-[16/9] w-full overflow-hidden shrink-0 bg-slate-100 dark:bg-[#090d14]">
                 {mod.coverImageUrl ? (
                   <img
                     src={mod.coverImageUrl}
                     alt={mod.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-85 group-hover:opacity-100"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-90 dark:opacity-70 group-hover:opacity-100"
                   />
                 ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-primary/30">
-                    <Presentation className="w-10 h-10 animate-pulse" />
+                  <div className="w-full h-full flex flex-col items-center justify-center text-emerald-500/20 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-[#090d14]">
+                    <Presentation className="w-14 h-14" />
                   </div>
                 )}
-                {/* slideCount badge */}
-                <div className="absolute top-3 left-3">
-                  <span className="px-2.5 py-1 rounded bg-black/60 border border-white/10 text-[9px] font-black uppercase tracking-widest flex items-center gap-1.5 text-white">
+                
+                {/* Sleek Gradient Overlay for Text Readability & Seamless Blend */}
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/0 to-transparent dark:from-[#090d14] dark:from-[5%] dark:via-[#090d14]/80 dark:via-[35%] dark:to-transparent" />
+
+                <div className="absolute top-4 right-4 z-10">
+                  <span className="px-3 py-1.5 rounded-full bg-emerald-500/90 border border-emerald-400/50 text-[10px] font-black uppercase tracking-widest flex items-center gap-1 text-white shadow-[0_0_15px_rgba(16,185,129,0.4)] backdrop-blur-md">
                     <Layers className="w-3.5 h-3.5" />
-                    {mod.slideCount || 0} Slide
+                    {mod.slideCount || 0} {t('materi.file_count')}
                   </span>
                 </div>
               </div>
 
               {/* Title & Desc */}
-              <div className="p-5 flex-1 flex flex-col justify-between">
+              <div className="p-6 flex-1 flex flex-col justify-between z-10 bg-white dark:bg-[#090d14] -mt-[1px]">
                 <div>
-                  <h3 className="font-black text-white text-sm line-clamp-1 mb-2 group-hover:text-primary transition-all tracking-tight">
+                  <h3 className="font-extrabold text-slate-900 dark:text-white text-xl line-clamp-2 mb-2 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-300 leading-snug tracking-tight">
                     {mod.title}
                   </h3>
-                  {mod.description && (
-                    <p className="text-xs text-white/40 line-clamp-2 leading-relaxed">
+                  {mod.description ? (
+                    <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
                       {mod.description}
                     </p>
+                  ) : (
+                    <p className="text-sm text-slate-400 dark:text-slate-500 italic">{t('materi.no_description')}</p>
                   )}
                 </div>
-                <div className="mt-6 pt-4 border-t border-white/5 text-[10px] font-black tracking-widest uppercase text-primary group-hover:underline flex items-center gap-1">
-                  Mulai Belajar & Lihat Slide →
+                
+                {/* Progress & Footer */}
+                <div className="mt-8 flex flex-col gap-5">
+                  
+                  {progressMap[mod.id] && (
+                    <div className="w-full">
+                      <div className="flex justify-between text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">
+                        <span className="flex items-center gap-1.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          {formatTimeAgo(progressMap[mod.id].lastAccessed) || 'Pernah dibuka'}
+                        </span>
+                        <span className="text-emerald-600 dark:text-emerald-400 font-black">
+                          {(mod.slideCount || 1) > 1 ? Math.round((progressMap[mod.id].currentSlideIdx / ((mod.slideCount || 1) - 1)) * 100) : (progressMap[mod.id].currentSlideIdx >= 0 ? 100 : 0)}%
+                        </span>
+                      </div>
+                      <div className="w-full h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden shadow-inner relative">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${(mod.slideCount || 1) > 1 ? (progressMap[mod.id].currentSlideIdx / ((mod.slideCount || 1) - 1)) * 100 : (progressMap[mod.id].currentSlideIdx >= 0 ? 100 : 0)}%` }}
+                          transition={{ duration: 1, ease: "easeOut" }}
+                          className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between pt-5 border-t border-slate-100 dark:border-white/5">
+                    <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500">
+                      <Presentation className="w-4 h-4" />
+                      <span className="text-xs font-semibold uppercase tracking-wider">{t('materi.open_module')}</span>
+                    </div>
+                    
+                    <div className="px-5 py-2 rounded-xl bg-slate-900 dark:bg-white group-hover:bg-emerald-500 dark:group-hover:bg-emerald-500 text-white dark:text-slate-900 group-hover:text-white font-bold text-[11px] uppercase tracking-wider flex items-center gap-1.5 transition-all duration-300 shadow-sm group-hover:shadow-[0_4px_15px_rgba(16,185,129,0.3)]">
+                      {progressMap[mod.id] ? 'Lanjutkan' : t('materi.view_slides')} <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>

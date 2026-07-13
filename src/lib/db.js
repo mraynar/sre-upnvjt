@@ -9,10 +9,25 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-// `prepare: false` is required when using Supabase's transaction pooler
-// (port 6543). The pooler does not support PostgreSQL prepared statements,
-// so any query without this flag will throw an AggregateError at render time.
-const client = postgres(process.env.DATABASE_URL, { prepare: false });
+// In development, cache the database client globally to prevent multiple connections on hot-reload.
+// prepare: false is required when using Supabase's transaction pooler (port 6543)
+let client;
+let db;
 
-export const db = drizzle(client, { schema });
+if (process.env.NODE_ENV === 'production') {
+  client = postgres(process.env.DATABASE_URL, { max: 5, prepare: false });
+  db = drizzle(client, { schema });
+} else {
+  if (!globalThis.globalDbClient) {
+    globalThis.globalDbClient = postgres(process.env.DATABASE_URL, { max: 5, prepare: false });
+  }
+  client = globalThis.globalDbClient;
+  
+  if (!globalThis.globalDb) {
+    globalThis.globalDb = drizzle(client, { schema });
+  }
+  db = globalThis.globalDb;
+}
+
+export { db };
 

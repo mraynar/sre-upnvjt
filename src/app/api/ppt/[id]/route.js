@@ -6,7 +6,8 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET(req, { params }) {
   try {
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     const mod = await db.query.pptModule.findFirst({
       where: (t, { eq }) => eq(t.id, id),
       with: {
@@ -28,9 +29,10 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     const body = await req.json();
-    const { title, description, coverImageUrl, isPublished } = body;
+    const { title, description, notes, coverImageUrl, isPublished } = body;
 
     if (!title) {
       return NextResponse.json({ error: "Judul modul wajib diisi" }, { status: 400 });
@@ -40,6 +42,7 @@ export async function PUT(req, { params }) {
       .set({
         title,
         description: description || null,
+        notes: notes || null,
         coverImageUrl: coverImageUrl || null,
         isPublished: Boolean(isPublished),
         updatedAt: new Date(),
@@ -60,7 +63,8 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     // Delete slides first (FK constraint)
     await db.delete(pptSlide).where(eq(pptSlide.moduleId, id));
     await db.delete(pptModule).where(eq(pptModule.id, id));

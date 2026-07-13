@@ -41,7 +41,7 @@ export default async function RootLayout({ children }) {
       suppressHydrationWarning
       className={`${inter.variable} ${outfit.variable} h-full antialiased scroll-smooth`}
     >
-      <body className="min-h-full flex flex-col bg-canvas text-ink font-sans">
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-canvas text-ink font-sans">
         <Providers>
           <LanguageProvider initialLanguage={appLanguage}>
             <HeaderWrapper />

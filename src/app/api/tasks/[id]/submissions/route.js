@@ -3,10 +3,14 @@ import { db } from "@/lib/db";
 import { taskSubmission, task, memberProfile, xpTransaction } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth/next";
+import { google } from "googleapis";
+import { Readable } from "stream";
 
 export async function GET(req, { params }) {
   try {
-    const taskId = parseInt(params.id);
+    const p = await params;
+    const taskId = parseInt(p.id);
     const submissions = await db.query.taskSubmission.findMany({
       where: (t, { eq }) => eq(t.taskId, taskId),
       with: {
@@ -27,7 +31,8 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const taskId = parseInt(params.id);
+    const p = await params;
+    const taskId = parseInt(p.id);
     const body = await req.json();
     const { submissionId, status, feedback } = body; // status: 'APPROVED' | 'REJECTED'
 
@@ -102,12 +107,101 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const taskId = parseInt(params.id);
-    const body = await req.json();
-    const { fileUrl } = body;
+    const p = await params;
+    const taskId = parseInt(p.id);
+    let finalFileUrl = "";
 
-    if (!fileUrl) {
-      return NextResponse.json({ error: "Link file submisi wajib diisi" }, { status: 400 });
+    const taskData = await db.query.task.findFirst({
+      where: (t, { eq }) => eq(t.id, taskId)
+    });
+
+    if (!taskData) {
+      return NextResponse.json({ error: "Tugas tidak ditemukan" }, { status: 404 });
+    }
+
+    const targetFolderId = taskData.folderId || process.env.GOOGLE_DRIVE_FOLDER_ID;
+
+    const contentType = req.headers.get("content-type") || "";
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await req.formData();
+      const type = formData.get("type"); // "link" or "file"
+
+      if (type === "link") {
+        finalFileUrl = formData.get("fileUrl");
+      } else if (type === "file") {
+        const files = formData.getAll("file");
+        if (!files || files.length === 0) {
+          return NextResponse.json({ error: "File tidak ditemukan" }, { status: 400 });
+        }
+        
+        const oauth2Client = new google.auth.OAuth2(
+          process.env.GOOGLE_CLIENT_ID,
+          process.env.GOOGLE_CLIENT_SECRET,
+          'https://developers.google.com/oauthplayground'
+        );
+
+        oauth2Client.setCredentials({
+          refresh_token: process.env.GOOGLE_REFRESH_TOKEN
+        });
+
+        const drive = google.drive({ version: 'v3', auth: oauth2Client });
+        let uploadedLinks = [];
+        
+        for (const file of files) {
+          if (typeof file === "string") continue;
+          
+          const bytes = await file.arrayBuffer();
+          const buffer = Buffer.from(bytes);
+          const stream = Readable.from(buffer);
+          
+          const newFileName = `${session.user.name.replace(/[^a-zA-Z0-9]/g, '_')}_Task${taskId}_${file.name}`;
+          
+          const fileMetadata = {
+            name: newFileName,
+            parents: [targetFolderId]
+          };
+
+          const media = {
+            mimeType: file.type,
+            body: stream,
+          };
+
+          const uploadedFile = await drive.files.create({
+            requestBody: fileMetadata,
+            media: media,
+            fields: 'id, webViewLink',
+            supportsAllDrives: true
+          });
+
+          const fileId = uploadedFile.data.id;
+
+          // Make it readable to anyone with link
+          await drive.permissions.create({
+            fileId: fileId,
+            requestBody: {
+              role: 'reader',
+              type: 'anyone'
+            },
+            supportsAllDrives: true
+          });
+          
+          uploadedLinks.push(uploadedFile.data.webViewLink);
+        }
+
+        if (uploadedLinks.length === 0) {
+          return NextResponse.json({ error: "File tidak valid" }, { status: 400 });
+        }
+        
+        finalFileUrl = uploadedLinks.join(", ");
+      }
+    } else {
+      // Fallback for JSON
+      const body = await req.json();
+      finalFileUrl = body.fileUrl;
+    }
+
+    if (!finalFileUrl) {
+      return NextResponse.json({ error: "Link atau file submisi wajib diisi" }, { status: 400 });
     }
 
     // Check if submission already exists
@@ -117,10 +211,9 @@ export async function POST(req, { params }) {
 
     let result;
     if (existing) {
-      // Update existing submission, reset status to PENDING, remove feedback
       const [updated] = await db.update(taskSubmission)
         .set({
-          fileUrl,
+          fileUrl: finalFileUrl,
           status: "PENDING",
           feedback: null,
           reviewedById: null,
@@ -130,11 +223,10 @@ export async function POST(req, { params }) {
         .returning();
       result = updated;
     } else {
-      // Create new submission
       const [inserted] = await db.insert(taskSubmission).values({
         taskId,
         memberId: parseInt(session.user.id),
-        fileUrl,
+        fileUrl: finalFileUrl,
         status: "PENDING",
         submittedAt: new Date(),
       }).returning();

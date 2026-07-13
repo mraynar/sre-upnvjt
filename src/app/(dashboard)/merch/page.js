@@ -15,7 +15,7 @@ export default async function MerchandisePage() {
     orderBy: [desc(merchandise.createdAt)]
   });
 
-  const safeMerch = dbMerchandise.map(m => ({
+  const safeMerch = dbMerchandise.map(m => ({ 
     ...m,
     price: m.price ? m.price.toString() : "0"
   }));

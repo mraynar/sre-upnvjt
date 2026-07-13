@@ -42,13 +42,40 @@
   --radius-full: 9999px;
 }
 
+:root {
+  --color-canvas: #ffffff;
+  --color-ink: #131f1c;
+  --color-body: #131f1c;
+  --color-body-muted: #6c8278;
+  --wave-color-1-start: #ffffff;
+  --wave-color-1-end: #f2faf6;
+  --wave-color-2-start: #f2faf6;
+  --wave-color-2-end: #e1f5ec;
+  --wave-color-3-start: #e1f5ec;
+  --wave-color-3-end: #cbebdc;
+}
+
+.dark {
+  --color-canvas: #07130e;
+  --color-ink: #ffffff;
+  --color-body: #ffffff;
+  --color-body-muted: #b2c0b9;
+  --wave-color-1-start: #d3e0d8;
+  --wave-color-1-end: #b2c0b9;
+  --wave-color-2-start: #b2c0b9;
+  --wave-color-2-end: #0f3036;
+  --wave-color-3-start: #0f3036;
+  --wave-color-3-end: #07130e;
+}
+
 body {
-  background-color: #ffffff;
-  color: #131f1c;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
   font-family: var(--font-sans);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3, h4, h5, h6, .font-display {
@@ -140,4 +167,71 @@ h1, h2, h3, h4, h5, h6, .font-display {
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ============================================================
+   ACCESSIBILITY — FOCUS VISIBLE STATES
+   All interactive elements get a visible keyboard focus ring
+   that matches our brand palette without clashing with the design.
+   ============================================================ */
+
+:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* On dark backgrounds, use the cream accent so it's still visible */
+.bg-\[\#07130e\] :focus-visible,
+.bg-\[\#050e0a\] :focus-visible,
+.bg-\[\#0a1c15\] :focus-visible {
+  outline-color: #e8ecc4;
+}
+
+/* ============================================================
+   ACCESSIBILITY — PREFERS-REDUCED-MOTION
+   Disables all CSS animations and transitions site-wide when
+   the user has configured their OS to prefer reduced motion.
+   Framer Motion reads this media query automatically via its
+   useReducedMotion hook when used (we pass it to motion props).
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep marquee running but make it instant/not distracting */
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   CARD TEXTURE PATTERNS
+   Subtle diagonal line pattern for org structure cards
+   ============================================================ */
+.bg-diagonal-texture {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255,255,255,0.02) 10px,
+    rgba(255,255,255,0.02) 11px
+  );
+}
+
+.bg-diagonal-texture-light {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(7,19,14,0.025) 10px,
+    rgba(7,19,14,0.025) 11px
+  );
 }

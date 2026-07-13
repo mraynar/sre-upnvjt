@@ -34,6 +34,7 @@ const hiddenHeaderRoutes = [
   "/events-admin",
   "/applications",
   "/testimonials",
+  "/staff",
 ];
 
 function isHiddenHeaderRoute(pathname) {

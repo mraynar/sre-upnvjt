@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +15,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { data: session, status } = useSession();
   const [isPublicRegistrationEnabled, setIsPublicRegistrationEnabled] = useState(false);
+
+  React.useEffect(() => {
+    if (status === "authenticated") {
+      if (session?.user?.role === "ADMIN" || session?.user?.role === "STAFF") {
+        router.push("/staff");
+      } else {
+        router.push("/member");
+      }
+    }
+  }, [status, session, router]);
 
   React.useEffect(() => {
     fetch("/api/settings/system")
@@ -173,10 +184,6 @@ export default function LoginPage() {
                 </div>
                 <span className="text-[13px] text-white/60 group-hover:text-white transition-colors select-none">Remember me</span>
               </label>
-              
-              <a href="#" className="text-[13px] text-[#e8ecc4] hover:text-white transition-colors font-medium">
-                Forgot password?
-              </a>
             </div>
 
             {error && (
