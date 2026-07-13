@@ -3,12 +3,26 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Users, FileText, CheckSquare, TrendingUp, AlertCircle, Calendar, Activity, 
-  ArrowRight, Clock, Plus, BarChart2, Star, Zap, Trophy
+import {
+  Users,
+  FileText,
+  CheckSquare,
+  TrendingUp,
+  AlertCircle,
+  Calendar,
+  Activity,
+  ArrowRight,
+  Clock,
+  Plus,
+  BarChart2,
+  Star,
+  Zap,
+  Trophy,
 } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/i18n/LanguageProvider";
+
+import Stats from "@/app/(dashboard)/dashboard/Stats";
 
 export default function DashboardClient({ stats, user }) {
   const { data: session } = useSession();
@@ -20,37 +34,79 @@ export default function DashboardClient({ stats, user }) {
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 12) setGreeting(t("dashboard.greeting.morning"));
-    else if (hour >= 12 && hour < 18) setGreeting(t("dashboard.greeting.afternoon"));
-    else if (hour >= 18 && hour < 22) setGreeting(t("dashboard.greeting.evening"));
+    else if (hour >= 12 && hour < 18)
+      setGreeting(t("dashboard.greeting.afternoon"));
+    else if (hour >= 18 && hour < 22)
+      setGreeting(t("dashboard.greeting.evening"));
     else setGreeting(t("dashboard.greeting.night"));
-    
-    setCurrentDate(new Date().toLocaleDateString(language === 'id' ? "id-ID" : "en-US", { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }));
+
+    setCurrentDate(
+      new Date().toLocaleDateString(language === "id" ? "id-ID" : "en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }),
+    );
   }, []);
 
   const container = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
+      transition: { staggerChildren: 0.1 },
+    },
   };
 
   const item = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 300, damping: 24 },
+    },
   };
 
   const chartData = stats?.chartData || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  const rawChartData = stats?.rawChartData || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const rawChartData = stats?.rawChartData || [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ];
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
 
-  const Widget = ({ title, value, subtitle, icon: Icon, color = "primary", trend = "+5%" }) => (
-    <motion.div variants={item} className="bg-white dark:bg-[#08120e] hover:bg-gray-50 dark:hover:bg-[#0a1611] border border-gray-100 dark:border-white/5 rounded-3xl p-6 relative overflow-hidden group transition-all duration-500 hover:-translate-y-1 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none dark:hover:shadow-[0_10px_40px_rgba(16,185,129,0.1)]">
+  const Widget = ({
+    title,
+    value,
+    subtitle,
+    icon: Icon,
+    color = "primary",
+    trend = "+5%",
+  }) => (
+    <motion.div
+      variants={item}
+      className="bg-white dark:bg-[#08120e] hover:bg-gray-50 dark:hover:bg-[#0a1611] border border-gray-100 dark:border-white/5 rounded-3xl p-6 relative overflow-hidden group transition-all duration-500 hover:-translate-y-1 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none dark:hover:shadow-[0_10px_40px_rgba(16,185,129,0.1)]"
+    >
       {/* Decorative Glows */}
-      <div className={`absolute -right-6 -top-6 w-32 h-32 rounded-full bg-${color}/10 blur-[40px] group-hover:bg-${color}/20 group-hover:scale-150 transition-all duration-700`}></div>
-      
+      <div
+        className={`absolute -right-6 -top-6 w-32 h-32 rounded-full bg-${color}/10 blur-2xl group-hover:bg-${color}/20 group-hover:scale-150 transition-all duration-700`}
+      ></div>
+
       <div className="flex justify-between items-start mb-8 relative z-10">
-        <div className={`p-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 text-${color} group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-sm dark:shadow-none`}>
+        <div
+          className={`p-3.5 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 text-${color} group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-sm dark:shadow-none`}
+        >
           <Icon className="w-6 h-6" />
         </div>
         <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold border border-emerald-100 dark:border-emerald-500/20">
@@ -58,19 +114,30 @@ export default function DashboardClient({ stats, user }) {
           {trend}
         </div>
       </div>
-      
+
       <div className="relative z-10">
-        <h3 className="text-4xl md:text-5xl font-display font-black text-gray-900 dark:text-white tracking-tighter mb-2">{value}</h3>
-        <p className="text-gray-900 dark:text-white font-bold text-sm tracking-wide mb-1">{title}</p>
+        <h3 className="text-4xl md:text-5xl font-display font-black text-gray-900 dark:text-white tracking-tighter mb-2">
+          {value}
+        </h3>
+        <p className="text-gray-900 dark:text-white font-bold text-sm tracking-wide mb-1">
+          {title}
+        </p>
         <p className="text-xs text-gray-500 dark:text-white/40 font-medium">
           {subtitle}
         </p>
       </div>
-      
+
       {/* Mini sparkline mock */}
       <div className="absolute bottom-0 left-0 w-full h-12 opacity-20 group-hover:opacity-40 transition-opacity pointer-events-none">
-        <svg viewBox="0 0 100 20" preserveAspectRatio="none" className="w-full h-full">
-          <path d="M0,20 L10,15 L20,18 L30,10 L40,12 L50,5 L60,8 L70,2 L80,6 L90,1 L100,5 L100,20 Z" className={`fill-${color}`} />
+        <svg
+          viewBox="0 0 100 20"
+          preserveAspectRatio="none"
+          className="w-full h-full"
+        >
+          <path
+            d="M0,20 L10,15 L20,18 L30,10 L40,12 L50,5 L60,8 L70,2 L80,6 L90,1 L100,5 L100,20 Z"
+            className={`fill-${color}`}
+          />
         </svg>
       </div>
     </motion.div>
@@ -80,10 +147,10 @@ export default function DashboardClient({ stats, user }) {
     <div className="w-full relative pb-20">
       {/* Background Ambience */}
       <div
-        className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/5 dark:bg-primary/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen animate-pulse"
+        className="absolute top-0 left-1/4 w-125 h-125 bg-primary/5 dark:bg-primary/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen animate-pulse"
         style={{ animationDuration: "6s" }}
       ></div>
-      <div className="absolute top-40 right-1/4 w-[400px] h-[400px] bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen"></div>
+      <div className="absolute top-40 right-1/4 w-100 h-100 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen"></div>
 
       {/* Header and ID Card */}
       <div className="flex flex-col xl:flex-row justify-between items-start gap-10 mb-12 relative z-10">
@@ -158,7 +225,7 @@ export default function DashboardClient({ stats, user }) {
         className="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10"
       >
         {/* Recent Activity Timeline */}
-        <div className="bg-white dark:bg-[#08120e] border border-gray-100 dark:border-white/5 rounded-3xl p-8 min-h-[440px] flex flex-col relative overflow-hidden shadow-sm dark:shadow-none lg:col-span-3">
+        <div className="bg-white dark:bg-[#08120e] border border-gray-100 dark:border-white/5 rounded-3xl p-8 min-h-110 flex flex-col relative overflow-hidden shadow-sm dark:shadow-none lg:col-span-3">
           <div className="flex justify-between items-center mb-8">
             <h3 className="font-display font-bold text-2xl tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
               <Clock className="w-6 h-6 text-blue-500" />
@@ -178,9 +245,9 @@ export default function DashboardClient({ stats, user }) {
                     className="relative pl-6 group"
                   >
                     {/* Timeline Node */}
-                    <div className="absolute w-3.5 h-3.5 bg-white dark:bg-[#08120e] border-2 border-primary rounded-full -left-[8.5px] top-1 group-hover:scale-150 group-hover:bg-primary transition-all duration-300" />
+                    <div className="absolute w-3.5 h-3.5 bg-white dark:bg-[#08120e] border-2 border-primary rounded-full left-[-8.5px] top-1 group-hover:scale-150 group-hover:bg-primary transition-all duration-300" />
 
-                    <div className="bg-gray-50 dark:bg-white/[0.02] p-4 rounded-2xl border border-gray-100 dark:border-white/5 group-hover:border-primary/30 transition-colors">
+                    <div className="bg-gray-50 dark:bg-white/2 p-4 rounded-2xl border border-gray-100 dark:border-white/5 group-hover:border-primary/30 transition-colors">
                       <div className="flex justify-between items-start mb-1.5">
                         <h4 className="text-sm font-bold text-gray-900 dark:text-white line-clamp-1 pr-2">
                           {activity.title}
@@ -210,7 +277,7 @@ export default function DashboardClient({ stats, user }) {
                 ))}
               </div>
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-gray-200 dark:border-white/10 rounded-2xl bg-gray-50 dark:bg-white/[0.01] h-48">
+              <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-gray-200 dark:border-white/10 rounded-2xl bg-gray-50 dark:bg-white/1 h-72">
                 <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3">
                   <Star className="w-6 h-6 text-gray-300 dark:text-white/20" />
                 </div>
@@ -226,8 +293,9 @@ export default function DashboardClient({ stats, user }) {
         </div>
       </motion.div>
 
-    
+      <div className="w-full mt-8">
+        <Stats />
+      </div>
     </div>
   );
 }
-
