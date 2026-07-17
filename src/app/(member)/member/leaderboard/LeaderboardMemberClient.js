@@ -343,11 +343,16 @@ export default function LeaderboardMemberClient({ initialLeaderboard, currentUse
                 ].join(" ")}
               >
                 {/* Rank */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   {isTop3 ? (
-                    <Medal className={`w-5 h-5 ${item.rank === 1 ? "text-amber-500" : item.rank === 2 ? "text-slate-400" : "text-orange-500"} fill-current`} />
+                    <div className="flex items-center gap-1">
+                      <Medal className={`w-4 h-4 flex-shrink-0 ${item.rank === 1 ? "text-amber-500" : item.rank === 2 ? "text-slate-400" : "text-orange-500"} fill-current`} />
+                      <span className={`text-sm font-black ${item.rank === 1 ? "text-amber-500 dark:text-amber-400" : item.rank === 2 ? "text-slate-400 dark:text-slate-300" : "text-orange-500 dark:text-amber-600"}`}>
+                        #{item.rank}
+                      </span>
+                    </div>
                   ) : (
-                    <span className="text-sm font-black text-slate-400 dark:text-white/30 w-5 text-center">#{item.rank}</span>
+                    <span className="text-sm font-black text-slate-400 dark:text-white/30">#{item.rank}</span>
                   )}
                   {isMe && <Flame className="w-3.5 h-3.5 text-primary animate-pulse" />}
                 </div>
