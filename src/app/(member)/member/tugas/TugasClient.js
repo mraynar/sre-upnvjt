@@ -1,630 +1,561 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  FolderKanban, Calendar, Award, CheckCircle2, XCircle, Clock,
-  ExternalLink, Send, ArrowRight, X, AlertTriangle, Info, Sparkles, Zap, Flame, UploadCloud, Link as LinkIcon
+  FolderKanban, Calendar, Zap, CheckCircle2, XCircle, Clock,
+  ExternalLink, Send, X, AlertTriangle, UploadCloud,
+  LinkIcon, FileText, ChevronRight, Filter, Search,
 } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageProvider";
+import { useRouter } from "next/navigation";
+import { EmptyState, SectionHeader } from "../components/ui/CommonUI";
 
-export default function TugasClient({ user, initialTasks, initialSubmissions }) {
-  const [tasks] = useState(initialTasks || []);
-  const [submissions, setSubmissions] = useState(initialSubmissions || []);
-  const [activeTask, setActiveTask] = useState(null); // task for details view
-  const [submissionType, setSubmissionType] = useState("link"); // 'link' or 'file'
-  const [fileUrl, setFileUrl] = useState("");
+// ─── Status config ──────────────────────────────────────────────────────────
+const STATUS_CONFIG = {
+  NOT_STARTED: {
+    label: "Belum Dikerjakan",
+    badge: "bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-white/50 border-slate-200 dark:border-white/10",
+    border: "hover:border-blue-500/40",
+    glow: "hover:shadow-[0_0_25px_rgba(59,130,246,0.12)]",
+    dot: "bg-slate-300 dark:bg-white/20",
+  },
+  PENDING: {
+    label: "Menunggu Review",
+    badge: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/25",
+    border: "hover:border-amber-500/40",
+    glow: "hover:shadow-[0_0_25px_rgba(245,158,11,0.12)]",
+    dot: "bg-amber-400 animate-pulse",
+  },
+  APPROVED: {
+    label: "Disetujui",
+    badge: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/25",
+    border: "hover:border-emerald-500/40",
+    glow: "hover:shadow-[0_0_25px_rgba(16,185,129,0.12)]",
+    dot: "bg-emerald-400",
+  },
+  REJECTED: {
+    label: "Perlu Revisi",
+    badge: "bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/25",
+    border: "hover:border-red-500/40",
+    glow: "hover:shadow-[0_0_25px_rgba(239,68,68,0.12)]",
+    dot: "bg-red-400",
+  },
+};
+
+const FILTER_TABS = [
+  { key: "ALL",         label: "Semua" },
+  { key: "NOT_STARTED", label: "Belum" },
+  { key: "PENDING",     label: "Review" },
+  { key: "APPROVED",    label: "Selesai" },
+  { key: "REJECTED",    label: "Revisi" },
+];
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+function getStatus(taskId, submissions) {
+  const sub = submissions.find((s) => s.taskId === taskId);
+  if (!sub)                       return "NOT_STARTED";
+  if (sub.status === "APPROVED")  return "APPROVED";
+  if (sub.status === "REJECTED")  return "REJECTED";
+  return "PENDING";
+}
+
+function isDeadlineSoon(deadline) {
+  const diff = (new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24);
+  return diff >= 0 && diff <= 3;
+}
+
+function isOverdue(deadline) {
+  return new Date(deadline) < new Date();
+}
+
+// ─── Task Card ───────────────────────────────────────────────────────────────
+function TaskCard({ task, submission, onOpen, index }) {
+  const status   = getStatus(task.id, submission ? [submission] : []);
+  const cfg      = STATUS_CONFIG[status];
+  const deadline = new Date(task.deadline).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+  const soon     = isDeadlineSoon(task.deadline);
+  const overdue  = isOverdue(task.deadline);
+  const canSubmit = status === "NOT_STARTED" || status === "REJECTED";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className={`group relative bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 ${cfg.border} ${cfg.glow} rounded-2xl p-5 transition-all duration-300 cursor-pointer hover:scale-[1.005] overflow-hidden`}
+      onClick={() => onOpen(task)}
+    >
+      {/* Status dot indicator */}
+      <div className={`absolute top-4 right-4 w-2 h-2 rounded-full ${cfg.dot}`} />
+
+      {/* Hover gradient */}
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl" style={{ background: "linear-gradient(135deg, rgba(16,185,129,0.03) 0%, transparent 60%)" }} />
+
+      <div className="flex items-start gap-4 relative z-10">
+        {/* Icon */}
+        <div className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 group-hover:bg-primary/10 group-hover:border-primary/25 flex items-center justify-center flex-shrink-0 transition-colors duration-300">
+          <FolderKanban className="w-5 h-5 text-slate-400 dark:text-white/40 group-hover:text-primary transition-colors" />
+        </div>
+
+        <div className="flex-1 min-w-0 pr-4">
+          <h4 className="text-sm font-black text-slate-900 dark:text-white group-hover:text-primary transition-colors truncate">{task.title}</h4>
+          <p className="text-[11px] text-slate-400 dark:text-white/40 mt-1 line-clamp-1">{task.description}</p>
+
+          <div className="flex flex-wrap items-center gap-2 mt-3">
+            {/* Deadline chip */}
+            <span className={`flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-lg border
+              ${overdue ? "bg-red-500/10 text-red-500 border-red-500/20" :
+                soon    ? "bg-amber-500/10 text-amber-500 border-amber-500/20" :
+                          "bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-white/40 border-slate-200 dark:border-white/10"}`}>
+              <Clock className="w-3 h-3" />
+              {overdue ? "Lewat batas" : `${deadline}`}
+            </span>
+
+            {/* XP chip */}
+            <span className="flex items-center gap-1 text-[10px] font-black px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 dark:text-amber-400 font-mono">
+              <Zap className="w-3 h-3" />+{task.rewardXp} XP
+            </span>
+
+            {/* Status badge */}
+            <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg border uppercase tracking-wider ${cfg.badge}`}>
+              {STATUS_CONFIG[status].label}
+            </span>
+          </div>
+        </div>
+
+        {/* Arrow */}
+        <ChevronRight className="w-5 h-5 text-slate-300 dark:text-white/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all flex-shrink-0 mt-1.5" />
+      </div>
+
+      {/* Rejected feedback preview */}
+      {status === "REJECTED" && submission?.feedback && (
+        <div className="mt-3 ml-15 pl-4 border-l-2 border-red-500/30 relative z-10">
+          <p className="text-[10px] text-red-500/80 font-medium italic line-clamp-1">"{submission.feedback}"</p>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+// ─── Submit Modal ────────────────────────────────────────────────────────────
+function TaskDetailModal({ task, submission, onClose, onSubmitSuccess }) {
+  const { t }             = useLanguage();
+  const router            = useRouter();
+  const fileRef           = useRef(null);
+  const [type, setType]   = useState(task?.submissionType === "FILE" ? "file" : "link");
+  const [url, setUrl]     = useState(submission?.fileUrl ?? "");
   const [files, setFiles] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState("");
   const [success, setSuccess] = useState("");
-  
-  const { language, t } = useLanguage();
+  const [isDragging, setIsDragging] = useState(false);
 
-  const getTaskVisuals = (taskId) => {
-    const sub = submissions.find(s => s.taskId === taskId);
-    if (!sub) return { 
-      key: "NOT_STARTED", 
-      label: t('member_tasks.status_not_started'), 
-      badge: "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/25",
-      borderHover: "hover:border-blue-500/50",
-      glow: "group-hover:shadow-[0_0_30px_rgba(59,130,246,0.2)]",
-      gradient: "from-blue-500/10 via-transparent to-transparent"
-    };
-    if (sub.status === "APPROVED") return { 
-      key: "APPROVED", 
-      label: t('member_tasks.status_approved'), 
-      badge: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/25",
-      borderHover: "hover:border-emerald-500/50",
-      glow: "group-hover:shadow-[0_0_30px_rgba(16,185,129,0.2)]",
-      gradient: "from-emerald-500/10 via-transparent to-transparent"
-    };
-    if (sub.status === "REJECTED") return { 
-      key: "REJECTED", 
-      label: t('member_tasks.status_rejected'), 
-      badge: "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/25",
-      borderHover: "hover:border-rose-500/50",
-      glow: "group-hover:shadow-[0_0_30px_rgba(244,63,94,0.2)]",
-      gradient: "from-rose-500/10 via-transparent to-transparent"
-    };
-    return { 
-      key: "PENDING", 
-      label: t('member_tasks.status_pending'), 
-      badge: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/25",
-      borderHover: "hover:border-amber-500/50",
-      glow: "group-hover:shadow-[0_0_30px_rgba(245,158,11,0.2)]",
-      gradient: "from-amber-500/10 via-transparent to-transparent"
-    };
-  };
+  const status    = getStatus(task.id, submission ? [submission] : []);
+  const canSubmit = status === "NOT_STARTED" || status === "REJECTED";
+  const statusCfg = STATUS_CONFIG[status];
 
-  const handleOpenDetail = (tk) => {
-    const sub = submissions.find(s => s.taskId === tk.id);
-    setActiveTask(tk);
-    setFileUrl(sub?.fileUrl || "");
-    setFiles([]);
-    
-    if (tk.submissionType === 'FILE') {
-      setSubmissionType("file");
-    } else if (tk.submissionType === 'LINK') {
-      setSubmissionType("link");
-    } else {
-      setSubmissionType("link");
-    }
-    
-    setError("");
-    setSuccess("");
-  };
-
-  const handleSubmitTask = async (e) => {
+  const handleDrop = (e) => {
     e.preventDefault();
-    if (!activeTask) return;
-    setIsLoading(true);
+    setIsDragging(false);
+    const dropped = Array.from(e.dataTransfer.files);
+    setFiles(dropped);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!canSubmit) return;
+
+    setLoading(true);
     setError("");
     setSuccess("");
 
     try {
-      const formData = new FormData();
-      formData.append("type", submissionType);
-      if (submissionType === "link") {
-        formData.append("fileUrl", fileUrl);
+      const fd = new FormData();
+      fd.append("type", type);
+
+      if (type === "link") {
+        if (!url.trim()) { setError("Link tidak boleh kosong."); setLoading(false); return; }
+        fd.append("fileUrl", url.trim());
       } else {
-        if (!files || files.length === 0) {
-          setError(t('member_tasks.error_no_file'));
-          setIsLoading(false);
-          return;
-        }
-
-        let totalSizeMb = 0;
-        files.forEach(f => { totalSizeMb += f.size / (1024 * 1024); });
-        const maxMb = activeTask.maxUploadSizeMb || 2;
-        if (totalSizeMb > maxMb) {
-          setError(`Total ukuran file melebihi batas maksimal (${maxMb} MB)`);
-          setIsLoading(false);
-          return;
-        }
-
-        files.forEach(f => {
-          const originalName = f.name;
-          const lastDotIdx = originalName.lastIndexOf('.');
-          const extension = lastDotIdx !== -1 ? originalName.substring(lastDotIdx) : '';
-          const oldNameNoExt = lastDotIdx !== -1 ? originalName.substring(0, lastDotIdx) : originalName;
-          
-          const safeTaskTitle = activeTask.title.replace(/[^a-zA-Z0-9]/g, '_');
-          const safeUserName = (user?.name || 'User').replace(/[^a-zA-Z0-9]/g, '_');
-          const safeOriginalName = oldNameNoExt.replace(/[^a-zA-Z0-9]/g, '_');
-          
-          const newFileName = `${safeTaskTitle}_${safeUserName}_${safeOriginalName}${extension}`;
-          const renamedFile = new File([f], newFileName, { type: f.type });
-          
-          formData.append("file", renamedFile);
-        });
+        if (files.length === 0) { setError("Pilih file terlebih dahulu."); setLoading(false); return; }
+        for (const f of files) fd.append("file", f);
       }
 
-      const res = await fetch(`/api/tasks/${activeTask.id}/submissions`, {
-        method: "POST",
-        body: formData,
-      });
-
+      const res = await fetch(`/api/tasks/${task.id}/submissions`, { method: "POST", body: fd });
       const data = await res.json();
-      if (res.ok) {
-        setSubmissions(prev => {
-          const filtered = prev.filter(s => s.taskId !== activeTask.id);
-          return [...filtered, data.submission];
-        });
-        setSuccess(t('member_tasks.submit_success'));
-        setTimeout(() => setActiveTask(null), 1500);
-      } else {
-        setError(data.error || t('member_tasks.submit_error'));
-      }
-    } catch {
-      setError(t('member_tasks.submit_network_error'));
+
+      if (!res.ok) throw new Error(data.error ?? "Gagal mengirim submisi.");
+
+      setSuccess("🎉 Tugas berhasil disubmit! Menunggu review.");
+      onSubmitSuccess(data.submission);
+      router.refresh();
+    } catch (err) {
+      setError(err.message);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="w-full relative transition-colors duration-500 min-h-[70vh] flex flex-col">
-      {/* Colorful Background Ambience */}
-      <div className="absolute top-0 left-0 w-full h-[500px] overflow-hidden pointer-events-none -z-10">
-        <div className="absolute -top-40 -left-40 w-[600px] h-[600px] bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen opacity-50 animate-[pulse_10s_ease-in-out_infinite]" />
-        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-emerald-500/10 dark:bg-emerald-500/20 rounded-full blur-[100px] mix-blend-multiply dark:mix-blend-screen opacity-50 animate-[pulse_12s_ease-in-out_infinite_reverse]" />
-        <div className="absolute top-60 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-blue-500/5 dark:bg-blue-500/10 rounded-[100%] blur-[80px] mix-blend-multiply dark:mix-blend-screen opacity-50" />
-      </div>
-
-      {/* Header */}
-      <div className="mb-12 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm mb-6"
-        >
-          <Sparkles className="w-4 h-4 text-purple-500" />
-          <span className="text-xs font-black tracking-widest uppercase text-slate-600 dark:text-gray-300">
-            RE-Port
-          </span>
-        </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tighter mb-4 text-slate-900 dark:text-white"
-        >
-          {t("member_tasks.title")
-            .split(" ")
-            .map((word, i) => (
-              <span
-                key={i}
-                className={
-                  i % 2 === 1
-                    ? "text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400"
-                    : ""
-                }
-              >
-                {word}{" "}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.94, y: 20 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-white dark:bg-[#07130e] border border-slate-200 dark:border-white/10 rounded-3xl shadow-[0_40px_80px_rgba(0,0,0,0.4)] relative"
+      >
+        {/* Header */}
+        <div className="sticky top-0 z-10 flex items-start justify-between p-6 pb-4 bg-white dark:bg-[#07130e] border-b border-slate-100 dark:border-white/5">
+          <div className="flex-1 pr-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg border uppercase tracking-wider ${statusCfg.badge}`}>
+                {statusCfg.label}
               </span>
-            ))}
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-slate-500 dark:text-gray-400 max-w-2xl text-lg font-medium"
-        >
-          {t("member_tasks.subtitle")}
-        </motion.p>
-      </div>
-
-      {/* Task Cards Grid */}
-      {tasks.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="py-24 flex flex-col items-center justify-center text-center bg-white/50 dark:bg-white/5 border border-dashed border-slate-300 dark:border-white/10 rounded-3xl backdrop-blur-sm shadow-xl"
-        >
-          <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mb-6">
-            <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+              <span className="flex items-center gap-1 text-[10px] font-black text-amber-500 font-mono">
+                <Zap className="w-3 h-3" />+{task.rewardXp} XP
+              </span>
+            </div>
+            <h2 className="text-lg font-black text-slate-900 dark:text-white">{task.title}</h2>
           </div>
-          <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
-            {t("member_tasks.empty_title")}
-          </h3>
-          <p className="text-slate-500 dark:text-gray-400 text-base max-w-sm leading-relaxed">
-            {t("member_tasks.empty_desc")}
-          </p>
-        </motion.div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 xl:gap-8 relative z-10">
-          {tasks.map((tk, index) => {
-            const visual = getTaskVisuals(tk.id);
-            return (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ type: "spring", bounce: 0.5, delay: index * 0.1 }}
-                key={tk.id}
-                onClick={() => handleOpenDetail(tk)}
-                className={`
-                  group relative overflow-hidden bg-slate-900 border border-white/10 rounded-2xl p-6 
-                  cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02]
-                  shadow-lg hover:shadow-[0_0_40px_rgba(16,185,129,0.3)]
-                `}
-              >
-                {/* Cyberpunk/RPG Animated Border Glow */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${visual.gradient} opacity-0 group-hover:opacity-100 transition-duration-500`}
-                />
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-[pulse_2s_ease-in-out_infinite]" />
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 text-slate-400 dark:text-white/40 transition-colors">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-                {/* Tech Grid Background */}
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none" />
+        <div className="p-6 space-y-5">
+          {/* Description */}
+          <div className="bg-slate-50 dark:bg-white/[0.02] border border-slate-100 dark:border-white/5 rounded-2xl p-4">
+            <p className="text-sm text-slate-600 dark:text-white/60 leading-relaxed whitespace-pre-line">{task.description}</p>
+          </div>
 
-                <div className="relative z-10 flex flex-col h-full">
-                  {/* Floating Hexagon XP Badge */}
-                  <div className="absolute -top-3 -right-3">
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-amber-500 blur-md opacity-40 rounded-full animate-pulse group-hover:opacity-80 transition-opacity" />
-                      <div className="relative bg-gradient-to-b from-amber-300 to-amber-600 border border-amber-200/50 rounded-xl px-4 py-2 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.5)] transform rotate-3 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300">
-                        <Zap className="w-4 h-4 text-amber-900 mr-1 fill-amber-900" />
-                        <span className="font-black text-amber-900 text-sm tracking-widest">
-                          {tk.rewardXp} XP
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+          {/* Deadline + submission type */}
+          <div className="flex flex-wrap gap-2.5">
+            <span className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-white/50">
+              <Calendar className="w-3.5 h-3.5" />
+              Deadline: {new Date(task.deadline).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+            </span>
+            {task.submissionType && (
+              <span className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-500">
+                {task.submissionType === "FILE" ? <UploadCloud className="w-3.5 h-3.5" /> : <LinkIcon className="w-3.5 h-3.5" />}
+                Submit via {task.submissionType === "FILE" ? "File" : "Link"}
+              </span>
+            )}
+          </div>
 
-                  {/* Quest Type / Status Label */}
-                  <div className="mb-6">
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest border-l-[3px] ${visual.badge}`}
+          {/* Rejected feedback */}
+          {status === "REJECTED" && submission?.feedback && (
+            <div className="flex items-start gap-3 p-4 bg-red-500/8 border border-red-500/20 rounded-2xl">
+              <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-black text-red-600 dark:text-red-400 mb-1">Feedback Reviewer:</p>
+                <p className="text-sm text-slate-600 dark:text-white/60">{submission.feedback}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Current submission preview */}
+          {(status === "PENDING" || status === "APPROVED") && submission?.fileUrl && (
+            <div className="flex items-center gap-3 p-4 bg-emerald-500/8 border border-emerald-500/20 rounded-2xl">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-black text-emerald-600 dark:text-emerald-400">Submisi kamu</p>
+                <p className="text-xs text-slate-500 dark:text-white/40 truncate mt-0.5">{submission.fileUrl}</p>
+              </div>
+              <a href={submission.fileUrl} target="_blank" rel="noreferrer" className="p-1.5 rounded-lg hover:bg-emerald-500/20 text-emerald-500 transition-colors flex-shrink-0">
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+          )}
+
+          {/* ── Submit form ──────────────────────────────────────────── */}
+          {canSubmit && (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Type selector — hanya tampil jika BOTH */}
+              {(!task.submissionType || task.submissionType === "BOTH") && (
+                <div className="flex gap-2 p-1.5 bg-slate-100 dark:bg-white/5 rounded-2xl">
+                  {[
+                    { key: "link", icon: LinkIcon,    label: "Submit Link" },
+                    { key: "file", icon: UploadCloud, label: "Upload File" },
+                  ].map(({ key, icon: Icon, label }) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => { setType(key); setFiles([]); setError(""); }}
+                      className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all duration-300 ${
+                        type === key
+                          ? "bg-white dark:bg-[#0d1f17] text-primary border border-primary/20 shadow-sm"
+                          : "text-slate-500 dark:text-white/40"}`}
                     >
-                      <Flame className="w-3 h-3" />
-                      {visual.label}
-                    </span>
-                  </div>
-
-                  <h3
-                    className="text-xl md:text-2xl font-black text-white line-clamp-3 mb-3 leading-snug group-hover:text-primary transition-colors break-words"
-                    title={tk.title}
-                  >
-                    {tk.title}
-                  </h3>
-
-                  {/* Quest Description */}
-                  <p className="text-xs md:text-sm text-slate-400 line-clamp-3 leading-relaxed mb-6 font-medium flex-1 break-words">
-                    {tk.description}
-                  </p>
-
-                  {/* Bottom Action Bar */}
-                  <div className="pt-4 border-t border-white/10 flex items-center justify-between mt-auto">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-md bg-slate-800 flex items-center justify-center border border-slate-700">
-                        <Clock className="w-4 h-4 text-slate-400 group-hover:text-primary transition-colors" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
-                          Deadline
-                        </span>
-                        <span
-                          className="text-xs font-bold text-slate-300"
-                          suppressHydrationWarning
-                        >
-                          {new Date(tk.deadline).toLocaleDateString(
-                            language === "en" ? "en-US" : "id-ID",
-                            { day: "numeric", month: "long", year: "numeric" },
-                          )}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-center px-4 py-2 rounded-md bg-primary text-[#050e0a] font-black text-[10px] uppercase tracking-widest shadow-[0_0_15px_rgba(16,185,129,0.4)] group-hover:shadow-[0_0_25px_rgba(16,185,129,0.7)] group-hover:bg-primary-focus transition-all duration-300 transform group-hover:scale-105">
-                      {t("member_tasks.start_mission")}{" "}
-                      <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </div>
+                      <Icon className="w-3.5 h-3.5" />{label}
+                    </button>
+                  ))}
                 </div>
-              </motion.div>
+              )}
+
+              {/* Link input */}
+              {type === "link" && (
+                <div className="relative">
+                  <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-white/30" />
+                  <input
+                    type="url"
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                    placeholder="https://drive.google.com/... atau link lainnya"
+                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-medium text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/25 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all"
+                  />
+                </div>
+              )}
+
+              {/* File drop zone */}
+              {type === "file" && (
+                <div
+                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={handleDrop}
+                  onClick={() => fileRef.current?.click()}
+                  className={`relative border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-300
+                    ${isDragging
+                      ? "border-primary bg-primary/5"
+                      : files.length > 0
+                        ? "border-emerald-500/50 bg-emerald-500/5"
+                        : "border-slate-300 dark:border-white/15 hover:border-primary/50 hover:bg-primary/5"}`}
+                >
+                  <input ref={fileRef} type="file" multiple className="hidden" onChange={(e) => setFiles(Array.from(e.target.files))} />
+
+                  {files.length > 0 ? (
+                    <div className="space-y-2">
+                      {files.map((f, i) => (
+                        <div key={i} className="flex items-center gap-2.5 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2.5">
+                          <FileText className="w-4 h-4 text-primary flex-shrink-0" />
+                          <span className="text-xs font-bold text-slate-700 dark:text-white truncate">{f.name}</span>
+                          <span className="text-[10px] text-slate-400 dark:text-white/30 ml-auto flex-shrink-0">{(f.size / 1024).toFixed(1)} KB</span>
+                        </div>
+                      ))}
+                      <button type="button" onClick={(e) => { e.stopPropagation(); setFiles([]); }} className="text-xs text-slate-400 hover:text-red-500 dark:text-white/30 dark:hover:text-red-400 transition-colors">
+                        Hapus pilihan
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <UploadCloud className={`w-10 h-10 mx-auto mb-3 transition-colors ${isDragging ? "text-primary" : "text-slate-300 dark:text-white/20"}`} />
+                      <p className="text-sm font-black text-slate-600 dark:text-white/60">Drag & drop file di sini</p>
+                      <p className="text-xs text-slate-400 dark:text-white/30 mt-1">atau klik untuk pilih file</p>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {/* Messages */}
+              <AnimatePresence>
+                {error && (
+                  <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                    className="flex items-center gap-2.5 p-3.5 bg-red-500/8 border border-red-500/20 rounded-xl">
+                    <XCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+                    <p className="text-xs font-bold text-red-600 dark:text-red-400">{error}</p>
+                  </motion.div>
+                )}
+                {success && (
+                  <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                    className="flex items-center gap-2.5 p-3.5 bg-emerald-500/8 border border-emerald-500/20 rounded-xl">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                    <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{success}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Submit button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-4 rounded-2xl bg-gradient-to-r from-primary to-emerald-400 hover:from-primary-focus hover:to-emerald-500 text-sm font-black text-[#050e0a] tracking-widest uppercase transition-all duration-300 flex items-center justify-center gap-2.5 shadow-[0_0_25px_rgba(16,185,129,0.25)] hover:shadow-[0_0_35px_rgba(16,185,129,0.45)] disabled:opacity-60 disabled:cursor-not-allowed hover:scale-[1.01]"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 rounded-full border-2 border-[#050e0a]/30 border-t-[#050e0a] animate-spin" />
+                    {type === "file" ? "Mengupload ke Google Drive..." : "Mengirim..."}
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    {status === "REJECTED" ? "Submit Ulang" : "Kirim Tugas"}
+                  </>
+                )}
+              </button>
+            </form>
+          )}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MAIN COMPONENT
+// ═══════════════════════════════════════════════════════════════════════════
+export default function TugasClient({ user, initialTasks, initialSubmissions }) {
+  const { t }                   = useLanguage();
+  const [tasks]                 = useState(initialTasks ?? []);
+  const [submissions, setSubm]  = useState(initialSubmissions ?? []);
+  const [activeTask, setActive] = useState(null);
+  const [filter, setFilter]     = useState("ALL");
+  const [search, setSearch]     = useState("");
+
+  // Derive submissions map
+  const subMap = Object.fromEntries(submissions.map((s) => [s.taskId, s]));
+
+  // Filter + search tasks
+  const visibleTasks = tasks
+    .filter((tk) => {
+      const status = getStatus(tk.id, submissions);
+      if (filter !== "ALL" && status !== filter) return false;
+      if (search && !tk.title.toLowerCase().includes(search.toLowerCase())) return false;
+      return true;
+    })
+    .sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+
+  // Stats
+  const approvedCount = submissions.filter((s) => s.status === "APPROVED").length;
+  const pendingCount  = submissions.filter((s) => s.status === "PENDING").length;
+  const totalTasks    = tasks.length;
+
+  const handleSubmitSuccess = (newSub) => {
+    setSubm((prev) => {
+      const idx = prev.findIndex((s) => s.taskId === newSub.taskId);
+      if (idx >= 0) {
+        const next = [...prev];
+        next[idx] = newSub;
+        return next;
+      }
+      return [...prev, newSub];
+    });
+  };
+
+  return (
+    <div className="w-full space-y-8 select-none">
+
+      {/* ── Header ───────────────────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4"
+      >
+        <div>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/25 text-[10px] font-black text-blue-600 dark:text-blue-400 tracking-widest uppercase mb-3">
+            <FolderKanban className="w-3 h-3" /> Penugasan Aktif
+          </span>
+          <h1 className="text-4xl md:text-5xl font-display font-black tracking-tighter text-slate-900 dark:text-white leading-none">
+            {t("member_tasks.title")}
+          </h1>
+          <p className="text-slate-500 dark:text-white/45 text-sm mt-2 font-medium">
+            {t("member_tasks.subtitle")}
+          </p>
+        </div>
+
+        {/* Mini stats */}
+        <div className="flex items-center gap-3">
+          {[
+            { label: "Total", val: totalTasks,    color: "text-slate-700 dark:text-white" },
+            { label: "Review", val: pendingCount,  color: "text-amber-600 dark:text-amber-400" },
+            { label: "Selesai", val: approvedCount, color: "text-emerald-600 dark:text-emerald-400" },
+          ].map((s) => (
+            <div key={s.label} className="flex flex-col items-center px-4 py-2.5 bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 rounded-2xl shadow-sm">
+              <span className={`text-xl font-black ${s.color}`}>{s.val}</span>
+              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-white/30">{s.label}</span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ── Filter + Search ───────────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="flex flex-col sm:flex-row gap-3"
+      >
+        {/* Filter tabs */}
+        <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/8 rounded-2xl overflow-x-auto">
+          {FILTER_TABS.map(({ key, label }) => {
+            const count = key === "ALL"
+              ? tasks.length
+              : tasks.filter((tk) => getStatus(tk.id, submissions) === key).length;
+            return (
+              <button
+                key={key}
+                onClick={() => setFilter(key)}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all duration-200 ${
+                  filter === key
+                    ? "bg-white dark:bg-[#0d1f17] text-primary border border-primary/20 shadow-sm"
+                    : "text-slate-500 dark:text-white/40 hover:text-slate-700 dark:hover:text-white/70"}`}
+              >
+                {label}
+                <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${filter === key ? "bg-primary/15" : "bg-slate-200 dark:bg-white/10"}`}>
+                  {count}
+                </span>
+              </button>
             );
           })}
         </div>
-      )}
 
-      {/* Task Detail Modal */}
-      <AnimatePresence>
-        {activeTask && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setActiveTask(null)}
-              className="absolute inset-0 bg-slate-900/60 dark:bg-black/60 backdrop-blur-md"
+        {/* Search */}
+        <div className="relative flex-1 max-w-xs">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-white/30" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Cari tugas..."
+            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/8 rounded-2xl text-sm font-medium text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/25 focus:outline-none focus:border-primary/50 transition-all"
+          />
+        </div>
+      </motion.div>
+
+      {/* ── Task Grid ─────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {visibleTasks.length > 0 ? (
+          visibleTasks.map((tk, i) => (
+            <TaskCard
+              key={tk.id}
+              task={tk}
+              submission={subMap[tk.id]}
+              onOpen={setActive}
+              index={i}
             />
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              transition={{ type: "spring", bounce: 0.4, duration: 0.6 }}
-              className="relative w-full max-w-4xl bg-white dark:bg-[#07130e] border border-slate-200 dark:border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
-            >
-              {/* Modal Colorful Header Background */}
-              <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-br from-primary/20 via-emerald-500/10 to-transparent pointer-events-none" />
-
-              <div className="relative p-6 md:p-8 flex items-center justify-between shrink-0">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/20 border border-primary/30 flex items-center justify-center text-primary backdrop-blur-sm">
-                    <FolderKanban className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h2 className="text-sm font-black text-slate-500 dark:text-gray-400 uppercase tracking-widest">
-                      {t("member_tasks.modal_title")}
-                    </h2>
-                    <p className="text-xs font-bold text-primary mt-0.5">
-                      SRE UPNVJT
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setActiveTask(null)}
-                  className="w-10 h-10 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="relative p-6 md:p-8 pt-0 overflow-y-auto flex-1 space-y-8 custom-scrollbar">
-                {/* Title and Meta */}
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-6 leading-tight break-words">
-                    {activeTask.title}
-                  </h3>
-                  <div className="flex flex-wrap gap-4">
-                    <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400">
-                      <Zap className="w-4 h-4 fill-current" />
-                      <span className="text-sm font-black">
-                        +{activeTask.rewardXp}{" "}
-                        <span className="font-bold text-xs uppercase opacity-70">
-                          {t("member_tasks.reward")}
-                        </span>
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-gray-300">
-                      <Clock className="w-4 h-4 text-primary" />
-                      <span
-                        className="text-sm font-bold"
-                        suppressHydrationWarning
-                      >
-                        <span className="opacity-60 font-medium mr-1">
-                          {t("member_tasks.deadline")}
-                        </span>
-                        {new Date(activeTask.deadline).toLocaleDateString(
-                          language === "en" ? "en-US" : "id-ID",
-                          {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          },
-                        )}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <div>
-                  <h4 className="text-xs font-black tracking-widest uppercase text-slate-400 dark:text-gray-500 mb-3">
-                    Instruksi Tugas
-                  </h4>
-                  <div className="p-4 md:p-6 rounded-3xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 text-xs md:text-sm text-slate-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap font-medium break-words max-w-full overflow-hidden">
-                    {activeTask.description}
-                  </div>
-                </div>
-
-                {/* Submisi status & Form */}
-                <div className="pt-8 border-t border-slate-200 dark:border-white/10">
-                  {(() => {
-                    const visual = getTaskVisuals(activeTask.id);
-                    const sub = submissions.find(
-                      (s) => s.taskId === activeTask.id,
-                    );
-
-                    return (
-                      <div className="space-y-6">
-                        <div className="flex justify-between items-end">
-                          <div>
-                            <h4 className="text-xs font-black tracking-widest uppercase text-slate-400 dark:text-gray-500 mb-1">
-                              {t("member_tasks.submission_status")}
-                            </h4>
-                            <p className="text-xs text-slate-500 dark:text-gray-400 font-medium max-w-[200px]">
-                              Periksa status peninjauan hasil kerja Anda
-                            </p>
-                          </div>
-                          <span
-                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider border shadow-sm ${visual.badge}`}
-                          >
-                            {visual.label}
-                          </span>
-                        </div>
-
-                        {/* Admin Feedback */}
-                        {sub?.feedback && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex gap-4"
-                          >
-                            <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
-                              <Info className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                            </div>
-                            <div>
-                              <div className="font-black text-sm text-amber-700 dark:text-amber-400 mb-1">
-                                {t("member_tasks.reviewer_note")}
-                              </div>
-                              <p className="text-sm text-amber-600/80 dark:text-amber-400/80 font-medium italic">
-                                "{sub.feedback}"
-                              </p>
-                            </div>
-                          </motion.div>
-                        )}
-
-                        {/* Submission URL Link for viewing */}
-                        {sub && (
-                          <div className="flex justify-between items-center p-5 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 group hover:border-primary/30 transition-colors">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-white/10 flex items-center justify-center">
-                                <ExternalLink className="w-4 h-4 text-slate-500 dark:text-gray-400" />
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-gray-500">
-                                  {t("member_tasks.submitted_file")}
-                                </span>
-                                <span className="text-xs font-bold text-slate-700 dark:text-gray-300 truncate max-w-[150px] sm:max-w-[250px]">
-                                  {sub.fileUrl}
-                                </span>
-                              </div>
-                            </div>
-                            <a
-                              href={sub.fileUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="px-4 py-2 rounded-xl bg-white dark:bg-[#07130e] border border-slate-200 dark:border-white/10 text-primary font-bold text-xs hover:border-primary transition-colors flex items-center gap-2"
-                            >
-                              {t("member_tasks.view_submission")}
-                            </a>
-                          </div>
-                        )}
-
-                        {/* Submission input form */}
-                        {(visual.key === "NOT_STARTED" ||
-                          visual.key === "REJECTED") && (
-                          <form
-                            onSubmit={handleSubmitTask}
-                            className="space-y-5 pt-4"
-                          >
-                            {/* Type Toggle */}
-                            {(!activeTask.submissionType ||
-                              activeTask.submissionType === "BOTH") && (
-                              <div className="flex bg-slate-100 dark:bg-white/5 p-1 rounded-xl">
-                                <button
-                                  type="button"
-                                  onClick={() => setSubmissionType("link")}
-                                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${submissionType === "link" ? "bg-white dark:bg-slate-800 text-primary shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-white"}`}
-                                >
-                                  <LinkIcon className="w-4 h-4" />{" "}
-                                  {t("member_tasks.type_link")}
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => setSubmissionType("file")}
-                                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${submissionType === "file" ? "bg-white dark:bg-slate-800 text-primary shadow-sm" : "text-slate-500 hover:text-slate-700 dark:hover:text-white"}`}
-                                >
-                                  <UploadCloud className="w-4 h-4" />{" "}
-                                  {t("member_tasks.type_file")}
-                                </button>
-                              </div>
-                            )}
-
-                            <div>
-                              <label className="block text-xs font-black tracking-widest text-slate-700 dark:text-gray-300 uppercase mb-3 ml-1">
-                                {submissionType === "link"
-                                  ? t("member_tasks.form_label")
-                                  : t("member_tasks.form_label_file")}
-                              </label>
-
-                              {submissionType === "link" ? (
-                                <div className="relative">
-                                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <ExternalLink className="w-5 h-5 text-slate-400" />
-                                  </div>
-                                  <input
-                                    type="url"
-                                    required
-                                    value={fileUrl}
-                                    onChange={(e) => setFileUrl(e.target.value)}
-                                    className="w-full h-14 pl-12 pr-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-gray-600 focus:outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"
-                                    placeholder="https://drive.google.com/..."
-                                  />
-                                </div>
-                              ) : (
-                                <div className="relative flex items-center justify-center w-full">
-                                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 dark:border-white/20 rounded-2xl cursor-pointer bg-slate-50 dark:bg-white/5 hover:bg-slate-100 dark:hover:bg-white/10 hover:border-primary/50 transition-all">
-                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                      <UploadCloud className="w-8 h-8 mb-2 text-slate-400 group-hover:text-primary" />
-                                      <p className="mb-1 text-sm font-bold text-slate-600 dark:text-gray-300">
-                                        {files.length > 0
-                                          ? `${files.length} file dipilih`
-                                          : t("member_tasks.choose_file")}
-                                      </p>
-                                      {!files.length && (
-                                        <p className="text-xs text-slate-500 dark:text-gray-500">
-                                          Maks.{" "}
-                                          {activeTask.maxUploadSizeMb || 2} MB
-                                        </p>
-                                      )}
-                                    </div>
-                                    <input
-                                      type="file"
-                                      className="hidden"
-                                      required={files.length === 0}
-                                      multiple={activeTask.allowMultipleFiles}
-                                      onChange={(e) =>
-                                        setFiles(Array.from(e.target.files))
-                                      }
-                                    />
-                                  </label>
-                                </div>
-                              )}
-                            </div>
-
-                            {error && (
-                              <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="px-4 py-3 rounded-xl bg-red-500/10 text-xs font-bold text-red-500 dark:text-red-400 flex items-center gap-2"
-                              >
-                                <AlertTriangle className="w-4 h-4" /> {error}
-                              </motion.div>
-                            )}
-                            {success && (
-                              <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="px-4 py-3 rounded-xl bg-emerald-500/10 text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2"
-                              >
-                                <CheckCircle2 className="w-4 h-4" /> {success}
-                              </motion.div>
-                            )}
-
-                            <button
-                              type="submit"
-                              disabled={isLoading}
-                              className="w-full h-14 bg-gradient-to-r from-primary to-emerald-400 text-white dark:text-[#050e0a] hover:from-primary-focus hover:to-emerald-500 transition-all rounded-2xl font-black text-sm tracking-wide uppercase flex items-center justify-center gap-2 shadow-[0_10px_30px_-10px_rgba(16,185,129,0.4)] hover:shadow-[0_10px_40px_-10px_rgba(16,185,129,0.6)] hover:-translate-y-0.5 disabled:opacity-50 disabled:pointer-events-none mt-4"
-                            >
-                              {isLoading ? (
-                                <div className="w-5 h-5 border-2 border-white/30 dark:border-[#050e0a]/30 border-t-white dark:border-t-[#050e0a] rounded-full animate-spin" />
-                              ) : (
-                                <>
-                                  <Send className="w-4 h-4" />
-                                  <span>{t("member_tasks.form_submit")}</span>
-                                </>
-                              )}
-                            </button>
-                          </form>
-                        )}
-                      </div>
-                    );
-                  })()}
-                </div>
-              </div>
-            </motion.div>
+          ))
+        ) : (
+          <div className="md:col-span-2">
+            <EmptyState
+              icon={FolderKanban}
+              title={filter !== "ALL" ? `Tidak ada tugas dengan status "${FILTER_TABS.find(f => f.key === filter)?.label}"` : "Belum ada tugas"}
+              description="Tugas akan muncul di sini saat sudah dibuat oleh admin."
+              className="py-20 bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 rounded-3xl"
+            />
           </div>
         )}
-      </AnimatePresence>
+      </div>
 
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: rgba(156, 163, 175, 0.3);
-          border-radius: 20px;
-        }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-          background-color: rgba(255, 255, 255, 0.1);
-        }
-      `,
-        }}
-      />
+      {/* ── Modal ─────────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {activeTask && (
+          <TaskDetailModal
+            task={activeTask}
+            submission={subMap[activeTask.id]}
+            onClose={() => setActive(null)}
+            onSubmitSuccess={(sub) => {
+              handleSubmitSuccess(sub);
+              setActive(null);
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
