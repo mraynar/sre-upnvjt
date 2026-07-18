@@ -177,7 +177,7 @@ export default function AttendanceClient({ initialAttendance, members, currentUs
       </div>
 
       {/* Filters Bar */}
-      <div className="flex flex-wrap gap-3 mb-6 bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10 rounded-2xl p-4 backdrop-blur-md items-center">
+      <div className="flex flex-wrap gap-3 mb-6 bg-white/40 dark:bg-white/2 border border-gray-200/50 dark:border-white/10 rounded-2xl p-4 backdrop-blur-md items-center">
         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400 mr-2">
           <Filter className="w-4 h-4 text-primary" />
           <span>Filter Kehadiran:</span>
@@ -208,10 +208,10 @@ export default function AttendanceClient({ initialAttendance, members, currentUs
       </div>
 
       {/* Table grid */}
-      <div className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-lg">
+      <div className="bg-white/40 dark:bg-white/2 border border-gray-200/50 dark:border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-lg">
         <div className="overflow-x-auto w-full">
-          <table className="w-full min-w-[800px] text-left">
-            <thead className="border-b border-gray-200/50 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02]">
+          <table className="w-full min-w-200 text-left">
+            <thead className="border-b border-gray-200/50 dark:border-white/10 bg-gray-50/50 dark:bg-white/2">
               <tr>
                 {["Nama Anggota", "NPM", "Tanggal", "Status", "Catatan/Notes", "Aksi"].map(h => (
                   <th key={h} className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">
@@ -232,7 +232,7 @@ export default function AttendanceClient({ initialAttendance, members, currentUs
                     </td>
                   </tr>
                 ) : filteredRecords.map(rec => (
-                  <tr key={rec.id} className="hover:bg-white/60 dark:hover:bg-white/[0.03] transition-all">
+                  <tr key={rec.id} className="hover:bg-white/60 dark:hover:bg-white/3 transition-all">
                     <td className="px-6 py-4 text-sm font-bold text-gray-900 dark:text-white">
                       {rec.member?.name || `ID User: ${rec.memberId}`}
                     </td>
@@ -256,7 +256,7 @@ export default function AttendanceClient({ initialAttendance, members, currentUs
                         {STATUS_METADATA[rec.status]?.label || rec.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-xs text-gray-500 dark:text-white/50 max-w-[240px] truncate">
+                    <td className="px-6 py-4 text-xs text-gray-500 dark:text-white/50 max-w-60 truncate">
                       {rec.notes || <span className="opacity-30">—</span>}
                     </td>
                     <td className="px-6 py-4">
@@ -299,7 +299,7 @@ export default function AttendanceClient({ initialAttendance, members, currentUs
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-lg bg-white dark:bg-[#0a1612] border border-gray-200 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
-              <div className="p-6 border-b border-gray-200 dark:border-white/10 flex items-center justify-between bg-gray-50/50 dark:bg-white/[0.02]">
+              <div className="p-6 border-b border-gray-200 dark:border-white/10 flex items-center justify-between bg-gray-50/50 dark:bg-white/2">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                   <ClipboardCheck className="w-5 h-5 text-primary" />
                   {targetRecord ? "Edit Catatan Absensi" : "Catat Kehadiran Baru"}
@@ -362,7 +362,7 @@ export default function AttendanceClient({ initialAttendance, members, currentUs
                 </form>
               </div>
 
-              <div className="p-6 border-t border-gray-200 dark:border-white/10 flex justify-end gap-3 bg-gray-50/50 dark:bg-white/[0.02]">
+              <div className="p-6 border-t border-gray-200 dark:border-white/10 flex justify-end gap-3 bg-gray-50/50 dark:bg-white/2">
                 <button type="button" onClick={handleCloseModal} className="px-5 py-2 rounded-xl text-sm font-semibold text-gray-500 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/10">Batal</button>
                 <button type="submit" form="attendanceForm" disabled={isLoading}
                   className="px-5 py-2 rounded-xl text-sm font-bold bg-primary text-[#050e0a] hover:bg-primary-focus flex items-center gap-2">
@@ -411,7 +411,7 @@ function Toast({ notification, onClose }) {
           initial={{ opacity: 0, y: 50, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.9 }}
-          className={`fixed bottom-6 right-6 z-[70] flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl border backdrop-blur-md ${
+          className={`fixed bottom-6 right-6 z-70 flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl border backdrop-blur-md ${
             notification.type === "success"
               ? "bg-green-500/10 border-green-500/20 text-green-400"
               : "bg-red-500/10 border-red-500/20 text-red-400"

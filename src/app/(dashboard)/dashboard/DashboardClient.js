@@ -21,9 +21,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/i18n/LanguageProvider";
-
-import Stats from "@/app/(dashboard)/dashboard/Stats";
-
+import ChartActivity from "./chartActivity";
 export default function DashboardClient({ stats, user }) {
   const { data: session } = useSession();
   const { t, language } = useLanguage();
@@ -150,7 +148,7 @@ export default function DashboardClient({ stats, user }) {
         className="absolute top-0 left-1/4 w-125 h-125 bg-primary/5 dark:bg-primary/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen animate-pulse"
         style={{ animationDuration: "6s" }}
       ></div>
-      <div className="absolute top-40 right-1/4 w-100 h-100 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen"></div>
+      <div className="absolute top-40 right-1/4 w-[400px] h-[400px] bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen"></div>
 
       {/* Header and ID Card */}
       <div className="flex flex-col xl:flex-row justify-between items-start gap-10 mb-12 relative z-10">
@@ -217,6 +215,10 @@ export default function DashboardClient({ stats, user }) {
         />
       </motion.div>
 
+      <div className="mt-10 grid grid-col-1">
+        <ChartActivity />
+      </div>
+
       {/* Main Content Area */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -277,7 +279,7 @@ export default function DashboardClient({ stats, user }) {
                 ))}
               </div>
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-gray-200 dark:border-white/10 rounded-2xl bg-gray-50 dark:bg-white/1 h-72">
+              <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-gray-200 dark:border-white/10 rounded-2xl bg-gray-50 dark:bg-white/[0.01] h-48">
                 <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center mb-3">
                   <Star className="w-6 h-6 text-gray-300 dark:text-white/20" />
                 </div>
@@ -293,9 +295,7 @@ export default function DashboardClient({ stats, user }) {
         </div>
       </motion.div>
 
-      <div className="w-full mt-8">
-        <Stats />
-      </div>
+    
     </div>
   );
 }

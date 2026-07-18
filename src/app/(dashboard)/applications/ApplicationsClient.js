@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ShieldCheck, Search, X, CheckCircle2, XCircle, AlertTriangle,
-  User, Mail, BookOpen, Clock, Check,
+  ShieldCheck, Search, X, CheckCircle2, XCircle
 } from "lucide-react";
 
 export default function ApplicationsClient({ initialApplications, currentUser }) {
@@ -79,10 +78,10 @@ export default function ApplicationsClient({ initialApplications, currentUser })
       </div>
 
       {/* Table grid */}
-      <div className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-lg">
+      <div className="bg-white/40 dark:bg-white/2 border border-gray-200/50 dark:border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-lg">
         <div className="overflow-x-auto w-full">
-          <table className="w-full min-w-[900px] text-left">
-            <thead className="border-b border-gray-200/50 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02]">
+          <table className="w-full min-w-225 text-left">
+            <thead className="border-b border-gray-200/50 dark:border-white/10 bg-gray-50/50 dark:bg-white/2">
               <tr>
                 {["Nama Lengkap", "Email", "NPM", "Fakultas / Prodi", "Tanggal", "Status", "Aksi"].map(h => (
                   <th key={h} className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">
@@ -103,7 +102,7 @@ export default function ApplicationsClient({ initialApplications, currentUser })
                     </td>
                   </tr>
                 ) : filtered.map(app => (
-                  <tr key={app.id} className="hover:bg-white/60 dark:hover:bg-white/[0.03] transition-all">
+                  <tr key={app.id} className="hover:bg-white/60 dark:hover:bg-white/3 transition-all">
                     <td className="px-6 py-4 text-sm font-bold text-gray-900 dark:text-white">
                       {app.fullName}
                     </td>
@@ -158,7 +157,7 @@ export default function ApplicationsClient({ initialApplications, currentUser })
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-xl bg-white dark:bg-[#0a1612] border border-gray-200 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
-              <div className="p-6 border-b border-gray-200 dark:border-white/10 flex items-center justify-between bg-gray-50/50 dark:bg-white/[0.02]">
+              <div className="p-6 border-b border-gray-200 dark:border-white/10 flex items-center justify-between bg-gray-50/50 dark:bg-white/2">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-primary" />
                   Review Motivasi Calon Pengurus
@@ -169,7 +168,7 @@ export default function ApplicationsClient({ initialApplications, currentUser })
               </div>
 
               <div className="p-6 overflow-y-auto flex-1 space-y-6">
-                <div className="p-4 bg-gray-50 dark:bg-white/[0.02] border border-gray-200 dark:border-white/5 rounded-2xl">
+                <div className="p-4 bg-gray-50 dark:bg-white/2 border border-gray-200 dark:border-white/5 rounded-2xl">
                   <div className="grid grid-cols-2 gap-4 text-xs">
                     <div>
                       <div className="text-gray-400 font-bold mb-0.5">Nama Pendaftar:</div>
@@ -190,7 +189,7 @@ export default function ApplicationsClient({ initialApplications, currentUser })
                 </div>
               </div>
 
-              <div className="p-6 border-t border-gray-200 dark:border-white/10 flex justify-between bg-gray-50/50 dark:bg-white/[0.02] shrink-0">
+              <div className="p-6 border-t border-gray-200 dark:border-white/10 flex justify-between bg-gray-50/50 dark:bg-white/2 shrink-0">
                 <button onClick={() => setModal(false)} className="px-5 py-2.5 rounded-xl font-semibold text-gray-500 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/10 transition-all text-xs">
                   Tutup
                 </button>
