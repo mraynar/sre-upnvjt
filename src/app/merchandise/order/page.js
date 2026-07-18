@@ -129,11 +129,11 @@ export default function OrderPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-[#e8ecc4] text-[#07130e] flex flex-col items-center justify-center pt-32 pb-20 px-6 selection:bg-[#07130e] selection:text-[#e8ecc4]">
+      <div className="min-h-screen bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white flex flex-col items-center justify-center pt-32 pb-20 px-6 selection:bg-[#07130e] selection:text-[#e8ecc4]">
         <motion.div 
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-[#07130e] text-[#e8ecc4] p-12 md:p-16 rounded-[40px] max-w-xl w-full text-center flex flex-col items-center shadow-2xl"
+          className="bg-[#07130e] dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 text-[#e8ecc4] p-12 md:p-16 rounded-[40px] max-w-xl w-full text-center flex flex-col items-center shadow-2xl"
         >
           <div className="w-20 h-20 bg-[#e8ecc4] text-[#07130e] rounded-full flex items-center justify-center mb-8">
             <CheckCircle2 className="w-10 h-10" />
@@ -155,7 +155,7 @@ export default function OrderPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#e8ecc4] text-[#07130e] pt-32 pb-24 selection:bg-[#07130e] selection:text-[#e8ecc4]">
+    <div className="min-h-screen bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white pt-32 pb-24 selection:bg-[#07130e] selection:text-[#e8ecc4]">
       
       <div className="px-6 md:px-12 lg:px-20 max-w-[1400px] mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24">
         
@@ -165,22 +165,22 @@ export default function OrderPage() {
           transition={{ duration: 0.8 }}
           className="lg:w-2/5 flex flex-col"
         >
-          <Link href="/merchandise" className="text-[12px] font-bold tracking-[0.2em] uppercase mb-12 flex items-center gap-2 hover:opacity-50 transition-opacity w-fit">
+          <Link href="/merchandise" className="text-[12px] font-bold tracking-[0.2em] uppercase mb-12 flex items-center gap-2 hover:opacity-50 transition-opacity w-fit text-[#07130e] dark:text-white">
             <ArrowRight className="w-4 h-4 rotate-180" /> Back to Catalog
           </Link>
           
           <h1 className="text-[60px] md:text-[90px] font-display font-black leading-[0.85] tracking-tighter uppercase mb-8">
             Order <br />
-            <span className="font-serif italic font-normal normal-case opacity-50 pr-4 text-[70px] md:text-[100px]">the</span>
+            <span className="font-serif italic font-normal normal-case opacity-50 pr-4 text-[70px] md:text-[100px] text-[#07130e] dark:text-white">the</span>
             Form
           </h1>
-          <p className="text-[15px] md:text-[16px] text-[#07130e]/70 leading-relaxed font-medium max-w-sm mb-12">
+          <p className="text-[15px] md:text-[16px] text-[#07130e]/70 dark:text-white/70 leading-relaxed font-medium max-w-sm mb-12">
             Lengkapi data dirimu untuk melakukan pemesanan. Pastikan nomor WhatsApp aktif untuk keperluan konfirmasi pembayaran dan pengiriman.
           </p>
 
-          <div className="bg-[#07130e]/5 p-8 rounded-3xl mb-8">
-            <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-[#07130e]/50 font-bold block mb-4">Payment Method</span>
-            <ul className="text-[14px] font-bold space-y-2 opacity-80">
+          <div className="bg-slate-50 dark:bg-white/5 p-8 rounded-3xl mb-8">
+            <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-[#07130e]/40 dark:text-white/50 font-bold block mb-4">Payment Method</span>
+            <ul className="text-[14px] font-bold space-y-2 text-[#07130e]/80 dark:text-white/80">
               <li>BCA: 1234567890 (a.n. SRE UPNVJT)</li>
               <li>Mandiri: 0987654321 (a.n. SRE UPNVJT)</li>
               <li>ShopeePay/GoPay: 081234567890</li>

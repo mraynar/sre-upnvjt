@@ -1,11 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, User } from "lucide-react";
+import { ArrowRight, Sun, Moon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 
-function HamburgerIcon({ isOpen, onClick, isLightBackground }) {
+function HamburgerIcon({ isOpen, onClick, useDarkText }) {
   return (
     <button
       onClick={onClick}
@@ -26,21 +27,21 @@ function HamburgerIcon({ isOpen, onClick, isLightBackground }) {
           initial={false}
           animate={isOpen ? { rotate: 45, y: 8, width: "100%" } : { rotate: 0, y: 0, width: "50%" }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className={`block h-[2px] rounded-full origin-center group-hover:w-full transition-all duration-300 group-hover:bg-primary drop-shadow-sm ${isLightBackground && !isOpen ? "bg-[#0a1f18] dark:bg-white" : "bg-white"}`}
+          className={`block h-[2px] rounded-full origin-center group-hover:w-full transition-all duration-300 group-hover:bg-primary drop-shadow-sm ${useDarkText && !isOpen ? "bg-[#07130e]" : "bg-white"}`}
         />
         {/* Middle line - always full */}
         <motion.span
           initial={false}
           animate={isOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1, width: "100%" }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className={`block w-full h-[2px] rounded-full origin-center group-hover:bg-primary transition-colors drop-shadow-sm ${isLightBackground && !isOpen ? "bg-[#0a1f18] dark:bg-white" : "bg-white"}`}
+          className={`block w-full h-[2px] rounded-full origin-center group-hover:bg-primary transition-colors drop-shadow-sm ${useDarkText && !isOpen ? "bg-[#07130e]" : "bg-white"}`}
         />
         {/* Bottom line - starts medium (75%) */}
         <motion.span
           initial={false}
           animate={isOpen ? { rotate: -45, y: -8, width: "100%" } : { rotate: 0, y: 0, width: "75%" }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className={`block h-[2px] rounded-full origin-center group-hover:w-full transition-all duration-300 group-hover:bg-primary drop-shadow-sm ${isLightBackground && !isOpen ? "bg-[#0a1f18] dark:bg-white" : "bg-white"}`}
+          className={`block h-[2px] rounded-full origin-center group-hover:w-full transition-all duration-300 group-hover:bg-primary drop-shadow-sm ${useDarkText && !isOpen ? "bg-[#07130e]" : "bg-white"}`}
         />
       </div>
     </button>
@@ -50,7 +51,11 @@ function HamburgerIcon({ isOpen, onClick, isLightBackground }) {
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -87,6 +92,8 @@ export default function Header() {
     (pathname.startsWith("/article") || pathname.startsWith("/merchandise/order")) && 
     !shouldBeSolid;
 
+  const useDarkText = mounted && theme === "light";
+
   return (
     <>
       {/* Global Navigation Bar */}
@@ -96,8 +103,8 @@ export default function Header() {
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         className={`fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 ${
           shouldBeSolid
-            ? "bg-[#0a1f18]/90 border-b border-white/5 text-white backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.1)]"
-            : `bg-transparent border-b border-transparent ${isLightBackground ? "text-[#0a1f18] dark:text-white" : "text-white"}`
+            ? "bg-white/95 dark:bg-[#0a1f18]/90 border-b border-slate-200 dark:border-white/5 " + (useDarkText ? "text-[#07130e]" : "text-white") + " dark:text-white backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.08)]"
+            : `bg-transparent border-b border-transparent ` + (useDarkText ? "text-[#07130e]" : "text-white")
         }`}
       >
         <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
@@ -111,7 +118,7 @@ export default function Header() {
               <img 
                 src="/images/logo.png" 
                 alt="SRE Logo" 
-                className={`h-10 w-auto object-contain transition-all duration-300 ${isLightBackground ? "brightness-0 dark:brightness-100" : ""}`} 
+                className={`h-10 w-auto object-contain transition-all duration-300 ${useDarkText ? "brightness-0" : ""}`} 
               />
             </motion.div>
           </Link>
@@ -131,15 +138,15 @@ export default function Header() {
                   {isActive && (
                     <motion.div
                       layoutId="nav-underline"
-                      className={`absolute -bottom-1 left-0 right-0 h-[2px] rounded-full ${isLightBackground ? "bg-[#0a1f18] dark:bg-white" : "bg-white"}`}
+                      className={`absolute -bottom-1 left-0 right-0 h-[2px] rounded-full ${useDarkText ? "bg-[#07130e]" : "bg-white"}`}
                       transition={{ type: "spring", stiffness: 450, damping: 30 }}
                     />
                   )}
                   <span
                     className={`relative z-10 font-medium ${
                       isActive
-                        ? (isLightBackground ? "text-[#0a1f18] dark:text-white font-bold" : "text-white font-bold")
-                        : (isLightBackground ? "text-[#0a1f18]/70 hover:text-[#0a1f18] dark:text-white/80 dark:hover:text-white transition-colors" : "text-white/80 hover:text-white transition-colors")
+                        ? (useDarkText ? "text-[#07130e] font-bold" : "text-white font-bold")
+                        : (useDarkText ? "text-[#07130e]/70 hover:text-[#07130e] transition-colors" : "text-white/80 hover:text-white transition-colors")
                     }`}
                   >
                     {item.name}
@@ -149,16 +156,34 @@ export default function Header() {
             })}
           </div>
 
-          {/* Desktop CTA — Login */}
-          <div className="hidden md:flex items-center gap-5">
+          {/* Desktop CTA — Theme toggle + Login */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Dark/Light Mode Toggle */}
+            {mounted && (
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 border ${
+                  useDarkText
+                    ? "border-[#07130e]/30 text-[#07130e] hover:bg-[#07130e]/10"
+                    : "border-white/30 text-white hover:bg-white/10"
+                }`}
+              >
+                {theme === "dark"
+                  ? <Sun className="w-4 h-4" aria-hidden="true" />
+                  : <Moon className="w-4 h-4" aria-hidden="true" />}
+              </motion.button>
+            )}
             <Link href="/login">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={`border text-[14px] font-semibold tracking-tight rounded-full px-6 py-2.5 transition-all duration-300 flex items-center gap-2 group shadow-lg cursor-pointer ${
-                  isLightBackground 
-                    ? "border-[#0a1f18]/30 text-[#0a1f18] hover:bg-[#0a1f18] hover:text-[#e8ecc4] dark:border-white/30 dark:text-white dark:hover:bg-white dark:hover:text-[#0a1f18]" 
-                    : "border-white/30 text-white hover:bg-white hover:text-[#0a1f18]"
+                  useDarkText 
+                    ? "border-[#07130e]/30 text-[#07130e] hover:bg-[#07130e] hover:text-white" 
+                    : "border-white/30 text-white hover:bg-white hover:text-[#07130e]"
                 }`}
               >
                 Login
@@ -174,7 +199,7 @@ export default function Header() {
         <HamburgerIcon
           isOpen={mobileMenuOpen}
           onClick={() => setMobileMenuOpen((v) => !v)}
-          isLightBackground={isLightBackground}
+          useDarkText={useDarkText}
         />
       </div>
 
