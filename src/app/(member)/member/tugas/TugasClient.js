@@ -459,11 +459,11 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
           </p>
         </div>
 
-        {/* Mini stats */}
-        <div className="flex items-center gap-3">
+        {/* Mini stats + Riwayat link */}
+        <div className="flex items-center gap-3 flex-wrap">
           {[
-            { label: "Total", val: totalTasks,    color: "text-slate-700 dark:text-white" },
-            { label: "Review", val: pendingCount,  color: "text-amber-600 dark:text-amber-400" },
+            { label: "Total",   val: totalTasks,    color: "text-slate-700 dark:text-white" },
+            { label: "Review",  val: pendingCount,  color: "text-amber-600 dark:text-amber-400" },
             { label: "Selesai", val: approvedCount, color: "text-emerald-600 dark:text-emerald-400" },
           ].map((s) => (
             <div key={s.label} className="flex flex-col items-center px-4 py-2.5 bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 rounded-2xl shadow-sm">
@@ -471,6 +471,14 @@ export default function TugasClient({ user, initialTasks, initialSubmissions }) 
               <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-white/30">{s.label}</span>
             </div>
           ))}
+          <Link
+            href="/member/tugas/riwayat"
+            className="group flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-[#08120e] border border-slate-200 dark:border-white/5 hover:border-primary/30 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(16,185,129,0.1)]"
+          >
+            <Clock className="w-4 h-4 text-slate-400 dark:text-white/40 group-hover:text-primary transition-colors" />
+            <span className="text-xs font-black text-slate-600 dark:text-white/60 group-hover:text-primary transition-colors whitespace-nowrap">Riwayat Tugas</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-300 dark:text-white/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+          </Link>
         </div>
       </motion.div>
 
