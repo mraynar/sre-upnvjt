@@ -117,6 +117,45 @@ async function main() {
     }
   }
 
+  console.log('Seeding staff...');
+
+  // Create staff role if not exists
+  let staffRole = await db.query.role.findFirst({
+    where: (roles, { eq }) => eq(roles.name, 'STAFF')
+  });
+
+  if (!staffRole) {
+    await db.insert(schema.role).values({
+      name: 'STAFF',
+      permissions: {},
+    });
+    staffRole = await db.query.role.findFirst({
+      where: (roles, { eq }) => eq(roles.name, 'STAFF')
+    });
+  }
+
+  // Check if staff user exists
+  const existingStaff = await db.query.user.findFirst({
+    where: (users, { eq }) => eq(users.email, 'staff@sre.co.id')
+  });
+
+  if (!existingStaff) {
+    const hashedStaffPassword = await bcrypt.hash('password123', 10);
+    await db.insert(schema.user).values({
+      name: 'Staff Contoh',
+      email: 'staff@sre.co.id',
+      password: hashedStaffPassword,
+      npm: '2023000001',
+      positionName: 'Staff Operations',
+      isActive: true,
+      roleId: staffRole.id,
+      departmentId: dept.id,
+    });
+    console.log('Staff created: staff@sre.co.id / password123');
+  } else {
+    console.log('Staff already exists.');
+  }
+
   console.log('Seeding finished.');
   await client.end();
   process.exit(0);
