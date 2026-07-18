@@ -19,7 +19,6 @@ import {
   Zap,
   Trophy,
 } from "lucide-react";
-import Link from "next/link";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import ChartActivity from "./chartActivity";
 export default function DashboardClient({ stats, user }) {
