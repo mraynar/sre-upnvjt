@@ -29,9 +29,9 @@ export async function getDepartments() {
 export async function createDepartment(data) {
   try {
     const { name, code } = data;
-    const [result] = await db.insert(department).values({ name, code });
+    const [result] = await db.insert(department).values({ name, code }).returning({ id: department.id });
     revalidatePath("/departments");
-    return { success: true, data: { id: result.insertId, name, code } };
+    return { success: true, data: { id: result.id, name, code } };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -61,9 +61,9 @@ export async function deleteDepartment(id) {
 export async function createDivision(data) {
   try {
     const { name, departmentId } = data;
-    const [result] = await db.insert(division).values({ name, departmentId });
+    const [result] = await db.insert(division).values({ name, departmentId }).returning({ id: division.id });
     revalidatePath("/departments");
-    return { success: true, data: { id: result.insertId, name, departmentId } };
+    return { success: true, data: { id: result.id, name, departmentId } };
   } catch (error) {
     return { success: false, error: error.message };
   }

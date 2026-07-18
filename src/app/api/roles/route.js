@@ -43,9 +43,9 @@ export async function POST(req) {
     const [result] = await db.insert(role).values({
       name,
       permissions: permissions || {},
-    });
+    }).returning({ id: role.id });
 
-    return NextResponse.json({ id: result.insertId, name, permissions: permissions || {} });
+    return NextResponse.json({ id: result.id, name, permissions: permissions || {} });
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
