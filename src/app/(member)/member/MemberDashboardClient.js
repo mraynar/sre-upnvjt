@@ -396,11 +396,11 @@ export default function MemberDashboardClient({
         <SectionHeader icon={Activity} title="Menu Cepat" className="mb-4" />
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {[
-            { href: "/member/leaderboard", icon: Trophy,        label: "Leaderboard", color: "text-amber-500",   bg: "bg-amber-500/10",  border: "border-amber-500/20" },
-            { href: "/member/tugas",       icon: FolderKanban,  label: "Tugas",       color: "text-blue-500",   bg: "bg-blue-500/10",   border: "border-blue-500/20" },
-            { href: "/member/absensi",     icon: ClipboardCheck, label: "Absensi",    color: "text-emerald-500",bg: "bg-emerald-500/10",border: "border-emerald-500/20" },
-            { href: "/member/materi",      icon: BookOpen,       label: "Materi",     color: "text-purple-500", bg: "bg-purple-500/10", border: "border-purple-500/20" },
-            { href: "/member/achievement", icon: Award,          label: "Achievement", color: "text-pink-500",  bg: "bg-pink-500/10",   border: "border-pink-500/20" },
+            { href: "/member/leaderboard", icon: Trophy,        label: "Leaderboard", color: "text-amber-500",   bg: "bg-amber-500/10",   border: "border-amber-500/20" },
+            { href: "/member/tugas",       icon: FolderKanban,  label: "Tugas",       color: "text-blue-500",   bg: "bg-blue-500/10",    border: "border-blue-500/20" },
+            { href: "/member/absensi",     icon: ClipboardCheck, label: "Absensi",    color: "text-emerald-500",bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
+            { href: "/member/dokumen",     icon: BookOpen,       label: "Dokumen",    color: "text-purple-500", bg: "bg-purple-500/10",  border: "border-purple-500/20" },
+            { href: "/member/achievement", icon: Award,          label: "Achievement", color: "text-pink-500",  bg: "bg-pink-500/10",    border: "border-pink-500/20" },
           ].map((item, i) => (
             <motion.div
               key={item.href}
