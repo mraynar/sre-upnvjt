@@ -141,6 +141,18 @@ h1, h2, h3, h4, h5, h6, .font-display {
   animation-play-state: paused;
 }
 
+/* XP Bar shimmer effect */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+/* Animated gradient border for Quest card */
+@keyframes bgSlide {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
 /* Custom scrollbar to match Apple-like premium gallery */
 ::-webkit-scrollbar {
   width: 8px;
