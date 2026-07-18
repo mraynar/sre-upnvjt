@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageProvider";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { EmptyState, SectionHeader } from "../components/ui/CommonUI";
 
 // ─── Status config ──────────────────────────────────────────────────────────
