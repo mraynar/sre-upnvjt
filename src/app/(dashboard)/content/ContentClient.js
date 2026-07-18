@@ -126,34 +126,36 @@ export default function ContentClient({ initialContents, currentUser }) {
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-40 h-40 bg-emerald-400/20 rounded-full blur-[60px] translate-y-1/3 -translate-x-1/4 pointer-events-none" />
         
-        <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-bold uppercase tracking-widest backdrop-blur-md">
-              <FileText className="w-4 h-4" /> Content Manager
-            </div>
+        <div className="w-full relative z-10 flex flex-col justify-between gap-6 md:gap-1">
+          <div className="space-y-4 md:flex md:justify-between ">
+            <div>
             <h1 className="text-4xl md:text-5xl font-black tracking-tighter leading-none drop-shadow-sm">
-              Articles & News
+              Artikel dan Berita
             </h1>
             <p className="text-white/80 max-w-lg text-sm md:text-base font-medium leading-relaxed">
-              Manage your publications, research insights, and organization updates with a seamless editing experience.
+              Tambah Artikel dan Berita Tentang Energi Terbarukan
             </p>
+            </div>
+            <div className="inline-flex h-max items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-[10px] lg:text-xs font-bold uppercase tracking-widest backdrop-blur-md">
+              <FileText className="w-4 h-4" /> Content Manager
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
-            <div className="relative w-full sm:w-auto">
+          <div className="flex flex-col md:grid md:grid-cols-3 items-center gap-3 w-full md:w-auto shrink-0">
+            <div className="relative w-full sm:w-auto md:col-start-1 md:col-span-2">
               <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
               <input 
                 type="text"
                 placeholder="Search content..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full sm:w-64 pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-md transition-all shadow-inner"
+                className="w-full  pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-md transition-all shadow-inner"
               />
             </div>
             {canCreate && (
               <button 
                 onClick={() => handleOpenModal()}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-emerald-900 hover:bg-gray-50 px-8 py-4 rounded-2xl font-bold transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+                className="w-full md:col-start-3 sm:w-auto flex items-center justify-center gap-2 bg-white text-emerald-900 hover:bg-gray-50 px-8 py-4 rounded-2xl font-bold transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
               >
                 <Plus className="w-5 h-5" />
                 <span>Create New</span>
