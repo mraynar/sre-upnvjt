@@ -11,7 +11,8 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const slideId = parseInt(params.slideId);
+    const resolvedParams = await params;
+    const slideId = parseInt(resolvedParams.slideId);
     const body = await req.json();
     const { title, fileUrl, order } = body;
 
@@ -41,8 +42,10 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const slideId = parseInt(params.slideId);
-    const moduleId = parseInt(params.id);
+    const resolvedParams = await params;
+    const slideId = parseInt(resolvedParams.slideId);
+    const resolvedParams = await params;
+    const moduleId = parseInt(resolvedParams.id);
 
     await db.delete(pptSlide).where(eq(pptSlide.id, slideId));
 

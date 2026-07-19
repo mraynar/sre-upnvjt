@@ -12,7 +12,8 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     const body = await req.json();
     const { name, imageUrl, description } = body;
 
@@ -38,7 +39,8 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     await db.delete(literatureCategory).where(eq(literatureCategory.id, id));
 
     return NextResponse.json({ success: true });
