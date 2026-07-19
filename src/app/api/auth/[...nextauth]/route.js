@@ -62,9 +62,11 @@ export const authOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user: authUser }) {
+    async jwt({ token, user: authUser, trigger, session }) {
       if (authUser) {
         token.id = authUser.id;
+        token.name = authUser.name;
+        token.email = authUser.email;
         token.roleName = authUser.roleName;
         token.permissions = authUser.permissions;
         token.departmentCode = authUser.departmentCode;
@@ -72,11 +74,15 @@ export const authOptions = {
         token.divisionName = authUser.divisionName;
         token.positionName = authUser.positionName;
       }
+      if (trigger === "update" && session?.name) {
+        token.name = session.name;
+      }
       return token;
     },
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id;
+        session.user.name = token.name;
         session.user.roleName = token.roleName;
         session.user.permissions = token.permissions;
         session.user.departmentCode = token.departmentCode;

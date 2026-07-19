@@ -18,8 +18,10 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/i18n/LanguageProvider";
+import { useSession } from "next-auth/react";
 
 export default function SettingsClient({ user }) {
+  const { update } = useSession();
   const router = useRouter();
   const { t, language, setLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState("profile");
@@ -119,6 +121,7 @@ export default function SettingsClient({ user }) {
         setProfileMessage({ type: "success", text: "Profile updated successfully!" });
         setProfileData(prev => ({ ...prev, profilePictureUrl: finalProfilePictureUrl }));
         setProfilePictureFile(null); // Clear selected file
+        await update({ name: profileData.name }); // Update session name so dashboard reflects it immediately
         router.refresh();
       } else {
         setProfileMessage({ type: "error", text: data.error || "Failed to update profile." });
