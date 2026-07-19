@@ -6,7 +6,8 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET(req, { params }) {
   try {
-    const quizId = parseInt(params.id);
+    const resolvedParams = await params;
+    const quizId = parseInt(resolvedParams.id);
     const questions = await db.query.quizQuestion.findMany({
       where: (t, { eq }) => eq(t.quizId, quizId),
       orderBy: [asc(quizQuestion.order)],
@@ -24,7 +25,8 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const quizId = parseInt(params.id);
+    const resolvedParams = await params;
+    const quizId = parseInt(resolvedParams.id);
     const body = await req.json();
     const { type, question, options, correctOptionId, points, order } = body;
 

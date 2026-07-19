@@ -12,7 +12,8 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     const body = await req.json();
     const { title, description, rewardXp, deadline } = body;
 
@@ -43,7 +44,8 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     // Delete submissions first (FK constraint)
     await db.delete(taskSubmission).where(eq(taskSubmission.taskId, id));
     await db.delete(task).where(eq(task.id, id));
