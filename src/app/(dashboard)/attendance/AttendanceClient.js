@@ -18,9 +18,9 @@ const STATUS_METADATA = {
   EXCUSED: { label: "Izin/Sakit", color: "bg-blue-500/15 text-blue-400 border-blue-500/25" },
 };
 
-const EMPTY_ATTENDANCE = { memberId: "", date: "", status: "PRESENT", notes: "" };
+const EMPTY_ATTENDANCE = { memberId: "", sessionId: "", status: "PRESENT", notes: "" };
 
-export default function AttendanceClient({ initialAttendance, members, currentUser }) {
+export default function AttendanceClient({ initialAttendance, members, sessions, currentUser }) {
   const { data: session } = useSession();
   const userObj = session?.user ?? currentUser;
 
@@ -48,18 +48,15 @@ export default function AttendanceClient({ initialAttendance, members, currentUs
 
   const handleOpenModal = (rec = null) => {
     if (rec) {
-      // YYYY-MM-DD format for date input
-      const dateStr = new Date(rec.date).toISOString().split("T")[0];
       setForm({
         memberId: rec.memberId?.toString() || "",
-        date: dateStr,
+        sessionId: rec.sessionId?.toString() || "",
         status: rec.status,
         notes: rec.notes || "",
       });
     } else {
       setForm({
         ...EMPTY_ATTENDANCE,
-        date: new Date().toISOString().split("T")[0],
       });
     }
     setTargetRecord(rec);
@@ -85,7 +82,7 @@ export default function AttendanceClient({ initialAttendance, members, currentUs
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           memberId: parseInt(form.memberId),
-          date: form.date,
+          sessionId: parseInt(form.sessionId),
           status: form.status,
           notes: form.notes,
         }),
@@ -213,7 +210,7 @@ export default function AttendanceClient({ initialAttendance, members, currentUs
           <table className="w-full min-w-200 text-left">
             <thead className="border-b border-gray-200/50 dark:border-white/10 bg-gray-50/50 dark:bg-white/2">
               <tr>
-                {["Nama Anggota", "NPM", "Tanggal", "Status", "Catatan/Notes", "Aksi"].map(h => (
+                {["Nama Anggota", "NPM", "Sesi (Tanggal)", "Status", "Catatan/Notes", "Aksi"].map(h => (
                   <th key={h} className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">
                     {h}
                   </th>
@@ -243,9 +240,9 @@ export default function AttendanceClient({ initialAttendance, members, currentUs
                       <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-primary" />
                         <span>
-                          {new Date(rec.date).toLocaleDateString("id-ID", {
+                          {rec.session ? `${rec.session.title} (${new Date(rec.session.date).toLocaleDateString("id-ID", {
                             day: "numeric", month: "short", year: "numeric"
-                          })}
+                          })})` : `Sesi ID: ${rec.sessionId}`}
                         </span>
                       </div>
                     </td>
@@ -326,14 +323,18 @@ export default function AttendanceClient({ initialAttendance, members, currentUs
                   </InputField>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <InputField label="Tanggal Kegiatan *">
-                      <input
-                        type="date"
+                    <InputField label="Sesi Kegiatan *">
+                      <select
                         required
-                        value={form.date}
-                        onChange={e => setForm(p => ({ ...p, date: e.target.value }))}
+                        value={form.sessionId}
+                        onChange={e => setForm(p => ({ ...p, sessionId: e.target.value }))}
                         className={inputCls}
-                      />
+                      >
+                        <option value="">— Pilih Sesi —</option>
+                        {sessions?.map(s => (
+                          <option key={s.id} value={s.id.toString()}>{s.title}</option>
+                        ))}
+                      </select>
                     </InputField>
 
                     <InputField label="Status Kehadiran *">
