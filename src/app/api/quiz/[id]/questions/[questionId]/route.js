@@ -12,7 +12,8 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const questionId = parseInt(params.questionId);
+    const resolvedParams = await params;
+    const questionId = parseInt(resolvedParams.questionId);
     const body = await req.json();
     const { type, question, options, correctOptionId, points, order } = body;
 
@@ -45,8 +46,9 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const questionId = parseInt(params.questionId);
-    const quizId = parseInt(params.id);
+    const resolvedParams = await params;
+    const questionId = parseInt(resolvedParams.questionId);
+    const quizId = parseInt(resolvedParams.id);
 
     await db.delete(quizQuestion).where(eq(quizQuestion.id, questionId));
 

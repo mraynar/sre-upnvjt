@@ -6,7 +6,8 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET(req, { params }) {
   try {
-    const moduleId = parseInt(params.id);
+    const resolvedParams = await params;
+    const moduleId = parseInt(resolvedParams.id);
     const slides = await db.query.pptSlide.findMany({
       where: (t, { eq }) => eq(t.moduleId, moduleId),
       orderBy: [asc(pptSlide.order)],
@@ -24,7 +25,8 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const moduleId = parseInt(params.id);
+    const resolvedParams = await params;
+    const moduleId = parseInt(resolvedParams.id);
     const body = await req.json();
     const { title, fileUrl } = body;
 

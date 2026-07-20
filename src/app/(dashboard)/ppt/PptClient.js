@@ -6,8 +6,10 @@ import {
   Plus, Edit2, Trash2, X, Search, CheckCircle2, XCircle,
   AlertTriangle, Presentation, UploadCloud, ChevronLeft,
   ChevronUp, ChevronDown, Eye, EyeOff, Layers, ExternalLink,
-  GripVertical, FileSliders,
+  GripVertical, FileSliders, FileText
 } from "lucide-react";
+import { convertPdfToWebPFiles } from "./pdfToWebp";
+import CachedImage from "./CachedImage";
 import {
   createPptModule, updatePptModule, deletePptModule,
   createPptSlide, updatePptSlide, deletePptSlide,
@@ -55,6 +57,7 @@ export default function PptClient({ initialModules, currentUser }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading]     = useState(false);
   const [notification, setNotification] = useState(null);
+  const [pdfProgress, setPdfProgress] = useState(null);
 
   // Module modal
   const [modModal, setModModal]     = useState(false);
@@ -102,6 +105,59 @@ export default function PptClient({ initialModules, currentUser }) {
       notify("error", "Terjadi kesalahan saat upload");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+
+  // ── File upload PDF to WebP ─────────────────────────────────────────────────
+  const handlePdfUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.type !== "application/pdf") { notify("error", "Harap pilih file PDF"); return; }
+    
+    setIsLoading(true);
+    try {
+      setPdfProgress({ current: 0, total: 0, status: "Memproses PDF..." });
+      
+      const webpFiles = await convertPdfToWebPFiles(file, (current, total) => {
+        setPdfProgress({ current, total, status: `Mengekstrak slide ${current}/${total}...` });
+      });
+
+      setPdfProgress({ current: 0, total: webpFiles.length, status: "Mengunggah gambar..." });
+      
+      let uploadedSlides = 0;
+      for (const webpFile of webpFiles) {
+        // Upload webp file
+        const fd = new FormData();
+        fd.append("file", webpFile);
+        fd.append("folder", "ppt-slides");
+        
+        const uploadRes = await fetch("/api/upload", { method: "POST", body: fd });
+        const uploadData = await uploadRes.json();
+        
+        if (uploadRes.ok && uploadData.url) {
+          // Create slide
+          const slideForm = { title: `Slide ${uploadedSlides + 1}`, fileUrl: uploadData.url };
+          const slideRes = await createPptSlide(activeModule.id, slideForm);
+          
+          if (slideRes.success) {
+            setSlides(prev => [...prev, slideRes.slide]);
+            setModules(prev => prev.map(m =>
+              m.id === activeModule.id ? { ...m, slideCount: (m.slideCount || 0) + 1 } : m
+            ));
+          }
+        }
+        uploadedSlides++;
+        setPdfProgress({ current: uploadedSlides, total: webpFiles.length, status: `Mengunggah slide ${uploadedSlides}/${webpFiles.length}...` });
+      }
+
+      notify("success", "Semua slide berhasil diunggah!");
+    } catch (err) {
+      console.error(err);
+      notify("error", "Gagal memproses PDF.");
+    } finally {
+      setIsLoading(false);
+      setPdfProgress(null);
     }
   };
 
@@ -304,6 +360,13 @@ export default function PptClient({ initialModules, currentUser }) {
               </button>
             )}
             {canCreate && (
+              <label className={`flex items-center gap-2 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-white px-5 py-2.5 rounded-xl font-bold tracking-wide hover:bg-gray-50 dark:hover:bg-white/10 transition-all text-sm cursor-pointer ${isLoading ? "opacity-50 pointer-events-none" : ""}`}>
+                <FileText className="w-4 h-4" />
+                Upload PDF
+                <input type="file" accept="application/pdf" onChange={(e) => { handlePdfUpload(e); e.target.value = null; }} className="hidden" />
+              </label>
+            )}
+            {canCreate && (
               <button
                 onClick={() => openSlideModal()}
                 className="flex items-center gap-2 bg-primary text-[#050e0a] px-5 py-2.5 rounded-xl font-bold tracking-wide hover:bg-primary-focus hover:scale-105 transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] text-sm"
@@ -329,6 +392,15 @@ export default function PptClient({ initialModules, currentUser }) {
           </span>
         </div>
 
+        {pdfProgress && (
+          <div className="bg-primary/10 text-primary border border-primary/20 p-4 rounded-xl mb-6 flex items-center justify-between">
+            <div className="font-semibold text-sm">{pdfProgress.status}</div>
+            {pdfProgress.total > 0 && (
+              <div className="text-sm font-bold">{Math.round((pdfProgress.current / pdfProgress.total) * 100)}%</div>
+            )}
+          </div>
+        )}
+
         {/* ── Slides list ── */}
         {slides.length === 0 ? (
           <div className="py-24 flex flex-col items-center justify-center text-center bg-white/40 dark:bg-white/[0.02] border border-dashed border-gray-200/50 dark:border-white/10 rounded-3xl">
@@ -352,17 +424,13 @@ export default function PptClient({ initialModules, currentUser }) {
                     <span className="text-[11px] font-black text-gray-400 dark:text-white/30 uppercase tracking-widest">#{slide.order}</span>
                   </div>
 
-                  {/* Drive preview iframe */}
-                  <div className="w-40 h-28 bg-gray-100 dark:bg-black/30 border-r border-gray-200 dark:border-white/10 shrink-0 overflow-hidden relative">
-                    <iframe
+                  {/* Slide preview */}
+                  <div className="w-40 h-28 bg-gray-100 dark:bg-black/30 border-r border-gray-200 dark:border-white/10 shrink-0 overflow-hidden relative flex items-center justify-center">
+                    <CachedImage
                       src={slide.fileUrl}
-                      title={slide.title || `Slide ${slide.order}`}
-                      className="w-full h-full border-0 pointer-events-none scale-[0.5] origin-top-left"
-                      style={{ width: "200%", height: "200%" }}
-                      loading="lazy"
-                      sandbox="allow-scripts allow-same-origin"
+                      alt={slide.title || `Slide ${slide.order}`}
+                      className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-transparent" />
                   </div>
 
                   {/* Content */}
@@ -574,7 +642,7 @@ export default function PptClient({ initialModules, currentUser }) {
                 className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-primary/10 to-primary/5 border-b border-gray-200 dark:border-white/5 cursor-pointer block text-left"
               >
                 {mod.coverImageUrl ? (
-                  <img src={mod.coverImageUrl} alt={mod.title}
+                  <CachedImage src={mod.coverImageUrl} alt={mod.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-primary/40">

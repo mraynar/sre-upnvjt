@@ -17,12 +17,12 @@ export async function createContent(data) {
       isPublished: isPublished !== undefined ? isPublished : false,
       updatedById,
       createdAt: new Date(),
-    });
+    }).returning({ id: content.id });
 
     revalidatePath("/content");
     revalidatePath("/dashboard/content");
     revalidatePath("/");
-    return { success: true, data: { id: result.insertId, title, slug } };
+    return { success: true, data: { id: result.id, title, slug } };
   } catch (error) {
     console.error("Error creating content:", error);
     if (error.code === 'ER_DUP_ENTRY') {

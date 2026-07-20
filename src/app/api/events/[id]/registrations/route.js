@@ -6,7 +6,8 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET(req, { params }) {
   try {
-    const eventId = parseInt(params.id);
+    const resolvedParams = await params;
+    const eventId = parseInt(resolvedParams.id);
     const data = await db.query.eventRegistration.findMany({
       where: (t, { eq }) => eq(t.eventId, eventId),
       orderBy: [eventRegistration.submittedAt],
@@ -24,7 +25,8 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const eventId = parseInt(params.id);
+    const resolvedParams = await params;
+    const eventId = parseInt(resolvedParams.id);
     const body = await req.json();
     const { registrationId, status } = body; // status: 'CONFIRMED' | 'REJECTED' | 'PENDING'
 
@@ -48,7 +50,8 @@ export async function PUT(req, { params }) {
 
 export async function POST(req, { params }) {
   try {
-    const eventId = parseInt(params.id);
+    const resolvedParams = await params;
+    const eventId = parseInt(resolvedParams.id);
     const body = await req.json();
     const { fullName, email, teamName, registrationType } = body;
 

@@ -3,7 +3,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 import { hasAccess } from "@/lib/permissions";
 import { db } from "@/lib/db";
-import { attendance, user } from "@/db/schema";
+import { attendance, attendanceSession, user } from "@/db/schema";
 import { desc, asc, eq } from "drizzle-orm";
 import AttendanceClient from "./AttendanceClient";
 
@@ -27,7 +27,7 @@ export default async function AttendanceAdminPage() {
     with: {
       member: { columns: { id: true, name: true, npm: true } },
     },
-    orderBy: [desc(attendance.date)],
+    orderBy: [desc(attendance.createdAt)],
   });
 
   // Fetch active users (members list) for add dropdown
@@ -37,10 +37,15 @@ export default async function AttendanceAdminPage() {
     columns: { id: true, name: true, npm: true },
   });
 
+  const sessions = await db.query.attendanceSession.findMany({
+    orderBy: [desc(attendanceSession.date)],
+  });
+
   return (
     <AttendanceClient
       initialAttendance={records}
       members={members}
+      sessions={sessions}
       currentUser={session.user}
     />
   );

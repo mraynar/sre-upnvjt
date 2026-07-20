@@ -12,7 +12,8 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     const body = await req.json();
     const { title, description, bannerUrl, eventDate, location, category, registrationType } = body;
 
@@ -46,7 +47,8 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     // Delete registrations first (FK constraint)
     await db.delete(eventRegistration).where(eq(eventRegistration.eventId, id));
     await db.delete(event).where(eq(event.id, id));

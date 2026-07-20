@@ -203,7 +203,7 @@ export default function MerchClient({ initialMerchandise }) {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 dark:text-white/20">
+                      <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 ">
                         <ShoppingBag className="w-10 h-10 mb-2" />
                         <span className="text-[12px]">No Image</span>
                       </div>
@@ -264,7 +264,7 @@ export default function MerchClient({ initialMerchandise }) {
               ))
             ) : (
               <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/5 rounded-3xl backdrop-blur-md shadow-sm border-dashed">
-                <ShoppingBag className="w-12 h-12 text-gray-500 dark:text-white/20 mb-4" />
+                <ShoppingBag className="w-12 h-12 text-gray-500  mb-4" />
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Belum ada produk</h3>
                 <p className="text-gray-500 dark:text-white/40 text-sm">Tambahkan merchandise baru untuk ditampilkan di landing page.</p>
               </div>
@@ -308,7 +308,7 @@ export default function MerchClient({ initialMerchandise }) {
                         required
                         value={currentMerch.name}
                         onChange={(e) => setCurrentMerch(prev => ({ ...prev, name: e.target.value }))}
-                        className="w-full h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
+                        className="w-full h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500  focus:outline-none focus:border-primary/50 transition-all"
                         placeholder="e.g. SRE Signature T-Shirt"
                       />
                     </div>
@@ -321,7 +321,7 @@ export default function MerchClient({ initialMerchandise }) {
                         min="0"
                         value={currentMerch.price}
                         onChange={(e) => setCurrentMerch(prev => ({ ...prev, price: e.target.value }))}
-                        className="w-full h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
+                        className="w-full h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500  focus:outline-none focus:border-primary/50 transition-all"
                         placeholder="e.g. 149000"
                       />
                     </div>
@@ -332,7 +332,7 @@ export default function MerchClient({ initialMerchandise }) {
                         required
                         value={currentMerch.description}
                         onChange={(e) => setCurrentMerch(prev => ({ ...prev, description: e.target.value }))}
-                        className="w-full p-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all resize-none h-24"
+                        className="w-full p-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500  focus:outline-none focus:border-primary/50 transition-all resize-none h-24"
                         placeholder="Detail bahan, ukuran, dll..."
                       />
                     </div>
@@ -349,7 +349,7 @@ export default function MerchClient({ initialMerchandise }) {
                           type="text"
                           value={currentMerch.imageUrl}
                           onChange={(e) => setCurrentMerch(prev => ({ ...prev, imageUrl: e.target.value }))}
-                          className="flex-1 h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
+                          className="flex-1 h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500  focus:outline-none focus:border-primary/50 transition-all"
                           placeholder="https://images.unsplash.com/..."
                         />
                         <label className={`relative overflow-hidden w-12 h-12 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl flex items-center justify-center hover:bg-gray-50 dark:hover:bg-white/10 transition-colors cursor-pointer shrink-0 ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -370,7 +370,7 @@ export default function MerchClient({ initialMerchandise }) {
                         type="url"
                         value={currentMerch.linkUrl}
                         onChange={(e) => setCurrentMerch(prev => ({ ...prev, linkUrl: e.target.value }))}
-                        className="w-full h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500 dark:text-white/20 focus:outline-none focus:border-primary/50 transition-all"
+                        className="w-full h-12 px-4 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder:text-gray-500  focus:outline-none focus:border-primary/50 transition-all"
                         placeholder="Link Shopee / Tokopedia / WhatsApp"
                       />
                     </div>

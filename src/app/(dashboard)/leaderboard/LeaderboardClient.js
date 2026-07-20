@@ -219,11 +219,11 @@ export default function LeaderboardClient({ initialLeaderboard, members, current
                       required
                       value={userId}
                       onChange={e => setUserId(e.target.value)}
-                      className="w-full h-12 px-4 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none"
+                      className="w-full h-12 px-4 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl text-sm focus:outline-none"
                     >
-                      <option value="">— Pilih Anggota —</option>
+                      <option className="dark:text-white" value="">— Pilih Anggota —</option>
                       {members.map(m => (
-                        <option key={m.id} value={m.id.toString()}>{m.name}</option>
+                        <option className="text-gray-900 dark:text-black " key={m.id} value={m.id.toString()}>{m.name}</option>
                       ))}
                     </select>
                   </InputField>

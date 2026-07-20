@@ -41,9 +41,9 @@ export async function createUser(data) {
       roleId: parseInt(roleId),
       departmentId: departmentId ? parseInt(departmentId) : null,
       divisionId: divisionId ? parseInt(divisionId) : null,
-    });
+    }).returning({ id: user.id });
     revalidatePath("/users");
-    return { success: true, data: { id: result.insertId, name, email } };
+    return { success: true, data: { id: result.id, name, email } };
   } catch (error) {
     return { success: false, error: error.message };
   }

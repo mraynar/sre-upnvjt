@@ -7,7 +7,8 @@ import { authOptions } from "../../auth/[...nextauth]/route";
 
 export async function GET(req, { params }) {
   try {
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     const result = await db.query.quiz.findFirst({
       where: (t, { eq }) => eq(t.id, id),
       with: {
@@ -29,7 +30,8 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     const body = await req.json();
     const { title, description, timeLimitMinutes, passingScore, rewardXp, isPublished } = body;
 
@@ -62,7 +64,8 @@ export async function DELETE(req, { params }) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     // Delete dependent submissions, then questions, then the quiz
     await db.delete(quizSubmission).where(eq(quizSubmission.quizId, id));
     await db.delete(quizQuestion).where(eq(quizQuestion.quizId, id));

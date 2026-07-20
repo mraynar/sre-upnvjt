@@ -16,11 +16,11 @@ export async function createMerchandise(data) {
       imageUrl,
       linkUrl,
       isAvailable: isAvailable !== undefined ? isAvailable : true,
-    });
+    }).returning({ id: merchandise.id });
 
     revalidatePath("/merchandise");
     revalidatePath("/");
-    return { success: true, merchandise: { id: result.insertId, name } };
+    return { success: true, merchandise: { id: result.id, name } };
   } catch (error) {
     console.error("Error creating merchandise:", error);
     return { success: false, error: error.message };

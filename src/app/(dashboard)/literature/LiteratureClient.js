@@ -308,11 +308,11 @@ export default function LiteratureClient({ initialCategories, initialItems, curr
             <select
               value={filterCategory}
               onChange={e => setFilterCategory(e.target.value)}
-              className="h-10 px-3 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-all"
+              className="h-10 px-3 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-sm focus:outline-none focus:border-primary/50 transition-all"
             >
-              <option value="all">Semua Kategori</option>
+              <option className="text-gray-900 dark:text-primary/50" value="all">Semua Kategori</option>
               {categories.map(c => (
-                <option key={c.id} value={c.id.toString()}>{c.name}</option>
+                <option className="text-gray-900 dark:text-primary/50" key={c.id} value={c.id.toString()}>{c.name}</option>
               ))}
             </select>
             <select
@@ -320,11 +320,11 @@ export default function LiteratureClient({ initialCategories, initialItems, curr
               onChange={e => setFilterType(e.target.value)}
               className="h-10 px-3 bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl text-sm text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 transition-all"
             >
-              <option value="all">Semua Tipe</option>
+              <option className="text-gray-900 dark:text-primary/50" value="all">Semua Tipe</option>
               {ITEM_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
-            <span className="flex items-center text-sm text-gray-500 dark:text-white/40 ml-auto">
-              {filteredItems.length} item
+            <span className="flex items-center text-sm text-gray-500 dark:text-primary ml-auto">
+              {filteredItems.length}
             </span>
           </div>
 

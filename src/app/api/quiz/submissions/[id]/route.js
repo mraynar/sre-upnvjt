@@ -16,7 +16,8 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ error: "Forbidden: Admin access only" }, { status: 403 });
     }
 
-    const id = parseInt(params.id);
+    const resolvedParams = await params;
+    const id = parseInt(resolvedParams.id);
     const body = await req.json();
     const { essayScore } = body;
 

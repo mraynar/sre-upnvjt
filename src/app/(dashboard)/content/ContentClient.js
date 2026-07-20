@@ -122,38 +122,40 @@ export default function ContentClient({ initialContents, currentUser }) {
   return (
     <div className="p-6 w-full space-y-6">
       {/* Header Stacked Layout */}
-      <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary/90 to-emerald-900 p-8 md:p-12 text-white shadow-2xl shadow-primary/20 mb-10">
+      <div className="relative overflow-hidden rounded-4xl bg-linear-to-br from-primary/90 to-emerald-900 p-8 md:p-12 text-white shadow-2xl shadow-primary/20 mb-10">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-40 h-40 bg-emerald-400/20 rounded-full blur-[60px] translate-y-1/3 -translate-x-1/4 pointer-events-none" />
         
-        <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-bold uppercase tracking-widest backdrop-blur-md">
-              <FileText className="w-4 h-4" /> Content Manager
-            </div>
+        <div className="w-full relative z-10 flex flex-col justify-between gap-6 md:gap-1">
+          <div className="space-y-4 md:flex md:justify-between ">
+            <div>
             <h1 className="text-4xl md:text-5xl font-black tracking-tighter leading-none drop-shadow-sm">
-              Articles & News
+              Artikel dan Berita
             </h1>
             <p className="text-white/80 max-w-lg text-sm md:text-base font-medium leading-relaxed">
-              Manage your publications, research insights, and organization updates with a seamless editing experience.
+              Tambah Artikel dan Berita Tentang Energi Terbarukan
             </p>
+            </div>
+            <div className="inline-flex h-max items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-[10px] lg:text-xs font-bold uppercase tracking-widest backdrop-blur-md">
+              <FileText className="w-4 h-4" /> Content Manager
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
-            <div className="relative w-full sm:w-auto">
+          <div className="flex flex-col md:grid md:grid-cols-3 items-center gap-3 w-full md:w-auto shrink-0">
+            <div className="relative w-full sm:w-auto md:col-start-1 md:col-span-2">
               <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-white/50" />
               <input 
                 type="text"
                 placeholder="Search content..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full sm:w-64 pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-md transition-all shadow-inner"
+                className="w-full  pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 backdrop-blur-md transition-all shadow-inner"
               />
             </div>
             {canCreate && (
               <button 
                 onClick={() => handleOpenModal()}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-emerald-900 hover:bg-gray-50 px-8 py-4 rounded-2xl font-bold transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
+                className="w-full md:col-start-3 sm:w-auto flex items-center justify-center gap-2 bg-white text-emerald-900 hover:bg-gray-50 px-8 py-4 rounded-2xl font-bold transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.2)] hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
               >
                 <Plus className="w-5 h-5" />
                 <span>Create New</span>
@@ -196,7 +198,7 @@ export default function ContentClient({ initialContents, currentUser }) {
                       <ImageIcon className="w-12 h-12 text-gray-300 dark:text-white/10" />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
                   
                   {/* Status Badge */}
                   <div className="absolute top-4 left-4">
@@ -300,7 +302,7 @@ export default function ContentClient({ initialContents, currentUser }) {
                       <textarea required rows={12} value={formData.body} onChange={e => setFormData({...formData, body: e.target.value})} className="w-full flex-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base focus:outline-none focus:ring-2 focus:ring-primary/50 text-gray-900 dark:text-white transition-all resize-none shadow-sm leading-relaxed" placeholder="Write your content here..." />
                     </div>
 
-                    <div className="flex items-center gap-4 p-6 bg-gradient-to-r from-gray-50 to-white dark:from-white/5 dark:to-transparent rounded-2xl border border-gray-200 dark:border-white/10 shadow-sm">
+                    <div className="flex items-center gap-4 p-6 bg-linear-to-r from-gray-50 to-white dark:from-white/5 dark:to-transparent rounded-2xl border border-gray-200 dark:border-white/10 shadow-sm">
                       <div className={`w-14 h-7 rounded-full p-1 cursor-pointer transition-colors ${formData.isPublished ? 'bg-primary' : 'bg-gray-300 dark:bg-white/20'}`} onClick={() => setFormData({...formData, isPublished: !formData.isPublished})}>
                         <motion.div layout className="w-5 h-5 bg-white rounded-full shadow-md" animate={{ x: formData.isPublished ? 28 : 0 }} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
                       </div>
@@ -329,8 +331,8 @@ export default function ContentClient({ initialContents, currentUser }) {
       <AnimatePresence>
         {isDeleteModalOpen && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]" onClick={() => !isLoading && setIsDeleteModalOpen(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white dark:bg-[#0a1612] rounded-3xl shadow-2xl z-[60] overflow-hidden border border-gray-200 dark:border-white/10 p-6 text-center">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-60" onClick={() => !isLoading && setIsDeleteModalOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white dark:bg-[#0a1612] rounded-3xl shadow-2xl z-60 overflow-hidden border border-gray-200 dark:border-white/10 p-6 text-center">
               <div className="w-16 h-16 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <AlertCircle className="w-8 h-8" />
               </div>
