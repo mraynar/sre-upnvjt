@@ -8,6 +8,10 @@ import {
   Sprout,
   Globe,
   Building2,
+  Leaf,
+  Zap,
+  Sun,
+  Wind,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -297,25 +301,29 @@ export default function Home() {
         >
           {/* Background decorations (Fix 2) */}
           <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-            {/* Solar panel icon - top right */}
-            <svg className="absolute top-12 right-8 w-40 h-40 opacity-[0.04] dark:opacity-[0.06] text-emerald-600 dark:text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M3 3h7v7H3zm0 11h7v7H3zm11-11h7v7h-7zm0 11h7v7h-7z"/>
-            </svg>
+            {/* Leaf icons */}
+            <Leaf className="absolute top-10 right-16 w-6 h-6 text-emerald-600 dark:text-emerald-300 opacity-[0.10] dark:opacity-[0.14]" />
+            <Leaf className="absolute top-32 right-48 w-8 h-8 text-emerald-600 dark:text-emerald-300 opacity-[0.08] dark:opacity-[0.12]" />
+            <Leaf className="absolute bottom-20 left-1/3 w-5 h-5 text-emerald-600 dark:text-emerald-300 opacity-[0.09] dark:opacity-[0.13]" />
 
-            {/* Leaf/plant icon - bottom left */}
-            <svg className="absolute bottom-16 left-6 w-52 h-52 opacity-[0.04] dark:opacity-[0.05] text-emerald-600 dark:text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-5 8z"/>
-            </svg>
+            {/* Zap/energy icons */}
+            <Zap className="absolute top-1/3 right-8 w-7 h-7 text-emerald-600 dark:text-emerald-300 opacity-[0.08] dark:opacity-[0.12]" />
+            <Zap className="absolute bottom-32 right-1/3 w-5 h-5 text-emerald-600 dark:text-emerald-300 opacity-[0.07] dark:opacity-[0.10]" />
 
-            {/* Wind turbine lines - mid left */}
-            <svg className="absolute top-1/2 -translate-y-1/2 -left-8 w-48 h-48 opacity-[0.03] dark:opacity-[0.05] text-emerald-600 dark:text-white" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="2"/>
-              <path d="M12 2v10M6.34 6.34l7.07 7.07M2 12h10M6.34 17.66l7.07-7.07"/>
-            </svg>
+            {/* Sun icons */}
+            <Sun className="absolute top-16 left-1/2 w-8 h-8 text-emerald-600 dark:text-emerald-300 opacity-[0.08] dark:opacity-[0.12]" />
+            <Sun className="absolute bottom-12 right-12 w-6 h-6 text-emerald-600 dark:text-emerald-300 opacity-[0.09] dark:opacity-[0.13]" />
+
+            {/* Wind icons */}
+            <Wind className="absolute top-1/2 left-8 w-7 h-7 text-emerald-600 dark:text-emerald-300 opacity-[0.07] dark:opacity-[0.11]" />
+            <Wind className="absolute bottom-40 left-1/4 w-5 h-5 text-emerald-600 dark:text-emerald-300 opacity-[0.08] dark:opacity-[0.12]" />
+
+            {/* Sprout icons */}
+            <Sprout className="absolute top-24 left-16 w-6 h-6 text-emerald-600 dark:text-emerald-300 opacity-[0.09] dark:opacity-[0.13]" />
           </div>
 
           <div className="site-container relative z-10 w-full max-w-screen-xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-stretch w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start w-full">
               
               {/* Left Column: Label + Image (First on desktop & mobile) (Fix 1) */}
               <div className="w-full flex flex-col justify-start order-1 lg:order-1 h-full min-h-0">
@@ -327,25 +335,23 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* Aspect-ratio image padding block */}
-                <div className="relative w-full" style={{ minHeight: '100%' }}>
-                  <div className="relative w-full overflow-hidden shadow-2xl rounded-2xl bg-white/10" style={{ paddingBottom: '130%' }}>
-                    <img
-                      src="/images/about/PanelSurya.jpg"
-                      alt="Panel Surya SRE UPN JATIM"
-                      className="absolute inset-0 w-full h-full object-cover rounded-2xl animate-fade-in"
-                    />
-                    {/* Decorative L-shaped corner accent top-right (directly on image) */}
-                    <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-emerald-400 z-10 rounded-tr-sm" aria-hidden="true" />
-                    {/* Decorative L-shaped corner accent bottom-left (directly on image) */}
-                    <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-emerald-400 z-10 rounded-bl-sm" aria-hidden="true" />
-                  </div>
-                  {/* Decorative offset border (does not touch image) */}
-                  <div className="absolute -bottom-3 -left-3 w-full h-full rounded-2xl border border-emerald-500/30 dark:border-emerald-400/20 pointer-events-none -z-10" aria-hidden="true" />
+                {/* Aspect-square image container */}
+                <div className="relative w-full aspect-square">
+                  <img
+                    src="/images/about/PanelSurya.jpg"
+                    alt="Panel Surya"
+                    className="absolute inset-0 w-full h-full object-cover rounded-2xl"
+                  />
+                  {/* Decorative L-shaped corner accent top-right */}
+                  <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-emerald-400 z-10" />
+                  {/* Decorative L-shaped corner accent bottom-left */}
+                  <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-emerald-400 z-10" />
+                  {/* Offset border frame */}
+                  <div className="absolute -bottom-3 -left-3 w-full h-full rounded-2xl border border-emerald-500/30 dark:border-emerald-400/20 pointer-events-none -z-10" />
                 </div>
               </div>
 
-              {/* Right Column: Text Content & Cards */}
+              {/* Right Column: Text Content & Cards (Fix 3) */}
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -413,7 +419,7 @@ export default function Home() {
                     <motion.span
                       whileHover={{ x: 4 }}
                       transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                      className="text-emerald-700 dark:text-primary"
+                      className="text-emerald-700 dark:text-emerald-400"
                     >
                       <ArrowUpRight className="w-5 h-5" aria-hidden="true" />
                     </motion.span>
