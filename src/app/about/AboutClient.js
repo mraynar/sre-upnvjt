@@ -177,7 +177,7 @@ export default function AboutClient({ divisionsData }) {
               <motion.span
                 key={i}
                 variants={wordChild}
-                className={i === 1 ? "text-primary dark:text-[#e8ecc4]" : ""}
+                className={i === 1 ? "text-amber-500 dark:text-amber-400" : ""}
                 style={{ display: "inline-block" }}
               >
                 {word}
@@ -224,7 +224,7 @@ export default function AboutClient({ divisionsData }) {
                 </div>
                 <h2 className="text-[36px] md:text-[48px] font-display font-black uppercase text-[#07130e] dark:text-white mb-6 tracking-tight leading-[1.05]">
                   Menjadi wadah{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-300">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-primary to-yellow-400">
                     esensial
                   </span>{" "}
                   mahasiswa
@@ -313,7 +313,7 @@ export default function AboutClient({ divisionsData }) {
                   {pl.num}
                 </span>
                 <div>
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-5 group-hover:scale-110 group-hover:bg-primary group-hover:text-[#07130e] group-hover:border-primary group-hover:shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all duration-500 relative">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-5 group-hover:scale-110 group-hover:bg-amber-400 group-hover:text-[#07130e] group-hover:border-amber-400 group-hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all duration-500 relative">
                     <pl.icon className="w-5 h-5" aria-hidden="true" />
                   </div>
                   <h4 className="text-[17px] font-black text-[#07130e] dark:text-white mb-2.5 uppercase tracking-tight">{pl.title}</h4>

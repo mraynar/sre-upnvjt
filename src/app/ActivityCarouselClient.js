@@ -131,7 +131,7 @@ export default function ActivityCarousel({ activities }) {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" aria-hidden="true" />
-                <span className="absolute top-3 right-3 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
+                <span className="absolute top-3 right-3 bg-amber-400 text-slate-900 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
                   Featured
                 </span>
                 <h3 className="absolute bottom-3 left-4 text-white font-black text-base uppercase tracking-wide">
@@ -170,10 +170,10 @@ export default function ActivityCarousel({ activities }) {
       <div className="flex items-center justify-center gap-4 mt-6">
         <button
           onClick={prev}
-          className="w-9 h-9 rounded-full bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-700 dark:hover:bg-emerald-600 flex items-center justify-center transition-colors shadow-md focus-visible:outline-emerald-500"
+          className="w-9 h-9 rounded-full bg-amber-400 hover:bg-amber-300 text-gray-900 dark:bg-amber-500 dark:hover:bg-amber-400 flex items-center justify-center transition-colors shadow-md focus-visible:outline-amber-500"
           aria-label="Previous slide"
         >
-          <ChevronLeft className="w-4 h-4 text-white" />
+          <ChevronLeft className="w-4 h-4 text-slate-900 dark:text-white" />
         </button>
         <div className="flex gap-2">
           {activities.map((_, i) => (
@@ -181,18 +181,18 @@ export default function ActivityCarousel({ activities }) {
               key={i}
               onClick={() => goTo(i)}
               aria-label={`Go to slide ${i + 1}`}
-              className={`h-2 rounded-full transition-all duration-300 focus-visible:outline-emerald-500 ${
-                i === current ? 'w-6 bg-emerald-500' : 'w-2 bg-gray-400 dark:bg-gray-600'
+              className={`h-2 rounded-full transition-all duration-300 focus-visible:outline-amber-500 ${
+                i === current ? 'w-6 bg-amber-400' : 'w-2 bg-gray-400 dark:bg-gray-600'
               }`}
             />
           ))}
         </div>
         <button
           onClick={next}
-          className="w-9 h-9 rounded-full bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-700 dark:hover:bg-emerald-600 flex items-center justify-center transition-colors shadow-md focus-visible:outline-emerald-500"
+          className="w-9 h-9 rounded-full bg-amber-400 hover:bg-amber-300 text-gray-900 dark:bg-amber-500 dark:hover:bg-amber-400 flex items-center justify-center transition-colors shadow-md focus-visible:outline-amber-500"
           aria-label="Next slide"
         >
-          <ChevronRight className="w-4 h-4 text-white" />
+          <ChevronRight className="w-4 h-4 text-slate-900 dark:text-white" />
         </button>
       </div>
     </div>

@@ -242,7 +242,7 @@ export default function Home() {
                   isLight ? "text-white" : "text-[#e8ecc4]"
                 }`}>of</span>
               </div>
-              <div className={isLight ? "text-white" : "text-[#e8ecc4] drop-shadow-md"}>RENEWABLE</div>
+              <div className="text-amber-400 dark:text-amber-400 drop-shadow-md">RENEWABLE</div>
               <div className={isLight ? "text-white" : "text-white drop-shadow-md"}>ENERGY</div>
             </motion.h1>
           </div>
@@ -300,7 +300,7 @@ export default function Home() {
             <div className="flex flex-col w-full h-full lg:pt-0">
               <div>
                 <h2 className="text-3xl lg:text-4xl font-black uppercase text-gray-900 dark:text-white leading-none">
-                  ABOUT SRE
+                  ABOUT <span className="text-amber-500 dark:text-amber-400">SRE</span>
                 </h2>
               </div>
 
@@ -335,7 +335,7 @@ export default function Home() {
               <hr className="border-gray-200 dark:border-gray-700" />
               
               <div>
-                <h3 className="text-2xl lg:text-3xl font-bold text-emerald-600 dark:text-emerald-400">SRE UPN JATIM</h3>
+                <h3 className="text-2xl lg:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-amber-400">SRE UPN JATIM</h3>
                 <p className="mt-3 text-gray-500 dark:text-gray-200 text-base leading-relaxed">
                   SRE UPN Veteran Jawa Timur is a collaborative student chapter under SRE Indonesia based in Surabaya. Since 2021, we have been empowering students through hands-on clean energy campaigns, professional research projects, and community technology deployments.
                 </p>
@@ -350,9 +350,9 @@ export default function Home() {
                 ].map((stat, idx) => (
                   <div
                     key={idx}
-                    className="rounded-xl p-4 border bg-emerald-50 border-emerald-200 dark:bg-emerald-950/50 dark:border-emerald-700/40 flex flex-col items-start gap-1 shadow-sm select-none"
+                    className="rounded-xl p-4 border bg-emerald-50/50 border-emerald-200 dark:bg-emerald-950/50 dark:border-emerald-700/40 flex flex-col items-start gap-1 shadow-sm select-none hover:border-amber-400/50 hover:bg-amber-50/10 dark:hover:bg-amber-950/10 transition-all duration-300"
                   >
-                    <stat.Icon className="text-emerald-600 dark:text-emerald-400 w-5 h-5 mb-2 shrink-0" aria-hidden="true" />
+                    <stat.Icon className="text-amber-500 dark:text-amber-400 w-5 h-5 mb-2 shrink-0" aria-hidden="true" />
                     <span className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 leading-none">
                       {stat.text}
                     </span>
@@ -407,9 +407,9 @@ export default function Home() {
                   </span>
                 </div>
                 <h2 className="text-[36px] md:text-[44px] font-display font-black tracking-tight text-gray-900 dark:text-white uppercase leading-[1.1]">
-                  OUR <span className="text-emerald-500">ACTIVITY</span>
+                  OUR <span className="text-amber-500 dark:text-amber-400">ACTIVITY</span>
                 </h2>
-                <div className="h-[3px] w-16 bg-emerald-500 mx-auto mt-2" aria-hidden="true" />
+                <div className="h-[3px] w-16 bg-gradient-to-r from-emerald-500 to-amber-400 mx-auto mt-2" aria-hidden="true" />
                 <p className="text-[15px] text-gray-500 dark:text-gray-400 max-w-xl mx-auto mt-3">
                   From research to community impact <br>
                   </br> explore what SRE UPN JATIM does on the ground.

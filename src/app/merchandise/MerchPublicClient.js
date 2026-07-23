@@ -81,7 +81,7 @@ export default function MerchPublicClient() {
           <h2 className="text-3xl md:text-5xl font-display font-black uppercase text-gray-900 dark:text-white tracking-tight relative inline-block">
             OUR SPECIAL BUNDLE
             {/* Yellow / gold accent line underline */}
-            <div className="h-[4px] w-full bg-yellow-400 dark:bg-emerald-500 mt-2 rounded-full" />
+            <div className="h-[4px] w-full bg-gradient-to-r from-yellow-400 to-amber-500 mt-2 rounded-full" />
           </h2>
         </div>
 
@@ -90,9 +90,9 @@ export default function MerchPublicClient() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border border-emerald-500/10 dark:border-white/5 bg-emerald-50/40 dark:bg-emerald-950/10 flex flex-col items-center justify-center text-center shadow-sm"
+          className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border border-amber-500/10 dark:border-white/5 bg-amber-50/10 dark:bg-amber-950/5 flex flex-col items-center justify-center text-center shadow-sm"
         >
-          <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-6">
+          <div className="w-20 h-20 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-500 dark:text-amber-400 mb-6">
             <Package className="w-10 h-10" />
           </div>
           <h3 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white mb-2">
@@ -110,7 +110,7 @@ export default function MerchPublicClient() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-display font-black uppercase tracking-tight relative inline-block">
               OUR PRODUCTS
-              <div className="h-[4px] w-full bg-white mt-2 rounded-full" />
+              <div className="h-[4px] w-full bg-gradient-to-r from-yellow-300 to-amber-400 mt-2 rounded-full" />
             </h2>
           </div>
 
@@ -121,7 +121,7 @@ export default function MerchPublicClient() {
             viewport={{ once: true }}
             className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border border-white/20 bg-white/10 dark:bg-[#07130e]/40 backdrop-blur-md flex flex-col items-center justify-center text-center shadow-2xl"
           >
-            <div className="w-20 h-20 rounded-full bg-white/15 flex items-center justify-center text-white mb-6">
+            <div className="w-20 h-20 rounded-full bg-amber-400/20 flex items-center justify-center text-amber-300 mb-6">
               <Package className="w-10 h-10" />
             </div>
             <h3 className="text-xl md:text-2xl font-bold mb-2 text-white">
