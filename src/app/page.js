@@ -264,7 +264,7 @@ export default function Home() {
             ══════════════════════════════════════════════════════════════════════ */}
 
         {/* Marquee ticker */}
-        <div className="bg-[#099160] dark:bg-[#050e09] border-y-2 border-white/25 dark:border-white/15 py-5 overflow-hidden flex select-none relative z-10" aria-hidden="true">
+        <div className="bg-[#099c6d] dark:bg-[#050e09] border-y-2 border-white/25 dark:border-white/15 py-5 overflow-hidden flex select-none relative z-10" aria-hidden="true">
           <motion.div
             animate={{ x: ["0%", "-50%"] }}
             transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
@@ -350,10 +350,10 @@ export default function Home() {
                 ].map((stat, idx) => (
                   <div
                     key={idx}
-                    className="rounded-xl p-4 border-2 bg-[#056041] border-yellow-300/60 dark:bg-[#093021] dark:border-emerald-500/60 flex flex-col items-start gap-1 shadow-md select-none hover:border-yellow-300 hover:bg-[#044c33] dark:hover:bg-[#0d422e] transition-all duration-300"
+                    className="rounded-xl p-4 border-2 bg-[#099c6d] border-yellow-300/60 dark:bg-[#093021] dark:border-emerald-500/60 flex flex-col items-start gap-1 shadow-md select-none hover:border-yellow-300 hover:bg-[#088c62] dark:hover:bg-[#0d422e] transition-all duration-300"
                   >
                     <stat.Icon className="text-yellow-300 dark:text-emerald-400 w-6 h-6 mb-1.5 shrink-0 drop-shadow-sm" aria-hidden="true" />
-                    <span className="text-[11px] font-black uppercase tracking-wider text-yellow-300/90 dark:text-emerald-300 leading-none">
+                    <span className="text-[11px] font-black uppercase tracking-wider text-yellow-300 dark:text-emerald-300 leading-none">
                       {stat.text}
                     </span>
                     <span className="text-sm font-black text-white dark:text-gray-100 leading-tight truncate w-full">
@@ -445,7 +445,7 @@ export default function Home() {
 
         {/* ── Testimonials Section ──────────────────────────────────────────────── */}
         {publicTestimonialsList.length > 0 && (
-          <section className="bg-[#097a52] dark:bg-[#07130e] border-t border-white/10 dark:border-white/5 py-24 relative overflow-hidden">
+          <section className="bg-[#089668] dark:bg-[#07130e] border-t-2 border-white/25 dark:border-white/15 py-24 relative overflow-hidden">
             <div className="site-container flex flex-col items-center">
               <motion.div
                 initial={{ opacity: 0, y: 22 }}
@@ -497,7 +497,7 @@ export default function Home() {
 
         {/* ── Partners Section ──────────────────────────────────────────────────── */}
         {partnersList.length > 0 && (
-          <section id="partners" className="scroll-mt-20 bg-[#0a9e6e] dark:bg-[#07130e] pb-24 relative overflow-hidden">
+          <section id="partners" className="scroll-mt-20 bg-[#099c6d] dark:bg-[#07130e] pb-24 relative overflow-hidden">
             <div className="site-container flex flex-col items-center justify-center text-center">
               <motion.div
                 initial={{ opacity: 0, y: 22 }}

@@ -130,15 +130,15 @@ export default function ActivityPage() {
 
             {/* Core Values Row */}
             <div className="grid grid-cols-3 gap-4 mt-4">
-              <div className="flex flex-col items-center p-4 rounded-xl bg-[#056041] border-2 border-yellow-300/50 dark:bg-emerald-950/60 dark:border-emerald-500/40 text-center shadow-md">
+              <div className="flex flex-col items-center p-4 rounded-xl bg-[#099c6d] border-2 border-yellow-300/60 dark:bg-emerald-950/60 dark:border-emerald-500/40 text-center shadow-md">
                 <Target className="w-6 h-6 text-yellow-300 dark:text-emerald-400 mb-2" />
                 <span className="text-xs font-black uppercase text-white dark:text-gray-200">Outreach</span>
               </div>
-              <div className="flex flex-col items-center p-4 rounded-xl bg-[#056041] border-2 border-yellow-300/50 dark:bg-emerald-950/60 dark:border-emerald-500/40 text-center shadow-md">
+              <div className="flex flex-col items-center p-4 rounded-xl bg-[#099c6d] border-2 border-yellow-300/60 dark:bg-emerald-950/60 dark:border-emerald-500/40 text-center shadow-md">
                 <Users className="w-6 h-6 text-yellow-300 dark:text-emerald-400 mb-2" />
                 <span className="text-xs font-black uppercase text-white dark:text-gray-200">Partnership</span>
               </div>
-              <div className="flex flex-col items-center p-4 rounded-xl bg-[#056041] border-2 border-yellow-300/50 dark:bg-emerald-950/60 dark:border-emerald-500/40 text-center shadow-md">
+              <div className="flex flex-col items-center p-4 rounded-xl bg-[#099c6d] border-2 border-yellow-300/60 dark:bg-emerald-950/60 dark:border-emerald-500/40 text-center shadow-md">
                 <BookOpen className="w-6 h-6 text-yellow-300 dark:text-emerald-400 mb-2" />
                 <span className="text-xs font-black uppercase text-white dark:text-gray-200">Awareness</span>
               </div>
@@ -168,7 +168,7 @@ export default function ActivityPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="group flex flex-col bg-[#056041] dark:bg-[#0d1f17] border-2 border-white/25 dark:border-white/15 rounded-2xl overflow-hidden shadow-md hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+                className="group flex flex-col bg-[#099c6d] dark:bg-[#0d1f17] border-2 border-yellow-300/60 dark:border-white/15 rounded-2xl overflow-hidden shadow-md hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
               >
                 {/* Image top with category overlay */}
                 <div className="relative aspect-video w-full overflow-hidden bg-emerald-950">

@@ -134,7 +134,7 @@ export default function MerchPublicClient() {
       </section>
 
       {/* ── 4. Get Official Merchandise bottom CTA (Gambar 3 Bottom Style) ── */}
-      <section className="py-24 px-6 md:px-12 lg:px-20 bg-[#082218] text-white relative overflow-hidden">
+      <section className="py-24 px-6 md:px-12 lg:px-20 bg-[#078a5e] dark:bg-[#082218] text-white relative overflow-hidden">
         {/* Wind Turbine vector layout on the right side */}
         <div className="absolute right-12 bottom-0 w-80 h-96 opacity-10 pointer-events-none hidden lg:block z-0">
           <svg className="w-full h-full text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor">

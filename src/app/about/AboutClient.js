@@ -161,7 +161,7 @@ export default function AboutClient({ divisionsData }) {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-start gap-4 mb-6"
           >
-            <span className="inline-block py-2 px-5 rounded-full bg-[#056041] dark:bg-white/5 border-2 border-yellow-300/50 dark:border-white/20 text-[11px] font-black tracking-widest uppercase text-yellow-300 dark:text-[#e8ecc4] shadow-md">
+            <span className="inline-block py-2 px-5 rounded-full bg-[#099c6d] dark:bg-white/5 border-2 border-yellow-300/60 dark:border-white/20 text-[11px] font-black tracking-widest uppercase text-yellow-300 dark:text-[#e8ecc4] shadow-md">
               SRE UPN Veteran Jawa Timur
             </span>
           </motion.div>
@@ -209,10 +209,10 @@ export default function AboutClient({ divisionsData }) {
             {/* Vision — left dark panel */}
             <motion.div
               {...fadeUp(0)}
-              className="bg-[#056041] dark:bg-[#07130e] p-10 md:p-14 relative overflow-hidden flex flex-col justify-between"
+              className="bg-[#099c6d] dark:bg-[#07130e] p-10 md:p-14 relative overflow-hidden flex flex-col justify-between"
             >
               {/* Large decorative "V" */}
-              <div className="absolute -top-8 -right-4 text-[200px] font-display font-black text-white/[0.05] select-none pointer-events-none leading-none" aria-hidden="true">
+              <div className="absolute -top-8 -right-4 text-[200px] font-display font-black text-white/[0.08] select-none pointer-events-none leading-none" aria-hidden="true">
                 V
               </div>
               <div>
@@ -242,9 +242,9 @@ export default function AboutClient({ divisionsData }) {
             {/* Mission — right slightly lighter panel */}
             <motion.div
               {...fadeUp(0.1)}
-              className="bg-[#045237] dark:bg-[#0a1a12] p-10 md:p-14 relative overflow-hidden flex flex-col justify-between border-t-2 border-white/25 dark:border-white/15 lg:border-t-0 lg:border-l-2"
+              className="bg-[#088c62] dark:bg-[#0a1a12] p-10 md:p-14 relative overflow-hidden flex flex-col justify-between border-t-2 border-white/25 dark:border-white/15 lg:border-t-0 lg:border-l-2"
             >
-              <div className="absolute -bottom-8 -left-4 text-[200px] font-display font-black text-white/[0.05] select-none pointer-events-none leading-none" aria-hidden="true">
+              <div className="absolute -bottom-8 -left-4 text-[200px] font-display font-black text-white/[0.08] select-none pointer-events-none leading-none" aria-hidden="true">
                 M
               </div>
               <div>
@@ -306,7 +306,7 @@ export default function AboutClient({ divisionsData }) {
               <motion.div
                 key={pl.num}
                 variants={staggerChild}
-                className="bg-[#056041] border-2 border-white/25 dark:bg-[#071d14] dark:border-white/15 p-7 rounded-2xl flex flex-col justify-between hover:border-yellow-300 hover:bg-[#044c33] dark:hover:bg-[#0b2b1e] hover:shadow-xl transition-all duration-500 group relative overflow-hidden shadow-md"
+                className="bg-[#099c6d] border-2 border-yellow-300/60 dark:bg-[#071d14] dark:border-white/15 p-7 rounded-2xl flex flex-col justify-between hover:border-yellow-300 hover:bg-[#088c62] dark:hover:bg-[#0b2b1e] hover:shadow-xl transition-all duration-500 group relative overflow-hidden shadow-md"
               >
                 {/* Large decorative number */}
                 <span className="absolute top-3 right-4 text-[72px] font-display font-black text-white/10 dark:text-white/10 group-hover:text-yellow-300/30 transition-colors duration-500 select-none pointer-events-none leading-none" aria-hidden="true">
@@ -326,15 +326,15 @@ export default function AboutClient({ divisionsData }) {
       </section>
 
       {/* ── 3. Org Structure Section ─────────────────────────────────────────── */}
-      <section id="structure" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#0bb37e] dark:bg-[#07130e] border-b border-slate-200 dark:border-white/5">
+      <section id="structure" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#0bb37e] dark:bg-[#07130e] border-b-2 border-white/25 dark:border-white/15">
         <div className="max-w-7xl mx-auto flex flex-col items-center">
           <motion.div 
             {...fadeUp(0)}
-            className="text-center mb-16 max-w-2xl"
+            className="text-center mb-16 max-w-3xl"
           >
-            <span className="text-[10px] font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase block mb-3">Internal Departments</span>
-            <h2 className="text-4xl md:text-5xl font-display font-black text-white dark:text-white uppercase tracking-tight">Struktur Organisasi</h2>
-            <p className="text-sm text-emerald-50/90 dark:text-white/40 mt-4 max-w-lg mx-auto leading-relaxed">
+            <span className="text-sm md:text-base font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase block mb-3 drop-shadow-sm">Internal Departments</span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black text-white dark:text-white uppercase tracking-tight drop-shadow-md">Struktur Organisasi</h2>
+            <p className="text-base md:text-lg font-bold text-white dark:text-gray-200 mt-4 max-w-xl mx-auto leading-relaxed drop-shadow-sm">
               SRE UPNVJT operates through six focused divisions, each responsible for a critical pillar of our movement.
             </p>
           </motion.div>
@@ -358,14 +358,14 @@ export default function AboutClient({ divisionsData }) {
               <motion.div
                 key={org.id}
                 variants={staggerChild}
-                className="bg-white/10 dark:bg-white/[0.03] border border-white/20 dark:border-white/5 rounded-3xl p-8 relative overflow-hidden group hover:border-yellow-300 dark:hover:border-emerald-500/30 hover:bg-white/15 dark:hover:bg-[#0a1f15] hover:shadow-2xl transition-all duration-500 flex flex-col justify-between"
+                className="bg-[#099c6d] border-2 border-yellow-300/60 dark:bg-[#0a1f15] dark:border-emerald-500/30 rounded-3xl p-8 relative overflow-hidden group hover:border-yellow-300 hover:shadow-2xl transition-all duration-500 flex flex-col justify-between shadow-md"
               >
-                <div className="absolute top-4 right-6 text-[44px] font-display font-black text-white/5 group-hover:text-yellow-300/10 transition-colors">
+                <div className="absolute top-4 right-6 text-[52px] font-display font-black text-yellow-300/40 dark:text-emerald-400/30 group-hover:text-yellow-300 transition-colors">
                   {org.id}
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold uppercase tracking-tight text-white dark:text-white mb-3">{org.name}</h4>
-                  <p className="text-[13px] text-emerald-50/80 dark:text-white/50 leading-relaxed font-light">{org.desc}</p>
+                  <h4 className="text-xl md:text-2xl font-black uppercase tracking-tight text-white dark:text-white mb-3 drop-shadow-sm">{org.name}</h4>
+                  <p className="text-sm md:text-base text-white dark:text-gray-200 leading-relaxed font-bold">{org.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -373,11 +373,11 @@ export default function AboutClient({ divisionsData }) {
 
           <motion.div 
             {...fadeUp(0)}
-            className="text-center mt-32 mb-16 max-w-2xl"
+            className="text-center mt-32 mb-16 max-w-3xl"
           >
-            <span className="text-[10px] font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase block mb-3">Our Core Team</span>
-            <h2 className="text-4xl md:text-5xl font-display font-black text-white dark:text-white uppercase tracking-tight">Kepengurusan Aktif</h2>
-            <p className="text-sm text-emerald-50/90 dark:text-white/40 mt-4 max-w-lg mx-auto">
+            <span className="text-sm md:text-base font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase block mb-3 drop-shadow-sm">Our Core Team</span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black text-white dark:text-white uppercase tracking-tight drop-shadow-md">Kepengurusan Aktif</h2>
+            <p className="text-base md:text-lg font-bold text-white dark:text-gray-200 mt-4 max-w-xl mx-auto drop-shadow-sm">
               Meet the team driving renewable energy awareness at UPNVJT.
             </p>
           </motion.div>
