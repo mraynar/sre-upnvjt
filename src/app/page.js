@@ -299,123 +299,108 @@ export default function Home() {
           className="scroll-mt-20 relative bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white py-24 px-6 lg:px-20 flex items-center border-b border-slate-200 dark:border-white/5 overflow-hidden"
           style={{ minHeight: "100vh" }}
         >
-          {/* Background decorations (Fix 1) */}
-          <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-            <Sun  className="absolute top-[20%] left-[30%]  w-7 h-7 text-emerald-500 dark:text-emerald-300 opacity-[0.05] dark:opacity-[0.07]" />
-            <Leaf className="absolute top-[60%] left-[50%]  w-6 h-6 text-emerald-500 dark:text-emerald-300 opacity-[0.05] dark:opacity-[0.07]" />
-            <Zap  className="absolute top-[35%] right-[20%] w-5 h-5 text-emerald-500 dark:text-emerald-300 opacity-[0.05] dark:opacity-[0.07]" />
-            <Wind className="absolute top-[75%] left-[65%]  w-6 h-6 text-emerald-500 dark:text-emerald-300 opacity-[0.05] dark:opacity-[0.07]" />
+          {/* BACKGROUND ICONS — z-0, spread across center (inline styles to guarantee opacity) */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            <Sun  style={{position:'absolute', top:'25%',  left:'40%',  width:20, height:20, opacity:0.04, color:'#10b981'}} />
+            <Leaf style={{position:'absolute', top:'65%',  left:'55%',  width:18, height:18, opacity:0.04, color:'#10b981'}} />
+            <Zap  style={{position:'absolute', top:'40%',  left:'70%',  width:16, height:16, opacity:0.04, color:'#10b981'}} />
+            <Wind style={{position:'absolute', top:'55%',  left:'30%',  width:18, height:18, opacity:0.04, color:'#10b981'}} />
           </div>
 
-          <div className="site-container relative z-10 w-full max-w-screen-xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start w-full">
-              
-              {/* Left Column: Label + Image (First on desktop & mobile) (Fix 2 & 3) */}
-              <div className="w-full flex flex-col items-start gap-4 order-1 lg:order-1 h-full min-h-0">
-                {/* Section title header */}
-                <div className="mb-4">
-                  <span className="text-[11px] uppercase tracking-[0.3em] text-emerald-600 dark:text-emerald-400 font-medium">
-                    • About
-                  </span>
-                  <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tight text-gray-900 dark:text-white leading-tight mt-1">
-                    SRE UPN <span className="text-emerald-600 dark:text-emerald-400">JATIM</span>
-                  </h2>
-                  <div className="h-[2px] w-0 bg-emerald-500 mt-2 animate-[expandWidth_0.8s_ease-out_0.3s_forwards]" />
-                </div>
+          {/* MAIN GRID — z-10 */}
+          <div className="site-container relative z-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
 
-                {/* Sized aspect-square image container */}
-                <div className="w-[280px] lg:w-[320px] aspect-square relative mx-auto lg:mx-0 flex-shrink-0">
-                  <img
-                    src="/images/about/PanelSurya.jpg"
-                    alt="Panel Surya"
-                    className="absolute inset-0 w-full h-full object-cover rounded-xl"
-                  />
-                  {/* Decorative L-shaped corner accent top-right */}
-                  <div className="absolute top-2 right-2 w-6 h-6 border-t-2 border-r-2 border-emerald-400 z-10" />
-                  {/* Decorative L-shaped corner accent bottom-left */}
-                  <div className="absolute bottom-2 left-2 w-6 h-6 border-b-2 border-l-2 border-emerald-400 z-10" />
-                  {/* Offset border frame */}
-                  <div className="absolute -bottom-2 -left-2 w-full h-full rounded-xl border border-emerald-500/25 dark:border-emerald-400/20 pointer-events-none -z-10" />
-                </div>
+            {/* LEFT COLUMN */}
+            <div className="flex flex-col gap-6 w-full">
+              {/* Label + Heading — same size relationship as right column "SRE INDONESIA" */}
+              <div>
+                <span className="text-xs uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-400 font-medium">
+                  • About
+                </span>
+                {/* This heading MUST visually align with "SRE INDONESIA" on the right */}
+                <h2 className="text-3xl lg:text-4xl font-black uppercase text-gray-900 dark:text-white mt-1">
+                  SRE UPN <span className="text-emerald-600 dark:text-emerald-400">JATIM</span>
+                </h2>
               </div>
 
-              {/* Right Column: Text Content & Cards (Fix 2) */}
-              <motion.div
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full flex flex-col justify-center order-2 lg:order-2 space-y-8"
-              >
-                {/* SRE INDONESIA Content Block */}
-                <div className="flex flex-col space-y-4">
-                  <h3 className="text-3xl font-bold uppercase text-gray-900 dark:text-white tracking-tight leading-none">
-                    SRE INDONESIA
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-200 text-base leading-relaxed max-w-xl">
-                    Society of Renewable Energy (SRE) Indonesia is the national student organization uniting university chapters across Indonesia in the mission to accelerate the country&apos;s clean energy transition. Through education, research, and community action, we drive the clean energy revolution.
-                  </p>
-                </div>
-
-                {/* Divider */}
-                <div className="w-full h-px bg-slate-200 dark:bg-white/5" aria-hidden="true" />
-
-                {/* SRE UPN JATIM Content Block */}
-                <div className="flex flex-col space-y-4">
-                  <h3 className="text-3xl font-bold uppercase text-emerald-600 dark:text-emerald-400 tracking-tight leading-none">
-                    SRE UPN JATIM
-                  </h3>
-                  <p className="text-gray-500 dark:text-gray-200 text-base leading-relaxed max-w-xl">
-                    SRE UPN Veteran Jawa Timur is a collaborative student chapter under SRE Indonesia based in Surabaya. Since 2021, we have been empowering students through hands-on clean energy campaigns, professional research projects, and community technology deployments.
-                  </p>
-                </div>
-
-                {/* Divider */}
-                <div className="w-full h-px bg-slate-200 dark:bg-white/5" aria-hidden="true" />
-
-                {/* Badge Row (Horizontal grid row of 3 stat cards) */}
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { text: "FOUNDED", value: "Est. 2021", Icon: Sprout },
-                    { text: "NETWORK", value: "SRE Indonesia", Icon: Globe },
-                    { text: "CAMPUS", value: "UPN Veteran Jatim", Icon: Building2 }
-                  ].map((stat, idx) => (
-                    <div
-                      key={idx}
-                      className="rounded-xl p-4 border bg-emerald-50 border-emerald-200 dark:bg-emerald-950/50 dark:border-emerald-700/40 flex flex-col items-start gap-1 shadow-sm select-none"
-                    >
-                      <stat.Icon className="text-emerald-600 dark:text-emerald-400 w-5 h-5 mb-2 shrink-0" aria-hidden="true" />
-                      <span className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 leading-none">
-                        {stat.text}
-                      </span>
-                      <span className="text-sm font-bold text-gray-800 dark:text-gray-100 leading-tight truncate w-full">
-                        {stat.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* CTA Link */}
-                <div className="pt-2">
-                  <Link
-                    href="/about"
-                    className="group inline-flex items-center gap-3 w-fit focus-visible:outline-emerald-600 focus-visible:outline-offset-4 rounded"
-                  >
-                    <span className="relative text-[14px] font-bold tracking-[0.18em] uppercase text-gray-900 dark:text-white after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:w-0 after:bg-emerald-600 dark:after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
-                      LEARN MORE ABOUT US
-                    </span>
-                    <motion.span
-                      whileHover={{ x: 4 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                      className="text-emerald-700 dark:text-emerald-400"
-                    >
-                      <ArrowUpRight className="w-5 h-5" aria-hidden="true" />
-                    </motion.span>
-                  </Link>
-                </div>
-              </motion.div>
-              
+              {/* Image — fixed size, not too small, not too large */}
+              <div className="relative w-full max-w-[400px] aspect-square">
+                <img
+                  src="/images/about/PanelSurya.jpg"
+                  alt="Panel Surya SRE UPN JATIM"
+                  style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',borderRadius:'16px'}}
+                />
+                <div style={{position:'absolute',top:10,right:10,width:24,height:24,borderTop:'2px solid #10b981',borderRight:'2px solid #10b981',zIndex:10}} />
+                <div style={{position:'absolute',bottom:10,left:10,width:24,height:24,borderBottom:'2px solid #10b981',borderLeft:'2px solid #10b981',zIndex:10}} />
+                <div style={{position:'absolute',bottom:-8,left:-8,width:'100%',height:'100%',borderRadius:16,border:'1px solid rgba(16,185,129,0.2)',zIndex:-1}} />
+              </div>
             </div>
+
+            {/* RIGHT COLUMN */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col gap-8 w-full"
+            >
+              <div>
+                <h3 className="text-3xl lg:text-4xl font-black uppercase text-gray-900 dark:text-white">SRE INDONESIA</h3>
+                <p className="mt-3 text-gray-500 dark:text-gray-200 text-base leading-relaxed">
+                  Society of Renewable Energy (SRE) Indonesia is the national student organization uniting university chapters across Indonesia in the mission to accelerate the country&apos;s clean energy transition. Through education, research, and community action, we drive the clean energy revolution.
+                </p>
+              </div>
+              
+              <hr className="border-gray-200 dark:border-gray-700" />
+              
+              <div>
+                <h3 className="text-2xl lg:text-3xl font-bold text-emerald-600 dark:text-emerald-400">SRE UPN JATIM</h3>
+                <p className="mt-3 text-gray-500 dark:text-gray-200 text-base leading-relaxed">
+                  SRE UPN Veteran Jawa Timur is a collaborative student chapter under SRE Indonesia based in Surabaya. Since 2021, we have been empowering students through hands-on clean energy campaigns, professional research projects, and community technology deployments.
+                </p>
+              </div>
+
+              {/* Badge Row (Horizontal grid row of 3 stat cards) */}
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { text: "FOUNDED", value: "Est. 2021", Icon: Sprout },
+                  { text: "NETWORK", value: "SRE Indonesia", Icon: Globe },
+                  { text: "CAMPUS", value: "UPN Veteran Jatim", Icon: Building2 }
+                ].map((stat, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-xl p-4 border bg-emerald-50 border-emerald-200 dark:bg-emerald-950/50 dark:border-emerald-700/40 flex flex-col items-start gap-1 shadow-sm select-none"
+                  >
+                    <stat.Icon className="text-emerald-600 dark:text-emerald-400 w-5 h-5 mb-2 shrink-0" aria-hidden="true" />
+                    <span className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 leading-none">
+                      {stat.text}
+                    </span>
+                    <span className="text-sm font-bold text-gray-800 dark:text-gray-100 leading-tight truncate w-full">
+                      {stat.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA Link */}
+              <div className="pt-2">
+                <Link
+                  href="/about"
+                  className="group inline-flex items-center gap-3 w-fit focus-visible:outline-emerald-600 focus-visible:outline-offset-4 rounded"
+                >
+                  <span className="relative text-[14px] font-bold tracking-[0.18em] uppercase text-gray-900 dark:text-white after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:w-0 after:bg-emerald-600 dark:after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
+                    LEARN MORE ABOUT US
+                  </span>
+                  <motion.span
+                    whileHover={{ x: 4 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                    className="text-emerald-700 dark:text-emerald-400"
+                  >
+                    <ArrowUpRight className="w-5 h-5" aria-hidden="true" />
+                  </motion.span>
+                </Link>
+              </div>
+            </motion.div>
           </div>
         </section>
 
