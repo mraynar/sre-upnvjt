@@ -1,10 +1,22 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Sun, Moon } from "lucide-react";
+import { ArrowRight, Sun, Moon, User, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
+
+const InstagramIcon = (props) => (
+  <svg className={`fill-current ${props.className || "w-4 h-4"}`} viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+  </svg>
+);
+
+const LinkedinIcon = (props) => (
+  <svg className={`fill-current ${props.className || "w-4 h-4"}`} viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+  </svg>
+);
 
 function HamburgerIcon({ isOpen, onClick, useDarkText }) {
   return (
@@ -102,8 +114,11 @@ export default function Header() {
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         className={`fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 ${
           shouldBeSolid
-            ? "bg-white/95 dark:bg-[#0a1f18]/90 border-b border-slate-200 dark:border-white/5 " + (useDarkText ? "text-[#07130e]" : "text-white") + " dark:text-white backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.08)]"
-            : `bg-transparent border-b border-transparent ` + (useDarkText ? "text-[#07130e]" : "text-white")
+            ? "bg-white/95 dark:bg-[#0a1f18]/90 border-b border-slate-200 dark:border-white/5 " +
+              (useDarkText ? "text-[#07130e]" : "text-white") +
+              " dark:text-white backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.08)]"
+            : `bg-transparent border-b border-transparent ` +
+              (useDarkText ? "text-[#07130e]" : "text-white")
         }`}
       >
         <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
@@ -114,10 +129,10 @@ export default function Header() {
               whileTap={{ scale: 0.95 }}
               className="flex items-center select-none cursor-pointer z-[60] relative"
             >
-              <img 
-                src="/images/logo.png" 
-                alt="SRE Logo" 
-                className={`h-10 w-auto object-contain transition-all duration-300 ${useDarkText ? "brightness-0" : ""}`} 
+              <img
+                src="/images/logo.png"
+                alt="SRE Logo"
+                className={`h-10 w-auto object-contain transition-all duration-300 ${useDarkText ? "brightness-0" : ""}`}
               />
             </motion.div>
           </Link>
@@ -138,14 +153,22 @@ export default function Header() {
                     <motion.div
                       layoutId="nav-underline"
                       className={`absolute -bottom-1 left-0 right-0 h-[2px] rounded-full ${useDarkText ? "bg-[#07130e]" : "bg-white"}`}
-                      transition={{ type: "spring", stiffness: 450, damping: 30 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 450,
+                        damping: 30,
+                      }}
                     />
                   )}
                   <span
                     className={`relative z-10 font-medium ${
                       isActive
-                        ? (useDarkText ? "text-[#07130e] font-bold" : "text-white font-bold")
-                        : (useDarkText ? "text-[#07130e]/70 hover:text-[#07130e] transition-colors" : "text-white/80 hover:text-white transition-colors")
+                        ? useDarkText
+                          ? "text-[#07130e] font-bold"
+                          : "text-white font-bold"
+                        : useDarkText
+                          ? "text-[#07130e]/70 hover:text-[#07130e] transition-colors"
+                          : "text-white/80 hover:text-white transition-colors"
                     }`}
                   >
                     {item.name}
@@ -163,16 +186,22 @@ export default function Header() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                aria-label={
+                  theme === "dark"
+                    ? "Switch to light mode"
+                    : "Switch to dark mode"
+                }
                 className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 border ${
                   useDarkText
                     ? "border-[#07130e]/30 text-[#07130e] hover:bg-[#07130e]/10"
                     : "border-white/30 text-white hover:bg-white/10"
                 }`}
               >
-                {theme === "dark"
-                  ? <Sun className="w-4 h-4" aria-hidden="true" />
-                  : <Moon className="w-4 h-4" aria-hidden="true" />}
+                {theme === "dark" ? (
+                  <Sun className="w-4 h-4" aria-hidden="true" />
+                ) : (
+                  <Moon className="w-4 h-4" aria-hidden="true" />
+                )}
               </motion.button>
             )}
             <Link href="/login">
@@ -180,8 +209,8 @@ export default function Header() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={`border text-[14px] font-semibold tracking-tight rounded-full px-6 py-2.5 transition-all duration-300 flex items-center gap-2 group shadow-lg cursor-pointer ${
-                  useDarkText 
-                    ? "border-[#07130e]/30 text-[#07130e] hover:bg-[#07130e] hover:text-white" 
+                  useDarkText
+                    ? "border-[#07130e]/30 text-[#07130e] hover:bg-[#07130e] hover:text-white"
                     : "border-white/30 text-white hover:bg-white hover:text-[#07130e]"
                 }`}
               >
@@ -190,7 +219,6 @@ export default function Header() {
               </motion.div>
             </Link>
           </div>
-
         </div>
       </motion.nav>
 
@@ -215,76 +243,248 @@ export default function Header() {
               onClick={close}
               className="fixed inset-0 z-40 md:hidden bg-black/40 backdrop-blur-sm"
             />
-
-            {/* Menu Panel – slides in from top */}
+            {/* Menu Panel – slides in from top with theme support */}
             <motion.div
               key="panel"
               initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
               animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)" }}
               exit={{ opacity: 0, clipPath: "inset(0 0 100% 0)" }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="fixed inset-x-0 top-0 z-50 md:hidden bg-[#07130e] min-h-screen flex flex-col px-7 pt-32 pb-12"
+              className={`fixed inset-0 z-50 md:hidden h-[100dvh] flex flex-col justify-between px-7 pt-20 pb-6 overflow-y-auto min-h-0 relative overflow-hidden transition-colors duration-500 ${
+                mounted && theme === "light"
+                  ? "bg-[#f4fbf7] text-[#07130e]"
+                  : "bg-[#07130e] text-white"
+              }`}
               style={{
                 background:
-                  "linear-gradient(160deg, #0a1f18 0%, #071410 60%, #0b1a10 100%)",
+                  mounted && theme === "light"
+                    ? "linear-gradient(160deg, #f4fbf7 0%, #e6f4ed 50%, #f0fdf4 100%)"
+                    : "linear-gradient(160deg, #091c15 0%, #06130d 50%, #0a1f18 100%)",
               }}
             >
+              {/* Glowing Background Ambient Orbs */}
+              <div
+                className={`absolute top-1/4 -left-20 w-72 h-72 rounded-full blur-[100px] pointer-events-none transition-colors duration-500 ${
+                  mounted && theme === "light"
+                    ? "bg-emerald-400/25"
+                    : "bg-emerald-500/15"
+                }`}
+              />
+              <div
+                className={`absolute bottom-1/4 -right-20 w-80 h-80 rounded-full blur-[120px] pointer-events-none transition-colors duration-500 ${
+                  mounted && theme === "light"
+                    ? "bg-teal-300/30"
+                    : "bg-teal-400/10"
+                }`}
+              />
+
               {/* Main Content Container */}
-              <div className="flex-1 flex flex-col justify-center w-full px-2 relative z-10">
-                <motion.span 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.1, duration: 0.5 }}
-                  className="text-[11px] font-bold tracking-[0.2em] text-[#e8ecc4]/60 uppercase mb-6 block"
-                >
-                  Navigation
-                </motion.span>
-
-                {/* Primary Links */}
-                <nav className="flex flex-col gap-1">
-                  {navItems.map((item, i) => (
-                    <Link key={item.name} href={item.path} onClick={close}>
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.15 + i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-[48px] sm:text-[56px] font-display font-bold text-[#e8ecc4] tracking-tighter leading-[1.1] hover:text-white transition-colors cursor-pointer"
-                      >
-                        {item.name}
-                      </motion.div>
-                    </Link>
-                  ))}
-                </nav>
-
-                {/* Login CTA — Mobile Menu */}
+              <div className="my-auto flex flex-col justify-center w-full px-2 relative z-10 py-2">
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 + navItems.length * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="mt-10"
+                  transition={{ delay: 0.1, duration: 0.4 }}
+                  className={`flex items-center justify-between mb-4 sm:mb-6 pb-2 border-b transition-colors duration-500 ${
+                    mounted && theme === "light"
+                      ? "border-emerald-900/10"
+                      : "border-white/10"
+                  }`}
                 >
-                  <Link href="/login" onClick={close} className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-primary text-[#07130e] text-[15px] font-bold tracking-widest uppercase transition-all hover:bg-[#e8ecc4] hover:scale-105 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
-                    <User className="w-5 h-5" />
-                    Login
-                  </Link>
+                  <span
+                    className={`text-[11px] font-bold tracking-[0.25em] uppercase transition-colors duration-500 ${
+                      mounted && theme === "light"
+                        ? "text-emerald-700"
+                        : "text-emerald-400"
+                    }`}
+                  >
+                    Navigation Menu
+                  </span>
+                  <span
+                    className={`text-[10px] font-mono transition-colors duration-500 ${
+                      mounted && theme === "light"
+                        ? "text-emerald-900/40"
+                        : "text-[#e8ecc4]/40"
+                    }`}
+                  >
+                    SRE SC UPNVJT
+                  </span>
                 </motion.div>
 
+                {/* Primary Links */}
+                <nav className="flex flex-col gap-1.5">
+                  {navItems.map((item, i) => {
+                    const isActive =
+                      pathname === item.path ||
+                      (pathname.startsWith(item.path) && item.path !== "/");
+                    const isLight = mounted && theme === "light";
+                    return (
+                      <Link key={item.name} href={item.path} onClick={close}>
+                        <motion.div
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{
+                            delay: 0.12 + i * 0.08,
+                            duration: 0.45,
+                            ease: [0.16, 1, 0.3, 1],
+                          }}
+                          className={`group flex items-center justify-between py-1.5 transition-all cursor-pointer ${
+                            isActive
+                              ? isLight
+                                ? "text-emerald-700 font-bold"
+                                : "text-emerald-400 font-bold"
+                              : isLight
+                                ? "text-[#07130e]/80 hover:text-emerald-900"
+                                : "text-[#e8ecc4] hover:text-white"
+                          }`}
+                        >
+                          <div className="flex items-center gap-4">
+                            <span
+                              className={`text-xs font-mono transition-colors ${
+                                isLight
+                                  ? "text-emerald-800/50 group-hover:text-emerald-700"
+                                  : "text-emerald-500/60 group-hover:text-emerald-400"
+                              }`}
+                            >
+                              0{i + 1}
+                            </span>
+                            <span className="text-[34px] xs:text-[40px] sm:text-[48px] font-display font-bold tracking-tighter leading-none group-hover:translate-x-2 transition-transform duration-300">
+                              {item.name}
+                            </span>
+                          </div>
+
+                          {isActive ? (
+                            <span
+                              className={`w-2.5 h-2.5 rounded-full ${
+                                isLight
+                                  ? "bg-emerald-600 shadow-[0_0_12px_#059669]"
+                                  : "bg-emerald-400 shadow-[0_0_12px_#34d399]"
+                              }`}
+                            />
+                          ) : (
+                            <ArrowUpRight
+                              className={`w-5 h-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 ${
+                                isLight ? "text-emerald-700" : "text-emerald-400"
+                              }`}
+                            />
+                          )}
+                        </motion.div>
+                      </Link>
+                    );
+                  })}
+                </nav>
+
+                {/* Actions Row: Login CTA + Mobile Dark/Light Mode Toggle */}
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    delay: 0.15 + navItems.length * 0.08,
+                    duration: 0.45,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="mt-6 flex items-center gap-3"
+                >
+                  <Link
+                    href="/login"
+                    onClick={close}
+                    className={`flex-1 inline-flex items-center justify-center gap-3 px-7 py-3.5 rounded-full text-[14px] font-bold tracking-widest uppercase transition-all active:scale-95 ${
+                      mounted && theme === "light"
+                        ? "bg-[#07130e] text-white hover:bg-emerald-900 shadow-[0_0_25px_rgba(7,19,14,0.15)]"
+                        : "bg-emerald-400 text-[#07130e] hover:bg-[#e8ecc4] shadow-[0_0_25px_rgba(16,185,129,0.3)]"
+                    }`}
+                  >
+                    <User className="w-4 h-4" />
+                    Login
+                  </Link>
+
+                  {mounted && (
+                    <button
+                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                      aria-label="Toggle theme"
+                      className={`w-12 h-12 rounded-full border backdrop-blur-md flex items-center justify-center active:scale-90 transition-all shrink-0 ${
+                        theme === "light"
+                          ? "border-emerald-900/20 bg-white/80 text-emerald-950 hover:bg-white shadow-sm"
+                          : "border-white/20 bg-white/5 text-white hover:bg-white/10"
+                      }`}
+                    >
+                      {theme === "dark" ? (
+                        <Sun className="w-5 h-5 text-amber-300" />
+                      ) : (
+                        <Moon className="w-5 h-5 text-emerald-700" />
+                      )}
+                    </button>
+                  )}
+                </motion.div>
               </div>
 
               {/* Footer Section */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 0.5 }}
-                className="mt-auto flex justify-between items-end text-[#e8ecc4]/60 text-[11px] sm:text-[12px] px-2 relative z-10"
+                transition={{ delay: 0.3, duration: 0.4 }}
+                className={`mt-auto shrink-0 flex justify-between items-end text-[11px] sm:text-[12px] px-2 relative z-10 pt-4 border-t transition-colors duration-500 ${
+                  mounted && theme === "light"
+                    ? "border-emerald-900/10 text-emerald-950/70"
+                    : "border-white/10 text-[#e8ecc4]/70"
+                }`}
               >
                 <div className="flex flex-col gap-1">
-                  <span>Society of Renewable Energy</span>
-                  <span>UPN Veteran Jawa Timur</span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`w-2 h-2 rounded-full animate-pulse ${
+                        mounted && theme === "light"
+                          ? "bg-emerald-600"
+                          : "bg-emerald-400"
+                      }`}
+                    />
+                    <span
+                      className={`font-semibold ${
+                        mounted && theme === "light"
+                          ? "text-emerald-950"
+                          : "text-white"
+                      }`}
+                    >
+                      Society of Renewable Energy
+                    </span>
+                  </div>
+                  <span
+                    className={
+                      mounted && theme === "light"
+                        ? "text-emerald-900/60"
+                        : "text-white/50"
+                    }
+                  >
+                    UPN Veteran Jawa Timur
+                  </span>
                 </div>
-                <div className="flex gap-5 font-bold tracking-wide">
-                  <a href="https://instagram.com/sre.upnvjt" target="_blank" rel="noreferrer" className="hover:text-[#e8ecc4] transition-colors">Instagram</a>
-                  <a href="https://linkedin.com/company/sre-upnvjt" target="_blank" rel="noreferrer" className="hover:text-[#e8ecc4] transition-colors">LinkedIn</a>
+
+                <div className="flex gap-4 font-bold tracking-wide">
+                  <a
+                    href="https://www.instagram.com/sre.upnjatim/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`flex items-center gap-1.5 transition-colors p-1 ${
+                      mounted && theme === "light"
+                        ? "hover:text-emerald-700 text-emerald-900/80"
+                        : "hover:text-emerald-400 text-white/70"
+                    }`}
+                  >
+                    <InstagramIcon className="w-3.5 h-3.5" />
+                    <span className="hidden xs:inline">Instagram</span>
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/company/sreupnjatim/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`flex items-center gap-1.5 transition-colors p-1 ${
+                      mounted && theme === "light"
+                        ? "hover:text-emerald-700 text-emerald-900/80"
+                        : "hover:text-emerald-400 text-white/70"
+                    }`}
+                  >
+                    <LinkedinIcon className="w-3.5 h-3.5" />
+                    <span className="hidden xs:inline">LinkedIn</span>
+                  </a>
                 </div>
               </motion.div>
             </motion.div>
