@@ -3,6 +3,7 @@ import AboutClient from "./AboutClient";
 import { db } from "@/lib/db";
 import { user, department, role } from "@/db/schema";
 import { eq, desc, asc } from "drizzle-orm";
+import { getAllDepartments } from "@/lib/services/organizationService";
 
 export const dynamic = "force-dynamic";
 
@@ -101,5 +102,8 @@ export default async function AboutPage() {
     };
   }).filter((div) => div.members.length > 0); // Only include departments that have real members
 
-  return <AboutClient divisionsData={divisionsData} />;
+  const departmentsData = await getAllDepartments();
+
+  return <AboutClient divisionsData={divisionsData} departmentsData={departmentsData} />;
 }
+

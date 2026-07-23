@@ -70,7 +70,7 @@ function EmptyState({ query }) {
       </div>
       <button
         onClick={() => window.location.reload()}
-        className="mt-2 px-8 py-3 rounded-full bg-yellow-300 text-slate-950 border-2 border-yellow-400 text-[12px] font-black uppercase tracking-widest hover:bg-yellow-400 shadow-md transition-all duration-300 focus-visible:outline-yellow-300"
+        className="mt-2 px-8 py-3 rounded-full bg-yellow-300 dark:bg-emerald-500 text-slate-950 dark:text-slate-950 border-2 border-yellow-400 dark:border-emerald-600 text-[12px] font-black uppercase tracking-widest hover:bg-yellow-400 dark:hover:bg-emerald-600 shadow-md transition-all duration-300 focus-visible:outline-yellow-300 dark:focus-visible:outline-emerald-500"
       >
         Browse All
       </button>

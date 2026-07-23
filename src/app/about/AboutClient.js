@@ -6,6 +6,7 @@ import {
   ArrowUpRight, BookOpen, Cpu, Leaf, Users, Mail, MapPin, ChevronLeft, ChevronRight
 } from "lucide-react";
 import Image from "next/image";
+import { DepartmentCard } from "@/components/organization/OrgComponents";
 
 // ─── Animation Variants ────────────────────────────────────────────────────────
 
@@ -112,7 +113,7 @@ function MemberCard({ member, index }) {
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 
-export default function AboutClient({ divisionsData }) {
+export default function AboutClient({ divisionsData, departmentsData = [] }) {
   const [activeTab, setActiveTab] = useState(divisionsData.length > 0 ? divisionsData[0].id : "");
   const tabListRef = useRef(null);
 
@@ -339,37 +340,12 @@ export default function AboutClient({ divisionsData }) {
             </p>
           </motion.div>
 
-          {/* Org cards — dynamically numbered, not hardcoded */}
-          <motion.div
-            variants={staggerParent}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-60px" }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full"
-          >
-            {[
-              { id: "01", name: "Research & Development", desc: "Focuses on solar power, bioenergy, and environmental audit studies." },
-              { id: "02", name: "Human Resource Development", desc: "Unites student chapters, managing onboarding and training plans." },
-              { id: "03", name: "Project Management", desc: "Oversees local community solar microgrids and deployment setups." },
-              { id: "04", name: "Public Relations", desc: "Coordinates national partnerships and external institutional visits." },
-              { id: "05", name: "Media & Information", desc: "Drives academic journals, graphics designs, and social reach." },
-              { id: "06", name: "Business Development", desc: "Creates chapter assets, merchandise gear, and sustainable funding." }
-            ].map((org, idx) => (
-              <motion.div
-                key={org.id}
-                variants={staggerChild}
-                className="bg-[#099c6d] border-2 border-[#e8ecc4]/60 dark:bg-[#0a1f15] dark:border-emerald-500/30 rounded-3xl p-8 relative overflow-hidden group hover:border-[#e8ecc4] hover:shadow-2xl transition-all duration-500 flex flex-col justify-between shadow-md"
-              >
-                <div className="absolute top-4 right-6 text-[52px] font-display font-black text-[#e8ecc4]/40 dark:text-emerald-400/30 group-hover:text-[#e8ecc4] transition-colors">
-                  {org.id}
-                </div>
-                <div>
-                  <h4 className="text-xl md:text-2xl font-black uppercase tracking-tight text-white dark:text-white mb-3 drop-shadow-sm">{org.name}</h4>
-                  <p className="text-sm md:text-base text-white dark:text-gray-200 leading-relaxed font-bold">{org.desc}</p>
-                </div>
-              </motion.div>
+          {/* Org cards — dynamically rendered from data service */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center w-full max-w-7xl mx-auto">
+            {departmentsData.map((dept, idx) => (
+              <DepartmentCard key={dept.slug} dept={dept} index={idx} />
             ))}
-          </motion.div>
+          </div>
 
           <motion.div 
             {...fadeUp(0)}

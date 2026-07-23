@@ -42,7 +42,7 @@ export default function MerchPublicClient() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="w-full max-w-[420px] aspect-square mx-auto rounded-3xl border-2 border-yellow-300/60 bg-[#099c6d] dark:bg-white/5 backdrop-blur-md shadow-2xl relative overflow-hidden flex items-center justify-center group"
+            className="w-full max-w-[420px] aspect-square mx-auto rounded-3xl border-2 border-yellow-300 dark:border-emerald-500/40 bg-[#099c6d] dark:bg-white/5 backdrop-blur-md shadow-2xl relative overflow-hidden flex items-center justify-center group"
           >
             <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/10 to-transparent" />
             {/* Spinning wind turbine vector inside box */}
@@ -81,7 +81,7 @@ export default function MerchPublicClient() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-display font-black uppercase text-white dark:text-white tracking-tight relative inline-block">
               OUR SPECIAL BUNDLE
-              <div className="h-[4px] w-full bg-gradient-to-r from-yellow-300 to-yellow-200 dark:from-yellow-400 dark:to-amber-500 mt-2 rounded-full" />
+              <div className="h-[4px] w-full bg-yellow-300 dark:bg-emerald-400 mt-2 rounded-full" />
             </h2>
           </div>
 
@@ -90,9 +90,9 @@ export default function MerchPublicClient() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border-2 border-yellow-300/60 bg-[#099c6d] dark:bg-amber-950/20 flex flex-col items-center justify-center text-center shadow-lg"
+            className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border-2 border-yellow-300 dark:border-emerald-500/40 bg-[#099c6d] dark:bg-[#0d1f17] flex flex-col items-center justify-center text-center shadow-lg"
           >
-            <div className="w-20 h-20 rounded-full bg-yellow-300/20 border-2 border-yellow-300 flex items-center justify-center text-yellow-300 mb-6">
+            <div className="w-20 h-20 rounded-full bg-yellow-300/20 border-2 border-yellow-300 dark:bg-emerald-500/20 dark:border-emerald-400 text-yellow-300 dark:text-emerald-400 flex items-center justify-center mb-6">
               <Package className="w-10 h-10" />
             </div>
             <h3 className="text-xl md:text-2xl font-black text-white dark:text-white mb-2">
@@ -111,7 +111,7 @@ export default function MerchPublicClient() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-display font-black uppercase tracking-tight relative inline-block">
               OUR PRODUCTS
-              <div className="h-[4px] w-full bg-gradient-to-r from-yellow-300 to-amber-400 mt-2 rounded-full" />
+              <div className="h-[4px] w-full bg-yellow-300 dark:bg-emerald-400 mt-2 rounded-full" />
             </h2>
           </div>
 
@@ -120,9 +120,9 @@ export default function MerchPublicClient() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border-2 border-yellow-300/60 bg-[#099c6d] dark:bg-[#07130e]/60 backdrop-blur-md flex flex-col items-center justify-center text-center shadow-2xl"
+            className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border-2 border-yellow-300 dark:border-emerald-500/40 bg-[#099c6d] dark:bg-[#0d1f17] backdrop-blur-md flex flex-col items-center justify-center text-center shadow-2xl"
           >
-            <div className="w-20 h-20 rounded-full bg-yellow-300/20 border-2 border-yellow-300 flex items-center justify-center text-yellow-300 mb-6">
+            <div className="w-20 h-20 rounded-full bg-yellow-300/20 border-2 border-yellow-300 dark:bg-emerald-500/20 dark:border-emerald-400 text-yellow-300 dark:text-emerald-400 flex items-center justify-center mb-6">
               <Package className="w-10 h-10" />
             </div>
             <h3 className="text-xl md:text-2xl font-black mb-2 text-white">
