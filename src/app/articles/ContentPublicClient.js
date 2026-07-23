@@ -51,18 +51,18 @@ function EmptyState({ query }) {
         <motion.div
           animate={{ scale: [1, 1.08, 1], opacity: [0.4, 0.6, 0.4] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute inset-0 rounded-full bg-primary/20 blur-xl"
+          className="absolute inset-0 rounded-full bg-yellow-300/30 dark:bg-emerald-400/20 blur-xl"
           aria-hidden="true"
         />
-        <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-primary/15 to-emerald-900/30 border border-primary/20 flex items-center justify-center">
-          <Leaf className="w-10 h-10 text-primary/60" aria-hidden="true" />
+        <div className="relative w-24 h-24 rounded-full bg-[#099c6d] dark:bg-emerald-950 border-2 border-yellow-300 dark:border-emerald-400 flex items-center justify-center shadow-lg">
+          <Leaf className="w-10 h-10 text-yellow-300 dark:text-emerald-400" aria-hidden="true" />
         </div>
       </div>
       <div>
-        <h3 className="text-[22px] font-display font-black uppercase tracking-tight text-[#07130e] dark:text-white mb-2">
+        <h3 className="text-[24px] font-display font-black uppercase tracking-tight text-white dark:text-white mb-2 drop-shadow-sm">
           No Articles Found
         </h3>
-        <p className="text-[14px] text-[#07130e]/50 dark:text-white/40 max-w-xs mx-auto leading-relaxed">
+        <p className="text-[15px] text-white dark:text-gray-200 max-w-sm mx-auto leading-relaxed font-bold">
           {query
             ? `No results for "${query}". Try a different keyword or browse all topics.`
             : "No articles available in this category yet. Check back soon."}
@@ -70,7 +70,7 @@ function EmptyState({ query }) {
       </div>
       <button
         onClick={() => window.location.reload()}
-        className="mt-2 px-6 py-2.5 rounded-full border border-slate-200 dark:border-white/10 text-[12px] font-bold uppercase tracking-widest text-[#07130e]/60 dark:text-white/40 hover:border-primary hover:text-primary transition-all duration-300 focus-visible:outline-primary"
+        className="mt-2 px-8 py-3 rounded-full bg-yellow-300 text-slate-950 border-2 border-yellow-400 text-[12px] font-black uppercase tracking-widest hover:bg-yellow-400 shadow-md transition-all duration-300 focus-visible:outline-yellow-300"
       >
         Browse All
       </button>
@@ -123,16 +123,16 @@ export default function ContentPublicClient({ initialArticles }) {
               Read the latest news, research, and updates from the Society of Renewable Energy UPN Veteran Jawa Timur.
             </p>
             
-            {/* Search bar with focus animation */}
+            {/* Search bar with focus animation — clean solid border, no white glowing box shadow */}
             <div className="relative max-w-xl mx-auto mb-12 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-300 dark:group-focus-within:text-emerald-400 transition-colors duration-300 pointer-events-none" aria-hidden="true" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-yellow-300 dark:text-emerald-400 pointer-events-none" aria-hidden="true" />
               <input 
                 type="text"
                 placeholder="Search articles by title or author..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 aria-label="Search articles"
-                className="w-full bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white dark:text-white placeholder:text-white/40 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-yellow-300/50 dark:focus:ring-primary/50 focus:border-yellow-300/40 dark:focus:border-primary/40 shadow-lg shadow-slate-100 dark:shadow-none transition-all duration-300 focus:scale-[1.01] backdrop-blur-sm"
+                className="w-full bg-[#099c6d] dark:bg-[#0a1f15] border-2 border-white/30 dark:border-white/15 rounded-2xl py-4 pl-12 pr-6 text-white dark:text-white placeholder:text-white/70 dark:placeholder:text-white/40 focus:outline-none focus:border-yellow-300 dark:focus:border-emerald-400 font-bold transition-all duration-300 shadow-md"
               />
             </div>
 
@@ -179,7 +179,7 @@ export default function ContentPublicClient({ initialArticles }) {
         aria-live="polite"
         aria-atomic="false"
         aria-label="Articles grid"
-        className="scroll-mt-20 py-20 px-6 bg-slate-50 dark:bg-[#050e0a] border-t border-slate-200 dark:border-white/5 relative z-10"
+        className="scroll-mt-20 py-20 px-6 bg-[#0aa373] dark:bg-[#050e0a] border-t-2 border-white/25 dark:border-white/15 relative z-10"
       >
         <div className="max-w-7xl mx-auto px-0 md:px-6">
           <AnimatePresence mode="wait">
@@ -205,7 +205,7 @@ export default function ContentPublicClient({ initialArticles }) {
                       className="group"
                     >
                       <Link href={`/articles/${article.slug}`} className="block h-full focus-visible:outline-primary focus-visible:rounded-3xl">
-                        <div className="bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 rounded-3xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 dark:hover:shadow-primary/8 transition-all duration-500 h-full flex flex-col hover:border-yellow-300 dark:hover:border-primary/30 hover:-translate-y-1 backdrop-blur-sm">
+                        <div className="bg-[#099c6d] dark:bg-[#0d1f17] border-2 border-yellow-300/60 dark:border-white/15 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-500 h-full flex flex-col hover:border-yellow-300 hover:-translate-y-1 shadow-md">
                           
                           {/* Image */}
                           <div className="h-56 relative overflow-hidden bg-black/30">
@@ -243,11 +243,11 @@ export default function ContentPublicClient({ initialArticles }) {
                                 </time>
                               </div>
                               
-                              <h3 className="text-[19px] font-bold text-white dark:text-white mb-3.5 line-clamp-2 group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors duration-200 leading-snug font-display">
+                              <h3 className="text-[19px] font-black text-white dark:text-white mb-3.5 line-clamp-2 group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors duration-200 leading-snug font-display">
                                 {article.title}
                               </h3>
                               
-                              <p className="text-[13px] text-emerald-50/90 dark:text-white/55 line-clamp-3 mb-5 leading-relaxed">
+                              <p className="text-[13px] text-white dark:text-gray-200 line-clamp-3 mb-5 leading-relaxed font-bold">
                                 {article.body.replace(/<[^>]*>?/gm, '')}
                               </p>
                             </div>

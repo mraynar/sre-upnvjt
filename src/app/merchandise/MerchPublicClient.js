@@ -42,7 +42,7 @@ export default function MerchPublicClient() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="w-full max-w-[420px] aspect-square mx-auto rounded-3xl border border-white/20 bg-white/5 backdrop-blur-md shadow-2xl relative overflow-hidden flex items-center justify-center group"
+            className="w-full max-w-[420px] aspect-square mx-auto rounded-3xl border-2 border-yellow-300/60 bg-[#099c6d] dark:bg-white/5 backdrop-blur-md shadow-2xl relative overflow-hidden flex items-center justify-center group"
           >
             <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/10 to-transparent" />
             {/* Spinning wind turbine vector inside box */}
@@ -75,36 +75,38 @@ export default function MerchPublicClient() {
         </div>
       </section>
 
-      {/* ── 2. Our Special Bundle Section (Gambar 2 Style) ── */}
-      <section className="py-24 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto bg-[#0bb37e] dark:bg-[#07130e]">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-display font-black uppercase text-white dark:text-white tracking-tight relative inline-block">
-            OUR SPECIAL BUNDLE
-            <div className="h-[4px] w-full bg-gradient-to-r from-yellow-300 to-yellow-200 dark:from-yellow-400 dark:to-amber-500 mt-2 rounded-full" />
-          </h2>
-        </div>
-
-        {/* Empty Placeholder Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border border-white/20 dark:border-white/5 bg-white/10 dark:bg-amber-950/5 flex flex-col items-center justify-center text-center shadow-sm"
-        >
-          <div className="w-20 h-20 rounded-full bg-white/15 dark:bg-amber-900/30 flex items-center justify-center text-yellow-300 dark:text-amber-400 mb-6">
-            <Package className="w-10 h-10" />
+      {/* ── 2. Our Special Bundle Section ── */}
+      <section className="py-24 px-6 md:px-12 lg:px-20 bg-[#0cc48a] dark:bg-[#07130e] border-t-2 border-white/25 dark:border-white/15">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-display font-black uppercase text-white dark:text-white tracking-tight relative inline-block">
+              OUR SPECIAL BUNDLE
+              <div className="h-[4px] w-full bg-gradient-to-r from-yellow-300 to-yellow-200 dark:from-yellow-400 dark:to-amber-500 mt-2 rounded-full" />
+            </h2>
           </div>
-          <h3 className="text-xl md:text-2xl font-bold text-white dark:text-white mb-2">
-            No bundle merchandise available yet.
-          </h3>
-          <p className="text-emerald-50/90 dark:text-gray-400 font-light max-w-md">
-            Please check back later for exciting bundles! We are working hard to create exclusive gear packages for you.
-          </p>
-        </motion.div>
+
+          {/* Empty Placeholder Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border-2 border-yellow-300/60 bg-[#099c6d] dark:bg-amber-950/20 flex flex-col items-center justify-center text-center shadow-lg"
+          >
+            <div className="w-20 h-20 rounded-full bg-yellow-300/20 border-2 border-yellow-300 flex items-center justify-center text-yellow-300 mb-6">
+              <Package className="w-10 h-10" />
+            </div>
+            <h3 className="text-xl md:text-2xl font-black text-white dark:text-white mb-2">
+              No bundle merchandise available yet.
+            </h3>
+            <p className="text-white dark:text-gray-300 font-bold max-w-md">
+              Please check back later for exciting bundles! We are working hard to create exclusive gear packages for you.
+            </p>
+          </motion.div>
+        </div>
       </section>
 
-      {/* ── 3. Our Products Section (Gambar 3 Style) ── */}
-      <section className="py-24 px-6 md:px-12 lg:px-20 bg-[#0bb37e] dark:bg-[#0c2a20] text-white">
+      {/* ── 3. Our Products Section ── */}
+      <section className="py-24 px-6 md:px-12 lg:px-20 bg-[#0aa373] dark:bg-[#0c2a20] text-white border-t-2 border-white/25 dark:border-white/15">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-display font-black uppercase tracking-tight relative inline-block">
@@ -118,15 +120,15 @@ export default function MerchPublicClient() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border border-white/20 bg-white/10 dark:bg-[#07130e]/40 backdrop-blur-md flex flex-col items-center justify-center text-center shadow-2xl"
+            className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border-2 border-yellow-300/60 bg-[#099c6d] dark:bg-[#07130e]/60 backdrop-blur-md flex flex-col items-center justify-center text-center shadow-2xl"
           >
-            <div className="w-20 h-20 rounded-full bg-amber-400/20 flex items-center justify-center text-amber-300 mb-6">
+            <div className="w-20 h-20 rounded-full bg-yellow-300/20 border-2 border-yellow-300 flex items-center justify-center text-yellow-300 mb-6">
               <Package className="w-10 h-10" />
             </div>
-            <h3 className="text-xl md:text-2xl font-bold mb-2 text-white">
+            <h3 className="text-xl md:text-2xl font-black mb-2 text-white">
               No merchandise available yet.
             </h3>
-            <p className="text-emerald-100 font-light max-w-md">
+            <p className="text-white font-bold max-w-md">
               Please check back later for exciting products! Follow our social media updates for launch announcements.
             </p>
           </motion.div>
@@ -134,7 +136,7 @@ export default function MerchPublicClient() {
       </section>
 
       {/* ── 4. Get Official Merchandise bottom CTA (Gambar 3 Bottom Style) ── */}
-      <section className="py-24 px-6 md:px-12 lg:px-20 bg-[#078a5e] dark:bg-[#082218] text-white relative overflow-hidden">
+      <section className="py-24 px-6 md:px-12 lg:px-20 bg-[#088c62] dark:bg-[#082218] text-white border-t-2 border-white/25 dark:border-white/15 relative overflow-hidden">
         {/* Wind Turbine vector layout on the right side */}
         <div className="absolute right-12 bottom-0 w-80 h-96 opacity-10 pointer-events-none hidden lg:block z-0">
           <svg className="w-full h-full text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor">
