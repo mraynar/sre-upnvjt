@@ -306,52 +306,38 @@ export default function Home() {
             }}
             aria-hidden="true"
           />
-          {/* Decorative "01" watermark bottom-right */}
-          <span
-            className="absolute bottom-0 right-4 lg:right-12 font-display font-black text-[180px] lg:text-[220px] leading-none select-none pointer-events-none text-[#07130e] dark:text-white opacity-[0.04] tracking-tighter"
-            aria-hidden="true"
-          >
-            01
-          </span>
 
-          <div className="relative z-10 w-full h-full max-w-screen-xl mx-auto px-6 md:px-10 lg:px-16 flex flex-col lg:flex-row min-h-screen">
+          <div className="relative z-10 w-full h-full max-w-screen-xl mx-auto px-6 md:px-10 lg:px-16 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 min-h-screen items-center py-16 lg:py-0">
 
-            {/* ── LEFT COLUMN: Giant Identity Typography (40%) ── */}
+            {/* ── COLUMN 1: Giant Identity Typography (lg:col-span-4) ── */}
             <motion.div
               initial={{ opacity: 0, x: -48 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full lg:w-[40%] flex flex-col justify-center py-20 lg:py-0 lg:pr-12 shrink-0"
+              className="w-full flex flex-col justify-center lg:pr-6 shrink-0 order-1 lg:col-span-4"
             >
               {/* WHO WE ARE plain label */}
-              <div className="flex items-center gap-2 mb-8">
-                <span className="w-2 h-2 rounded-full bg-emerald-600 dark:bg-primary" aria-hidden="true" />
+              <div className="flex items-center gap-2 mb-6">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-primary" aria-hidden="true" />
                 <span className="text-[13px] sm:text-[14px] font-bold tracking-[0.28em] text-emerald-800 dark:text-primary uppercase">
                   WHO WE ARE
                 </span>
               </div>
 
-              {/* Giant Stacked Type */}
-              <div className="flex flex-col items-start leading-[0.88] tracking-tight select-none">
-                {/* "SRE" — outline/stroke style */}
-                <span
-                  className="font-display font-black uppercase text-[72px] sm:text-[96px] lg:text-[120px] text-transparent"
-                  style={{
-                    WebkitTextStroke: "2px currentColor",
-                    color: "transparent",
-                  }}
-                  aria-hidden="true"
-                >
-                  <span className="text-emerald-600 dark:text-primary" style={{ WebkitTextStroke: "2.5px" }}>SRE</span>
+              {/* Stacked Type Identity */}
+              <div className="flex flex-col items-start leading-[0.95] tracking-tight select-none">
+                {/* "PART OF" (small, light) */}
+                <span className="text-[12px] sm:text-[14px] font-bold tracking-[0.25em] text-[#07130e]/60 dark:text-white/60 uppercase mb-2">
+                  PART OF
                 </span>
-                {/* "INDONESIA" — solid bold */}
-                <span className="font-display font-black uppercase text-[60px] sm:text-[80px] lg:text-[96px] text-[#07130e] dark:text-white leading-none">
-                  INDONESIA
+                {/* "SRE INDONESIA" (large, bold green) */}
+                <span className="font-display font-black uppercase text-[48px] sm:text-[68px] lg:text-[84px] text-emerald-700 dark:text-primary leading-none mb-3">
+                  SRE INDONESIA.
                 </span>
-                {/* "× UPN JATIM" — smaller accent in green */}
-                <span className="font-display font-black uppercase text-[28px] sm:text-[36px] lg:text-[48px] text-emerald-700 dark:text-primary leading-tight mt-2">
-                  × UPN JATIM
+                {/* "UPN JATIM" (medium, accent) */}
+                <span className="font-display font-black uppercase text-[24px] sm:text-[32px] lg:text-[40px] text-[#07130e]/80 dark:text-white/80 leading-tight">
+                  UPN JATIM
                 </span>
               </div>
 
@@ -361,40 +347,63 @@ export default function Home() {
               </p>
             </motion.div>
 
-            {/* ── RIGHT COLUMN: Content Blocks (60%) ── */}
+            {/* ── COLUMN 2: Complementary Image (lg:col-span-3) ── */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+              className="w-full flex justify-center order-3 lg:order-2 lg:col-span-3 relative"
+            >
+              {/* Subtle green accent border glow */}
+              <div className="absolute -inset-2.5 rounded-[22px] bg-emerald-500/10 dark:bg-primary/10 blur-md pointer-events-none" aria-hidden="true" />
+              <div className="relative w-full aspect-[3/4] max-w-[240px] sm:max-w-[280px] lg:max-w-full rounded-2xl overflow-hidden border border-emerald-600/30 dark:border-primary/30 shadow-lg bg-white/10 group">
+                <Image
+                  src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800&auto=format&fit=crop"
+                  alt="SRE UPNVJT Solar Energy Project"
+                  fill
+                  sizes="(max-width: 1024px) 240px, 280px"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-[#07130e]/10 group-hover:bg-transparent transition-colors duration-500" aria-hidden="true" />
+              </div>
+            </motion.div>
+
+            {/* ── COLUMN 3: Content Blocks (lg:col-span-5) ── */}
             <motion.div
               initial={{ opacity: 0, x: 48 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-              className="w-full lg:w-[60%] flex flex-col justify-center py-16 lg:py-0 lg:pl-12 lg:border-l lg:border-slate-200 lg:dark:border-white/8"
+              className="w-full flex flex-col justify-center lg:pl-8 lg:border-l lg:border-slate-200 lg:dark:border-white/8 order-2 lg:order-3 lg:col-span-5"
             >
 
               {/* ── Block 1: About SRE Indonesia ── */}
-              <div className="mb-10">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-[2px] h-10 bg-emerald-600 dark:bg-primary shrink-0 rounded-full" aria-hidden="true" />
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-[2px] h-8 bg-emerald-600 dark:bg-primary shrink-0 rounded-full" aria-hidden="true" />
                   <span className="text-[12px] sm:text-[13px] font-bold tracking-[0.28em] text-emerald-800 dark:text-primary uppercase">
                     ABOUT SRE INDONESIA
                   </span>
                 </div>
-                <p className="text-[15px] sm:text-[16px] lg:text-[17px] font-light text-[#07130e]/75 dark:text-white/65 leading-[1.75] max-w-lg">
+                <p className="text-[15px] sm:text-[16px] font-light text-[#07130e]/75 dark:text-white/65 leading-[1.7] max-w-lg">
                   <strong className="font-semibold text-[#07130e] dark:text-white">Society of Renewable Energy (SRE) Indonesia</strong>{" "}is the national student organization dedicated to accelerating Indonesia&apos;s transition to clean and sustainable energy. Founded to unite student chapters across universities, SRE Indonesia drives education, research, and grassroots action on renewable energy at a national scale.
                 </p>
               </div>
 
               {/* Thin green divider */}
-              <div className="w-full h-px bg-gradient-to-r from-emerald-600/40 dark:from-primary/40 via-emerald-400/20 dark:via-primary/20 to-transparent mb-10" aria-hidden="true" />
+              <div className="w-full h-px bg-gradient-to-r from-emerald-600/40 dark:from-primary/40 via-emerald-400/20 dark:via-primary/20 to-transparent mb-8" aria-hidden="true" />
 
               {/* ── Block 2: Our Chapter ── */}
-              <div className="mb-10">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-[2px] h-10 bg-emerald-600 dark:bg-primary shrink-0 rounded-full" aria-hidden="true" />
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-[2px] h-8 bg-emerald-600 dark:bg-primary shrink-0 rounded-full" aria-hidden="true" />
                   <span className="text-[12px] sm:text-[13px] font-bold tracking-[0.28em] text-emerald-800 dark:text-primary uppercase">
                     OUR CHAPTER
                   </span>
                 </div>
-                <p className="text-[15px] sm:text-[16px] lg:text-[17px] font-light text-[#07130e]/75 dark:text-white/65 leading-[1.75] max-w-lg">
+                <p className="text-[15px] sm:text-[16px] font-light text-[#07130e]/75 dark:text-white/65 leading-[1.7] max-w-lg">
                   <strong className="font-semibold text-[#07130e] dark:text-white">SRE UPN Veteran Jawa Timur</strong>{" "}is an official local chapter of SRE Indonesia based in Surabaya. Since 2021, we have been empowering students through hands-on renewable energy programs, campus energy audits, and community-driven sustainability initiatives across East Java.
                 </p>
               </div>
@@ -408,7 +417,7 @@ export default function Home() {
                   hidden: {},
                   show: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
                 }}
-                className="flex flex-wrap items-center gap-x-6 gap-y-3 mb-10"
+                className="flex flex-wrap items-center gap-x-6 gap-y-3 mb-8"
               >
                 {[
                   { text: "Est. 2021", Icon: Sprout },
