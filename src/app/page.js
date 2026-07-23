@@ -400,10 +400,13 @@ export default function Home() {
         </section>
 
 
-        {/* ── Programs / Activity Section ──────────────────────────────────────── */}
-        <section id="activity" className="scroll-mt-20 bg-white dark:bg-[#050e09] py-24 border-b border-slate-200 dark:border-white/5 relative overflow-hidden">
+        {/* ── Our Activity Section ──────────────────────────────────────── */}
+        <section
+          id="activity"
+          className="scroll-mt-20 bg-gray-50 dark:bg-[#050e09] py-24 px-6 lg:px-20 border-b border-slate-200 dark:border-white/5 relative overflow-hidden"
+        >
           <div className="w-full relative z-10 flex flex-col items-center">
-            <div className="site-container">
+            <div className="site-container w-full">
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -411,110 +414,91 @@ export default function Home() {
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                 className="text-center mb-16 max-w-2xl mx-auto flex flex-col items-center"
               >
-                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-md mb-6">
-                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse" aria-hidden="true"></span>
-                  <span className="text-[12px] font-bold tracking-[0.2em] text-primary uppercase">WHAT WE DO</span>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-emerald-500 text-lg leading-none select-none">•</span>
+                  <span className="text-[12px] font-bold tracking-[0.2em] text-emerald-600 dark:text-emerald-400 uppercase">
+                    WHAT WE DO
+                  </span>
                 </div>
-                <h2 className="text-[40px] md:text-[56px] font-display font-black tracking-tight text-[#07130e] dark:text-white uppercase leading-[1.1] mb-6">
-                  Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-[#86b598]">Programs</span>
+                <h2 className="text-[40px] md:text-[48px] font-display font-black tracking-tight text-[#07130e] dark:text-white uppercase leading-[1.1]">
+                  OUR <span className="text-emerald-500">ACTIVITY</span>
                 </h2>
-                <p className="text-[16px] text-[#07130e]/60 dark:text-white/50 max-w-xl mx-auto">
-                  Explore our main initiatives designed to promote renewable energy awareness, empower communities, and drive sustainable innovation.
+                <div className="h-[3px] w-16 bg-emerald-500 mx-auto mt-3" aria-hidden="true" />
+                <p className="text-[16px] text-gray-500 dark:text-gray-400 max-w-xl mx-auto mt-6">
+                  From research to community impact — explore what SRE UPN JATIM does on the ground.
                 </p>
               </motion.div>
-            </div>
 
-            {/* Full-width carousel */}
-            <div className="w-screen relative overflow-hidden mb-16" style={{ height: cardDims.height + 60 }}>
-              <motion.div
-                animate={{ x: `calc(50vw - ${activeProgram * (cardDims.width + cardDims.gap) + cardDims.width / 2}px)` }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="absolute top-0 left-0 flex items-center h-full"
-                style={{ gap: cardDims.gap, willChange: "transform" }}
-              >
-                {publicActivitiesList.map((activity, idx) => {
-                  const isActive = idx === activeProgram;
-                  return (
-                    <motion.div
-                      key={activity.id || idx}
-                      animate={{
-                        scale: isActive ? 1 : 0.82,
-                        opacity: isActive ? 1 : 0.4,
-                        rotateY: isActive ? 0 : idx < activeProgram ? 18 : -18,
-                      }}
-                      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                      onClick={() => setActiveProgram(idx)}
-                      className="relative flex-shrink-0 rounded-[28px] md:rounded-[40px] overflow-hidden shadow-2xl cursor-pointer group"
-                      style={{ width: cardDims.width, height: cardDims.height, transformOrigin: "center center" }}
-                    >
+              {/* 3 Activity Cards Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full mt-12">
+                {[
+                  {
+                    title: "Campus Energy Audit",
+                    description: "Conducting electrical consumption analysis and building-level energy efficiency studies.",
+                    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=600&auto=format&fit=crop"
+                  },
+                  {
+                    title: "Renewable Energy Project",
+                    description: "Hands-on solar and wind energy installation projects for communities.",
+                    image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=600&auto=format&fit=crop"
+                  },
+                  {
+                    title: "Study & Discussion",
+                    description: "Weekly internal knowledge-sharing sessions on renewable energy topics.",
+                    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=600&auto=format&fit=crop"
+                  }
+                ].map((act, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: idx * 0.15, ease: [0.16, 1, 0.3, 1] }}
+                    className="group bg-white dark:bg-[#0d1f17] border border-slate-200/50 dark:border-white/5 rounded-2xl overflow-hidden shadow-md hover:scale-[1.02] transition-transform duration-300 relative flex flex-col h-full"
+                  >
+                    {/* Image block with bottom overlay */}
+                    <div className="relative w-full h-[220px] overflow-hidden">
                       <img
-                        src={activity.imageUrl || `https://images.unsplash.com/photo-1466611653911-95081537e5b7?q=80&w=1200&auto=format&fit=crop&sig=${idx}`}
-                        alt={activity.title || "Program Item"}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                        src={act.image}
+                        alt={act.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
-                      <div
-                        className={`absolute inset-0 transition-all duration-700 ${isActive ? "bg-gradient-to-t from-[#0b120f] via-[#0b120f]/50 to-transparent" : "bg-black/70"}`}
-                        aria-hidden="true"
-                      />
-                      <AnimatePresence>
-                        {isActive && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                            className="absolute inset-x-0 bottom-0 p-5 md:p-8 lg:p-12 text-white flex flex-col justify-end"
-                          >
-                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center mb-4 md:mb-6 border border-white/20 group-hover:bg-primary group-hover:border-primary transition-all duration-300" aria-hidden="true">
-                              <ArrowUpRight className="w-4 h-4 md:w-5 md:h-5 text-white transform group-hover:rotate-45 transition-transform duration-300" />
-                            </div>
-                            <h3 className="text-[22px] md:text-[32px] lg:text-[40px] font-display font-bold leading-tight mb-2 md:mb-4 tracking-tight line-clamp-1">
-                              {activity.title || "SRE Activity Program"}
-                            </h3>
-                            <p className="text-[13px] md:text-[16px] lg:text-[18px] font-light text-white/80 leading-relaxed line-clamp-2">
-                              {activity.description || "Stay tuned for more details regarding this activity. SRE is committed to green transition."}
-                            </p>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
+                      {/* Dark overlay at bottom of image */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0b120f]/80 via-transparent to-transparent z-0" aria-hidden="true" />
+                      {/* Card title overlaid bold white on bottom of image */}
+                      <h3 className="absolute bottom-4 left-6 text-xl font-bold text-white z-10 font-display uppercase tracking-wide">
+                        {act.title}
+                      </h3>
+                    </div>
 
-              {/* Progress dots */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-50" role="tablist" aria-label="Program navigation">
-                {publicActivitiesList.map((activity, i) => (
-                  <button
-                    key={i}
-                    role="tab"
-                    aria-selected={i === activeProgram}
-                    aria-label={`View program: ${activity.title || `Program ${i + 1}`}`}
-                    onClick={() => setActiveProgram(i)}
-                    className={`h-1.5 rounded-full transition-all duration-300 focus-visible:outline-primary ${i === activeProgram ? "w-6 bg-primary dark:bg-white" : "w-1.5 bg-[#07130e]/20 dark:bg-white/20 hover:bg-[#07130e]/40 dark:hover:bg-white/40"}`}
-                  />
+                    {/* Card Body */}
+                    <div className="p-6 flex-1 flex flex-col justify-start">
+                      <p className="text-gray-500 dark:text-gray-300 text-sm leading-relaxed">
+                        {act.description}
+                      </p>
+                    </div>
+                  </motion.div>
                 ))}
               </div>
-            </div>
 
-            <div className="site-container text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="mb-12"
-              >
-                <motion.a
-                  href="#all-activities"
-                  whileHover={{ scale: 1.04 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="border border-[#07130e]/20 dark:border-white/20 hover:bg-[#07130e] dark:hover:bg-white/10 hover:text-[#e8ecc4] dark:hover:text-white text-[#07130e] dark:text-white/70 text-[15px] font-semibold rounded-full px-8 py-3.5 transition-colors duration-300 inline-flex items-center gap-2 focus-visible:outline-primary"
+              {/* SEE ALL ACTIVITIES CTA Button */}
+              <div className="w-full text-center mt-16">
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
                 >
-                  See More of Our Activities
-                  <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-                </motion.a>
-              </motion.div>
+                  <Link
+                    href="/events"
+                    className="inline-flex items-center gap-2 border border-emerald-500/30 hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-500/20 hover:border-emerald-500 text-emerald-600 dark:text-emerald-400 font-semibold tracking-wider text-xs uppercase px-8 py-3.5 rounded-full transition-all duration-300 focus-visible:outline-emerald-500"
+                  >
+                    SEE ALL ACTIVITIES
+                    <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
+                  </Link>
+                </motion.div>
+              </div>
+
             </div>
           </div>
         </section>
