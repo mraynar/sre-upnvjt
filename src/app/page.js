@@ -292,7 +292,7 @@ export default function Home() {
         {/* ── About Section — 2-Column Redesign ── */}
         <section
           id="about"
-          className="scroll-mt-20 relative bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white py-16 lg:py-24 flex items-center border-b border-slate-200 dark:border-white/5"
+          className="scroll-mt-20 relative bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white py-12 lg:py-20 flex items-center border-b border-slate-200 dark:border-white/5"
           style={{ minHeight: "100vh" }}
         >
           <div className="site-container relative z-10 w-full max-w-screen-xl mx-auto px-6 md:px-10 lg:px-16">
@@ -302,76 +302,45 @@ export default function Home() {
               <div className="relative w-full order-1 lg:order-1 flex justify-center">
                 <div className="relative w-full max-w-[480px] lg:max-w-full">
                   {/* Decorative offset block */}
-                  <div className="absolute -bottom-4 -right-4 w-full h-[260px] lg:h-[560px] rounded-3xl border-2 border-emerald-500/40 -z-10" />
+                  <div className="absolute -bottom-3 -right-3 w-full h-[260px] lg:h-[500px] rounded-2xl border-2 border-emerald-500/30 -z-10" />
                   
                   {/* The Image */}
-                  <div className="relative w-full h-[260px] lg:h-[560px] rounded-3xl overflow-hidden shadow-2xl bg-white/10 group">
+                  <div className="relative w-full h-[260px] lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl bg-white/10">
                     <Image
                       src="/images/about/PanelSurya.jpg"
                       alt="SRE UPNVJT Solar Panel Project"
                       fill
                       sizes="(max-width: 1024px) 100vw, 45vw"
-                      className="object-cover"
+                      className="object-cover w-full h-full"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#07130e]/20 via-transparent to-transparent" aria-hidden="true" />
                   </div>
                 </div>
               </div>
 
               {/* Right Column: All Text Content (55%) */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full flex flex-col justify-center order-2 lg:order-2"
+                className="w-full flex flex-col justify-center order-2 lg:order-2 space-y-6"
               >
-                {/* Large ABOUT Heading */}
-                <h2 className="text-5xl lg:text-7xl font-black uppercase text-[#07130e] dark:text-white tracking-tight mb-4 px-0">
-                  ABOUT
-                </h2>
-
-                {/* WHO WE ARE Label */}
-                <div className="flex items-center gap-2 mb-6">
+                {/* Single small label */}
+                <div className="flex items-center gap-2">
                   <span className="text-emerald-600 dark:text-primary text-lg leading-none select-none">•</span>
-                  <span className="text-sm font-bold tracking-[0.25em] text-[#07130e] dark:text-white uppercase">
-                    WHO WE ARE
+                  <span className="text-sm font-bold tracking-[0.25em] text-[#07130e]/80 dark:text-white/80 uppercase">
+                    ABOUT SRE UPN JATIM
                   </span>
                 </div>
 
-                {/* SRE Indonesia Branding */}
-                <div className="flex flex-col mb-4">
-                  <span className="text-lg font-light tracking-wider text-emerald-800/80 dark:text-[#e8ecc4]/85 uppercase">
-                    PART OF
-                  </span>
-                  <span className="text-4xl sm:text-5xl font-extrabold uppercase text-[#07130e] dark:text-white tracking-tight mt-1">
-                    SRE INDONESIA
-                  </span>
-                </div>
-
-                {/* SRE Indonesia Description (2 sentences) */}
-                <p className="text-[15px] sm:text-[16px] font-light text-[#07130e]/75 dark:text-white/65 leading-relaxed mb-6 max-w-xl">
-                  Society of Renewable Energy (SRE) Indonesia is the national student organization uniting university chapters across Indonesia in the mission to accelerate the country's clean energy transition through education, research, and community action.
-                </p>
-
-                {/* Short Divider Line */}
-                <div className="w-16 h-0.5 bg-emerald-600 dark:bg-primary mb-8 rounded-full" aria-hidden="true" />
-
-                {/* BIG CREATIVE HIGHLIGHT BLOCK: SRE UPN JATIM */}
-                <div className="relative w-fit flex flex-col mb-8 select-none px-0">
-                  <h3 className="font-display font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl leading-none flex flex-wrap items-baseline gap-x-4 tracking-[0.08em] uppercase">
-                    <span
-                      className="text-transparent"
-                      style={{
-                        WebkitTextStroke: "2.5px currentColor",
-                        color: "transparent",
-                      }}
-                    >
-                      <span className="text-emerald-600 dark:text-primary">SRE UPN</span>
-                    </span>
-                    <span className="text-emerald-600 dark:text-primary">
-                      JATIM
+                {/* SRE INDONESIA x UPN JATIM Heading Stack */}
+                <div className="relative select-none px-0">
+                  <h3 className="font-display font-black text-5xl sm:text-6xl leading-[0.9] flex flex-col tracking-tighter uppercase text-[#07130e] dark:text-white">
+                    <span>SRE</span>
+                    <span>INDONESIA</span>
+                    <span className="text-3xl sm:text-4xl text-emerald-700 dark:text-primary mt-1 font-extrabold leading-[0.9]">
+                      × UPN JATIM
                     </span>
                   </h3>
                   {/* Subtle animated underline */}
@@ -380,66 +349,51 @@ export default function Home() {
                     whileInView={{ width: "100%" }}
                     viewport={{ once: true }}
                     transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-                    className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-emerald-600 to-emerald-400 dark:from-primary dark:to-emerald-300 rounded-full"
+                    className="absolute -bottom-2 left-0 h-[3px] bg-gradient-to-r from-emerald-600 to-emerald-400 dark:from-primary dark:to-emerald-300 rounded-full"
                   />
                 </div>
 
-                {/* Short paragraph about SRE UPN JATIM */}
-                <p className="text-[16px] sm:text-[18px] font-light text-[#07130e]/80 dark:text-white/70 leading-relaxed mb-8 max-w-xl">
-                  SRE UPN Veteran Jawa Timur is a collaborative student-led chapter under SRE Indonesia. We actively foster a generation of sustainability-minded student leaders in Surabaya through green energy literacy campaigns, professional research projects, and community-level technology deployments.
+                {/* Combined Body Text (2 sentences max) */}
+                <p className="text-[15px] sm:text-[16px] lg:text-[17px] font-light text-[#07130e]/75 dark:text-white/65 leading-[1.65] max-w-xl">
+                  SRE UPN Veteran Jawa Timur is an official student chapter of SRE Indonesia — the national organization accelerating Indonesia&apos;s clean energy transition. Since 2021, we have been driving renewable energy education, research, and community action across East Java.
                 </p>
 
-                {/* Thin full-width green gradient line above badge row */}
-                <div className="w-full h-px bg-gradient-to-r from-emerald-500 to-transparent mb-8" aria-hidden="true" />
-
-                {/* Badge Row (Styled Card Row) */}
-                <motion.div
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true, margin: "-40px" }}
-                  variants={{
-                    hidden: {},
-                    show: { transition: { staggerChildren: 0.1, delayChildren: 0.25 } },
-                  }}
-                  className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8"
-                >
-                  {[
-                    { text: "Est. 2021", Icon: Sprout },
-                    { text: "SRE Indonesia Member", Icon: Globe },
-                    { text: "UPN Veteran Jawa Timur", Icon: Building2 }
-                  ].map((stat, idx) => (
-                    <motion.div
-                      key={idx}
-                      variants={{
-                        hidden: { opacity: 0, y: 10 },
-                        show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-                      }}
-                      className="bg-white/10 dark:bg-white/5 border border-emerald-500/20 rounded-xl px-4 py-3 flex flex-col items-start gap-2 shadow-sm"
-                    >
-                      <stat.Icon className="w-5 h-5 text-emerald-400 shrink-0" aria-hidden="true" />
-                      <span className="text-[13px] font-semibold text-gray-700 dark:text-gray-200 tracking-wide uppercase leading-tight">
-                        {stat.text}
-                      </span>
-                    </motion.div>
-                  ))}
-                </motion.div>
+                {/* Badge Row (Horizontal, single line, vertical line separators, green icon/text) */}
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] sm:text-[14px] font-bold text-emerald-800 dark:text-primary pt-2 select-none">
+                  <div className="flex items-center gap-2">
+                    <Sprout className="w-4 h-4" />
+                    <span>Est. 2021</span>
+                  </div>
+                  <span className="text-emerald-800/35 dark:text-primary/30">|</span>
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4" />
+                    <span>SRE Indonesia</span>
+                  </div>
+                  <span className="text-emerald-800/35 dark:text-primary/30">|</span>
+                  <div className="flex items-center gap-2">
+                    <Building2 className="w-4 h-4" />
+                    <span>UPN Veteran Jawa Timur</span>
+                  </div>
+                </div>
 
                 {/* CTA Link */}
-                <Link
-                  href="/about"
-                  className="group inline-flex items-center gap-3 w-fit focus-visible:outline-emerald-600 focus-visible:outline-offset-4 rounded"
-                >
-                  <span className="relative text-[14px] font-bold tracking-[0.18em] uppercase text-[#07130e] dark:text-white after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:w-0 after:bg-emerald-600 dark:after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
-                    LEARN MORE ABOUT US
-                  </span>
-                  <motion.span
-                    whileHover={{ x: 4 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    className="text-emerald-700 dark:text-primary"
+                <div className="pt-2">
+                  <Link
+                    href="/about"
+                    className="group inline-flex items-center gap-3 w-fit focus-visible:outline-emerald-600 focus-visible:outline-offset-4 rounded"
                   >
-                    <ArrowUpRight className="w-5 h-5" aria-hidden="true" />
-                  </motion.span>
-                </Link>
+                    <span className="relative text-[14px] font-bold tracking-[0.18em] uppercase text-[#07130e] dark:text-white after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:w-0 after:bg-emerald-600 dark:after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
+                      LEARN MORE ABOUT US
+                    </span>
+                    <motion.span
+                      whileHover={{ x: 4 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      className="text-emerald-700 dark:text-primary"
+                    >
+                      <ArrowUpRight className="w-5 h-5" aria-hidden="true" />
+                    </motion.span>
+                  </Link>
+                </div>
               </motion.div>
               
             </div>
