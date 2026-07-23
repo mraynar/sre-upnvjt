@@ -292,20 +292,46 @@ export default function Home() {
         {/* ── About Section — 2-Column Redesign ── */}
         <section
           id="about"
-          className="scroll-mt-20 relative bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white py-16 lg:py-0 flex items-center border-b border-slate-200 dark:border-white/5"
+          className="scroll-mt-20 relative bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white py-16 lg:py-24 flex items-center border-b border-slate-200 dark:border-white/5"
           style={{ minHeight: "100vh" }}
         >
           <div className="site-container relative z-10 w-full max-w-screen-xl mx-auto px-6 md:px-10 lg:px-16">
-            <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16 w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center w-full">
               
-              {/* Left Column: All Text Content (55%) */}
+              {/* Left Column: Image (First on desktop, stacks above on mobile) */}
+              <div className="relative w-full order-1 lg:order-1 flex justify-center">
+                <div className="relative w-full max-w-[480px] lg:max-w-full">
+                  {/* Decorative offset block */}
+                  <div className="absolute -bottom-4 -right-4 w-full h-[260px] lg:h-[560px] rounded-3xl border-2 border-emerald-500/40 -z-10" />
+                  
+                  {/* The Image */}
+                  <div className="relative w-full h-[260px] lg:h-[560px] rounded-3xl overflow-hidden shadow-2xl bg-white/10 group">
+                    <Image
+                      src="/images/about/PanelSurya.jpg"
+                      alt="SRE UPNVJT Solar Panel Project"
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 45vw"
+                      className="object-cover"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#07130e]/20 via-transparent to-transparent" aria-hidden="true" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: All Text Content (55%) */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full lg:w-[55%] flex flex-col justify-center order-2 lg:order-1"
+                className="w-full flex flex-col justify-center order-2 lg:order-2"
               >
+                {/* Large ABOUT Heading */}
+                <h2 className="text-5xl lg:text-7xl font-black uppercase text-[#07130e] dark:text-white tracking-tight mb-4 px-0">
+                  ABOUT
+                </h2>
+
                 {/* WHO WE ARE Label */}
                 <div className="flex items-center gap-2 mb-6">
                   <span className="text-emerald-600 dark:text-primary text-lg leading-none select-none">•</span>
@@ -324,12 +350,17 @@ export default function Home() {
                   </span>
                 </div>
 
+                {/* SRE Indonesia Description (2 sentences) */}
+                <p className="text-[15px] sm:text-[16px] font-light text-[#07130e]/75 dark:text-white/65 leading-relaxed mb-6 max-w-xl">
+                  Society of Renewable Energy (SRE) Indonesia is the national student organization uniting university chapters across Indonesia in the mission to accelerate the country's clean energy transition through education, research, and community action.
+                </p>
+
                 {/* Short Divider Line */}
                 <div className="w-16 h-0.5 bg-emerald-600 dark:bg-primary mb-8 rounded-full" aria-hidden="true" />
 
                 {/* BIG CREATIVE HIGHLIGHT BLOCK: SRE UPN JATIM */}
-                <div className="relative w-fit flex flex-col mb-8 select-none">
-                  <h3 className="font-display font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl leading-none flex flex-wrap items-baseline gap-x-4 tracking-tighter uppercase">
+                <div className="relative w-fit flex flex-col mb-8 select-none px-0">
+                  <h3 className="font-display font-black text-5xl sm:text-6xl lg:text-7xl xl:text-8xl leading-none flex flex-wrap items-baseline gap-x-4 tracking-[0.08em] uppercase">
                     <span
                       className="text-transparent"
                       style={{
@@ -358,7 +389,10 @@ export default function Home() {
                   SRE UPN Veteran Jawa Timur is a collaborative student-led chapter under SRE Indonesia. We actively foster a generation of sustainability-minded student leaders in Surabaya through green energy literacy campaigns, professional research projects, and community-level technology deployments.
                 </p>
 
-                {/* Badge Row (Separated by ·) */}
+                {/* Thin full-width green gradient line above badge row */}
+                <div className="w-full h-px bg-gradient-to-r from-emerald-500 to-transparent mb-8" aria-hidden="true" />
+
+                {/* Badge Row (Styled Card Row) */}
                 <motion.div
                   initial="hidden"
                   whileInView="show"
@@ -367,28 +401,26 @@ export default function Home() {
                     hidden: {},
                     show: { transition: { staggerChildren: 0.1, delayChildren: 0.25 } },
                   }}
-                  className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-8 text-[#07130e]/80 dark:text-white/75"
+                  className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8"
                 >
                   {[
                     { text: "Est. 2021", Icon: Sprout },
                     { text: "SRE Indonesia Member", Icon: Globe },
                     { text: "UPN Veteran Jawa Timur", Icon: Building2 }
                   ].map((stat, idx) => (
-                    <React.Fragment key={idx}>
-                      <motion.div
-                        variants={{
-                          hidden: { opacity: 0, y: 10 },
-                          show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-                        }}
-                        className="inline-flex items-center gap-2 text-[14px] font-medium"
-                      >
-                        <stat.Icon className="w-4 h-4 text-emerald-700 dark:text-primary shrink-0" aria-hidden="true" />
-                        <span>{stat.text}</span>
-                      </motion.div>
-                      {idx < 2 && (
-                        <span className="text-[#07130e]/40 dark:text-white/30 text-sm select-none font-bold">·</span>
-                      )}
-                    </React.Fragment>
+                    <motion.div
+                      key={idx}
+                      variants={{
+                        hidden: { opacity: 0, y: 10 },
+                        show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+                      }}
+                      className="bg-white/10 dark:bg-white/5 border border-emerald-500/20 rounded-xl px-4 py-3 flex flex-col items-start gap-2 shadow-sm"
+                    >
+                      <stat.Icon className="w-5 h-5 text-emerald-400 shrink-0" aria-hidden="true" />
+                      <span className="text-[13px] font-semibold text-gray-700 dark:text-gray-200 tracking-wide uppercase leading-tight">
+                        {stat.text}
+                      </span>
+                    </motion.div>
                   ))}
                 </motion.div>
 
@@ -408,33 +440,6 @@ export default function Home() {
                     <ArrowUpRight className="w-5 h-5" aria-hidden="true" />
                   </motion.span>
                 </Link>
-              </motion.div>
-
-              {/* Right Column: Image Only (45%) */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.98 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full lg:w-[45%] flex justify-center order-1 lg:order-2"
-              >
-                <div className="relative w-full max-w-[480px] lg:max-w-full">
-                  {/* Green Accent Offset Rectangle */}
-                  <div className="absolute top-3 left-3 w-full h-[260px] lg:h-[500px] bg-emerald-600/30 dark:bg-primary/30 rounded-3xl pointer-events-none -z-10 transition-transform duration-500 group-hover:translate-x-1 group-hover:translate-y-1" />
-                  
-                  {/* The Image */}
-                  <div className="relative w-full h-[260px] lg:h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-white/10 group">
-                    <Image
-                      src="https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=800&auto=format&fit=crop"
-                      alt="SRE UPNVJT Solar Energy Project"
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 45vw"
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-103"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#07130e]/20 via-transparent to-transparent" aria-hidden="true" />
-                  </div>
-                </div>
               </motion.div>
               
             </div>
