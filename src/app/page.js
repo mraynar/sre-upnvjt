@@ -292,9 +292,41 @@ export default function Home() {
         {/* ── About Section — 2-Column Redesign ── */}
         <section
           id="about"
-          className="scroll-mt-20 relative bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white py-24 px-6 lg:px-20 flex items-center border-b border-slate-200 dark:border-white/5"
+          className="scroll-mt-20 relative bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white py-24 px-6 lg:px-20 flex items-center border-b border-slate-200 dark:border-white/5 overflow-hidden"
           style={{ minHeight: "100vh" }}
         >
+          {/* Subtle Background Decorations (Fix 3) */}
+          {/* Top-left: faint SVG sun/solar icon */}
+          <div className="absolute top-8 left-8 w-32 h-32 opacity-[0.04] dark:opacity-[0.06] text-emerald-500 pointer-events-none select-none z-0 animate-spin-slow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
+              <circle cx="12" cy="12" r="4"/>
+              <path d="M12 2v2"/>
+              <path d="M12 20v2"/>
+              <path d="m4.93 4.93 1.41 1.41"/>
+              <path d="m17.66 17.66 1.41 1.41"/>
+              <path d="M2 12h2"/>
+              <path d="M20 12h2"/>
+              <path d="m6.34 17.66-1.41 1.41"/>
+              <path d="m19.07 4.93-1.41 1.41"/>
+            </svg>
+          </div>
+
+          {/* Bottom-right: subtle dot-grid pattern using radial-gradient */}
+          <div
+            className="absolute bottom-0 right-0 w-64 h-64 opacity-[0.08] pointer-events-none z-0"
+            style={{
+              backgroundImage: "radial-gradient(circle, #10b981 1px, transparent 1px)",
+              backgroundSize: "16px 16px"
+            }}
+            aria-hidden="true"
+          />
+
+          {/* Mid-left: large faint circle outline behind image area */}
+          <div
+            className="absolute left-[-80px] top-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full border border-emerald-500/10 dark:border-emerald-400/10 pointer-events-none z-0"
+            aria-hidden="true"
+          />
+
           <div className="site-container relative z-10 w-full max-w-screen-xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
               
@@ -308,16 +340,14 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* Next.js Image Component exactly as requested */}
+                {/* Plain <img> tag fallback for maximum rendering reliability */}
                 <div className="relative w-full h-[260px] md:h-[420px] lg:h-[480px]">
                   {/* Decorative offset border */}
                   <div className="absolute -bottom-3 -right-3 w-full h-full rounded-2xl border-2 border-emerald-500/30 -z-10" />
-                  <Image
+                  <img
                     src="/images/about/PanelSurya.jpg"
                     alt="Solar Panel SRE UPN Jatim"
-                    fill
-                    className="object-cover rounded-2xl w-full h-full"
-                    loading="lazy"
+                    className="w-full h-full object-cover rounded-2xl shadow-xl"
                   />
                 </div>
               </div>
@@ -356,7 +386,7 @@ export default function Home() {
                 {/* Divider */}
                 <div className="w-full h-px bg-slate-200 dark:bg-white/5" aria-hidden="true" />
 
-                {/* Badge Row (Horizontal grid row of 3 stat cards) */}
+                {/* Badge Row (Horizontal grid row of 3 stat cards) (Fix 2) */}
                 <div className="grid grid-cols-3 gap-3">
                   {[
                     { text: "FOUNDED", value: "Est. 2021", Icon: Sprout },
@@ -365,13 +395,13 @@ export default function Home() {
                   ].map((stat, idx) => (
                     <div
                       key={idx}
-                      className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/20 rounded-xl px-4 py-3 flex flex-col items-start gap-1 shadow-sm select-none"
+                      className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-700/40 rounded-xl px-4 py-3 flex flex-col items-start gap-1 shadow-sm select-none"
                     >
                       <stat.Icon className="w-5 h-5 text-emerald-500 shrink-0 mb-1" aria-hidden="true" />
                       <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 tracking-wider uppercase leading-none">
                         {stat.text}
                       </span>
-                      <span className="text-[12px] sm:text-[13px] font-semibold text-gray-700 dark:text-gray-200 tracking-wide uppercase leading-tight truncate w-full">
+                      <span className="text-[12px] sm:text-[13px] font-semibold text-gray-800 dark:text-gray-100 tracking-wide uppercase leading-tight truncate w-full">
                         {stat.value}
                       </span>
                     </div>
