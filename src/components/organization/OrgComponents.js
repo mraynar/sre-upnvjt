@@ -34,10 +34,10 @@ export function DepartmentCard({ dept, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: index * 0.08 }}
-      className="bg-[#099c6d] border-2 border-yellow-300 dark:bg-[#0a1f15] dark:border-emerald-500/30 rounded-3xl p-8 relative overflow-hidden group hover:border-yellow-300 dark:hover:border-emerald-400 hover:shadow-2xl transition-all duration-500 flex flex-col justify-between shadow-md"
+      className="bg-[#099c6d] border-2 border-[#e8ecc4] dark:bg-[#0a1f15] dark:border-emerald-500/30 rounded-3xl p-8 relative overflow-hidden group hover:border-[#e8ecc4] dark:hover:border-emerald-400 hover:shadow-2xl transition-all duration-500 flex flex-col justify-between shadow-md"
     >
       {/* Decorative Index Number */}
-      <div className="absolute top-4 right-6 text-[52px] font-display font-black text-white/20 dark:text-emerald-400/20 group-hover:text-yellow-300 dark:group-hover:text-emerald-400/40 transition-colors">
+      <div className="absolute top-4 right-6 text-[52px] font-display font-black text-white/20 dark:text-emerald-400/20 group-hover:text-[#e8ecc4] dark:group-hover:text-emerald-400/40 transition-colors">
         {numberStr}
       </div>
 
@@ -54,19 +54,19 @@ export function DepartmentCard({ dept, index }) {
         {/* Stats & Director Summary */}
         <div className="space-y-4 pt-4 border-t border-white/10 dark:border-white/5">
           <div className="flex items-center gap-3 text-xs font-bold text-white/90">
-            <User className="w-4 h-4 text-yellow-300 dark:text-emerald-400" />
+            <User className="w-4 h-4 text-[#e8ecc4] dark:text-emerald-400" />
             <span className="truncate">
-              Director: <strong className="text-yellow-300 dark:text-emerald-400 font-extrabold">{dept.directorName || "Not Assigned"}</strong>
+              Director: <strong className="text-[#e8ecc4] dark:text-emerald-400 font-extrabold">{dept.directorName || "Not Assigned"}</strong>
             </span>
           </div>
 
           <div className="flex items-center gap-6 text-xs text-white/80 dark:text-gray-400 font-semibold">
             <span className="flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-yellow-300/80 dark:text-emerald-400/70" />
+              <Shield className="w-3.5 h-3.5 text-[#e8ecc4]/85 dark:text-emerald-400/70" />
               {dept.managerCount} Managers
             </span>
             <span className="flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-yellow-300/80 dark:text-emerald-400/70" />
+              <Users className="w-3.5 h-3.5 text-[#e8ecc4]/85 dark:text-emerald-400/70" />
               {dept.staffCount} Staff Members
             </span>
           </div>
@@ -76,7 +76,7 @@ export function DepartmentCard({ dept, index }) {
         <div className="pt-2">
           <Link
             href={`/about/organization/${dept.slug}`}
-            className="inline-flex items-center gap-2 text-xs font-black tracking-widest uppercase text-yellow-300 hover:text-white dark:text-emerald-400 dark:hover:text-white transition-colors duration-300"
+            className="inline-flex items-center gap-2 text-xs font-black tracking-widest uppercase text-[#e8ecc4] hover:text-white dark:text-emerald-400 dark:hover:text-white transition-colors duration-300"
           >
             VIEW TEAM
             <ArrowUpRight className="w-4 h-4" />
