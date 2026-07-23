@@ -1,94 +1,66 @@
-'use client'
-import { useState, useEffect, useRef } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+"use client";
+import React, { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-// Wrap section content in a client component
 export default function ActivityCarousel({ activities }) {
-  const [current, setCurrent] = useState(0)
-  const [direction, setDirection] = useState(1) // 1 = right-to-left (next), -1 = left-to-right (prev)
-  const touchStartX = useRef(null)
-
-  // Auto-rotate
-  useEffect(() => {
-    const t = setInterval(() => {
-      setDirection(1)
-      setCurrent(p => (p + 1) % activities.length)
-    }, 4000)
-    return () => clearInterval(t)
-  }, [activities.length])
-
-  // Keyboard support
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === 'ArrowLeft') {
-        setDirection(-1)
-        setCurrent(p => (p - 1 + activities.length) % activities.length)
-      }
-      if (e.key === 'ArrowRight') {
-        setDirection(1)
-        setCurrent(p => (p + 1) % activities.length)
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [activities.length])
-
-  // Touch/trackpad swipe
-  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX }
-  const onTouchEnd = (e) => {
-    if (!touchStartX.current) return
-    const diff = touchStartX.current - e.changedTouches[0].clientX
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        setDirection(1)
-        setCurrent(p => (p + 1) % activities.length)
-      } else {
-        setDirection(-1)
-        setCurrent(p => (p - 1 + activities.length) % activities.length)
-      }
-    }
-    touchStartX.current = null
-  }
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+  const [touchStart, setTouchStart] = useState(null);
 
   const prev = () => {
-    setDirection(-1)
-    setCurrent(p => (p - 1 + activities.length) % activities.length)
-  }
+    setDirection(-1);
+    setCurrent((prev) => (prev === 0 ? activities.length - 1 : prev - 1));
+  };
 
   const next = () => {
-    setDirection(1)
-    setCurrent(p => (p + 1) % activities.length)
-  }
+    setDirection(1);
+    setCurrent((prev) => (prev === activities.length - 1 ? 0 : prev + 1));
+  };
 
-  const goTo = (i) => {
-    setDirection(i > current ? 1 : -1)
-    setCurrent(i)
-  }
+  const goTo = (index) => {
+    setDirection(index > current ? 1 : -1);
+    setCurrent(index);
+  };
 
-  // Get 3 visible: left, center, right
-  const getIndex = (offset) => (current + offset + activities.length) % activities.length
+  // Touch handlers for mobile swipe
+  const onTouchStart = (e) => {
+    setTouchStart(e.touches[0].clientX);
+  };
 
-  if (!activities || activities.length === 0) return null
+  const onTouchEnd = (e) => {
+    if (!touchStart) return;
+    const diff = touchStart - e.changedTouches[0].clientX;
+    if (diff > 50) {
+      next();
+    } else if (diff < -50) {
+      prev();
+    }
+    setTouchStart(null);
+  };
 
-  // Smooth cubic-bezier spring slide transition animation variants
+  const getIndex = (offset) => (current + offset + activities.length) % activities.length;
+
+  if (!activities || activities.length === 0) return null;
+
+  // Slide transition animation variants (Smooth spring animation physics)
   const slideVariants = {
     enter: (dir) => ({
-      x: dir > 0 ? 120 : -120,
-      scale: 0.92,
+      x: dir > 0 ? 220 : -220,
       opacity: 0,
+      scale: 0.92,
     }),
     center: {
       x: 0,
-      scale: 1,
       opacity: 1,
+      scale: 1,
     },
     exit: (dir) => ({
-      x: dir > 0 ? -120 : 120,
-      scale: 0.92,
+      x: dir > 0 ? -220 : 220,
       opacity: 0,
+      scale: 0.92,
     }),
-  }
+  };
 
   return (
     <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} className="w-full relative select-none">
@@ -102,9 +74,9 @@ export default function ActivityCarousel({ activities }) {
             animate="center"
             exit="exit"
             transition={{
-              x: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
-              scale: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
-              opacity: { duration: 0.35, ease: "easeInOut" }
+              x: { type: "spring", stiffness: 220, damping: 25 },
+              opacity: { duration: 0.35, ease: "easeOut" },
+              scale: { duration: 0.35, ease: "easeOut" }
             }}
             className="flex items-center justify-center gap-4 w-full px-4"
           >
@@ -126,8 +98,8 @@ export default function ActivityCarousel({ activities }) {
               </div>
             </div>
 
-            {/* CENTER CARD — featured (Emerald background in Light Mode, dark emerald in Dark Mode) */}
-            <div className="w-full md:w-[44%] flex-shrink-0 scale-100 z-10 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 transition-all duration-500 rounded-2xl overflow-hidden border-2 border-yellow-300/60 dark:border-white/5 bg-[#099c6d] dark:bg-emerald-950">
+            {/* CENTER CARD — featured (Emerald background matching about section cards) */}
+            <div className="w-full md:w-[44%] flex-shrink-0 scale-100 z-10 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 transition-all duration-500 rounded-2xl overflow-hidden border-2 border-[#e8ecc4]/60 dark:border-white/5 bg-[#099c6d] dark:bg-emerald-950">
               <div className="relative h-[280px]">
                 <img
                   src={activities[current].image}
@@ -135,10 +107,10 @@ export default function ActivityCarousel({ activities }) {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" aria-hidden="true" />
-                <span className="absolute top-3 right-3 bg-yellow-300 dark:bg-emerald-400 text-slate-950 dark:text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                <span className="absolute top-3 right-3 bg-[#e8ecc4] dark:bg-emerald-400 text-slate-900 dark:text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
                   Featured
                 </span>
-                <h3 className="absolute bottom-3 left-4 text-white font-black text-base uppercase tracking-wide drop-shadow-sm">
+                <h3 className="absolute bottom-3 left-4 text-white font-black text-base uppercase tracking-wide">
                   {activities[current].title}
                 </h3>
               </div>
@@ -179,7 +151,7 @@ export default function ActivityCarousel({ activities }) {
         >
           <ChevronLeft className="w-5 h-5 text-slate-950 dark:text-white stroke-[2.5]" />
         </button>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2">
           {activities.map((_, i) => (
             <button
               key={i}
@@ -200,6 +172,5 @@ export default function ActivityCarousel({ activities }) {
         </button>
       </div>
     </div>
-  )
+  );
 }
-

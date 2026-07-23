@@ -114,7 +114,7 @@ export default function Header() {
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         className={`fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 ${
           shouldBeSolid
-            ? "bg-[#0bb37e]/80 dark:bg-[#0a1f18]/90 border-b border-white/15 dark:border-white/5 text-white" +
+            ? "bg-[#0a9468]/85 dark:bg-[#0a1f18]/90 border-b border-white/15 dark:border-white/5 text-white" +
               " dark:text-white backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.15)]"
             : `bg-transparent border-b border-transparent text-white`
         }`}

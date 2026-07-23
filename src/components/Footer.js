@@ -130,7 +130,21 @@ export default function Footer() {
       </footer>
 
       {/* Wave transition SVG — Structured & Elegant Wave Layers */}
-      <div className={`w-full leading-[0] pointer-events-none select-none relative z-20 ${isLight ? "bg-[#0bb37e]" : "bg-[#07130e]"}`}>
+      <div className={`w-full leading-[0] pointer-events-none select-none relative z-20 ${
+        !isLight
+          ? "bg-[#07130e]"
+          : pathname === "/"
+          ? "bg-[#099c6d]"
+          : pathname === "/about"
+          ? "bg-[#0bb37e]"
+          : pathname === "/activity"
+          ? "bg-[#0aa373]"
+          : pathname === "/articles"
+          ? "bg-[#0aa373]"
+          : pathname === "/merchandise"
+          ? "bg-[#088c62]"
+          : "bg-[#0bb37e]"
+      }`}>
         <svg
           viewBox="0 0 1440 220"
           preserveAspectRatio="none"
@@ -162,6 +176,7 @@ export default function Footer() {
           <path d="M 0 140 Q 360 80 720 140 T 1440 140 L 1440 220 L 0 220 Z" fill="url(#waveGrad3)" />
         </svg>
       </div>
+
 
 
     </div>
