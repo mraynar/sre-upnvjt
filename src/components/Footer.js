@@ -67,7 +67,7 @@ export default function Footer() {
   if (pathname === "/login" || isDashboardRoute) return null;
 
   return (
-    <div className="w-full flex flex-col mt-auto relative z-10">
+    <div className="w-full flex flex-col mt-16 md:mt-24 relative z-10">
       {/* Main Footer Body */}
       <footer className="bg-white dark:bg-[#07130e] text-[#07130e]/70 dark:text-white/70 border-t border-slate-200 dark:border-transparent relative overflow-hidden pt-16 lg:pt-20 pb-6">
         {/* Subtle ambient glow */}
