@@ -411,7 +411,7 @@ export default function Home() {
                 <h2 className="text-[36px] md:text-[44px] font-display font-black tracking-tight text-white dark:text-white uppercase leading-[1.1]">
                   OUR <span className="text-yellow-300 dark:text-emerald-400">ACTIVITY</span>
                 </h2>
-                <div className="h-[4px] w-20 bg-gradient-to-r from-white via-yellow-300 to-yellow-400 dark:from-emerald-500 dark:to-emerald-400 mx-auto mt-2 rounded-full" aria-hidden="true" />
+                <div className="h-[4px] w-20 bg-yellow-300 dark:bg-emerald-400 mx-auto mt-2 rounded-full" aria-hidden="true" />
                 <p className="text-[15px] md:text-[16px] text-white dark:text-gray-300 max-w-xl mx-auto mt-3 font-bold leading-relaxed">
                   From research to community impact <br />
                   explore what SRE UPN JATIM does on the ground.
@@ -431,10 +431,10 @@ export default function Home() {
                 >
                   <Link
                     href="/events"
-                    className="inline-flex items-center gap-2 border-2 border-yellow-300/60 hover:bg-yellow-300 hover:text-[#0cc48a] text-yellow-300 dark:border-emerald-500/30 dark:text-emerald-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-300 dark:hover:border-emerald-500 font-bold tracking-wider text-xs uppercase px-8 py-3.5 rounded-full transition-all duration-300 focus-visible:outline-yellow-300"
+                    className="group inline-flex items-center gap-2 border-2 border-yellow-300/60 hover:bg-yellow-300 hover:text-[#0cc48a] text-yellow-300 dark:border-emerald-500/40 dark:text-emerald-400 dark:hover:bg-emerald-400 dark:hover:text-[#040e0a] font-bold tracking-wider text-xs uppercase px-8 py-3.5 rounded-full transition-all duration-300 focus-visible:outline-yellow-300"
                   >
                     SEE ALL ACTIVITIES
-                    <ArrowUpRight className="w-4 h-4 text-yellow-300 group-hover:text-[#0cc48a] transition-colors" aria-hidden="true" />
+                    <ArrowUpRight className="w-4 h-4 text-yellow-300 group-hover:text-[#0cc48a] dark:text-emerald-400 dark:group-hover:text-[#040e0a] transition-colors" aria-hidden="true" />
                   </Link>
                 </motion.div>
               </div>

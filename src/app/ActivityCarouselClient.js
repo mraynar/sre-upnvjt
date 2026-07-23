@@ -82,7 +82,7 @@ export default function ActivityCarousel({ activities }) {
           >
             {/* LEFT CARD — Inactive, smaller, with matching structural components */}
             <div
-              className="hidden md:block w-[26%] flex-shrink-0 opacity-50 scale-90 transition-all duration-500 rounded-2xl overflow-hidden cursor-pointer border-2 border-yellow-300/35 dark:border-white/5 bg-[#099c6d] dark:bg-[#093021] shadow-lg"
+              className="hidden md:block w-[26%] flex-shrink-0 opacity-50 scale-90 transition-all duration-500 rounded-2xl overflow-hidden cursor-pointer border-2 border-yellow-300/40 dark:border-emerald-500/35 bg-[#099c6d] dark:bg-[#093021] shadow-lg"
               onClick={prev}
             >
               <div className="relative h-[160px]">
@@ -104,7 +104,7 @@ export default function ActivityCarousel({ activities }) {
             </div>
 
             {/* CENTER CARD — featured (Emerald background matching about section cards) */}
-            <div className="w-full md:w-[44%] flex-shrink-0 scale-100 z-10 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 transition-all duration-500 rounded-2xl overflow-hidden border-2 border-yellow-300/65 dark:border-white/5 bg-[#099c6d] dark:bg-emerald-950">
+            <div className="w-full md:w-[44%] flex-shrink-0 scale-100 z-10 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 transition-all duration-500 rounded-2xl overflow-hidden border-2 border-yellow-300 dark:border-emerald-400/60 bg-[#099c6d] dark:bg-emerald-950">
               <div className="relative h-[280px]">
                 <img
                   src={activities[current].image}
@@ -128,7 +128,7 @@ export default function ActivityCarousel({ activities }) {
 
             {/* RIGHT CARD — Inactive, smaller, with matching structural components */}
             <div
-              className="hidden md:block w-[26%] flex-shrink-0 opacity-50 scale-90 transition-all duration-500 rounded-2xl overflow-hidden cursor-pointer border-2 border-yellow-300/35 dark:border-white/5 bg-[#099c6d] dark:bg-[#093021] shadow-lg"
+              className="hidden md:block w-[26%] flex-shrink-0 opacity-50 scale-90 transition-all duration-500 rounded-2xl overflow-hidden cursor-pointer border-2 border-yellow-300/40 dark:border-emerald-500/35 bg-[#099c6d] dark:bg-[#093021] shadow-lg"
               onClick={next}
             >
               <div className="relative h-[160px]">
@@ -142,6 +142,7 @@ export default function ActivityCarousel({ activities }) {
                   {activities[getIndex(1)].title}
                 </h3>
               </div>
+
               <div className="p-3">
                 <p className="text-emerald-50 dark:text-gray-300 text-[11px] leading-relaxed font-bold line-clamp-2">
                   {activities[getIndex(1)].description}
