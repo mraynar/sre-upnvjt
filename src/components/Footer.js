@@ -129,52 +129,123 @@ export default function Footer() {
         </div>
       </footer>
 
-      {/* Wave transition SVG — Structured & Elegant Wave Layers */}
-      <div className={`w-full leading-[0] pointer-events-none select-none relative z-20 ${
-        !isLight
-          ? "bg-[#07130e]"
-          : pathname === "/"
-          ? "bg-[#099c6d]"
-          : pathname === "/about"
-          ? "bg-[#0bb37e]"
-          : pathname === "/activity"
-          ? "bg-[#0aa373]"
-          : pathname === "/articles"
-          ? "bg-[#0aa373]"
-          : pathname === "/merchandise"
-          ? "bg-[#088c62]"
-          : "bg-[#0bb37e]"
-      }`}>
+      {/* Dynamic Renewable Energy Vector Scene — Plants, Turbines, and Solar Panels */}
+      <div className={`w-full leading-[0] pointer-events-none select-none relative z-20 bg-[#0bb37e] dark:bg-[#07130e] border-t border-white/10 dark:border-white/5`}>
         <svg
-          viewBox="0 0 1440 220"
+          viewBox="0 0 1440 180"
           preserveAspectRatio="none"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="w-full block h-[90px] md:h-[130px] lg:h-[180px]"
           aria-hidden="true"
         >
-          <defs>
-            <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#d1fae5" : "#14532d"} stopOpacity="0.85" />
-              <stop offset="100%" stopColor={isLight ? "#a7f3d0" : "#052e16"} stopOpacity="1" />
-            </linearGradient>
-            <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#a7f3d0" : "#064e3b"} stopOpacity="0.9" />
-              <stop offset="100%" stopColor={isLight ? "#6ee7b7" : "#022c22"} stopOpacity="1" />
-            </linearGradient>
-            <linearGradient id="waveGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#6ee7b7" : "#065f46"} />
-              <stop offset="100%" stopColor={isLight ? "#34d399" : "#064e3b"} />
-            </linearGradient>
-          </defs>
-          {/* Back Wave Layer 1 */}
-          <path d="M 0 100 C 360 40, 720 160, 1080 100 C 1200 80, 1320 120, 1440 100 L 1440 220 L 0 220 Z" fill="url(#waveGrad1)" opacity="0.5" />
-          {/* Mid Wave Layer 2 */}
-          <path d="M 0 130 C 300 80, 600 180, 900 130 C 1100 100, 1280 160, 1440 140 L 1440 220 L 0 220 Z" fill="url(#waveGrad2)" opacity="0.8" />
-          {/* Front Wave Layer 3 */}
-          <path d="M 0 160 C 400 110, 800 210, 1100 160 C 1250 140, 1370 180, 1440 160 L 1440 220 L 0 220 Z" fill="url(#waveGrad3)" />
+          <style dangerouslySetInnerHTML={{ __html: `
+            @keyframes spin-slow {
+              from { transform: rotate(0deg); }
+              to { transform: rotate(360deg); }
+            }
+            .turbine-spin-1 {
+              animation: spin-slow 12s linear infinite;
+              transform-origin: 400px 70px;
+            }
+            .turbine-spin-2 {
+              animation: spin-slow 18s linear infinite;
+              transform-origin: 1040px 85px;
+            }
+            .turbine-spin-3 {
+              animation: spin-slow 15s linear infinite;
+              transform-origin: 740px 95px;
+            }
+          `}} />
+
+          {/* Hills / Ground layers */}
+          <path d="M 0 140 Q 360 110 720 140 T 1440 140 L 1440 180 L 0 180 Z" fill={isLight ? "#0a9468" : "#05100c"} opacity="0.4" />
+          <path d="M 0 160 Q 400 130 800 160 T 1440 160 L 1440 180 L 0 180 Z" fill={isLight ? "#088c62" : "#030a08"} />
+
+          {/* Left Trees Group */}
+          {/* Tree 1 */}
+          <rect x="148" y="145" width="4" height="20" fill={isLight ? "#e8ecc4" : "#10b981"} opacity="0.4" />
+          <circle cx="150" cy="135" r="14" fill={isLight ? "#a7f3d0" : "#047857"} opacity="0.8" />
+          
+          {/* Tree 2 */}
+          <rect x="178" y="148" width="4" height="20" fill={isLight ? "#e8ecc4" : "#10b981"} opacity="0.4" />
+          <circle cx="180" cy="138" r="11" fill={isLight ? "#6ee7b7" : "#065f46"} opacity="0.7" />
+
+          {/* Tree 3 */}
+          <rect x="268" y="146" width="4" height="20" fill={isLight ? "#e8ecc4" : "#10b981"} opacity="0.4" />
+          <circle cx="270" cy="136" r="13" fill={isLight ? "#a7f3d0" : "#047857"} opacity="0.75" />
+
+          {/* Wind Turbine 1 (Big) */}
+          {/* Tower */}
+          <path d="M 397 165 L 400 70 L 403 165 Z" fill={isLight ? "#e8ecc4" : "#34d399"} opacity="0.7" />
+          {/* Blades */}
+          <g className="turbine-spin-1">
+            <line x1="400" y1="70" x2="400" y2="25" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="3.5" strokeLinecap="round" opacity="0.8" />
+            <line x1="400" y1="70" x2="361" y2="92.5" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="3.5" strokeLinecap="round" opacity="0.8" />
+            <line x1="400" y1="70" x2="439" y2="92.5" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="3.5" strokeLinecap="round" opacity="0.8" />
+            <circle cx="400" cy="70" r="4.5" fill={isLight ? "#e8ecc4" : "#10b981"} />
+          </g>
+
+          {/* Solar Panel Group (Center-Left) */}
+          <g opacity="0.75">
+            {/* Stand */}
+            <line x1="575" y1="160" x2="575" y2="148" stroke={isLight ? "#e8ecc4" : "#10b981"} strokeWidth="2.5" />
+            {/* Panel */}
+            <polygon points="545,148 605,148 615,133 555,133" fill={isLight ? "#6ee7b7" : "#065f46"} stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="1.5" />
+            {/* Grid Lines */}
+            <line x1="575" y1="148" x2="585" y2="133" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="0.75" />
+            <line x1="560" y1="148" x2="570" y2="133" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="0.75" />
+            <line x1="590" y1="148" x2="600" y2="133" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="0.75" />
+          </g>
+
+          {/* Wind Turbine 3 (Medium height) */}
+          {/* Tower */}
+          <path d="M 737 165 L 740 95 L 743 165 Z" fill={isLight ? "#e8ecc4" : "#34d399"} opacity="0.6" />
+          {/* Blades */}
+          <g className="turbine-spin-3">
+            <line x1="740" y1="95" x2="740" y2="55" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="3" strokeLinecap="round" opacity="0.85" />
+            <line x1="740" y1="95" x2="705" y2="115" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="3" strokeLinecap="round" opacity="0.85" />
+            <line x1="740" y1="95" x2="775" y2="115" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="3" strokeLinecap="round" opacity="0.85" />
+            <circle cx="740" cy="95" r="4" fill={isLight ? "#e8ecc4" : "#10b981"} />
+          </g>
+
+          {/* Solar Panel Group (Center-Right) */}
+          <g opacity="0.7">
+            {/* Stand */}
+            <line x1="885" y1="162" x2="885" y2="150" stroke={isLight ? "#e8ecc4" : "#10b981"} strokeWidth="2.5" />
+            {/* Panel */}
+            <polygon points="855,150 915,150 925,135 865,135" fill={isLight ? "#6ee7b7" : "#065f46"} stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="1.5" />
+            {/* Grid Lines */}
+            <line x1="885" y1="150" x2="895" y2="135" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="0.75" />
+            <line x1="870" y1="150" x2="880" y2="135" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="0.75" />
+            <line x1="900" y1="150" x2="910" y2="135" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="0.75" />
+          </g>
+
+          {/* Wind Turbine 2 (Smallest & Back) */}
+          {/* Tower */}
+          <path d="M 1038 165 L 1040 85 L 1042 165 Z" fill={isLight ? "#e8ecc4" : "#34d399"} opacity="0.5" />
+          {/* Blades */}
+          <g className="turbine-spin-2">
+            <line x1="1040" y1="85" x2="1040" y2="48" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="2.5" strokeLinecap="round" opacity="0.75" />
+            <line x1="1040" y1="85" x2="1008" y2="103.5" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="2.5" strokeLinecap="round" opacity="0.75" />
+            <line x1="1040" y1="85" x2="1072" y2="103.5" stroke={isLight ? "#e8ecc4" : "#34d399"} strokeWidth="2.5" strokeLinecap="round" opacity="0.75" />
+            <circle cx="1040" cy="85" r="3.5" fill={isLight ? "#e8ecc4" : "#10b981"} />
+          </g>
+
+          {/* Right Trees Group */}
+          {/* Tree 4 */}
+          <rect x="1198" y="144" width="4" height="20" fill={isLight ? "#e8ecc4" : "#10b981"} opacity="0.4" />
+          <circle cx="1200" cy="134" r="14" fill={isLight ? "#a7f3d0" : "#047857"} opacity="0.8" />
+          
+          {/* Tree 5 */}
+          <rect x="1228" y="147" width="4" height="20" fill={isLight ? "#e8ecc4" : "#10b981"} opacity="0.4" />
+          <circle cx="1230" cy="137" r="11" fill={isLight ? "#6ee7b7" : "#065f46"} opacity="0.7" />
         </svg>
       </div>
+    </div>
+  );
+}
+
 
 
 
