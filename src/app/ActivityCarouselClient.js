@@ -89,7 +89,7 @@ export default function ActivityCarousel({ activities }) {
 
   return (
     <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} className="w-full relative select-none">
-      <div className="relative overflow-hidden w-full py-4 min-h-[420px] flex items-center justify-center">
+      <div className="relative overflow-hidden w-full py-2 min-h-[380px] flex items-center justify-center">
         <AnimatePresence initial={false} custom={direction} mode="popLayout">
           <motion.div
             key={current}

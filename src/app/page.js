@@ -294,18 +294,18 @@ export default function Home() {
           </div>
 
           {/* MAIN GRID — z-10 */}
-          <div className="site-container relative z-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+          <div className="site-container relative z-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-stretch">
 
             {/* LEFT COLUMN */}
-            <div className="flex flex-col gap-6 w-full lg:pt-0">
+            <div className="flex flex-col w-full h-full lg:pt-0">
               <div>
                 <h2 className="text-3xl lg:text-4xl font-black uppercase text-gray-900 dark:text-white leading-none">
                   ABOUT SRE
                 </h2>
               </div>
 
-              {/* Image — fixed size, not too small, not too large */}
-              <div className="relative w-full max-w-[360px] aspect-square">
+              {/* Image — stretches to match right column height */}
+              <div className="relative w-full max-w-[360px] flex-1 mt-6 min-h-[320px]">
                 <img
                   src="/images/about/PanelSurya.jpg"
                   alt="Panel Surya SRE UPN JATIM"
@@ -323,7 +323,7 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col gap-8 w-full lg:pt-[90px]"
+              className="flex flex-col gap-8 w-full lg:pt-0"
             >
               <div>
                 <h3 className="text-3xl lg:text-4xl font-black uppercase text-gray-900 dark:text-white">SRE INDONESIA</h3>
@@ -386,28 +386,31 @@ export default function Home() {
         </section>
 
 
-        {/* ── Programs / Activity Section ──────────────────────────────────────── */}
-        <section id="activity" className="scroll-mt-20 bg-white dark:bg-[#050e09] py-24 border-b border-slate-200 dark:border-white/5 relative overflow-hidden">
+        {/* ── Our Activity Section — 100vh ── */}
+        <section
+          id="activity"
+          className="scroll-mt-20 bg-gray-50 dark:bg-[#050e09] py-8 lg:py-12 px-6 lg:px-20 border-b border-slate-200 dark:border-white/5 relative overflow-hidden flex items-center justify-center lg:h-screen lg:min-h-screen"
+        >
           <div className="w-full relative z-10 flex flex-col items-center">
-            <div className="site-container w-full">
+            <div className="site-container w-full flex flex-col justify-between items-center gap-4">
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                className="text-center mb-16 max-w-2xl mx-auto flex flex-col items-center"
+                className="text-center mb-6 max-w-2xl mx-auto flex flex-col items-center"
               >
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-2">
                   <span className="text-emerald-500 text-lg leading-none select-none">•</span>
                   <span className="text-[12px] font-bold tracking-[0.2em] text-emerald-600 dark:text-emerald-400 uppercase">
                     WHAT WE DO
                   </span>
                 </div>
-                <h2 className="text-[40px] md:text-[48px] font-display font-black tracking-tight text-gray-900 dark:text-white uppercase leading-[1.1]">
+                <h2 className="text-[36px] md:text-[44px] font-display font-black tracking-tight text-gray-900 dark:text-white uppercase leading-[1.1]">
                   OUR <span className="text-emerald-500">ACTIVITY</span>
                 </h2>
-                <div className="h-[3px] w-16 bg-emerald-500 mx-auto mt-3" aria-hidden="true" />
-                <p className="text-[16px] text-gray-500 dark:text-gray-400 max-w-xl mx-auto mt-6">
+                <div className="h-[3px] w-16 bg-emerald-500 mx-auto mt-2" aria-hidden="true" />
+                <p className="text-[15px] text-gray-500 dark:text-gray-400 max-w-xl mx-auto mt-3">
                   From research to community impact — explore what SRE UPN JATIM does on the ground.
                 </p>
               </motion.div>
@@ -416,7 +419,7 @@ export default function Home() {
               <ActivityCarousel activities={ACTIVITIES} />
 
               {/* SEE ALL ACTIVITIES CTA Button */}
-              <div className="w-full text-center mt-12">
+              <div className="w-full text-center mt-6">
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
