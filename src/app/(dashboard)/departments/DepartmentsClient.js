@@ -41,6 +41,7 @@ export default function DepartmentsClient({ initialDepartments }) {
     const data = {
       name: formData.get("name"),
       code: formData.get("code")?.toUpperCase(),
+      description: formData.get("description") || null,
     };
 
     let res;
@@ -151,6 +152,11 @@ export default function DepartmentsClient({ initialDepartments }) {
                   </div>
                   <div>
                     <h2 className="text-2xl font-display font-black text-gray-900 dark:text-white tracking-tight">{dept.name}</h2>
+                    {dept.description && (
+                      <p className="mt-1 text-sm text-gray-600 dark:text-white/60 line-clamp-2 max-w-2xl">
+                        {dept.description}
+                      </p>
+                    )}
                     <div className="flex items-center gap-3 mt-3 text-xs text-gray-500 dark:text-white/40 font-medium">
                       <span className="flex items-center gap-1.5"><Users className="w-4 h-4" /> {t("departments.members_count").replace("{count}", dept._count?.users || 0)}</span>
                       <span className="w-1.5 h-1.5 rounded-full bg-white dark:bg-white/20 shadow-sm dark:shadow-none"></span>
@@ -282,6 +288,14 @@ export default function DepartmentsClient({ initialDepartments }) {
                     name="code" type="text" required defaultValue={deptModal.data?.code}
                     className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors uppercase"
                     placeholder={t("departments.placeholder_code")}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">Deskripsi</label>
+                  <textarea 
+                    name="description" rows={3} defaultValue={deptModal.data?.description || ""}
+                    className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors resize-none"
+                    placeholder="Deskripsi singkat mengenai departemen ini..."
                   />
                 </div>
                 <div className="pt-2">

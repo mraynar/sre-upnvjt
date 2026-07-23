@@ -95,7 +95,7 @@ export function MemberCard({ member, fallbackRole }) {
   const photo = member.photo;
 
   return (
-    <div className="group relative bg-white/10 dark:bg-[#07130e] border border-white/10 dark:border-white/5 rounded-3xl overflow-hidden hover:border-yellow-300/40 dark:hover:border-emerald-500/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.08)] dark:hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] flex flex-col">
+    <div className="group relative bg-white/10 dark:bg-[#07130e] border border-white/10 dark:border-white/5 rounded-3xl overflow-hidden hover:border-yellow-300/40 dark:hover:border-emerald-500/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.08)] dark:hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] flex flex-col h-full w-full">
       <div className="aspect-[4/5] bg-black/40 overflow-hidden relative w-full">
         {photo ? (
           <Image
@@ -264,6 +264,97 @@ export function StaffGrid({ divisions }) {
           />
         ))}
       </div>
+    </div>
+  );
+}
+
+// ─── 7. Org Tree Section component (Hierarchical Layout) ────────────────────────
+export function OrgTreeSection({ dept }) {
+  if (!dept) return null;
+
+  const hasDivisions = dept.divisions && dept.divisions.length > 0;
+
+  return (
+    <div className="w-full flex flex-col items-center">
+      
+      {/* DIRECTOR LEVEL */}
+      {dept.director && (
+        <div className="flex flex-col items-center w-full">
+          <div className="text-center mb-6">
+            <h3 className="text-sm font-black text-yellow-300 dark:text-emerald-400 tracking-[0.25em] uppercase mb-1">
+              Department Leader
+            </h3>
+            <h2 className="text-3xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
+              Director
+            </h2>
+          </div>
+          
+          <div className="relative z-10 w-full max-w-[340px] hover:-translate-y-2 transition-transform duration-500">
+            <DirectorCard director={dept.director} fallbackRole={`Director of ${dept.name}`} />
+          </div>
+          
+          {/* Connector Line down from Director to Divisions */}
+          {hasDivisions && (
+            <div className="w-px h-16 bg-gradient-to-b from-yellow-300 to-yellow-300/30 dark:from-emerald-500/80 dark:to-emerald-500/20 mt-6 relative">
+               {/* Decorative Dot at connection point */}
+               <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-yellow-300 dark:bg-emerald-400 shadow-[0_0_10px_rgba(253,224,71,0.6)]"></div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* DIVISIONS LEVEL */}
+      {hasDivisions && (
+        <div className="w-full relative mt-1.5">
+          {/* Top Horizontal Connecting Line */}
+          <div className="absolute top-0 left-[10%] right-[10%] h-px bg-yellow-300/80 dark:bg-emerald-500/40 hidden md:block"></div>
+          
+          <div className="flex flex-wrap justify-center gap-x-12 gap-y-16 items-start w-full pt-8">
+            {dept.divisions.map((div, idx) => (
+              <div key={idx} className="flex flex-col items-center w-full max-w-[300px] relative group">
+                
+                {/* Vertical line connecting horizontal bar to Division title (Desktop) */}
+                <div className="hidden md:block absolute -top-10 left-1/2 w-px h-10 bg-yellow-300/80 dark:bg-emerald-500/40 -translate-x-1/2 group-hover:bg-yellow-300 transition-colors"></div>
+                
+                {/* Division Header */}
+                <div className="bg-[#099c6d] dark:bg-[#07130e] border border-yellow-300/40 dark:border-emerald-500/40 px-6 py-2.5 rounded-full mb-8 z-10 text-center shadow-lg hover:border-yellow-300 transition-colors">
+                  <span className="text-xs font-black uppercase tracking-widest text-white dark:text-emerald-400">{div.name}</span>
+                </div>
+
+                {/* Manager */}
+                {div.manager ? (
+                  <div className="w-full flex flex-col items-center">
+                    <div className="w-full max-w-[190px] z-10 hover:-translate-y-1.5 transition-transform duration-300">
+                      <MemberCard member={div.manager} fallbackRole="Division Manager" />
+                    </div>
+                    {/* Connector to staff */}
+                    {div.staff && div.staff.length > 0 && (
+                      <div className="w-px h-10 bg-yellow-300/80 dark:bg-emerald-500/30 my-4"></div>
+                    )}
+                  </div>
+                ) : (
+                  // If no manager but has staff, still need a line
+                  div.staff && div.staff.length > 0 && (
+                     <div className="w-px h-10 bg-yellow-300/80 dark:bg-emerald-500/30 mb-4 -mt-4"></div>
+                  )
+                )}
+
+                {/* Staff Grid */}
+                {div.staff && div.staff.length > 0 && (
+                  <div className="w-full grid grid-cols-2 gap-3 mt-2 px-1">
+                    {div.staff.map((staffMember, sIdx) => (
+                      <div key={sIdx} className="w-full h-auto flex hover:-translate-y-1 transition-transform duration-300">
+                        <MemberCard member={staffMember} fallbackRole="Staff" />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

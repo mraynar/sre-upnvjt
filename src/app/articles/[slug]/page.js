@@ -9,7 +9,7 @@ import { ChevronLeft, Calendar, User, FileText, Image as ImageIcon } from "lucid
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }) {
-  const { slug } = params;
+  const { slug } = await params;
   const data = await db.query.content.findFirst({
     where: eq(content.slug, slug),
   });
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ContentDetailPage({ params }) {
-  const { slug } = params;
+  const { slug } = await params;
 
   // Use a manual leftJoin select to safely fetch the article with its author.
   // The Drizzle relation for `content` is named `updatedBy` (not `author`),

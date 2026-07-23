@@ -28,10 +28,10 @@ export async function getDepartments() {
 
 export async function createDepartment(data) {
   try {
-    const { name, code } = data;
-    const [result] = await db.insert(department).values({ name, code }).returning({ id: department.id });
+    const { name, code, description } = data;
+    const [result] = await db.insert(department).values({ name, code, description }).returning({ id: department.id });
     revalidatePath("/departments");
-    return { success: true, data: { id: result.id, name, code } };
+    return { success: true, data: { id: result.id, name, code, description } };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -39,10 +39,10 @@ export async function createDepartment(data) {
 
 export async function updateDepartment(id, data) {
   try {
-    const { name, code } = data;
-    await db.update(department).set({ name, code }).where(eq(department.id, id));
+    const { name, code, description } = data;
+    await db.update(department).set({ name, code, description }).where(eq(department.id, id));
     revalidatePath("/departments");
-    return { success: true, data: { id, name, code } };
+    return { success: true, data: { id, name, code, description } };
   } catch (error) {
     return { success: false, error: error.message };
   }
