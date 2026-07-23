@@ -62,6 +62,9 @@ export default function ActivityCarousel({ activities }) {
     }),
   };
 
+  const getImage = (item) => item?.imageUrl || item?.image || '/images/about/PanelSurya.jpg';
+  const getTitle = (item) => item?.name || item?.title || '';
+
   return (
     <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} className="w-full relative select-none">
       <div className="relative overflow-hidden w-full py-2 min-h-[380px] flex items-center justify-center">
@@ -87,18 +90,18 @@ export default function ActivityCarousel({ activities }) {
             >
               <div className="relative h-[160px]">
                 <img
-                  src={activities[getIndex(-1)].image}
-                  alt={activities[getIndex(-1)].title}
+                  src={getImage(activities[getIndex(-1)])}
+                  alt={getTitle(activities[getIndex(-1)])}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" aria-hidden="true" />
-                <h3 className="absolute bottom-2.5 left-3 text-white font-black text-xs uppercase tracking-wide">
-                  {activities[getIndex(-1)].title}
+                <h3 className="absolute bottom-2.5 left-3 text-white font-black text-xs uppercase tracking-wide line-clamp-1">
+                  {getTitle(activities[getIndex(-1)])}
                 </h3>
               </div>
               <div className="p-3">
                 <p className="text-emerald-50 dark:text-gray-300 text-[11px] leading-relaxed font-bold line-clamp-2">
-                  {activities[getIndex(-1)].description}
+                  {activities[getIndex(-1)]?.description}
                 </p>
               </div>
             </div>
@@ -107,21 +110,21 @@ export default function ActivityCarousel({ activities }) {
             <div className="w-full md:w-[44%] flex-shrink-0 scale-100 z-10 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 transition-all duration-500 rounded-2xl overflow-hidden border-2 border-yellow-300 dark:border-emerald-400/60 bg-[#099c6d] dark:bg-emerald-950">
               <div className="relative h-[280px]">
                 <img
-                  src={activities[current].image}
-                  alt={activities[current].title}
+                  src={getImage(activities[current])}
+                  alt={getTitle(activities[current])}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" aria-hidden="true" />
                 <span className="absolute top-3 right-3 bg-yellow-300 dark:bg-emerald-400 text-slate-900 dark:text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
-                  Featured
+                  {activities[current]?.type || "Featured"}
                 </span>
-                <h3 className="absolute bottom-3 left-4 text-white font-black text-base uppercase tracking-wide">
-                  {activities[current].title}
+                <h3 className="absolute bottom-3 left-4 text-white font-black text-base uppercase tracking-wide line-clamp-1">
+                  {getTitle(activities[current])}
                 </h3>
               </div>
               <div className="p-4 transition-colors duration-300">
-                <p className="text-white dark:text-gray-300 text-sm leading-relaxed font-bold">
-                  {activities[current].description}
+                <p className="text-white dark:text-gray-300 text-sm leading-relaxed font-bold line-clamp-2">
+                  {activities[current]?.description}
                 </p>
               </div>
             </div>
@@ -133,8 +136,8 @@ export default function ActivityCarousel({ activities }) {
             >
               <div className="relative h-[160px]">
                 <img
-                  src={activities[getIndex(1)].image}
-                  alt={activities[getIndex(1)].title}
+                  src={getImage(activities[getIndex(1)])}
+                  alt={getTitle(activities[getIndex(1)])}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" aria-hidden="true" />

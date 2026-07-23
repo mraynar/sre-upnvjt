@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { getPublicContent } from "@/app/actions/contentActions";
 import ActivityCarousel from "@/app/ActivityCarouselClient";
+import { getActivities } from "@/app/actions/activityActions";
 
 export const dynamic = "force-dynamic";
 
@@ -112,8 +113,15 @@ const ACTIVITIES = [
 export default function Home() {
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [dbActivities, setDbActivities] = useState([]);
+
   useEffect(() => {
     setMounted(true);
+    getActivities().then((res) => {
+      if (res?.success && res?.data && res.data.length > 0) {
+        setDbActivities(res.data);
+      }
+    });
   }, []);
 
   const isLight = mounted && (theme === "light" || resolvedTheme === "light");
@@ -419,7 +427,7 @@ export default function Home() {
               </motion.div>
 
               {/* 3 Cards Carousel Row */}
-              <ActivityCarousel activities={ACTIVITIES} />
+              <ActivityCarousel activities={dbActivities.length > 0 ? dbActivities : ACTIVITIES} />
 
               {/* SEE ALL ACTIVITIES CTA Button */}
               <div className="w-full text-center mt-6">
@@ -430,7 +438,7 @@ export default function Home() {
                   transition={{ duration: 0.6 }}
                 >
                   <Link
-                    href="/events"
+                    href="/activity"
                     className="group inline-flex items-center gap-2 border-2 border-yellow-300/60 hover:bg-yellow-300 hover:text-[#0cc48a] text-yellow-300 dark:border-emerald-500/40 dark:text-emerald-400 dark:hover:bg-emerald-400 dark:hover:text-[#040e0a] font-bold tracking-wider text-xs uppercase px-8 py-3.5 rounded-full transition-all duration-300 focus-visible:outline-yellow-300"
                   >
                     SEE ALL ACTIVITIES
