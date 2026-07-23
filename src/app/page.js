@@ -295,8 +295,7 @@ export default function Home() {
           className="scroll-mt-20 relative bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white py-24 px-6 lg:px-20 flex items-center border-b border-slate-200 dark:border-white/5 overflow-hidden"
           style={{ minHeight: "100vh" }}
         >
-          {/* Subtle Background Decorations (Fix 3) */}
-          {/* Top-left: faint SVG sun/solar icon */}
+          {/* Subtle Background Decorations */}
           <div className="absolute top-8 left-8 w-32 h-32 opacity-[0.04] dark:opacity-[0.06] text-emerald-500 pointer-events-none select-none z-0 animate-spin-slow" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
               <circle cx="12" cy="12" r="4"/>
@@ -311,16 +310,6 @@ export default function Home() {
             </svg>
           </div>
 
-          {/* Bottom-right: subtle dot-grid pattern using radial-gradient */}
-          <div
-            className="absolute bottom-0 right-0 w-64 h-64 opacity-[0.08] pointer-events-none z-0"
-            style={{
-              backgroundImage: "radial-gradient(circle, #10b981 1px, transparent 1px)",
-              backgroundSize: "16px 16px"
-            }}
-            aria-hidden="true"
-          />
-
           {/* Mid-left: large faint circle outline behind image area */}
           <div
             className="absolute left-[-80px] top-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full border border-emerald-500/10 dark:border-emerald-400/10 pointer-events-none z-0"
@@ -328,26 +317,31 @@ export default function Home() {
           />
 
           <div className="site-container relative z-10 w-full max-w-screen-xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-stretch w-full">
               
               {/* Left Column: Label + Image (First on desktop & mobile) */}
-              <div className="w-full flex flex-col justify-start order-1 lg:order-1">
+              <div className="w-full flex flex-col justify-start order-1 lg:order-1 h-full min-h-0">
                 {/* Small uppercase label */}
-                <div className="flex items-center gap-2 mb-6">
+                <div className="flex items-center gap-2 mb-6 shrink-0">
                   <span className="text-emerald-600 dark:text-primary text-lg leading-none select-none">•</span>
                   <span className="text-sm font-bold tracking-[0.25em] text-[#07130e]/80 dark:text-white/80 uppercase">
                     ABOUT SRE UPN JATIM
                   </span>
                 </div>
 
-                {/* Plain <img> tag fallback for maximum rendering reliability */}
-                <div className="relative w-full h-[260px] md:h-[420px] lg:h-[480px]">
-                  {/* Decorative offset border */}
-                  <div className="absolute -bottom-3 -right-3 w-full h-full rounded-2xl border-2 border-emerald-500/30 -z-10" />
+                {/* Plain <img> tag with layered border accents */}
+                <div className="relative w-full h-[260px] lg:h-auto lg:flex-1 lg:min-h-0 rounded-2xl overflow-hidden shadow-2xl group">
+                  {/* Decorative L-shaped corner accent top-left */}
+                  <div className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-emerald-400 z-10" aria-hidden="true" />
+                  {/* Decorative L-shaped corner accent bottom-right */}
+                  <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-emerald-400 z-10" aria-hidden="true" />
+                  {/* Thin full-height green line on the left edge of the image */}
+                  <div className="absolute left-0 top-0 w-[3px] h-full bg-gradient-to-b from-emerald-400 via-emerald-600 to-transparent z-10" aria-hidden="true" />
+                  
                   <img
                     src="/images/about/PanelSurya.jpg"
                     alt="Solar Panel SRE UPN Jatim"
-                    className="w-full h-full object-cover rounded-2xl shadow-xl"
+                    className="w-full h-full object-cover rounded-2xl"
                   />
                 </div>
               </div>
@@ -365,7 +359,7 @@ export default function Home() {
                   <h3 className="text-3xl lg:text-4xl font-bold uppercase text-[#07130e] dark:text-white tracking-tight leading-none">
                     SRE INDONESIA
                   </h3>
-                  <p className="text-base text-gray-600 dark:text-gray-300 leading-relaxed max-w-xl">
+                  <p className="text-base text-gray-400 dark:text-gray-300 leading-relaxed max-w-xl">
                     Society of Renewable Energy (SRE) Indonesia is the national student organization uniting university chapters across Indonesia in the mission to accelerate the country&apos;s clean energy transition. Through education, research, and community action, we drive the clean energy revolution.
                   </p>
                 </div>
@@ -378,7 +372,7 @@ export default function Home() {
                   <h3 className="text-3xl lg:text-4xl font-bold uppercase text-emerald-600 dark:text-emerald-400 tracking-tight leading-none">
                     SRE UPN JATIM
                   </h3>
-                  <p className="text-base text-gray-600 dark:text-gray-300 leading-relaxed max-w-xl">
+                  <p className="text-base text-gray-400 dark:text-gray-300 leading-relaxed max-w-xl">
                     SRE UPN Veteran Jawa Timur is a collaborative student chapter under SRE Indonesia based in Surabaya. Since 2021, we have been empowering students through hands-on clean energy campaigns, professional research projects, and community technology deployments.
                   </p>
                 </div>
@@ -386,7 +380,7 @@ export default function Home() {
                 {/* Divider */}
                 <div className="w-full h-px bg-slate-200 dark:bg-white/5" aria-hidden="true" />
 
-                {/* Badge Row (Horizontal grid row of 3 stat cards) (Fix 2) */}
+                {/* Badge Row */}
                 <div className="grid grid-cols-3 gap-3">
                   {[
                     { text: "FOUNDED", value: "Est. 2021", Icon: Sprout },
