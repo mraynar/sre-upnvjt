@@ -71,18 +71,21 @@ export default function ActivityCarousel({ activities }) {
 
   if (!activities || activities.length === 0) return null
 
-  // Slide transition animation variants
+  // Smooth cubic-bezier spring slide transition animation variants
   const slideVariants = {
     enter: (dir) => ({
-      x: dir > 0 ? 160 : -160,
+      x: dir > 0 ? 120 : -120,
+      scale: 0.92,
       opacity: 0,
     }),
     center: {
       x: 0,
+      scale: 1,
       opacity: 1,
     },
     exit: (dir) => ({
-      x: dir > 0 ? -160 : 160,
+      x: dir > 0 ? -120 : 120,
+      scale: 0.92,
       opacity: 0,
     }),
   }
@@ -99,8 +102,9 @@ export default function ActivityCarousel({ activities }) {
             animate="center"
             exit="exit"
             transition={{
-              x: { type: "tween", duration: 0.35, ease: "easeInOut" },
-              opacity: { duration: 0.25 }
+              x: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+              scale: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+              opacity: { duration: 0.35, ease: "easeInOut" }
             }}
             className="flex items-center justify-center gap-4 w-full px-4"
           >
@@ -122,8 +126,8 @@ export default function ActivityCarousel({ activities }) {
               </div>
             </div>
 
-            {/* CENTER CARD — featured */}
-            <div className="w-full md:w-[44%] flex-shrink-0 scale-100 z-10 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 transition-all duration-500 rounded-2xl overflow-hidden border border-yellow-200/50 dark:border-white/5 bg-yellow-300 dark:bg-emerald-950">
+            {/* CENTER CARD — featured (Emerald background in Light Mode, dark emerald in Dark Mode) */}
+            <div className="w-full md:w-[44%] flex-shrink-0 scale-100 z-10 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 transition-all duration-500 rounded-2xl overflow-hidden border-2 border-yellow-300/60 dark:border-white/5 bg-[#099c6d] dark:bg-emerald-950">
               <div className="relative h-[280px]">
                 <img
                   src={activities[current].image}
@@ -131,15 +135,15 @@ export default function ActivityCarousel({ activities }) {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" aria-hidden="true" />
-                <span className="absolute top-3 right-3 bg-amber-400 dark:bg-emerald-400 text-slate-900 dark:text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
+                <span className="absolute top-3 right-3 bg-yellow-300 dark:bg-emerald-400 text-slate-950 dark:text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
                   Featured
                 </span>
-                <h3 className="absolute bottom-3 left-4 text-white font-black text-base uppercase tracking-wide">
+                <h3 className="absolute bottom-3 left-4 text-white font-black text-base uppercase tracking-wide drop-shadow-sm">
                   {activities[current].title}
                 </h3>
               </div>
               <div className="p-4 transition-colors duration-300">
-                <p className="text-slate-800 dark:text-gray-300 text-sm leading-relaxed font-bold">
+                <p className="text-white dark:text-gray-300 text-sm leading-relaxed font-bold">
                   {activities[current].description}
                 </p>
               </div>
@@ -166,35 +170,36 @@ export default function ActivityCarousel({ activities }) {
         </AnimatePresence>
       </div>
 
-      {/* Controls */}
+      {/* Controls — Pure bright yellow in Light Mode, emerald in Dark Mode */}
       <div className="flex items-center justify-center gap-4 mt-6">
         <button
           onClick={prev}
-          className="w-9 h-9 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-900 dark:bg-emerald-600 dark:hover:bg-emerald-500 dark:text-white flex items-center justify-center transition-colors shadow-md focus-visible:outline-amber-500"
+          className="w-10 h-10 rounded-full bg-yellow-300 hover:bg-yellow-400 text-slate-950 border border-yellow-400 dark:bg-emerald-600 dark:hover:bg-emerald-500 dark:text-white dark:border-transparent flex items-center justify-center transition-all duration-300 shadow-md transform hover:scale-110 active:scale-95 focus-visible:outline-yellow-300"
           aria-label="Previous slide"
         >
-          <ChevronLeft className="w-4 h-4 text-slate-900 dark:text-white" />
+          <ChevronLeft className="w-5 h-5 text-slate-950 dark:text-white stroke-[2.5]" />
         </button>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           {activities.map((_, i) => (
             <button
               key={i}
               onClick={() => goTo(i)}
               aria-label={`Go to slide ${i + 1}`}
-              className={`h-2 rounded-full transition-all duration-300 focus-visible:outline-amber-500 ${
-                i === current ? 'w-6 bg-amber-400 dark:bg-emerald-400' : 'w-2 bg-white/40 dark:bg-gray-600'
+              className={`h-2 rounded-full transition-all duration-300 focus-visible:outline-yellow-300 ${
+                i === current ? 'w-6 bg-yellow-300 dark:bg-emerald-400' : 'w-2 bg-white/40 dark:bg-gray-600'
               }`}
             />
           ))}
         </div>
         <button
           onClick={next}
-          className="w-9 h-9 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-900 dark:bg-emerald-600 dark:hover:bg-emerald-500 dark:text-white flex items-center justify-center transition-colors shadow-md focus-visible:outline-amber-500"
+          className="w-10 h-10 rounded-full bg-yellow-300 hover:bg-yellow-400 text-slate-950 border border-yellow-400 dark:bg-emerald-600 dark:hover:bg-emerald-500 dark:text-white dark:border-transparent flex items-center justify-center transition-all duration-300 shadow-md transform hover:scale-110 active:scale-95 focus-visible:outline-yellow-300"
           aria-label="Next slide"
         >
-          <ChevronRight className="w-4 h-4 text-slate-900 dark:text-white" />
+          <ChevronRight className="w-5 h-5 text-slate-950 dark:text-white stroke-[2.5]" />
         </button>
       </div>
     </div>
   )
 }
+

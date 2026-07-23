@@ -350,10 +350,10 @@ export default function Home() {
                 ].map((stat, idx) => (
                   <div
                     key={idx}
-                    className="rounded-xl p-4 border-2 bg-[#099c6d] border-yellow-300/60 dark:bg-[#093021] dark:border-emerald-500/60 flex flex-col items-start gap-1 shadow-md select-none hover:border-yellow-300 hover:bg-[#088c62] dark:hover:bg-[#0d422e] transition-all duration-300"
+                    className="rounded-xl p-4 border-2 bg-[#099c6d] border-[#e8ecc4]/60 dark:bg-[#093021] dark:border-emerald-500/60 flex flex-col items-start gap-1 shadow-md select-none hover:border-[#e8ecc4] hover:bg-[#088c62] dark:hover:bg-[#0d422e] transition-all duration-300"
                   >
-                    <stat.Icon className="text-yellow-300 dark:text-emerald-400 w-6 h-6 mb-1.5 shrink-0 drop-shadow-sm" aria-hidden="true" />
-                    <span className="text-[11px] font-black uppercase tracking-wider text-yellow-300 dark:text-emerald-300 leading-none">
+                    <stat.Icon className="text-[#e8ecc4] dark:text-emerald-400 w-6 h-6 mb-1.5 shrink-0 drop-shadow-sm" aria-hidden="true" />
+                    <span className="text-[11px] font-black uppercase tracking-wider text-[#e8ecc4] dark:text-emerald-300 leading-none">
                       {stat.text}
                     </span>
                     <span className="text-sm font-black text-white dark:text-gray-100 leading-tight truncate w-full">

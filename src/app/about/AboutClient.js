@@ -306,14 +306,14 @@ export default function AboutClient({ divisionsData }) {
               <motion.div
                 key={pl.num}
                 variants={staggerChild}
-                className="bg-[#099c6d] border-2 border-yellow-300/60 dark:bg-[#071d14] dark:border-white/15 p-7 rounded-2xl flex flex-col justify-between hover:border-yellow-300 hover:bg-[#088c62] dark:hover:bg-[#0b2b1e] hover:shadow-xl transition-all duration-500 group relative overflow-hidden shadow-md"
+                className="bg-[#099c6d] border-2 border-[#e8ecc4]/60 dark:bg-[#071d14] dark:border-white/15 p-7 rounded-2xl flex flex-col justify-between hover:border-[#e8ecc4] hover:bg-[#088c62] dark:hover:bg-[#0b2b1e] hover:shadow-xl transition-all duration-500 group relative overflow-hidden shadow-md"
               >
                 {/* Large decorative number */}
-                <span className="absolute top-3 right-4 text-[72px] font-display font-black text-white/10 dark:text-white/10 group-hover:text-yellow-300/30 transition-colors duration-500 select-none pointer-events-none leading-none" aria-hidden="true">
+                <span className="absolute top-3 right-4 text-[72px] font-display font-black text-white/10 dark:text-white/10 group-hover:text-[#e8ecc4]/30 transition-colors duration-500 select-none pointer-events-none leading-none" aria-hidden="true">
                   {pl.num}
                 </span>
                 <div>
-                  <div className="w-12 h-12 rounded-2xl bg-yellow-300 border-2 border-yellow-400 flex items-center justify-center text-[#07130e] mb-5 group-hover:scale-110 group-hover:bg-yellow-400 shadow-md transition-all duration-500 relative">
+                  <div className="w-12 h-12 rounded-2xl bg-[#e8ecc4] border-2 border-[#e8ecc4] flex items-center justify-center text-[#07130e] mb-5 group-hover:scale-110 group-hover:bg-[#e8ecc4] shadow-md transition-all duration-500 relative">
                     <pl.icon className="w-6 h-6" aria-hidden="true" />
                   </div>
                   <h4 className="text-[18px] font-black text-white dark:text-white mb-2.5 uppercase tracking-tight">{pl.title}</h4>
@@ -358,9 +358,9 @@ export default function AboutClient({ divisionsData }) {
               <motion.div
                 key={org.id}
                 variants={staggerChild}
-                className="bg-[#099c6d] border-2 border-yellow-300/60 dark:bg-[#0a1f15] dark:border-emerald-500/30 rounded-3xl p-8 relative overflow-hidden group hover:border-yellow-300 hover:shadow-2xl transition-all duration-500 flex flex-col justify-between shadow-md"
+                className="bg-[#099c6d] border-2 border-[#e8ecc4]/60 dark:bg-[#0a1f15] dark:border-emerald-500/30 rounded-3xl p-8 relative overflow-hidden group hover:border-[#e8ecc4] hover:shadow-2xl transition-all duration-500 flex flex-col justify-between shadow-md"
               >
-                <div className="absolute top-4 right-6 text-[52px] font-display font-black text-yellow-300/40 dark:text-emerald-400/30 group-hover:text-yellow-300 transition-colors">
+                <div className="absolute top-4 right-6 text-[52px] font-display font-black text-[#e8ecc4]/40 dark:text-emerald-400/30 group-hover:text-[#e8ecc4] transition-colors">
                   {org.id}
                 </div>
                 <div>
