@@ -69,13 +69,13 @@ export default function Footer() {
   return (
     <div className="w-full flex flex-col mt-auto relative z-10">
       {/* Main Footer Body */}
-      <footer className="bg-white dark:bg-[#07130e] text-[#07130e]/70 dark:text-white/70 border-t border-slate-200 dark:border-transparent relative overflow-hidden py-16">
+      <footer className="bg-white dark:bg-[#07130e] text-[#07130e]/70 dark:text-white/70 border-t border-slate-200 dark:border-transparent relative overflow-hidden pt-10 pb-6">
         {/* Subtle ambient glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
 
         <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 relative z-10 flex flex-col items-center text-center">
           {/* Logo */}
-          <Link href="/" className="mb-8" aria-label="SRE UPNVJT Home">
+          <Link href="/" className="mb-4" aria-label="SRE UPNVJT Home">
             <Image
               src="/images/logo.png"
               alt="SRE UPNVJT Logo"
@@ -86,7 +86,7 @@ export default function Footer() {
           </Link>
 
           {/* Navigation Links — Large Font */}
-          <nav className="mb-8 w-full" aria-label="Footer navigation">
+          <nav className="mb-4 w-full" aria-label="Footer navigation">
             <ul className="flex flex-wrap justify-center items-center gap-x-8 md:gap-x-12 gap-y-4">
               {[
                 { label: "Home", href: "/" },
@@ -108,7 +108,7 @@ export default function Footer() {
           </nav>
 
           {/* Social Media Links — Large Icons */}
-          <div className="flex justify-center items-center gap-8 mb-10">
+          <div className="flex justify-center items-center gap-8 mb-6">
             {SOCIAL_LINKS.map(({ label, href, Icon, aria: ariaLabel }) => (
               <a
                 key={label}
@@ -142,16 +142,16 @@ export default function Footer() {
         >
           <defs>
             <linearGradient id="hillGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#ffffff" : "#d3e0d8"} />
-              <stop offset="100%" stopColor={isLight ? "#ecfdf5" : "#b2c0b9"} />
+              <stop offset="0%" stopColor={isLight ? "#e6fcf0" : "#d3e0d8"} />
+              <stop offset="100%" stopColor={isLight ? "#c6f6d5" : "#b2c0b9"} />
             </linearGradient>
             <linearGradient id="hillGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#ecfdf5" : "#b2c0b9"} />
-              <stop offset="100%" stopColor={isLight ? "#d1fae5" : "#0f3036"} />
+              <stop offset="0%" stopColor={isLight ? "#c6f6d5" : "#b2c0b9"} />
+              <stop offset="100%" stopColor={isLight ? "#9ae6b4" : "#0f3036"} />
             </linearGradient>
             <linearGradient id="hillGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#d1fae5" : "#0f3036"} />
-              <stop offset="100%" stopColor={isLight ? "#a7f3d0" : "#07130e"} />
+              <stop offset="0%" stopColor={isLight ? "#9ae6b4" : "#0f3036"} />
+              <stop offset="100%" stopColor={isLight ? "#34d399" : "#07130e"} />
             </linearGradient>
           </defs>
           <path d="M-50 180 C 250 100, 500 210, 800 130 C 1100 50, 1300 140, 1500 90 L 1500 240 L -50 240 Z" fill="url(#hillGrad1)" opacity="0.8" />

@@ -411,7 +411,8 @@ export default function Home() {
                 </h2>
                 <div className="h-[3px] w-16 bg-emerald-500 mx-auto mt-2" aria-hidden="true" />
                 <p className="text-[15px] text-gray-500 dark:text-gray-400 max-w-xl mx-auto mt-3">
-                  From research to community impact — explore what SRE UPN JATIM does on the ground.
+                  From research to community impact <br>
+                  </br> explore what SRE UPN JATIM does on the ground.
                 </p>
               </motion.div>
 
