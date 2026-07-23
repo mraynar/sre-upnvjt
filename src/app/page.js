@@ -311,7 +311,7 @@ export default function Home() {
           <div className="site-container relative z-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
 
             {/* LEFT COLUMN */}
-            <div className="flex flex-col gap-6 w-full">
+            <div className="flex flex-col gap-6 w-full lg:pt-0">
               {/* Label + Heading — same size relationship as right column "SRE INDONESIA" */}
               <div>
                 <span className="text-xs uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-400 font-medium">
@@ -342,7 +342,7 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col gap-8 w-full"
+              className="flex flex-col gap-8 w-full lg:pt-[90px]"
             >
               <div>
                 <h3 className="text-3xl lg:text-4xl font-black uppercase text-gray-900 dark:text-white">SRE INDONESIA</h3>
