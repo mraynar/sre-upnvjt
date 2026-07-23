@@ -299,59 +299,48 @@ export default function Home() {
           className="scroll-mt-20 relative bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white py-24 px-6 lg:px-20 flex items-center border-b border-slate-200 dark:border-white/5 overflow-hidden"
           style={{ minHeight: "100vh" }}
         >
-          {/* Background decorations (Fix 2) */}
+          {/* Background decorations (Fix 1) */}
           <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-            {/* Leaf icons */}
-            <Leaf className="absolute top-10 right-16 w-6 h-6 text-emerald-600 dark:text-emerald-300 opacity-[0.10] dark:opacity-[0.14]" />
-            <Leaf className="absolute top-32 right-48 w-8 h-8 text-emerald-600 dark:text-emerald-300 opacity-[0.08] dark:opacity-[0.12]" />
-            <Leaf className="absolute bottom-20 left-1/3 w-5 h-5 text-emerald-600 dark:text-emerald-300 opacity-[0.09] dark:opacity-[0.13]" />
-
-            {/* Zap/energy icons */}
-            <Zap className="absolute top-1/3 right-8 w-7 h-7 text-emerald-600 dark:text-emerald-300 opacity-[0.08] dark:opacity-[0.12]" />
-            <Zap className="absolute bottom-32 right-1/3 w-5 h-5 text-emerald-600 dark:text-emerald-300 opacity-[0.07] dark:opacity-[0.10]" />
-
-            {/* Sun icons */}
-            <Sun className="absolute top-16 left-1/2 w-8 h-8 text-emerald-600 dark:text-emerald-300 opacity-[0.08] dark:opacity-[0.12]" />
-            <Sun className="absolute bottom-12 right-12 w-6 h-6 text-emerald-600 dark:text-emerald-300 opacity-[0.09] dark:opacity-[0.13]" />
-
-            {/* Wind icons */}
-            <Wind className="absolute top-1/2 left-8 w-7 h-7 text-emerald-600 dark:text-emerald-300 opacity-[0.07] dark:opacity-[0.11]" />
-            <Wind className="absolute bottom-40 left-1/4 w-5 h-5 text-emerald-600 dark:text-emerald-300 opacity-[0.08] dark:opacity-[0.12]" />
-
-            {/* Sprout icons */}
-            <Sprout className="absolute top-24 left-16 w-6 h-6 text-emerald-600 dark:text-emerald-300 opacity-[0.09] dark:opacity-[0.13]" />
+            <Sun className="absolute top-[15%] left-[25%]  w-8 h-8 text-emerald-500 dark:text-emerald-300 opacity-[0.05] dark:opacity-[0.07]" />
+            <Leaf className="absolute top-[55%] left-[45%]  w-7 h-7 text-emerald-500 dark:text-emerald-300 opacity-[0.05] dark:opacity-[0.07]" />
+            <Zap className="absolute top-[30%] right-[15%] w-6 h-6 text-emerald-500 dark:text-emerald-300 opacity-[0.05] dark:opacity-[0.07]" />
+            <Wind className="absolute top-[70%] left-[60%]  w-7 h-7 text-emerald-500 dark:text-emerald-300 opacity-[0.05] dark:opacity-[0.07]" />
           </div>
 
           <div className="site-container relative z-10 w-full max-w-screen-xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start w-full">
               
-              {/* Left Column: Label + Image (First on desktop & mobile) (Fix 1) */}
+              {/* Left Column: Label + Image (First on desktop & mobile) (Fix 3 & 4) */}
               <div className="w-full flex flex-col justify-start order-1 lg:order-1 h-full min-h-0">
-                {/* Small uppercase label */}
-                <div className="flex items-center gap-2 mb-6 shrink-0">
-                  <span className="text-emerald-600 dark:text-emerald-400 text-lg leading-none select-none">•</span>
-                  <span className="text-sm font-bold tracking-[0.25em] text-emerald-600 dark:text-emerald-400 uppercase">
-                    ABOUT SRE UPN JATIM
+                {/* Section title header */}
+                <div className="mb-6 shrink-0">
+                  <span className="text-xs uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-400 font-medium">
+                    • About
                   </span>
+                  <h2 className="text-4xl lg:text-5xl font-black uppercase tracking-tight text-gray-900 dark:text-white leading-none mt-1">
+                    SRE UPN <span className="text-emerald-600 dark:text-emerald-400">JATIM</span>
+                  </h2>
                 </div>
 
-                {/* Aspect-square image container */}
-                <div className="relative w-full aspect-square">
-                  <img
-                    src="/images/about/PanelSurya.jpg"
-                    alt="Panel Surya"
-                    className="absolute inset-0 w-full h-full object-cover rounded-2xl"
-                  />
-                  {/* Decorative L-shaped corner accent top-right */}
-                  <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-emerald-400 z-10" />
-                  {/* Decorative L-shaped corner accent bottom-left */}
-                  <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-emerald-400 z-10" />
-                  {/* Offset border frame */}
-                  <div className="absolute -bottom-3 -left-3 w-full h-full rounded-2xl border border-emerald-500/30 dark:border-emerald-400/20 pointer-events-none -z-10" />
+                {/* Sized aspect-square image container */}
+                <div className="max-w-[380px] lg:max-w-[420px] w-full mx-auto lg:mx-0">
+                  <div className="relative w-full aspect-square">
+                    <img
+                      src="/images/about/PanelSurya.jpg"
+                      alt="Panel Surya"
+                      className="absolute inset-0 w-full h-full object-cover rounded-2xl"
+                    />
+                    {/* Decorative L-shaped corner accent top-right */}
+                    <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-emerald-400 z-10" />
+                    {/* Decorative L-shaped corner accent bottom-left */}
+                    <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-emerald-400 z-10" />
+                    {/* Offset border frame */}
+                    <div className="absolute -bottom-3 -left-3 w-full h-full rounded-2xl border border-emerald-500/30 dark:border-emerald-400/20 pointer-events-none -z-10" />
+                  </div>
                 </div>
               </div>
 
-              {/* Right Column: Text Content & Cards (Fix 3) */}
+              {/* Right Column: Text Content & Cards (Fix 2 & Underline Detail) */}
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -364,7 +353,7 @@ export default function Home() {
                   <h3 className="text-3xl font-bold uppercase text-gray-900 dark:text-white tracking-tight leading-none">
                     SRE INDONESIA
                   </h3>
-                  <p className="text-base text-gray-600 dark:text-gray-300 leading-relaxed max-w-xl">
+                  <p className="text-gray-500 dark:text-gray-200 text-base leading-relaxed max-w-xl">
                     Society of Renewable Energy (SRE) Indonesia is the national student organization uniting university chapters across Indonesia in the mission to accelerate the country&apos;s clean energy transition. Through education, research, and community action, we drive the clean energy revolution.
                   </p>
                 </div>
@@ -374,10 +363,13 @@ export default function Home() {
 
                 {/* SRE UPN JATIM Content Block */}
                 <div className="flex flex-col space-y-4">
-                  <h3 className="text-3xl font-bold uppercase text-emerald-600 dark:text-emerald-400 tracking-tight leading-none">
-                    SRE UPN JATIM
-                  </h3>
-                  <p className="text-base text-gray-600 dark:text-gray-300 leading-relaxed max-w-xl">
+                  <div>
+                    <h3 className="text-3xl font-bold uppercase text-emerald-600 dark:text-emerald-400 tracking-tight leading-none">
+                      SRE UPN JATIM
+                    </h3>
+                    <div className="h-[2px] w-0 bg-emerald-500 mt-2 animate-[expandWidth_0.8s_ease-out_0.3s_forwards]" />
+                  </div>
+                  <p className="text-gray-500 dark:text-gray-200 text-base leading-relaxed max-w-xl">
                     SRE UPN Veteran Jawa Timur is a collaborative student chapter under SRE Indonesia based in Surabaya. Since 2021, we have been empowering students through hands-on clean energy campaigns, professional research projects, and community technology deployments.
                   </p>
                 </div>
