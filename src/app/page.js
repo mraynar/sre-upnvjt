@@ -226,11 +226,7 @@ export default function Home() {
           </video>
           
           {isLight ? (
-            <>
-              {/* Milky translucent overlay with backdrop blur for premium light mode styling */}
-              <div className="absolute inset-0 bg-white/10 backdrop-blur-none z-0 pointer-events-none" />
-              <div className="absolute inset-0 bg-gradient-to-b from-white/0 to-white/30 z-0 pointer-events-none" />
-            </>
+            <div className="absolute inset-0 bg-black/45 z-0 pointer-events-none" style={{ backgroundColor: "rgba(0, 0, 0, 0.45)" }} />
           ) : (
             <>
               {/* Dark green multiply overlay for crisp dark mode contrast */}
@@ -247,21 +243,21 @@ export default function Home() {
               className="text-[46px] sm:text-[72px] md:text-[110px] lg:text-[130px] font-display font-black tracking-[-0.04em] leading-[0.85] uppercase flex flex-col items-start w-full"
             >
               <div className="flex items-center gap-2 sm:gap-3 md:gap-5">
-                <span className={isLight ? "text-emerald-800 drop-shadow-[0_2px_8px_rgba(255,255,255,0.95)]" : "text-white drop-shadow-md"}>SOCIETY</span>
+                <span className={isLight ? "text-white" : "text-white drop-shadow-md"}>SOCIETY</span>
                 <span className={`text-[28px] sm:text-[40px] md:text-[64px] lg:text-[72px] font-serif italic font-normal normal-case tracking-normal transform -translate-y-1 md:-translate-y-4 ${
-                  isLight ? "text-[#07130e]/80 drop-shadow-[0_2px_4px_rgba(255,255,255,0.9)]" : "text-[#e8ecc4]"
+                  isLight ? "text-white" : "text-[#e8ecc4]"
                 }`}>of</span>
               </div>
-              <div className={isLight ? "text-emerald-700 drop-shadow-[0_2px_8px_rgba(255,255,255,0.95)]" : "text-[#e8ecc4] drop-shadow-md"}>RENEWABLE</div>
-              <div className={isLight ? "text-emerald-800 drop-shadow-[0_2px_8px_rgba(255,255,255,0.95)]" : "text-white drop-shadow-md"}>ENERGY</div>
+              <div className={isLight ? "text-white" : "text-[#e8ecc4] drop-shadow-md"}>RENEWABLE</div>
+              <div className={isLight ? "text-white" : "text-white drop-shadow-md"}>ENERGY</div>
             </motion.h1>
           </div>
 
           <div className="absolute bottom-8 md:bottom-12 right-8 md:right-16 lg:right-24 z-10 flex flex-col items-end">
             <span className={`text-[12px] sm:text-[14px] font-medium tracking-wide text-right ${
-              isLight ? "text-emerald-800 font-semibold drop-shadow-[0_2px_4px_rgba(255,255,255,0.9)]" : "text-white/90 drop-shadow-md"
+              isLight ? "text-white" : "text-white/90 drop-shadow-md"
             }`}>
-              Student Organization at <strong className={isLight ? "text-[#07130e] font-bold block sm:inline" : "text-white font-bold block sm:inline"}>UPN Veteran Jawa Timur</strong>
+              Student Organization at <strong className="text-white font-bold block sm:inline">UPN Veteran Jawa Timur</strong>
             </span>
           </div>
 
