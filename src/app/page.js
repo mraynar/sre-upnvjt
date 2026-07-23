@@ -292,88 +292,90 @@ export default function Home() {
         {/* ── About Section — 2-Column Redesign ── */}
         <section
           id="about"
-          className="scroll-mt-20 relative bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white py-12 lg:py-20 flex items-center border-b border-slate-200 dark:border-white/5"
+          className="scroll-mt-20 relative bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white py-24 px-6 lg:px-20 flex items-center border-b border-slate-200 dark:border-white/5"
           style={{ minHeight: "100vh" }}
         >
-          <div className="site-container relative z-10 w-full max-w-screen-xl mx-auto px-6 md:px-10 lg:px-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center w-full">
+          <div className="site-container relative z-10 w-full max-w-screen-xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
               
-              {/* Left Column: Image (First on desktop, stacks above on mobile) */}
-              <div className="relative w-full order-1 lg:order-1 flex justify-center">
-                <div className="relative w-full max-w-[480px] lg:max-w-full">
-                  {/* Decorative offset block */}
-                  <div className="absolute -bottom-3 -right-3 w-full h-[260px] lg:h-[500px] rounded-2xl border-2 border-emerald-500/30 -z-10" />
-                  
-                  {/* The Image */}
-                  <div className="relative w-full h-[260px] lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl bg-white/10">
-                    <Image
-                      src="/images/about/PanelSurya.jpg"
-                      alt="SRE UPNVJT Solar Panel Project"
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 45vw"
-                      className="object-cover w-full h-full"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: All Text Content (55%) */}
-              <motion.div
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="w-full flex flex-col justify-center order-2 lg:order-2 space-y-6"
-              >
-                {/* Single small label */}
-                <div className="flex items-center gap-2">
+              {/* Left Column: Label + Image (First on desktop & mobile) */}
+              <div className="w-full flex flex-col justify-start order-1 lg:order-1">
+                {/* Small uppercase label */}
+                <div className="flex items-center gap-2 mb-6">
                   <span className="text-emerald-600 dark:text-primary text-lg leading-none select-none">•</span>
                   <span className="text-sm font-bold tracking-[0.25em] text-[#07130e]/80 dark:text-white/80 uppercase">
                     ABOUT SRE UPN JATIM
                   </span>
                 </div>
 
-                {/* SRE INDONESIA x UPN JATIM Heading Stack */}
-                <div className="relative select-none px-0">
-                  <h3 className="font-display font-black text-5xl sm:text-6xl leading-[0.9] flex flex-col tracking-tighter uppercase text-[#07130e] dark:text-white">
-                    <span>SRE</span>
-                    <span>INDONESIA</span>
-                    <span className="text-3xl sm:text-4xl text-emerald-700 dark:text-primary mt-1 font-extrabold leading-[0.9]">
-                      × UPN JATIM
-                    </span>
-                  </h3>
-                  {/* Subtle animated underline */}
-                  <motion.div
-                    initial={{ width: 0 }}
-                    whileInView={{ width: "100%" }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-                    className="absolute -bottom-2 left-0 h-[3px] bg-gradient-to-r from-emerald-600 to-emerald-400 dark:from-primary dark:to-emerald-300 rounded-full"
+                {/* Next.js Image Component exactly as requested */}
+                <div className="relative w-full h-[260px] md:h-[420px] lg:h-[480px]">
+                  {/* Decorative offset border */}
+                  <div className="absolute -bottom-3 -right-3 w-full h-full rounded-2xl border-2 border-emerald-500/30 -z-10" />
+                  <Image
+                    src="/images/about/PanelSurya.jpg"
+                    alt="Solar Panel SRE UPN Jatim"
+                    fill
+                    className="object-cover rounded-2xl w-full h-full"
+                    loading="lazy"
                   />
                 </div>
+              </div>
 
-                {/* Combined Body Text (2 sentences max) */}
-                <p className="text-[15px] sm:text-[16px] lg:text-[17px] font-light text-[#07130e]/75 dark:text-white/65 leading-[1.65] max-w-xl">
-                  SRE UPN Veteran Jawa Timur is an official student chapter of SRE Indonesia — the national organization accelerating Indonesia&apos;s clean energy transition. Since 2021, we have been driving renewable energy education, research, and community action across East Java.
-                </p>
+              {/* Right Column: Text Content & Cards */}
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="w-full flex flex-col justify-center order-2 lg:order-2 space-y-8"
+              >
+                {/* SRE INDONESIA Content Block */}
+                <div className="flex flex-col space-y-4">
+                  <h3 className="text-3xl lg:text-4xl font-bold uppercase text-[#07130e] dark:text-white tracking-tight leading-none">
+                    SRE INDONESIA
+                  </h3>
+                  <p className="text-base text-gray-600 dark:text-gray-300 leading-relaxed max-w-xl">
+                    Society of Renewable Energy (SRE) Indonesia is the national student organization uniting university chapters across Indonesia in the mission to accelerate the country&apos;s clean energy transition. Through education, research, and community action, we drive the clean energy revolution.
+                  </p>
+                </div>
 
-                {/* Badge Row (Horizontal, single line, vertical line separators, green icon/text) */}
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] sm:text-[14px] font-bold text-emerald-800 dark:text-primary pt-2 select-none">
-                  <div className="flex items-center gap-2">
-                    <Sprout className="w-4 h-4" />
-                    <span>Est. 2021</span>
-                  </div>
-                  <span className="text-emerald-800/35 dark:text-primary/30">|</span>
-                  <div className="flex items-center gap-2">
-                    <Globe className="w-4 h-4" />
-                    <span>SRE Indonesia</span>
-                  </div>
-                  <span className="text-emerald-800/35 dark:text-primary/30">|</span>
-                  <div className="flex items-center gap-2">
-                    <Building2 className="w-4 h-4" />
-                    <span>UPN Veteran Jawa Timur</span>
-                  </div>
+                {/* Divider */}
+                <div className="w-full h-px bg-slate-200 dark:bg-white/5" aria-hidden="true" />
+
+                {/* SRE UPN JATIM Content Block */}
+                <div className="flex flex-col space-y-4">
+                  <h3 className="text-3xl lg:text-4xl font-bold uppercase text-emerald-600 dark:text-emerald-400 tracking-tight leading-none">
+                    SRE UPN JATIM
+                  </h3>
+                  <p className="text-base text-gray-600 dark:text-gray-300 leading-relaxed max-w-xl">
+                    SRE UPN Veteran Jawa Timur is a collaborative student chapter under SRE Indonesia based in Surabaya. Since 2021, we have been empowering students through hands-on clean energy campaigns, professional research projects, and community technology deployments.
+                  </p>
+                </div>
+
+                {/* Divider */}
+                <div className="w-full h-px bg-slate-200 dark:bg-white/5" aria-hidden="true" />
+
+                {/* Badge Row (Horizontal grid row of 3 stat cards) */}
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { text: "FOUNDED", value: "Est. 2021", Icon: Sprout },
+                    { text: "NETWORK", value: "SRE Indonesia", Icon: Globe },
+                    { text: "CAMPUS", value: "UPN Veteran Jatim", Icon: Building2 }
+                  ].map((stat, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/20 rounded-xl px-4 py-3 flex flex-col items-start gap-1 shadow-sm select-none"
+                    >
+                      <stat.Icon className="w-5 h-5 text-emerald-500 shrink-0 mb-1" aria-hidden="true" />
+                      <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 tracking-wider uppercase leading-none">
+                        {stat.text}
+                      </span>
+                      <span className="text-[12px] sm:text-[13px] font-semibold text-gray-700 dark:text-gray-200 tracking-wide uppercase leading-tight truncate w-full">
+                        {stat.value}
+                      </span>
+                    </div>
+                  ))}
                 </div>
 
                 {/* CTA Link */}
