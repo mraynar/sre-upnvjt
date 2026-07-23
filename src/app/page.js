@@ -256,7 +256,7 @@ export default function Home() {
           </div>
 
           <div className={`absolute bottom-0 left-0 w-full h-[2px] z-20 ${
-            isLight ? "bg-slate-200" : "bg-[#e8ecc4]"
+            isLight ? "bg-yellow-300" : "bg-[#e8ecc4]"
           }`} />
         </section>
         {/* ══════════════════════════════════════════════════════════════════════
@@ -264,7 +264,7 @@ export default function Home() {
             ══════════════════════════════════════════════════════════════════════ */}
 
         {/* Marquee ticker */}
-        <div className="bg-white dark:bg-[#050e09] border-y border-slate-200 dark:border-white/5 py-5 overflow-hidden flex select-none relative z-10" aria-hidden="true">
+        <div className="bg-[#0bb37e] dark:bg-[#050e09] border-y border-white/10 dark:border-white/5 py-5 overflow-hidden flex select-none relative z-10" aria-hidden="true">
           <motion.div
             animate={{ x: ["0%", "-50%"] }}
             transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
@@ -272,8 +272,8 @@ export default function Home() {
           >
             {Array(16).fill(PARTNERS).flat().map((p, idx) => (
               <div key={idx} className="flex items-center gap-6 shrink-0">
-                <span className="text-[13px] md:text-[14px] font-display font-semibold tracking-widest text-[#07130e] dark:text-white/50 uppercase">{p}</span>
-                <div className="w-1.5 h-1.5 rounded-full bg-[#07130e] dark:bg-white/30 shrink-0" />
+                <span className="text-[13px] md:text-[14px] font-display font-semibold tracking-widest text-yellow-300 dark:text-white/50 uppercase">{p}</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-yellow-300 dark:bg-white/30 shrink-0" />
               </div>
             ))}
           </motion.div>
@@ -282,7 +282,7 @@ export default function Home() {
         {/* ── About Section — 2-Column Redesign ── */}
         <section
           id="about"
-          className="scroll-mt-20 relative bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white py-24 px-6 lg:px-20 flex items-center border-b border-slate-200 dark:border-white/5 overflow-hidden"
+          className="scroll-mt-20 relative bg-[#0bb37e] dark:bg-[#07130e] text-white py-24 px-6 lg:px-20 flex items-center border-b border-slate-200 dark:border-white/5 overflow-hidden"
           style={{ minHeight: "100vh" }}
         >
           {/* BACKGROUND ICONS — z-0, spread across center (inline styles to guarantee opacity) */}
@@ -299,8 +299,8 @@ export default function Home() {
             {/* LEFT COLUMN */}
             <div className="flex flex-col w-full h-full lg:pt-0">
               <div>
-                <h2 className="text-3xl lg:text-4xl font-black uppercase text-gray-900 dark:text-white leading-none">
-                  ABOUT <span className="text-amber-500 dark:text-amber-400">SRE</span>
+                <h2 className="text-3xl lg:text-4xl font-black uppercase text-white leading-none">
+                  ABOUT <span className="text-yellow-300 dark:text-emerald-400">SRE</span>
                 </h2>
               </div>
 
@@ -326,17 +326,17 @@ export default function Home() {
               className="flex flex-col gap-8 w-full lg:pt-0"
             >
               <div>
-                <h3 className="text-3xl lg:text-4xl font-black uppercase text-gray-900 dark:text-white">SRE INDONESIA</h3>
-                <p className="mt-3 text-gray-500 dark:text-gray-200 text-base leading-relaxed">
+                <h3 className="text-3xl lg:text-4xl font-black uppercase text-white">SRE INDONESIA</h3>
+                <p className="mt-3 text-emerald-50/90 dark:text-gray-300 text-base leading-relaxed">
                   Society of Renewable Energy (SRE) Indonesia is the national student organization uniting university chapters across Indonesia in the mission to accelerate the country&apos;s clean energy transition. Through education, research, and community action, we drive the clean energy revolution.
                 </p>
               </div>
               
-              <hr className="border-gray-200 dark:border-gray-700" />
+              <hr className="border-white/10 dark:border-gray-700" />
               
               <div>
-                <h3 className="text-2xl lg:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-amber-400">SRE UPN JATIM</h3>
-                <p className="mt-3 text-gray-500 dark:text-gray-200 text-base leading-relaxed">
+                <h3 className="text-2xl lg:text-3xl font-black text-yellow-300 dark:text-emerald-400">SRE UPN JATIM</h3>
+                <p className="mt-3 text-emerald-50/90 dark:text-gray-300 text-base leading-relaxed">
                   SRE UPN Veteran Jawa Timur is a collaborative student chapter under SRE Indonesia based in Surabaya. Since 2021, we have been empowering students through hands-on clean energy campaigns, professional research projects, and community technology deployments.
                 </p>
               </div>
@@ -350,13 +350,13 @@ export default function Home() {
                 ].map((stat, idx) => (
                   <div
                     key={idx}
-                    className="rounded-xl p-4 border bg-emerald-50/50 border-emerald-200 dark:bg-emerald-950/50 dark:border-emerald-700/40 flex flex-col items-start gap-1 shadow-sm select-none hover:border-amber-400/50 hover:bg-amber-50/10 dark:hover:bg-amber-950/10 transition-all duration-300"
+                    className="rounded-xl p-4 border bg-white/10 border-white/20 dark:bg-emerald-950/50 dark:border-emerald-700/40 flex flex-col items-start gap-1 shadow-sm select-none hover:border-yellow-300 hover:bg-white/15 dark:hover:bg-amber-950/10 transition-all duration-300"
                   >
-                    <stat.Icon className="text-amber-500 dark:text-amber-400 w-5 h-5 mb-2 shrink-0" aria-hidden="true" />
-                    <span className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 leading-none">
+                    <stat.Icon className="text-yellow-300 dark:text-emerald-400 w-5 h-5 mb-2 shrink-0" aria-hidden="true" />
+                    <span className="text-xs uppercase tracking-wider text-emerald-100 dark:text-gray-400 leading-none">
                       {stat.text}
                     </span>
-                    <span className="text-sm font-bold text-gray-800 dark:text-gray-100 leading-tight truncate w-full">
+                    <span className="text-sm font-bold text-white dark:text-gray-100 leading-tight truncate w-full">
                       {stat.value}
                     </span>
                   </div>
@@ -369,13 +369,13 @@ export default function Home() {
                   href="/about"
                   className="group inline-flex items-center gap-3 w-fit focus-visible:outline-emerald-600 focus-visible:outline-offset-4 rounded"
                 >
-                  <span className="relative text-[14px] font-bold tracking-[0.18em] uppercase text-gray-900 dark:text-white after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:w-0 after:bg-emerald-600 dark:after:bg-primary after:transition-all after:duration-300 group-hover:after:w-full">
+                  <span className="relative text-[14px] font-bold tracking-[0.18em] uppercase text-white dark:text-white after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:w-0 after:bg-yellow-300 dark:after:bg-emerald-400 after:transition-all after:duration-300 group-hover:after:w-full">
                     LEARN MORE ABOUT US
                   </span>
                   <motion.span
                     whileHover={{ x: 4 }}
                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    className="text-emerald-700 dark:text-emerald-400"
+                    className="text-yellow-300 dark:text-emerald-400"
                   >
                     <ArrowUpRight className="w-5 h-5" aria-hidden="true" />
                   </motion.span>
@@ -402,7 +402,7 @@ export default function Home() {
                 transition={{ duration: 0.6 }}
                 className="text-center"
               >
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center justify-center gap-2 mb-2">
                   <span className="text-yellow-300 dark:text-emerald-500 text-lg leading-none select-none">•</span>
                   <span className="text-[12px] font-bold tracking-[0.2em] text-emerald-100 dark:text-emerald-400 uppercase">
                     WHAT WE DO
@@ -445,7 +445,7 @@ export default function Home() {
 
         {/* ── Testimonials Section ──────────────────────────────────────────────── */}
         {publicTestimonialsList.length > 0 && (
-          <section className="bg-white dark:bg-[#07130e] border-t border-slate-200 dark:border-white/5 py-24 relative overflow-hidden">
+          <section className="bg-[#0aa373] dark:bg-[#07130e] border-t border-white/10 dark:border-white/5 py-24 relative overflow-hidden">
             <div className="site-container flex flex-col items-center">
               <motion.div
                 initial={{ opacity: 0, y: 22 }}
@@ -454,9 +454,9 @@ export default function Home() {
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                 className="mb-12 text-center"
               >
-                <span className="text-[14px] font-semibold tracking-wider text-primary uppercase mb-3 block">Testimonials & Review</span>
-                <h2 className="text-[36px] font-display font-black tracking-tight text-ink uppercase">What Members Say</h2>
-                <p className="text-[15px] text-ink/60 mt-4 max-w-lg mx-auto">
+                <span className="text-[14px] font-semibold tracking-wider text-yellow-300 dark:text-emerald-400 uppercase mb-3 block">Testimonials & Review</span>
+                <h2 className="text-[36px] font-display font-black tracking-tight text-white dark:text-white uppercase">What Members Say</h2>
+                <p className="text-[15px] text-emerald-50/90 dark:text-white/60 mt-4 max-w-lg mx-auto">
                   Hear directly from members about their learning journey, growth, and team experiences at SRE UPNVJT.
                 </p>
               </motion.div>
@@ -472,20 +472,20 @@ export default function Home() {
                   <motion.div
                     key={test.id}
                     variants={staggerChild}
-                    className="bg-white/60 dark:bg-white/5 border border-slate-200 dark:border-white/8 p-6 rounded-3xl flex flex-col justify-between shadow-sm relative group hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm"
+                    className="bg-white/10 dark:bg-white/5 border border-white/15 dark:border-white/8 p-6 rounded-3xl flex flex-col justify-between shadow-sm relative group hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm"
                   >
-                    <p className="text-sm italic text-[#07130e]/70 dark:text-white/60 mb-6 leading-relaxed">&ldquo;{test.content}&rdquo;</p>
+                    <p className="text-sm italic text-emerald-50/90 dark:text-white/60 mb-6 leading-relaxed">&ldquo;{test.content}&rdquo;</p>
                     <div className="flex items-center gap-3">
                       {test.authorPhotoUrl ? (
-                        <img src={test.authorPhotoUrl} alt="" className="w-10 h-10 rounded-full object-cover border border-[#0f3036]/10" />
+                        <img src={test.authorPhotoUrl} alt="" className="w-10 h-10 rounded-full object-cover border border-white/20" />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm" aria-hidden="true">
+                        <div className="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center text-yellow-300 dark:text-emerald-400 font-bold text-sm" aria-hidden="true">
                           {test.authorName?.charAt(0)}
                         </div>
                       )}
                       <div>
-                        <div className="font-bold text-sm text-[#07130e] dark:text-white">{test.authorName}</div>
-                        <div className="text-[11px] text-[#07130e]/50 dark:text-white/40">{test.authorPosition}</div>
+                        <div className="font-bold text-sm text-white dark:text-white">{test.authorName}</div>
+                        <div className="text-[11px] text-white/60 dark:text-white/40">{test.authorPosition}</div>
                       </div>
                     </div>
                   </motion.div>
@@ -497,7 +497,7 @@ export default function Home() {
 
         {/* ── Partners Section ──────────────────────────────────────────────────── */}
         {partnersList.length > 0 && (
-          <section id="partners" className="scroll-mt-20 bg-white dark:bg-[#07130e] pb-24 relative overflow-hidden">
+          <section id="partners" className="scroll-mt-20 bg-[#0bb37e] dark:bg-[#07130e] pb-24 relative overflow-hidden">
             <div className="site-container flex flex-col items-center justify-center text-center">
               <motion.div
                 initial={{ opacity: 0, y: 22 }}
@@ -506,9 +506,9 @@ export default function Home() {
                 transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                 className="mb-12"
               >
-                <span className="text-[14px] font-semibold tracking-wider text-primary uppercase mb-3 block">Collaboration & Synergy</span>
-                <h2 className="text-[36px] font-display font-black tracking-tight text-ink uppercase">Our Partners</h2>
-                <p className="text-[15px] text-ink-muted-80 mt-4 max-w-lg mx-auto">
+                <span className="text-[14px] font-semibold tracking-wider text-yellow-300 dark:text-emerald-400 uppercase mb-3 block">Collaboration & Synergy</span>
+                <h2 className="text-[36px] font-display font-black tracking-tight text-white dark:text-white uppercase">Our Partners</h2>
+                <p className="text-[15px] text-emerald-50/90 dark:text-white/60 mt-4 max-w-lg mx-auto">
                   Organizations, institutions, and communities we work with to accelerate the sustainable transition.
                 </p>
               </motion.div>
@@ -528,7 +528,7 @@ export default function Home() {
                     <motion.div
                       key={partner.id}
                       variants={staggerChild}
-                      className={`${sizeClasses} bg-white/60 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 rounded-2xl border border-slate-200 dark:border-white/8 p-4 flex items-center justify-center hover:border-[#07130e]/20 dark:hover:border-white/20 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 cursor-pointer group`}
+                      className={`${sizeClasses} bg-white/10 dark:bg-white/5 hover:bg-white/20 dark:hover:bg-white/10 rounded-2xl border border-white/20 dark:border-white/8 p-4 flex items-center justify-center hover:border-yellow-300/40 dark:hover:border-white/20 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 cursor-pointer group`}
                     >
                       <img 
                         src={partner.logoUrl} 

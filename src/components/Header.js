@@ -103,7 +103,7 @@ export default function Header() {
   const isTransparentOnTop = isHome && !isScrolled;
   const shouldBeSolid = !isTransparentOnTop;
 
-  const useDarkText = mounted && theme === "light" && !isTransparentOnTop;
+  const useDarkText = false; // always white text on green/dark navbar
 
   return (
     <>
@@ -114,11 +114,9 @@ export default function Header() {
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         className={`fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 ${
           shouldBeSolid
-            ? "bg-white/95 dark:bg-[#0a1f18]/90 border-b border-slate-200 dark:border-white/5 " +
-              (useDarkText ? "text-[#07130e]" : "text-white") +
-              " dark:text-white backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.08)]"
-            : `bg-transparent border-b border-transparent ` +
-              (useDarkText ? "text-[#07130e]" : "text-white")
+            ? "bg-[#0a9468]/95 dark:bg-[#0a1f18]/90 border-b border-white/10 dark:border-white/5 text-white" +
+              " dark:text-white backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.12)]"
+            : `bg-transparent border-b border-transparent text-white`
         }`}
       >
         <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
@@ -132,7 +130,7 @@ export default function Header() {
               <img
                 src="/images/logo.png"
                 alt="SRE Logo"
-                className={`h-10 w-auto object-contain transition-all duration-300 ${useDarkText ? "brightness-0" : ""}`}
+                className="h-10 w-auto object-contain transition-all duration-300 brightness-0 invert"
               />
             </motion.div>
           </Link>

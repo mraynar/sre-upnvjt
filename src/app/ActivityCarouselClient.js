@@ -123,7 +123,7 @@ export default function ActivityCarousel({ activities }) {
             </div>
 
             {/* CENTER CARD — featured */}
-            <div className="w-full md:w-[44%] flex-shrink-0 scale-100 z-10 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 transition-all duration-500 rounded-2xl overflow-hidden border border-slate-200/50 dark:border-white/5 bg-white dark:bg-emerald-950">
+            <div className="w-full md:w-[44%] flex-shrink-0 scale-100 z-10 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 transition-all duration-500 rounded-2xl overflow-hidden border border-amber-200/50 dark:border-white/5 bg-amber-300 dark:bg-emerald-950">
               <div className="relative h-[280px]">
                 <img
                   src={activities[current].image}
@@ -139,7 +139,7 @@ export default function ActivityCarousel({ activities }) {
                 </h3>
               </div>
               <div className="p-4 transition-colors duration-300">
-                <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                <p className="text-amber-900 dark:text-gray-300 text-sm leading-relaxed font-semibold">
                   {activities[current].description}
                 </p>
               </div>

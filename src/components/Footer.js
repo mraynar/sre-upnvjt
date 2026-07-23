@@ -2,8 +2,7 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { MapPin, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -20,9 +19,9 @@ const LinkedinIcon = (props) => (
   </svg>
 );
 
-const YoutubeIcon = (props) => (
+const TikTokIcon = (props) => (
   <svg className={`fill-current ${props.className || "w-4 h-4"}`} viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M23.498 6.163a3.003 3.003 0 00-2.11-2.108C19.524 3.545 12 3.545 12 3.545s-7.525 0-9.387.51a3.003 3.003 0 00-2.11 2.108C0 8.025 0 12 0 12s0 3.975.503 5.837a3.003 3.003 0 002.11 2.108c1.862.51 9.387.51 9.387.51s7.525 0 9.387-.51a3.003 3.003 0 002.11-2.108C24 15.975 24 12 24 12s0-3.975-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.73a8.27 8.27 0 004.83 1.55V6.82a4.85 4.85 0 01-1.06-.13z"/>
   </svg>
 );
 
@@ -40,10 +39,10 @@ const SOCIAL_LINKS = [
     aria: "SRE UPNVJT on LinkedIn",
   },
   {
-    label: "YouTube",
-    href: "https://youtube.com/@sreupnvjt",
-    Icon: YoutubeIcon,
-    aria: "SRE UPNVJT on YouTube",
+    label: "TikTok",
+    href: "https://tiktok.com/@sre.upnvjt",
+    Icon: TikTokIcon,
+    aria: "SRE UPNVJT on TikTok",
   },
   {
     label: "Email",
@@ -67,9 +66,9 @@ export default function Footer() {
   if (pathname === "/login" || isDashboardRoute) return null;
 
   return (
-    <div className="w-full flex flex-col mt-16 md:mt-24 relative z-10">
+    <div className="w-full flex flex-col mt-0 relative z-10">
       {/* Main Footer Body */}
-      <footer className="bg-white dark:bg-[#07130e] text-[#07130e]/70 dark:text-white/70 border-t border-slate-200 dark:border-transparent relative overflow-hidden pt-16 lg:pt-20 pb-6">
+      <footer className="bg-[#0bb37e] dark:bg-[#07130e] text-white/90 dark:text-white/70 border-transparent relative overflow-hidden pt-16 lg:pt-20 pb-6">
         {/* Subtle ambient glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
 
@@ -81,7 +80,7 @@ export default function Footer() {
               alt="SRE UPNVJT Logo"
               width={160}
               height={64}
-              className="h-16 w-auto object-contain brightness-0 dark:brightness-100 opacity-90 hover:opacity-100 transition-opacity"
+              className="h-16 w-auto object-contain brightness-0 invert dark:brightness-0 dark:invert dark:opacity-40 opacity-90 hover:opacity-100 dark:hover:opacity-60 transition-opacity"
             />
           </Link>
 
@@ -98,7 +97,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-lg md:text-xl font-bold tracking-wide text-gray-700 dark:text-gray-200 hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors duration-200"
+                    className="text-lg md:text-xl font-bold tracking-wide text-white dark:text-gray-200 hover:text-yellow-300 dark:hover:text-emerald-400 transition-colors duration-200"
                   >
                     {link.label}
                   </Link>
@@ -116,7 +115,7 @@ export default function Footer() {
                 target={href.startsWith("http") ? "_blank" : undefined}
                 rel={href.startsWith("http") ? "noreferrer noopener" : undefined}
                 aria-label={ariaLabel}
-                className="text-gray-500 hover:text-emerald-500 dark:text-gray-400 dark:hover:text-emerald-400 transition-all duration-300 transform hover:scale-110"
+                className="text-white/80 hover:text-yellow-300 dark:text-gray-400 dark:hover:text-emerald-400 transition-all duration-300 transform hover:scale-110"
               >
                 <Icon className="w-8 h-8" />
               </a>
@@ -124,41 +123,37 @@ export default function Footer() {
           </div>
 
           {/* Bottom Copyright */}
-          <div className="text-[12px] text-gray-400 dark:text-gray-500 font-medium">
+          <div className="text-[12px] text-white/60 dark:text-gray-500 font-medium">
             © {new Date().getFullYear()} Society of Renewable Energy UPN Veteran Jawa Timur. All rights reserved.
           </div>
         </div>
       </footer>
 
-      {/* Wave transition SVG — placed at the very bottom of the page */}
-      <div className="w-full leading-[0] pointer-events-none select-none bg-transparent -mt-16 md:-mt-24 lg:-mt-28 relative z-20">
+      {/* Wave transition SVG */}
+      <div className="w-full leading-[0] pointer-events-none select-none bg-transparent relative z-20">
         <svg
-          viewBox="0 0 1440 240"
+          viewBox="0 0 1440 160"
           preserveAspectRatio="xMidYMax slice"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-[120px] md:h-auto block"
+          className="w-full block"
           aria-hidden="true"
         >
           <defs>
-            <linearGradient id="hillGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#e6fcf0" : "#d3e0d8"} />
-              <stop offset="100%" stopColor={isLight ? "#c6f6d5" : "#b2c0b9"} />
+            <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={isLight ? "#a8f0d0" : "#1a3d2e"} />
+              <stop offset="100%" stopColor={isLight ? "#6ee7b7" : "#0f2a1f"} />
             </linearGradient>
-            <linearGradient id="hillGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#c6f6d5" : "#b2c0b9"} />
-              <stop offset="100%" stopColor={isLight ? "#9ae6b4" : "#0f3036"} />
-            </linearGradient>
-            <linearGradient id="hillGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#9ae6b4" : "#0f3036"} />
+            <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={isLight ? "#6ee7b7" : "#0f2a1f"} />
               <stop offset="100%" stopColor={isLight ? "#34d399" : "#07130e"} />
             </linearGradient>
           </defs>
-          <path d="M-50 180 C 250 100, 500 210, 800 130 C 1100 50, 1300 140, 1500 90 L 1500 240 L -50 240 Z" fill="url(#hillGrad1)" opacity="0.8" />
-          <path d="M-50 200 C 300 150, 700 230, 1000 160 C 1250 90, 1350 170, 1500 130 L 1500 240 L -50 240 Z" fill="url(#hillGrad2)" />
-          <path d="M-50 220 C 400 180, 800 240, 1100 190 C 1280 150, 1380 200, 1500 170 L 1500 240 L -50 240 Z" fill="url(#hillGrad3)" />
+          <path d="M0 80 C 360 20, 720 140, 1080 60 C 1260 20, 1380 80, 1440 50 L1440 160 L0 160 Z" fill="url(#waveGrad1)" opacity="0.7" />
+          <path d="M0 100 C 300 50, 700 140, 1000 80 C 1200 30, 1360 100, 1440 70 L1440 160 L0 160 Z" fill="url(#waveGrad2)" />
         </svg>
       </div>
+
     </div>
   );
 }

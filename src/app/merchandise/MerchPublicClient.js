@@ -12,7 +12,7 @@ const InstagramIcon = (props) => (
 
 export default function MerchPublicClient() {
   return (
-    <div className="min-h-screen bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white pt-24 select-none">
+    <div className="min-h-screen bg-[#0bb37e] dark:bg-[#07130e] text-white dark:text-white pt-24 select-none">
       
       {/* ── 1. Hero Section (Gambar 4 Style) ── */}
       <section className="relative bg-[#0bb37e] dark:bg-[#0c2a20] text-white py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
@@ -76,12 +76,11 @@ export default function MerchPublicClient() {
       </section>
 
       {/* ── 2. Our Special Bundle Section (Gambar 2 Style) ── */}
-      <section className="py-24 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto bg-white dark:bg-[#07130e]">
+      <section className="py-24 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto bg-[#0bb37e] dark:bg-[#07130e]">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-display font-black uppercase text-gray-900 dark:text-white tracking-tight relative inline-block">
+          <h2 className="text-3xl md:text-5xl font-display font-black uppercase text-white dark:text-white tracking-tight relative inline-block">
             OUR SPECIAL BUNDLE
-            {/* Yellow / gold accent line underline */}
-            <div className="h-[4px] w-full bg-gradient-to-r from-yellow-400 to-amber-500 mt-2 rounded-full" />
+            <div className="h-[4px] w-full bg-gradient-to-r from-yellow-300 to-yellow-200 dark:from-yellow-400 dark:to-amber-500 mt-2 rounded-full" />
           </h2>
         </div>
 
@@ -90,15 +89,15 @@ export default function MerchPublicClient() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border border-amber-500/10 dark:border-white/5 bg-amber-50/10 dark:bg-amber-950/5 flex flex-col items-center justify-center text-center shadow-sm"
+          className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border border-white/20 dark:border-white/5 bg-white/10 dark:bg-amber-950/5 flex flex-col items-center justify-center text-center shadow-sm"
         >
-          <div className="w-20 h-20 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-500 dark:text-amber-400 mb-6">
+          <div className="w-20 h-20 rounded-full bg-white/15 dark:bg-amber-900/30 flex items-center justify-center text-yellow-300 dark:text-amber-400 mb-6">
             <Package className="w-10 h-10" />
           </div>
-          <h3 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white mb-2">
+          <h3 className="text-xl md:text-2xl font-bold text-white dark:text-white mb-2">
             No bundle merchandise available yet.
           </h3>
-          <p className="text-gray-500 dark:text-gray-400 font-light max-w-md">
+          <p className="text-emerald-50/90 dark:text-gray-400 font-light max-w-md">
             Please check back later for exciting bundles! We are working hard to create exclusive gear packages for you.
           </p>
         </motion.div>

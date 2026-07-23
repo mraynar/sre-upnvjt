@@ -40,7 +40,7 @@ export default function ActivityPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#07130e] text-white pt-20">
+    <div className="min-h-screen bg-[#0bb37e] dark:bg-[#07130e] text-white pt-20">
       {/* ── HERO BANNER SECTION (Gambar 5 style) ── */}
       <section className="relative h-[70vh] flex items-center overflow-hidden">
         {/* Background Image with Dark Multiply Overlay */}
@@ -85,7 +85,7 @@ export default function ActivityPage() {
       </section>
 
       {/* ── EXTERNAL PROGRAM SECTION (Gambar 4 style) ── */}
-      <section id="programs" className="py-24 px-6 md:px-12 bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white border-t border-slate-200 dark:border-white/5 relative overflow-hidden">
+      <section id="programs" className="py-24 px-6 md:px-12 bg-[#0bb37e] dark:bg-[#07130e] text-white border-t border-white/10 dark:border-white/5 relative overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: Interactive Group Image */}
           <motion.div
@@ -93,7 +93,7 @@ export default function ActivityPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200/50 dark:border-white/5"
+            className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 dark:border-white/5"
           >
             <img
               src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800&auto=format&fit=crop"
@@ -102,7 +102,7 @@ export default function ActivityPage() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute bottom-6 left-6 text-white">
-              <span className="text-xs uppercase tracking-widest text-emerald-400 font-bold mb-1 block">• TEAM COLLABORATION</span>
+              <span className="text-xs uppercase tracking-widest text-yellow-300 dark:text-emerald-400 font-bold mb-1 block">• TEAM COLLABORATION</span>
               <h4 className="text-xl font-bold">Building Clean Energy Foundations</h4>
             </div>
           </motion.div>
@@ -115,32 +115,32 @@ export default function ActivityPage() {
             transition={{ duration: 0.8 }}
             className="flex flex-col gap-6"
           >
-            <span className="text-xs uppercase tracking-widest text-emerald-600 dark:text-emerald-400 font-black">
+            <span className="text-xs uppercase tracking-widest text-yellow-300 dark:text-emerald-400 font-black">
               OUTREACH & SYNERGY
             </span>
-            <h2 className="text-3xl md:text-4xl font-display font-black uppercase text-gray-900 dark:text-white tracking-tight leading-tight">
+            <h2 className="text-3xl md:text-4xl font-display font-black uppercase text-white dark:text-white tracking-tight leading-tight">
               External Program
             </h2>
-            <p className="text-gray-500 dark:text-gray-300 leading-relaxed font-light text-base">
+            <p className="text-emerald-50/90 dark:text-gray-300 leading-relaxed font-light text-base">
               External programs organized by the Society of Renewable Energy at UPN Veteran Jawa Timur involve activities and events that extend beyond the boundaries of the student organization to engage external stakeholders. 
             </p>
-            <p className="text-gray-500 dark:text-gray-300 leading-relaxed font-light text-base">
+            <p className="text-emerald-50/90 dark:text-gray-300 leading-relaxed font-light text-base">
               These include clean energy outreach campaigns, technology partnerships with other academic institutions, and community-based solar implementations designed to promote awareness and accelerate decentralized sustainable transition on the ground.
             </p>
 
             {/* Core Values Row */}
             <div className="grid grid-cols-3 gap-4 mt-4">
-              <div className="flex flex-col items-center p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-center">
-                <Target className="w-6 h-6 text-emerald-600 dark:text-emerald-400 mb-2" />
-                <span className="text-xs font-bold uppercase text-gray-700 dark:text-gray-300">Outreach</span>
+              <div className="flex flex-col items-center p-4 rounded-xl bg-white/10 dark:bg-emerald-950/40 text-center">
+                <Target className="w-6 h-6 text-yellow-300 dark:text-emerald-400 mb-2" />
+                <span className="text-xs font-bold uppercase text-white dark:text-gray-300">Outreach</span>
               </div>
-              <div className="flex flex-col items-center p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-center">
-                <Users className="w-6 h-6 text-emerald-600 dark:text-emerald-400 mb-2" />
-                <span className="text-xs font-bold uppercase text-gray-700 dark:text-gray-300">Partnership</span>
+              <div className="flex flex-col items-center p-4 rounded-xl bg-white/10 dark:bg-emerald-950/40 text-center">
+                <Users className="w-6 h-6 text-yellow-300 dark:text-emerald-400 mb-2" />
+                <span className="text-xs font-bold uppercase text-white dark:text-gray-300">Partnership</span>
               </div>
-              <div className="flex flex-col items-center p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-center">
-                <BookOpen className="w-6 h-6 text-emerald-600 dark:text-emerald-400 mb-2" />
-                <span className="text-xs font-bold uppercase text-gray-700 dark:text-gray-300">Awareness</span>
+              <div className="flex flex-col items-center p-4 rounded-xl bg-white/10 dark:bg-emerald-950/40 text-center">
+                <BookOpen className="w-6 h-6 text-yellow-300 dark:text-emerald-400 mb-2" />
+                <span className="text-xs font-bold uppercase text-white dark:text-gray-300">Awareness</span>
               </div>
             </div>
           </motion.div>
@@ -148,15 +148,15 @@ export default function ActivityPage() {
       </section>
 
       {/* ── PAST EVENTS SECTION (Gambar 4 style) ── */}
-      <section className="py-24 px-6 md:px-12 bg-gray-50 dark:bg-[#050e09] border-t border-slate-200 dark:border-white/5 relative overflow-hidden">
+      <section className="py-24 px-6 md:px-12 bg-[#0aa373] dark:bg-[#050e09] border-t border-white/10 dark:border-white/5 relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-16 text-center max-w-xl mx-auto">
-            <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 tracking-widest uppercase mb-2 block">• EXPLORE PAST DISPATCHES</span>
-            <h2 className="text-3xl md:text-5xl font-display font-black text-gray-900 dark:text-white uppercase leading-[1.1]">
+            <span className="text-xs font-black text-yellow-300 dark:text-emerald-400 tracking-widest uppercase mb-2 block">• EXPLORE PAST DISPATCHES</span>
+            <h2 className="text-3xl md:text-5xl font-display font-black text-white dark:text-white uppercase leading-[1.1]">
               Our Past Events
             </h2>
-            <div className="h-[3px] w-16 bg-emerald-500 mx-auto mt-4" aria-hidden="true" />
+            <div className="h-[3px] w-16 bg-gradient-to-r from-white to-yellow-300 dark:from-emerald-500 dark:to-emerald-400 mx-auto mt-4" aria-hidden="true" />
           </div>
 
           {/* Cards Grid */}
@@ -168,7 +168,7 @@ export default function ActivityPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="group flex flex-col bg-white dark:bg-[#0d1f17] border border-slate-200/50 dark:border-white/5 rounded-2xl overflow-hidden shadow-md hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+                className="group flex flex-col bg-white/10 dark:bg-[#0d1f17] border border-white/10 dark:border-white/5 rounded-2xl overflow-hidden shadow-md hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
               >
                 {/* Image top with category overlay */}
                 <div className="relative aspect-video w-full overflow-hidden bg-emerald-950">
@@ -178,7 +178,7 @@ export default function ActivityPage() {
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute top-3 left-3">
-                    <span className="px-2.5 py-1 rounded bg-black/55 text-emerald-400 border border-white/5 text-[9px] font-bold uppercase tracking-wider backdrop-blur-md">
+                    <span className="px-2.5 py-1 rounded bg-black/55 text-yellow-300 dark:text-emerald-400 border border-white/5 text-[9px] font-bold uppercase tracking-wider backdrop-blur-md">
                       {ev.category}
                     </span>
                   </div>
@@ -187,22 +187,22 @@ export default function ActivityPage() {
                 {/* Body Content */}
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors duration-200 mb-2">
+                    <h3 className="text-xl font-bold text-white dark:text-white group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors duration-200 mb-2">
                       {ev.title}
                     </h3>
-                    <p className="text-gray-500 dark:text-gray-300 text-sm leading-relaxed mb-6 font-light">
+                    <p className="text-emerald-50/90 dark:text-gray-300 text-sm leading-relaxed mb-6 font-light">
                       {ev.description}
                     </p>
                   </div>
 
                   {/* Metadata Row */}
-                  <div className="pt-4 border-t border-slate-200/50 dark:border-white/5 flex flex-col gap-2">
-                    <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 font-medium">
-                      <Calendar className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                  <div className="pt-4 border-t border-white/10 dark:border-white/5 flex flex-col gap-2">
+                    <div className="flex items-center gap-2 text-xs text-white/70 dark:text-gray-500 font-medium">
+                      <Calendar className="w-3.5 h-3.5 text-yellow-300 dark:text-emerald-400 shrink-0" />
                       <span>{ev.date}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500 font-medium">
-                      <MapPin className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                    <div className="flex items-center gap-2 text-xs text-white/70 dark:text-gray-500 font-medium">
+                      <MapPin className="w-3.5 h-3.5 text-yellow-300 dark:text-emerald-400 shrink-0" />
                       <span>{ev.location}</span>
                     </div>
                   </div>

@@ -102,37 +102,37 @@ export default function ContentPublicClient({ initialArticles }) {
   });
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white font-sans selection:bg-primary/30">
+    <div className="min-h-screen bg-[#0bb37e] dark:bg-[#07130e] text-white dark:text-white font-sans selection:bg-yellow-300">
       
       {/* ── Hero / Filter Section ──────────────────────────────────────────── */}
-      <section id="hero" className="scroll-mt-20 pt-40 pb-20 px-6 relative overflow-hidden bg-white dark:bg-[#07130e]">
+      <section id="hero" className="scroll-mt-20 pt-40 pb-20 px-6 relative overflow-hidden bg-[#0bb37e] dark:bg-[#07130e]">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/15 blur-[140px] rounded-full pointer-events-none" aria-hidden="true" />
         
         <div className="max-w-7xl mx-auto px-0 md:px-6 relative z-10 text-center">
           <motion.div {...fadeUp} initial={fadeUp.initial} animate={fadeUp.animate} transition={fadeUp.transition}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 text-yellow-300 dark:text-emerald-400 text-xs font-bold uppercase tracking-widest mb-6">
               <FileText className="w-4 h-4" aria-hidden="true" /> Latest Updates
             </div>
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 text-[#07130e] dark:text-white font-display">
+            <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 text-white dark:text-white font-display">
               Articles &{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400">
+              <span className="text-yellow-300 dark:text-emerald-400">
                 Insights
               </span>
             </h1>
-            <p className="text-lg text-[#07130e]/55 dark:text-white/55 max-w-2xl mx-auto mb-10">
+            <p className="text-lg text-emerald-50/90 dark:text-white/55 max-w-2xl mx-auto mb-10">
               Read the latest news, research, and updates from the Society of Renewable Energy UPN Veteran Jawa Timur.
             </p>
             
             {/* Search bar with focus animation */}
             <div className="relative max-w-xl mx-auto mb-12 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#07130e]/30 dark:text-white/30 group-focus-within:text-primary transition-colors duration-300 pointer-events-none" aria-hidden="true" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/40 group-focus-within:text-yellow-300 dark:group-focus-within:text-emerald-400 transition-colors duration-300 pointer-events-none" aria-hidden="true" />
               <input 
                 type="text"
                 placeholder="Search articles by title or author..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 aria-label="Search articles"
-                className="w-full bg-white/80 dark:bg-white/5 border border-[#07130e]/10 dark:border-white/10 rounded-2xl py-4 pl-12 pr-6 text-[#07130e] dark:text-white placeholder:text-[#07130e]/30 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/40 shadow-lg shadow-slate-100 dark:shadow-none transition-all duration-300 focus:scale-[1.01] backdrop-blur-sm"
+                className="w-full bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white dark:text-white placeholder:text-white/40 dark:placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-yellow-300/50 dark:focus:ring-primary/50 focus:border-yellow-300/40 dark:focus:border-primary/40 shadow-lg shadow-slate-100 dark:shadow-none transition-all duration-300 focus:scale-[1.01] backdrop-blur-sm"
               />
             </div>
 
@@ -148,17 +148,17 @@ export default function ContentPublicClient({ initialArticles }) {
                   role="tab"
                   aria-selected={activeCategory === cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`relative px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shrink-0 transition-colors duration-200 border focus-visible:outline-primary ${
+                  className={`relative px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider shrink-0 transition-colors duration-200 border focus-visible:outline-yellow-300 ${
                     activeCategory === cat
-                      ? "text-[#050e0a] border-transparent"
-                      : "bg-white/60 dark:bg-white/5 text-[#07130e]/50 dark:text-gray-400 border-[#07130e]/10 dark:border-white/5 hover:text-[#07130e] dark:hover:text-white hover:border-[#07130e]/20 dark:hover:bg-white/10"
+                      ? "text-slate-950 dark:text-slate-950 border-transparent"
+                      : "bg-white/10 dark:bg-white/5 text-white/80 dark:text-gray-400 border-white/20 dark:border-white/5 hover:text-yellow-300 dark:hover:text-white hover:border-white/30 dark:hover:border-white/15"
                   }`}
                 >
                   {/* Animated sliding background pill */}
                   {activeCategory === cat && (
                     <motion.span
                       layoutId="cat-active-pill"
-                      className="absolute inset-0 rounded-xl bg-primary"
+                      className="absolute inset-0 rounded-xl bg-yellow-300 dark:bg-emerald-500"
                       transition={{ type: "spring", stiffness: 380, damping: 30 }}
                       aria-hidden="true"
                     />
@@ -205,7 +205,7 @@ export default function ContentPublicClient({ initialArticles }) {
                       className="group"
                     >
                       <Link href={`/articles/${article.slug}`} className="block h-full focus-visible:outline-primary focus-visible:rounded-3xl">
-                        <div className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-3xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 dark:hover:shadow-primary/8 transition-all duration-500 h-full flex flex-col hover:border-primary/30 hover:-translate-y-1 backdrop-blur-sm">
+                        <div className="bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 rounded-3xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 dark:hover:shadow-primary/8 transition-all duration-500 h-full flex flex-col hover:border-yellow-300 dark:hover:border-primary/30 hover:-translate-y-1 backdrop-blur-sm">
                           
                           {/* Image */}
                           <div className="h-56 relative overflow-hidden bg-black/30">
@@ -236,33 +236,33 @@ export default function ContentPublicClient({ initialArticles }) {
                           {/* Content */}
                           <div className="p-6 md:p-7 flex-1 flex flex-col justify-between">
                             <div>
-                              <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-primary mb-3">
+                              <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-yellow-300 dark:text-emerald-400 mb-3">
                                 <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
                                 <time dateTime={article.createdAt}>
                                   {new Date(article.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                                 </time>
                               </div>
                               
-                              <h3 className="text-[19px] font-bold text-[#07130e] dark:text-white mb-3.5 line-clamp-2 group-hover:text-primary transition-colors duration-200 leading-snug font-display">
+                              <h3 className="text-[19px] font-bold text-white dark:text-white mb-3.5 line-clamp-2 group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors duration-200 leading-snug font-display">
                                 {article.title}
                               </h3>
                               
-                              <p className="text-[13px] text-[#07130e]/55 dark:text-white/55 line-clamp-3 mb-5 leading-relaxed">
+                              <p className="text-[13px] text-emerald-50/90 dark:text-white/55 line-clamp-3 mb-5 leading-relaxed">
                                 {article.body.replace(/<[^>]*>?/gm, '')}
                               </p>
                             </div>
                             
-                            <div className="flex items-center justify-between mt-auto pt-5 border-t border-slate-200 dark:border-[#07130e]/10 dark:border-white/8">
+                            <div className="flex items-center justify-between mt-auto pt-5 border-t border-white/10 dark:border-[#07130e]/10 dark:border-white/8">
                               <div className="flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center text-xs font-black" aria-hidden="true">
+                                <div className="w-8 h-8 rounded-full bg-white/15 text-yellow-300 dark:text-emerald-400 flex items-center justify-center text-xs font-black" aria-hidden="true">
                                   {article.author?.name ? article.author.name.charAt(0).toUpperCase() : "S"}
                                 </div>
-                                <span className="text-[13px] font-semibold text-[#07130e] dark:text-white truncate max-w-[120px]">
+                                <span className="text-[13px] font-semibold text-white dark:text-white truncate max-w-[120px]">
                                   {article.author?.name || "SRE UPNVJT"}
                                 </span>
                               </div>
                               <div
-                                className="w-9 h-9 rounded-full bg-[#07130e]/5 dark:bg-white/8 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-300 text-[#07130e]/50 dark:text-white/50"
+                                className="w-9 h-9 rounded-full bg-white/10 dark:bg-white/8 flex items-center justify-center group-hover:bg-yellow-300 dark:group-hover:bg-primary group-hover:text-slate-950 dark:group-hover:text-white transition-all duration-300 text-white dark:text-white/50"
                                 aria-hidden="true"
                               >
                                 <ArrowRight className="w-4 h-4" />
