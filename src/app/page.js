@@ -256,7 +256,7 @@ export default function Home() {
           </div>
 
           <div className={`absolute bottom-0 left-0 w-full h-[2px] z-20 ${
-            isLight ? "bg-yellow-300" : "bg-[#e8ecc4]"
+            isLight ? "bg-[#e8ecc4]" : "bg-[#e8ecc4]"
           }`} />
         </section>
         {/* ══════════════════════════════════════════════════════════════════════
@@ -272,8 +272,8 @@ export default function Home() {
           >
             {Array(16).fill(PARTNERS).flat().map((p, idx) => (
               <div key={idx} className="flex items-center gap-6 shrink-0">
-                <span className="text-[13px] md:text-[14px] font-display font-semibold tracking-widest text-yellow-300 dark:text-white/50 uppercase">{p}</span>
-                <div className="w-1.5 h-1.5 rounded-full bg-yellow-300 dark:bg-white/30 shrink-0" />
+                <span className="text-[13px] md:text-[14px] font-display font-semibold tracking-widest text-[#e8ecc4] dark:text-white/50 uppercase">{p}</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-[#e8ecc4] dark:bg-white/30 shrink-0" />
               </div>
             ))}
           </motion.div>
@@ -300,7 +300,7 @@ export default function Home() {
             <div className="flex flex-col w-full h-full lg:pt-0">
               <div>
                 <h2 className="text-3xl lg:text-4xl font-black uppercase text-white leading-none">
-                  ABOUT <span className="text-yellow-300 dark:text-emerald-400">SRE</span>
+                  ABOUT <span className="text-[#e8ecc4] dark:text-emerald-400">SRE</span>
                 </h2>
               </div>
 

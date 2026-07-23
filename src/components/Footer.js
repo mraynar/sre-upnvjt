@@ -156,26 +156,26 @@ export default function Footer() {
           <defs>
             <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor={isLight ? "#d1fae5" : "#14532d"} stopOpacity="0.85" />
-              <stop offset="100%" stopColor={isLight ? "#6ee7b7" : "#052e16"} stopOpacity="1" />
+              <stop offset="100%" stopColor={isLight ? "#a7f3d0" : "#052e16"} stopOpacity="1" />
             </linearGradient>
             <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#6ee7b7" : "#064e3b"} stopOpacity="0.9" />
-              <stop offset="100%" stopColor={isLight ? "#34d399" : "#022c22"} stopOpacity="1" />
+              <stop offset="0%" stopColor={isLight ? "#a7f3d0" : "#064e3b"} stopOpacity="0.9" />
+              <stop offset="100%" stopColor={isLight ? "#6ee7b7" : "#022c22"} stopOpacity="1" />
             </linearGradient>
-            <linearGradient id="waveGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor={isLight ? "#a7f3d0" : "#065f46"} />
-              <stop offset="50%" stopColor={isLight ? "#34d399" : "#047857"} />
-              <stop offset="100%" stopColor={isLight ? "#10b981" : "#064e3b"} />
+            <linearGradient id="waveGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={isLight ? "#6ee7b7" : "#065f46"} />
+              <stop offset="100%" stopColor={isLight ? "#34d399" : "#064e3b"} />
             </linearGradient>
           </defs>
           {/* Back Wave Layer 1 */}
-          <path d="M 0 60 Q 360 140 720 60 T 1440 60 L 1440 220 L 0 220 Z" fill="url(#waveGrad1)" opacity="0.5" />
+          <path d="M 0 100 C 360 40, 720 160, 1080 100 C 1200 80, 1320 120, 1440 100 L 1440 220 L 0 220 Z" fill="url(#waveGrad1)" opacity="0.5" />
           {/* Mid Wave Layer 2 */}
-          <path d="M 0 100 Q 360 20 720 100 T 1440 100 L 1440 220 L 0 220 Z" fill="url(#waveGrad2)" opacity="0.8" />
+          <path d="M 0 130 C 300 80, 600 180, 900 130 C 1100 100, 1280 160, 1440 140 L 1440 220 L 0 220 Z" fill="url(#waveGrad2)" opacity="0.8" />
           {/* Front Wave Layer 3 */}
-          <path d="M 0 140 Q 360 80 720 140 T 1440 140 L 1440 220 L 0 220 Z" fill="url(#waveGrad3)" />
+          <path d="M 0 160 C 400 110, 800 210, 1100 160 C 1250 140, 1370 180, 1440 160 L 1440 220 L 0 220 Z" fill="url(#waveGrad3)" />
         </svg>
       </div>
+
 
 
 
