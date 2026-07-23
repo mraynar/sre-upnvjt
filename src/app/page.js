@@ -264,7 +264,7 @@ export default function Home() {
             ══════════════════════════════════════════════════════════════════════ */}
 
         {/* Marquee ticker */}
-        <div className="bg-[#099160] dark:bg-[#050e09] border-y border-white/10 dark:border-white/5 py-5 overflow-hidden flex select-none relative z-10" aria-hidden="true">
+        <div className="bg-[#099160] dark:bg-[#050e09] border-y-2 border-white/25 dark:border-white/15 py-5 overflow-hidden flex select-none relative z-10" aria-hidden="true">
           <motion.div
             animate={{ x: ["0%", "-50%"] }}
             transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
@@ -282,7 +282,7 @@ export default function Home() {
         {/* ── About Section — 2-Column Redesign ── */}
         <section
           id="about"
-          className="scroll-mt-20 relative bg-[#0bb37e] dark:bg-[#07130e] text-white py-24 px-6 lg:px-20 flex items-center border-b border-white/10 dark:border-white/5 overflow-hidden"
+          className="scroll-mt-20 relative bg-[#0bb37e] dark:bg-[#07130e] text-white py-24 px-6 lg:px-20 flex items-center border-b-2 border-white/25 dark:border-white/15 overflow-hidden"
           style={{ minHeight: "100vh" }}
         >
           {/* BACKGROUND ICONS — z-0, spread across center (inline styles to guarantee opacity) */}
@@ -350,13 +350,13 @@ export default function Home() {
                 ].map((stat, idx) => (
                   <div
                     key={idx}
-                    className="rounded-xl p-4 border bg-white/10 border-white/20 dark:bg-emerald-950/50 dark:border-emerald-700/40 flex flex-col items-start gap-1 shadow-sm select-none hover:border-yellow-300 hover:bg-white/15 dark:hover:bg-amber-950/10 transition-all duration-300"
+                    className="rounded-xl p-4 border-2 bg-[#056041] border-yellow-300/60 dark:bg-[#093021] dark:border-emerald-500/60 flex flex-col items-start gap-1 shadow-md select-none hover:border-yellow-300 hover:bg-[#044c33] dark:hover:bg-[#0d422e] transition-all duration-300"
                   >
-                    <stat.Icon className="text-yellow-300 dark:text-emerald-400 w-5 h-5 mb-2 shrink-0" aria-hidden="true" />
-                    <span className="text-xs uppercase tracking-wider text-emerald-100 dark:text-gray-400 leading-none">
+                    <stat.Icon className="text-yellow-300 dark:text-emerald-400 w-6 h-6 mb-1.5 shrink-0 drop-shadow-sm" aria-hidden="true" />
+                    <span className="text-[11px] font-black uppercase tracking-wider text-yellow-300/90 dark:text-emerald-300 leading-none">
                       {stat.text}
                     </span>
-                    <span className="text-sm font-bold text-white dark:text-gray-100 leading-tight truncate w-full">
+                    <span className="text-sm font-black text-white dark:text-gray-100 leading-tight truncate w-full">
                       {stat.value}
                     </span>
                   </div>
@@ -389,7 +389,7 @@ export default function Home() {
         {/* ── Our Activity Section — 100vh ── */}
         <section
           id="activity"
-          className="scroll-mt-20 bg-[#0cc48a] dark:bg-[#040e0a] py-8 lg:py-12 px-6 lg:px-20 border-b border-white/10 dark:border-white/5 relative overflow-hidden flex items-center justify-center lg:h-screen lg:min-h-screen"
+          className="scroll-mt-20 bg-[#0cc48a] dark:bg-[#040e0a] py-8 lg:py-12 px-6 lg:px-20 border-b-2 border-white/25 dark:border-white/15 relative overflow-hidden flex items-center justify-center lg:h-screen lg:min-h-screen"
         >
           <div className="w-full relative z-10 flex flex-col items-center">
             <div className="site-container w-full flex flex-col justify-between items-center gap-4">
@@ -403,16 +403,16 @@ export default function Home() {
                 className="text-center"
               >
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <span className="text-yellow-300 dark:text-emerald-500 text-lg leading-none select-none">•</span>
-                  <span className="text-[12px] font-bold tracking-[0.2em] text-emerald-100 dark:text-emerald-400 uppercase">
+                  <span className="text-yellow-300 dark:text-emerald-400 text-xl leading-none select-none font-black">•</span>
+                  <span className="text-[15px] md:text-[17px] font-black tracking-[0.25em] text-yellow-300 dark:text-emerald-400 uppercase drop-shadow-md">
                     WHAT WE DO
                   </span>
                 </div>
                 <h2 className="text-[36px] md:text-[44px] font-display font-black tracking-tight text-white dark:text-white uppercase leading-[1.1]">
                   OUR <span className="text-yellow-300 dark:text-emerald-400">ACTIVITY</span>
                 </h2>
-                <div className="h-[3px] w-16 bg-gradient-to-r from-white to-yellow-300 dark:from-emerald-500 dark:to-emerald-400 mx-auto mt-2" aria-hidden="true" />
-                <p className="text-[15px] text-white dark:text-gray-400 max-w-xl mx-auto mt-3 font-medium">
+                <div className="h-[4px] w-20 bg-gradient-to-r from-white via-yellow-300 to-yellow-400 dark:from-emerald-500 dark:to-emerald-400 mx-auto mt-2 rounded-full" aria-hidden="true" />
+                <p className="text-[15px] md:text-[16px] text-white dark:text-gray-300 max-w-xl mx-auto mt-3 font-bold leading-relaxed">
                   From research to community impact <br />
                   explore what SRE UPN JATIM does on the ground.
                 </p>

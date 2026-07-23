@@ -151,7 +151,7 @@ export default function AboutClient({ divisionsData }) {
     <div className="min-h-screen bg-[#0bb37e] dark:bg-[#07130e] text-white dark:text-white selection:bg-yellow-300 selection:text-[#07130e] antialiased overflow-hidden">
 
       {/* ── 1. Hero Section ─────────────────────────────────────────────────── */}
-      <section id="hero" className="scroll-mt-20 relative pt-44 pb-24 px-6 overflow-hidden border-b border-slate-200 dark:border-white/5 bg-[#0bb37e] dark:bg-[#07130e]">
+      <section id="hero" className="scroll-mt-20 relative pt-44 pb-24 px-6 overflow-hidden border-b-2 border-white/25 dark:border-white/15 bg-[#0bb37e] dark:bg-[#07130e]">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
         
         <div className="max-w-7xl mx-auto relative z-10">
@@ -161,7 +161,7 @@ export default function AboutClient({ divisionsData }) {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-start gap-4 mb-6"
           >
-            <span className="inline-block py-2 px-5 rounded-full bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 text-[10px] font-black tracking-widest uppercase text-white dark:text-[#e8ecc4]">
+            <span className="inline-block py-2 px-5 rounded-full bg-[#056041] dark:bg-white/5 border-2 border-yellow-300/50 dark:border-white/20 text-[11px] font-black tracking-widest uppercase text-yellow-300 dark:text-[#e8ecc4] shadow-md">
               SRE UPN Veteran Jawa Timur
             </span>
           </motion.div>
@@ -189,7 +189,7 @@ export default function AboutClient({ divisionsData }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.35 }}
-            className="text-base sm:text-lg md:text-xl text-emerald-50/90 dark:text-white/60 max-w-3xl leading-relaxed font-medium"
+            className="text-base sm:text-lg md:text-xl text-white dark:text-gray-200 max-w-3xl leading-relaxed font-bold"
           >
             Society of Renewable Energy UPN Veteran Jawa Timur adalah komunitas penggerak akselerasi transisi energi bersih dan edukasi lingkungan terkemuka di tingkat mahasiswa.
           </motion.p>
@@ -197,30 +197,30 @@ export default function AboutClient({ divisionsData }) {
       </section>
 
       {/* ── 2. Vision & Mission Section ─────────────────────────────────────── */}
-      <section id="vision" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#0aa373] dark:bg-[#050e0a] border-b border-slate-200 dark:border-white/5 relative overflow-hidden">
+      <section id="vision" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#0aa373] dark:bg-[#050e0a] border-b-2 border-white/25 dark:border-white/15 relative overflow-hidden">
         {/* Ambient decoration */}
         <div className="absolute -top-20 -right-20 w-[500px] h-[500px] bg-primary/4 blur-[140px] rounded-full pointer-events-none" aria-hidden="true" />
 
         <div className="max-w-7xl mx-auto">
           
           {/* Vision + Mission — side by side with strong visual contrast */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-0 mb-24 rounded-[32px] overflow-hidden border border-white/10 dark:border-white/5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-0 mb-24 rounded-[32px] overflow-hidden border-2 border-white/25 dark:border-white/15 shadow-xl">
             
             {/* Vision — left dark panel */}
             <motion.div
               {...fadeUp(0)}
-              className="bg-white/10 dark:bg-[#07130e] p-10 md:p-14 relative overflow-hidden flex flex-col justify-between"
+              className="bg-[#056041] dark:bg-[#07130e] p-10 md:p-14 relative overflow-hidden flex flex-col justify-between"
             >
               {/* Large decorative "V" */}
-              <div className="absolute -top-8 -right-4 text-[200px] font-display font-black text-white/[0.03] select-none pointer-events-none leading-none" aria-hidden="true">
+              <div className="absolute -top-8 -right-4 text-[200px] font-display font-black text-white/[0.05] select-none pointer-events-none leading-none" aria-hidden="true">
                 V
               </div>
               <div>
                 <div className="flex items-center gap-3 mb-8">
-                  <span className="w-8 h-8 rounded-full bg-white/15 border border-white/25 flex items-center justify-center text-yellow-300 dark:text-emerald-400 text-[10px] font-black">
+                  <span className="w-8 h-8 rounded-full bg-yellow-300 text-[#07130e] flex items-center justify-center text-[11px] font-black shadow-sm">
                     01
                   </span>
-                  <span className="text-[10px] font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase">Our Vision</span>
+                  <span className="text-[12px] font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase">Our Vision</span>
                 </div>
                 <h2 className="text-[36px] md:text-[48px] font-display font-black uppercase text-white dark:text-white mb-6 tracking-tight leading-[1.05]">
                   Menjadi wadah{" "}
@@ -229,22 +229,22 @@ export default function AboutClient({ divisionsData }) {
                   </span>{" "}
                   mahasiswa
                 </h2>
-                <p className="text-[15px] md:text-[17px] text-white/90 dark:text-white/55 leading-relaxed font-light border-l-2 border-yellow-300/40 dark:border-emerald-500/40 pl-5">
+                <p className="text-[15px] md:text-[17px] text-white dark:text-gray-200 leading-relaxed font-bold border-l-4 border-yellow-300 dark:border-emerald-400 pl-5">
                   Dalam mengeksplorasi, mengembangkan, dan mengimplementasikan inovasi di bidang energi baru terbarukan demi masa depan yang berkelanjutan dan mandiri energi.
                 </p>
               </div>
               {/* Accent line at bottom */}
-              <div className="mt-10 pt-6 border-t border-white/10 dark:border-white/5">
-                <span className="text-[11px] text-white/40 dark:text-white/20 tracking-widest uppercase font-bold">SRE UPNVJT Vision Statement</span>
+              <div className="mt-10 pt-6 border-t-2 border-white/20 dark:border-white/10">
+                <span className="text-[11px] text-white/80 dark:text-white/40 tracking-widest uppercase font-black">SRE UPNVJT Vision Statement</span>
               </div>
             </motion.div>
 
             {/* Mission — right slightly lighter panel */}
             <motion.div
               {...fadeUp(0.1)}
-              className="bg-white/5 dark:bg-[#0a1a12] p-10 md:p-14 relative overflow-hidden flex flex-col justify-between border-t border-white/10 dark:border-white/5 lg:border-t-0 lg:border-l border-white/10 dark:border-white/5"
+              className="bg-[#045237] dark:bg-[#0a1a12] p-10 md:p-14 relative overflow-hidden flex flex-col justify-between border-t-2 border-white/25 dark:border-white/15 lg:border-t-0 lg:border-l-2"
             >
-              <div className="absolute -bottom-8 -left-4 text-[200px] font-display font-black text-white/[0.03] select-none pointer-events-none leading-none" aria-hidden="true">
+              <div className="absolute -bottom-8 -left-4 text-[200px] font-display font-black text-white/[0.05] select-none pointer-events-none leading-none" aria-hidden="true">
                 M
               </div>
               <div>
@@ -270,18 +270,18 @@ export default function AboutClient({ divisionsData }) {
                       transition={{ duration: 0.55, delay: idx * 0.1 + 0.2, ease: [0.16, 1, 0.3, 1] }}
                       className="flex gap-4 items-start"
                     >
-                      <span className="shrink-0 w-7 h-7 rounded-full border border-yellow-300/30 dark:border-emerald-500/30 bg-white/10 dark:bg-emerald-500/10 flex items-center justify-center text-yellow-300 dark:text-emerald-400 text-[10px] font-black mt-0.5">
+                      <span className="shrink-0 w-7 h-7 rounded-full border-2 border-yellow-300 dark:border-emerald-400 bg-yellow-300 text-[#07130e] flex items-center justify-center text-[10px] font-black mt-0.5 shadow-sm">
                         {String(idx + 1).padStart(2, "0")}
                       </span>
-                      <span className="text-[14px] md:text-[15px] text-white/85 dark:text-white/65 leading-relaxed font-medium">
+                      <span className="text-[14px] md:text-[15px] text-white dark:text-gray-200 leading-relaxed font-bold">
                         {item.desc}
                       </span>
                     </motion.li>
                   ))}
                 </ul>
               </div>
-              <div className="mt-10 pt-6 border-t border-white/10 dark:border-white/5">
-                <span className="text-[11px] text-white/40 dark:text-white/20 tracking-widest uppercase font-bold">SRE UPNVJT Mission Statement</span>
+              <div className="mt-10 pt-6 border-t-2 border-white/20 dark:border-white/10">
+                <span className="text-[11px] text-white/80 dark:text-white/40 tracking-widest uppercase font-black">SRE UPNVJT Mission Statement</span>
               </div>
             </motion.div>
           </div>
@@ -291,7 +291,7 @@ export default function AboutClient({ divisionsData }) {
             {...fadeUp(0)}
             className="mb-4"
           >
-            <h3 className="text-[10px] font-black text-white/70 dark:text-white/30 tracking-[0.3em] uppercase text-center mb-10">
+            <h3 className="text-[12px] font-black text-yellow-300 dark:text-emerald-300 tracking-[0.3em] uppercase text-center mb-10 drop-shadow-sm">
               Empat Pilar Utama Pergerakan
             </h3>
           </motion.div>
@@ -306,18 +306,18 @@ export default function AboutClient({ divisionsData }) {
               <motion.div
                 key={pl.num}
                 variants={staggerChild}
-                className="bg-white/10 dark:bg-white/[0.03] border border-white/20 dark:border-white/5 p-7 rounded-2xl flex flex-col justify-between hover:border-yellow-300/40 hover:bg-white/15 dark:hover:bg-white/[0.06] hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 group relative overflow-hidden bg-diagonal-texture shadow-sm"
+                className="bg-[#056041] border-2 border-white/25 dark:bg-[#071d14] dark:border-white/15 p-7 rounded-2xl flex flex-col justify-between hover:border-yellow-300 hover:bg-[#044c33] dark:hover:bg-[#0b2b1e] hover:shadow-xl transition-all duration-500 group relative overflow-hidden shadow-md"
               >
                 {/* Large decorative number */}
-                <span className="absolute top-3 right-4 text-[72px] font-display font-black text-white/[0.06] dark:text-white/[0.06] group-hover:text-yellow-300/20 transition-colors duration-500 select-none pointer-events-none leading-none" aria-hidden="true">
+                <span className="absolute top-3 right-4 text-[72px] font-display font-black text-white/10 dark:text-white/10 group-hover:text-yellow-300/30 transition-colors duration-500 select-none pointer-events-none leading-none" aria-hidden="true">
                   {pl.num}
                 </span>
                 <div>
-                  <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-5 group-hover:scale-110 group-hover:bg-amber-400 group-hover:text-[#07130e] group-hover:border-amber-400 group-hover:shadow-[0_0_20px_rgba(245,158,11,0.4)] transition-all duration-500 relative">
-                    <pl.icon className="w-5 h-5" aria-hidden="true" />
+                  <div className="w-12 h-12 rounded-2xl bg-yellow-300 border-2 border-yellow-400 flex items-center justify-center text-[#07130e] mb-5 group-hover:scale-110 group-hover:bg-yellow-400 shadow-md transition-all duration-500 relative">
+                    <pl.icon className="w-6 h-6" aria-hidden="true" />
                   </div>
-                  <h4 className="text-[17px] font-black text-[#07130e] dark:text-white mb-2.5 uppercase tracking-tight">{pl.title}</h4>
-                  <p className="text-[13px] text-[#07130e]/60 dark:text-white/45 leading-relaxed font-medium">{pl.desc}</p>
+                  <h4 className="text-[18px] font-black text-white dark:text-white mb-2.5 uppercase tracking-tight">{pl.title}</h4>
+                  <p className="text-[13px] text-white/95 dark:text-gray-300 leading-relaxed font-bold">{pl.desc}</p>
                 </div>
               </motion.div>
             ))}

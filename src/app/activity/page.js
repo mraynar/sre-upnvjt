@@ -85,7 +85,7 @@ export default function ActivityPage() {
       </section>
 
       {/* ── EXTERNAL PROGRAM SECTION (Gambar 4 style) ── */}
-      <section id="programs" className="py-24 px-6 md:px-12 bg-[#0bb37e] dark:bg-[#07130e] text-white border-t border-white/10 dark:border-white/5 relative overflow-hidden">
+      <section id="programs" className="py-24 px-6 md:px-12 bg-[#0bb37e] dark:bg-[#07130e] text-white border-t-2 border-white/25 dark:border-white/15 relative overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left: Interactive Group Image */}
           <motion.div
@@ -93,7 +93,7 @@ export default function ActivityPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 dark:border-white/5"
+            className="relative rounded-2xl overflow-hidden shadow-2xl border-2 border-white/25 dark:border-white/15"
           >
             <img
               src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800&auto=format&fit=crop"
@@ -121,26 +121,26 @@ export default function ActivityPage() {
             <h2 className="text-3xl md:text-4xl font-display font-black uppercase text-white dark:text-white tracking-tight leading-tight">
               External Program
             </h2>
-            <p className="text-emerald-50/90 dark:text-gray-300 leading-relaxed font-light text-base">
+            <p className="text-white dark:text-gray-200 leading-relaxed font-semibold text-base">
               External programs organized by the Society of Renewable Energy at UPN Veteran Jawa Timur involve activities and events that extend beyond the boundaries of the student organization to engage external stakeholders. 
             </p>
-            <p className="text-emerald-50/90 dark:text-gray-300 leading-relaxed font-light text-base">
+            <p className="text-white dark:text-gray-200 leading-relaxed font-semibold text-base">
               These include clean energy outreach campaigns, technology partnerships with other academic institutions, and community-based solar implementations designed to promote awareness and accelerate decentralized sustainable transition on the ground.
             </p>
 
             {/* Core Values Row */}
             <div className="grid grid-cols-3 gap-4 mt-4">
-              <div className="flex flex-col items-center p-4 rounded-xl bg-white/10 dark:bg-emerald-950/40 text-center">
+              <div className="flex flex-col items-center p-4 rounded-xl bg-[#056041] border-2 border-yellow-300/50 dark:bg-emerald-950/60 dark:border-emerald-500/40 text-center shadow-md">
                 <Target className="w-6 h-6 text-yellow-300 dark:text-emerald-400 mb-2" />
-                <span className="text-xs font-bold uppercase text-white dark:text-gray-300">Outreach</span>
+                <span className="text-xs font-black uppercase text-white dark:text-gray-200">Outreach</span>
               </div>
-              <div className="flex flex-col items-center p-4 rounded-xl bg-white/10 dark:bg-emerald-950/40 text-center">
+              <div className="flex flex-col items-center p-4 rounded-xl bg-[#056041] border-2 border-yellow-300/50 dark:bg-emerald-950/60 dark:border-emerald-500/40 text-center shadow-md">
                 <Users className="w-6 h-6 text-yellow-300 dark:text-emerald-400 mb-2" />
-                <span className="text-xs font-bold uppercase text-white dark:text-gray-300">Partnership</span>
+                <span className="text-xs font-black uppercase text-white dark:text-gray-200">Partnership</span>
               </div>
-              <div className="flex flex-col items-center p-4 rounded-xl bg-white/10 dark:bg-emerald-950/40 text-center">
+              <div className="flex flex-col items-center p-4 rounded-xl bg-[#056041] border-2 border-yellow-300/50 dark:bg-emerald-950/60 dark:border-emerald-500/40 text-center shadow-md">
                 <BookOpen className="w-6 h-6 text-yellow-300 dark:text-emerald-400 mb-2" />
-                <span className="text-xs font-bold uppercase text-white dark:text-gray-300">Awareness</span>
+                <span className="text-xs font-black uppercase text-white dark:text-gray-200">Awareness</span>
               </div>
             </div>
           </motion.div>
@@ -148,7 +148,7 @@ export default function ActivityPage() {
       </section>
 
       {/* ── PAST EVENTS SECTION (Gambar 4 style) ── */}
-      <section className="py-24 px-6 md:px-12 bg-[#0aa373] dark:bg-[#050e09] border-t border-white/10 dark:border-white/5 relative overflow-hidden">
+      <section className="py-24 px-6 md:px-12 bg-[#0aa373] dark:bg-[#050e09] border-t-2 border-white/25 dark:border-white/15 relative overflow-hidden">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-16 text-center max-w-xl mx-auto">
@@ -168,7 +168,7 @@ export default function ActivityPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="group flex flex-col bg-white/10 dark:bg-[#0d1f17] border border-white/10 dark:border-white/5 rounded-2xl overflow-hidden shadow-md hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
+                className="group flex flex-col bg-[#056041] dark:bg-[#0d1f17] border-2 border-white/25 dark:border-white/15 rounded-2xl overflow-hidden shadow-md hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
               >
                 {/* Image top with category overlay */}
                 <div className="relative aspect-video w-full overflow-hidden bg-emerald-950">
@@ -187,21 +187,21 @@ export default function ActivityPage() {
                 {/* Body Content */}
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="text-xl font-bold text-white dark:text-white group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors duration-200 mb-2">
+                    <h3 className="text-xl font-black text-white dark:text-white group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors duration-200 mb-2">
                       {ev.title}
                     </h3>
-                    <p className="text-emerald-50/90 dark:text-gray-300 text-sm leading-relaxed mb-6 font-light">
+                    <p className="text-white dark:text-gray-300 text-sm leading-relaxed mb-6 font-medium">
                       {ev.description}
                     </p>
                   </div>
 
                   {/* Metadata Row */}
-                  <div className="pt-4 border-t border-white/10 dark:border-white/5 flex flex-col gap-2">
-                    <div className="flex items-center gap-2 text-xs text-white/70 dark:text-gray-500 font-medium">
+                  <div className="pt-4 border-t-2 border-white/20 dark:border-white/10 flex flex-col gap-2">
+                    <div className="flex items-center gap-2 text-xs text-white/90 dark:text-gray-400 font-bold">
                       <Calendar className="w-3.5 h-3.5 text-yellow-300 dark:text-emerald-400 shrink-0" />
                       <span>{ev.date}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-white/70 dark:text-gray-500 font-medium">
+                    <div className="flex items-center gap-2 text-xs text-white/90 dark:text-gray-400 font-bold">
                       <MapPin className="w-3.5 h-3.5 text-yellow-300 dark:text-emerald-400 shrink-0" />
                       <span>{ev.location}</span>
                     </div>

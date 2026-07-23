@@ -123,29 +123,29 @@ export default function Footer() {
           </div>
 
           {/* Bottom Copyright */}
-          <div className="text-[12px] text-white/60 dark:text-gray-500 font-medium">
+          <div className="text-[12px] text-white/90 dark:text-gray-400 font-bold">
             © {new Date().getFullYear()} Society of Renewable Energy UPN Veteran Jawa Timur. All rights reserved.
           </div>
         </div>
       </footer>
 
-      {/* Wave transition SVG */}
+      {/* Wave transition SVG — Structured & Elegant Wave Layers */}
       <div className={`w-full leading-[0] pointer-events-none select-none relative z-20 ${isLight ? "bg-[#0bb37e]" : "bg-[#07130e]"}`}>
         <svg
-          viewBox="0 0 1440 200"
+          viewBox="0 0 1440 220"
           preserveAspectRatio="none"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full block h-[100px] md:h-[140px] lg:h-[200px]"
+          className="w-full block h-[90px] md:h-[130px] lg:h-[180px]"
           aria-hidden="true"
         >
           <defs>
             <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#d1fae5" : "#14532d"} stopOpacity="0.9" />
+              <stop offset="0%" stopColor={isLight ? "#d1fae5" : "#14532d"} stopOpacity="0.85" />
               <stop offset="100%" stopColor={isLight ? "#6ee7b7" : "#052e16"} stopOpacity="1" />
             </linearGradient>
             <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#6ee7b7" : "#064e3b"} stopOpacity="0.95" />
+              <stop offset="0%" stopColor={isLight ? "#6ee7b7" : "#064e3b"} stopOpacity="0.9" />
               <stop offset="100%" stopColor={isLight ? "#34d399" : "#022c22"} stopOpacity="1" />
             </linearGradient>
             <linearGradient id="waveGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -154,14 +154,15 @@ export default function Footer() {
               <stop offset="100%" stopColor={isLight ? "#10b981" : "#064e3b"} />
             </linearGradient>
           </defs>
-          {/* Back wave — lightest */}
-          <path d="M0 120 C 180 60, 360 160, 540 100 C 720 40, 900 140, 1080 80 C 1260 20, 1380 100, 1440 70 L1440 200 L0 200 Z" fill="url(#waveGrad1)" opacity="0.6" />
-          {/* Mid wave */}
-          <path d="M0 140 C 200 80, 450 180, 720 120 C 900 70, 1100 160, 1300 100 C 1380 70, 1440 120, 1440 140 L1440 200 L0 200 Z" fill="url(#waveGrad2)" opacity="0.85" />
-          {/* Front wave — most prominent */}
-          <path d="M0 160 C 120 110, 300 180, 540 150 C 780 120, 960 180, 1200 140 C 1320 118, 1400 155, 1440 160 L1440 200 L0 200 Z" fill="url(#waveGrad3)" />
+          {/* Back Wave Layer 1 */}
+          <path d="M 0 60 Q 360 140 720 60 T 1440 60 L 1440 220 L 0 220 Z" fill="url(#waveGrad1)" opacity="0.5" />
+          {/* Mid Wave Layer 2 */}
+          <path d="M 0 100 Q 360 20 720 100 T 1440 100 L 1440 220 L 0 220 Z" fill="url(#waveGrad2)" opacity="0.8" />
+          {/* Front Wave Layer 3 */}
+          <path d="M 0 140 Q 360 80 720 140 T 1440 140 L 1440 220 L 0 220 Z" fill="url(#waveGrad3)" />
         </svg>
       </div>
+
 
     </div>
   );
