@@ -68,13 +68,13 @@ export default function Footer() {
   return (
     <div className="w-full flex flex-col mt-0 relative z-10">
       {/* Main Footer Body */}
-      <footer className="bg-[#0bb37e] dark:bg-[#07130e] text-white/90 dark:text-white/70 border-transparent relative overflow-hidden pt-16 lg:pt-20 pb-6">
+      <footer className="bg-[#0bb37e] dark:bg-[#07130e] text-white/90 dark:text-white/70 border-transparent relative overflow-hidden pt-20 lg:pt-24 pb-12">
         {/* Subtle ambient glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
 
         <div className="w-full max-w-[1400px] mx-auto px-6 md:px-12 relative z-10 flex flex-col items-center text-center">
           {/* Logo */}
-          <Link href="/" className="mb-4" aria-label="SRE UPNVJT Home">
+          <Link href="/" className="mb-8" aria-label="SRE UPNVJT Home">
             <Image
               src="/images/logo.png"
               alt="SRE UPNVJT Logo"
@@ -85,7 +85,7 @@ export default function Footer() {
           </Link>
 
           {/* Navigation Links — Large Font */}
-          <nav className="mb-4 w-full" aria-label="Footer navigation">
+          <nav className="mb-8 w-full" aria-label="Footer navigation">
             <ul className="flex flex-wrap justify-center items-center gap-x-8 md:gap-x-12 gap-y-4">
               {[
                 { label: "Home", href: "/" },
@@ -107,7 +107,7 @@ export default function Footer() {
           </nav>
 
           {/* Social Media Links — Large Icons */}
-          <div className="flex justify-center items-center gap-8 mb-6">
+          <div className="flex justify-center items-center gap-8 mb-10">
             {SOCIAL_LINKS.map(({ label, href, Icon, aria: ariaLabel }) => (
               <a
                 key={label}
