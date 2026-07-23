@@ -250,13 +250,13 @@ export default function Header() {
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className={`fixed inset-0 z-50 md:hidden h-[100dvh] flex flex-col justify-between px-7 pt-20 pb-6 overflow-y-auto min-h-0 relative overflow-hidden transition-colors duration-500 ${
                 mounted && theme === "light"
-                  ? "bg-[#f4fbf7] text-[#07130e]"
+                  ? "bg-[#0bb37e] text-white"
                   : "bg-[#07130e] text-white"
               }`}
               style={{
                 background:
                   mounted && theme === "light"
-                    ? "linear-gradient(160deg, #f4fbf7 0%, #e6f4ed 50%, #f0fdf4 100%)"
+                    ? "linear-gradient(160deg, #0bb37e 0%, #0aa373 50%, #099c6d 100%)"
                     : "linear-gradient(160deg, #091c15 0%, #06130d 50%, #0a1f18 100%)",
               }}
             >
@@ -264,14 +264,14 @@ export default function Header() {
               <div
                 className={`absolute top-1/4 -left-20 w-72 h-72 rounded-full blur-[100px] pointer-events-none transition-colors duration-500 ${
                   mounted && theme === "light"
-                    ? "bg-emerald-400/25"
+                    ? "bg-yellow-300/30"
                     : "bg-emerald-500/15"
                 }`}
               />
               <div
                 className={`absolute bottom-1/4 -right-20 w-80 h-80 rounded-full blur-[120px] pointer-events-none transition-colors duration-500 ${
                   mounted && theme === "light"
-                    ? "bg-teal-300/30"
+                    ? "bg-yellow-400/20"
                     : "bg-teal-400/10"
                 }`}
               />
@@ -284,14 +284,14 @@ export default function Header() {
                   transition={{ delay: 0.1, duration: 0.4 }}
                   className={`flex items-center justify-between mb-4 sm:mb-6 pb-2 border-b transition-colors duration-500 ${
                     mounted && theme === "light"
-                      ? "border-emerald-900/10"
+                      ? "border-white/20"
                       : "border-white/10"
                   }`}
                 >
                   <span
                     className={`text-[11px] font-bold tracking-[0.25em] uppercase transition-colors duration-500 ${
                       mounted && theme === "light"
-                        ? "text-emerald-700"
+                        ? "text-yellow-300"
                         : "text-emerald-400"
                     }`}
                   >
@@ -328,10 +328,10 @@ export default function Header() {
                           className={`group flex items-center justify-between py-1.5 transition-all cursor-pointer ${
                             isActive
                               ? isLight
-                                ? "text-emerald-700 font-bold"
+                                ? "text-yellow-300 font-bold"
                                 : "text-emerald-400 font-bold"
                               : isLight
-                                ? "text-[#07130e]/80 hover:text-emerald-900"
+                                ? "text-white/80 hover:text-yellow-300"
                                 : "text-white/70 hover:text-emerald-400"
                           }`}
                         >
@@ -339,7 +339,7 @@ export default function Header() {
                             <span
                               className={`text-xs font-mono transition-colors ${
                                 isLight
-                                  ? "text-emerald-800/50 group-hover:text-emerald-700"
+                                  ? "text-yellow-300/60 group-hover:text-yellow-300"
                                   : "text-emerald-500/60 group-hover:text-emerald-400"
                               }`}
                             >
@@ -354,14 +354,14 @@ export default function Header() {
                             <span
                               className={`w-2.5 h-2.5 rounded-full ${
                                 isLight
-                                  ? "bg-emerald-600 shadow-[0_0_12px_#059669]"
+                                  ? "bg-yellow-300 shadow-[0_0_12px_#f59e0b]"
                                   : "bg-emerald-400 shadow-[0_0_12px_#34d399]"
                               }`}
                             />
                           ) : (
                             <ArrowUpRight
                               className={`w-5 h-5 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 ${
-                                isLight ? "text-emerald-700" : "text-emerald-400"
+                                isLight ? "text-yellow-300" : "text-emerald-400"
                               }`}
                             />
                           )}
@@ -387,7 +387,7 @@ export default function Header() {
                     onClick={close}
                     className={`flex-1 inline-flex items-center justify-center gap-3 px-7 py-3.5 rounded-full text-[14px] font-bold tracking-widest uppercase transition-all active:scale-95 ${
                       mounted && theme === "light"
-                        ? "bg-[#07130e] text-white hover:bg-emerald-900 shadow-[0_0_25px_rgba(7,19,14,0.15)]"
+                        ? "bg-yellow-300 text-slate-950 hover:bg-white shadow-[0_0_25px_rgba(245,158,11,0.25)]"
                         : "bg-emerald-400 text-[#07130e] hover:bg-white shadow-[0_0_25px_rgba(16,185,129,0.3)]"
                     }`}
                   >
@@ -401,14 +401,14 @@ export default function Header() {
                       aria-label="Toggle theme"
                       className={`w-12 h-12 rounded-full border backdrop-blur-md flex items-center justify-center active:scale-90 transition-all shrink-0 ${
                         theme === "light"
-                          ? "border-emerald-900/20 bg-white/80 text-emerald-950 hover:bg-white shadow-sm"
+                          ? "border-white/20 bg-white/5 text-yellow-300 hover:bg-white/10"
                           : "border-white/20 bg-white/5 text-white hover:bg-white/10"
                       }`}
                     >
                       {theme === "dark" ? (
                         <Sun className="w-5 h-5 text-amber-300" />
                       ) : (
-                        <Moon className="w-5 h-5 text-emerald-700" />
+                        <Moon className="w-5 h-5 text-yellow-300" />
                       )}
                     </button>
                   )}
@@ -422,23 +422,23 @@ export default function Header() {
                 transition={{ delay: 0.3, duration: 0.4 }}
                 className={`mt-auto shrink-0 flex justify-between items-end text-[11px] sm:text-[12px] px-2 relative z-10 pt-4 border-t transition-colors duration-500 ${
                   mounted && theme === "light"
-                    ? "border-emerald-900/10 text-emerald-950/70"
+                    ? "border-white/20 text-white/70"
                     : "border-white/10 text-white/50"
                 }`}
               >
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">
                     <span
-                      className={`w-2 h-2 rounded-full animate-pulse ${
+                      className={`w-2.5 h-2.5 rounded-full animate-pulse ${
                         mounted && theme === "light"
-                          ? "bg-emerald-600"
+                          ? "bg-yellow-300 shadow-[0_0_8px_#f59e0b]"
                           : "bg-emerald-400"
                       }`}
                     />
                     <span
                       className={`font-semibold ${
                         mounted && theme === "light"
-                          ? "text-emerald-950"
+                          ? "text-white"
                           : "text-white"
                       }`}
                     >
@@ -448,7 +448,7 @@ export default function Header() {
                   <span
                     className={
                       mounted && theme === "light"
-                        ? "text-emerald-900/60"
+                        ? "text-white/70"
                         : "text-white/50"
                     }
                   >
@@ -463,7 +463,7 @@ export default function Header() {
                     rel="noreferrer"
                     className={`flex items-center gap-1.5 transition-colors p-1 ${
                       mounted && theme === "light"
-                        ? "hover:text-emerald-700 text-emerald-900/80"
+                        ? "hover:text-yellow-300 text-white/80"
                         : "hover:text-emerald-400 text-white/70"
                     }`}
                   >
@@ -476,7 +476,7 @@ export default function Header() {
                     rel="noreferrer"
                     className={`flex items-center gap-1.5 transition-colors p-1 ${
                       mounted && theme === "light"
-                        ? "hover:text-emerald-700 text-emerald-900/80"
+                        ? "hover:text-yellow-300 text-white/80"
                         : "hover:text-emerald-400 text-white/70"
                     }`}
                   >
