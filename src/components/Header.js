@@ -301,7 +301,7 @@ export default function Header() {
                     className={`text-[10px] font-mono transition-colors duration-500 ${
                       mounted && theme === "light"
                         ? "text-emerald-900/40"
-                        : "text-[#e8ecc4]/40"
+                        : "text-white/40"
                     }`}
                   >
                     SRE SC UPNVJT
@@ -332,7 +332,7 @@ export default function Header() {
                                 : "text-emerald-400 font-bold"
                               : isLight
                                 ? "text-[#07130e]/80 hover:text-emerald-900"
-                                : "text-[#e8ecc4] hover:text-white"
+                                : "text-white/70 hover:text-emerald-400"
                           }`}
                         >
                           <div className="flex items-center gap-4">
@@ -345,7 +345,7 @@ export default function Header() {
                             >
                               0{i + 1}
                             </span>
-                            <span className="text-[34px] xs:text-[40px] sm:text-[48px] font-display font-bold tracking-tighter leading-none group-hover:translate-x-2 transition-transform duration-300">
+                            <span className="text-[26px] xs:text-[30px] sm:text-[36px] font-display font-black uppercase tracking-tight leading-none group-hover:translate-x-2 transition-transform duration-300">
                               {item.name}
                             </span>
                           </div>
@@ -388,7 +388,7 @@ export default function Header() {
                     className={`flex-1 inline-flex items-center justify-center gap-3 px-7 py-3.5 rounded-full text-[14px] font-bold tracking-widest uppercase transition-all active:scale-95 ${
                       mounted && theme === "light"
                         ? "bg-[#07130e] text-white hover:bg-emerald-900 shadow-[0_0_25px_rgba(7,19,14,0.15)]"
-                        : "bg-emerald-400 text-[#07130e] hover:bg-[#e8ecc4] shadow-[0_0_25px_rgba(16,185,129,0.3)]"
+                        : "bg-emerald-400 text-[#07130e] hover:bg-white shadow-[0_0_25px_rgba(16,185,129,0.3)]"
                     }`}
                   >
                     <User className="w-4 h-4" />
@@ -423,7 +423,7 @@ export default function Header() {
                 className={`mt-auto shrink-0 flex justify-between items-end text-[11px] sm:text-[12px] px-2 relative z-10 pt-4 border-t transition-colors duration-500 ${
                   mounted && theme === "light"
                     ? "border-emerald-900/10 text-emerald-950/70"
-                    : "border-white/10 text-[#e8ecc4]/70"
+                    : "border-white/10 text-white/50"
                 }`}
               >
                 <div className="flex flex-col gap-1">
