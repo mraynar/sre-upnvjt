@@ -69,7 +69,7 @@ export default function Footer() {
   return (
     <div className="w-full flex flex-col mt-auto relative z-10">
       {/* Main Footer Body */}
-      <footer className="bg-white dark:bg-[#07130e] text-[#07130e]/70 dark:text-white/70 border-t border-slate-200 dark:border-transparent relative overflow-hidden pt-10 pb-6">
+      <footer className="bg-white dark:bg-[#07130e] text-[#07130e]/70 dark:text-white/70 border-t border-slate-200 dark:border-transparent relative overflow-hidden pt-16 lg:pt-20 pb-6">
         {/* Subtle ambient glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
 
@@ -131,7 +131,7 @@ export default function Footer() {
       </footer>
 
       {/* Wave transition SVG — placed at the very bottom of the page */}
-      <div className="w-full leading-[0] pointer-events-none select-none bg-white dark:bg-[#07130e]">
+      <div className="w-full leading-[0] pointer-events-none select-none bg-transparent -mt-16 md:-mt-24 lg:-mt-28 relative z-20">
         <svg
           viewBox="0 0 1440 240"
           preserveAspectRatio="xMidYMax slice"
