@@ -369,13 +369,13 @@ export default function Home() {
                   href="/about"
                   className="group inline-flex items-center gap-3 w-fit focus-visible:outline-emerald-600 focus-visible:outline-offset-4 rounded"
                 >
-                  <span className="relative text-[14px] font-bold tracking-[0.18em] uppercase text-white dark:text-white after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:w-0 after:bg-yellow-300 dark:after:bg-emerald-400 after:transition-all after:duration-300 group-hover:after:w-full">
+                  <span className="relative text-[14px] font-bold tracking-[0.18em] uppercase text-[#e8ecc4] dark:text-white after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:w-0 after:bg-[#e8ecc4] dark:after:bg-emerald-400 after:transition-all after:duration-300 group-hover:after:w-full">
                     LEARN MORE ABOUT US
                   </span>
                   <motion.span
                     whileHover={{ x: 4 }}
                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    className="text-yellow-300 dark:text-emerald-400"
+                    className="text-[#e8ecc4] dark:text-emerald-400"
                   >
                     <ArrowUpRight className="w-5 h-5" aria-hidden="true" />
                   </motion.span>
@@ -431,13 +431,14 @@ export default function Home() {
                 >
                   <Link
                     href="/events"
-                    className="inline-flex items-center gap-2 border border-white/40 hover:bg-white hover:text-[#0bb37e] text-white dark:border-emerald-500/30 dark:text-emerald-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-300 dark:hover:border-emerald-500 font-semibold tracking-wider text-xs uppercase px-8 py-3.5 rounded-full transition-all duration-300 focus-visible:outline-emerald-500"
+                    className="inline-flex items-center gap-2 border-2 border-[#e8ecc4]/60 hover:bg-[#e8ecc4] hover:text-[#0cc48a] text-[#e8ecc4] dark:border-emerald-500/30 dark:text-emerald-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-300 dark:hover:border-emerald-500 font-bold tracking-wider text-xs uppercase px-8 py-3.5 rounded-full transition-all duration-300 focus-visible:outline-emerald-500"
                   >
                     SEE ALL ACTIVITIES
-                    <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
+                    <ArrowUpRight className="w-4 h-4 text-[#e8ecc4] group-hover:text-[#0cc48a] transition-colors" aria-hidden="true" />
                   </Link>
                 </motion.div>
               </div>
+
 
             </div>
           </div>
