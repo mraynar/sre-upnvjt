@@ -256,7 +256,7 @@ export default function Home() {
           </div>
 
           <div className={`absolute bottom-0 left-0 w-full h-[2px] z-20 ${
-            isLight ? "bg-[#e8ecc4]" : "bg-[#e8ecc4]"
+            isLight ? "bg-yellow-300" : "bg-[#e8ecc4]"
           }`} />
         </section>
         {/* ══════════════════════════════════════════════════════════════════════
@@ -272,8 +272,8 @@ export default function Home() {
           >
             {Array(16).fill(PARTNERS).flat().map((p, idx) => (
               <div key={idx} className="flex items-center gap-6 shrink-0">
-                <span className="text-[13px] md:text-[14px] font-display font-semibold tracking-widest text-[#e8ecc4] dark:text-white/50 uppercase">{p}</span>
-                <div className="w-1.5 h-1.5 rounded-full bg-[#e8ecc4] dark:bg-white/30 shrink-0" />
+                <span className="text-[13px] md:text-[14px] font-display font-semibold tracking-widest text-yellow-300 dark:text-white/50 uppercase">{p}</span>
+                <div className="w-1.5 h-1.5 rounded-full bg-yellow-300 dark:bg-white/30 shrink-0" />
               </div>
             ))}
           </motion.div>
@@ -300,7 +300,7 @@ export default function Home() {
             <div className="flex flex-col w-full h-full lg:pt-0">
               <div>
                 <h2 className="text-3xl lg:text-4xl font-black uppercase text-white leading-none">
-                  ABOUT <span className="text-[#e8ecc4] dark:text-emerald-400">SRE</span>
+                  ABOUT <span className="text-yellow-300 dark:text-emerald-400">SRE</span>
                 </h2>
               </div>
 
@@ -350,10 +350,10 @@ export default function Home() {
                 ].map((stat, idx) => (
                   <div
                     key={idx}
-                    className="rounded-xl p-4 border-2 bg-[#099c6d] border-[#e8ecc4]/60 dark:bg-[#093021] dark:border-emerald-500/60 flex flex-col items-start gap-1 shadow-md select-none hover:border-[#e8ecc4] hover:bg-[#088c62] dark:hover:bg-[#0d422e] transition-all duration-300"
+                    className="rounded-xl p-4 border-2 bg-[#099c6d] border-yellow-300/60 dark:bg-[#093021] dark:border-emerald-500/60 flex flex-col items-start gap-1 shadow-md select-none hover:border-yellow-300 hover:bg-[#088c62] dark:hover:bg-[#0d422e] transition-all duration-300"
                   >
-                    <stat.Icon className="text-[#e8ecc4] dark:text-emerald-400 w-6 h-6 mb-1.5 shrink-0 drop-shadow-sm" aria-hidden="true" />
-                    <span className="text-[11px] font-black uppercase tracking-wider text-[#e8ecc4] dark:text-emerald-300 leading-none">
+                    <stat.Icon className="text-yellow-300 dark:text-emerald-400 w-6 h-6 mb-1.5 shrink-0 drop-shadow-sm" aria-hidden="true" />
+                    <span className="text-[11px] font-black uppercase tracking-wider text-yellow-300 dark:text-emerald-300 leading-none">
                       {stat.text}
                     </span>
                     <span className="text-sm font-black text-white dark:text-gray-100 leading-tight truncate w-full">
@@ -369,13 +369,13 @@ export default function Home() {
                   href="/about"
                   className="group inline-flex items-center gap-3 w-fit focus-visible:outline-emerald-600 focus-visible:outline-offset-4 rounded"
                 >
-                  <span className="relative text-[14px] font-bold tracking-[0.18em] uppercase text-[#e8ecc4] dark:text-white after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:w-0 after:bg-[#e8ecc4] dark:after:bg-emerald-400 after:transition-all after:duration-300 group-hover:after:w-full">
+                  <span className="relative text-[14px] font-bold tracking-[0.18em] uppercase text-white dark:text-white after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[1.5px] after:w-0 after:bg-yellow-300 dark:after:bg-emerald-400 after:transition-all after:duration-300 group-hover:after:w-full">
                     LEARN MORE ABOUT US
                   </span>
                   <motion.span
                     whileHover={{ x: 4 }}
                     transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    className="text-[#e8ecc4] dark:text-emerald-400"
+                    className="text-yellow-300 dark:text-emerald-400"
                   >
                     <ArrowUpRight className="w-5 h-5" aria-hidden="true" />
                   </motion.span>
@@ -431,10 +431,10 @@ export default function Home() {
                 >
                   <Link
                     href="/events"
-                    className="inline-flex items-center gap-2 border-2 border-[#e8ecc4]/60 hover:bg-[#e8ecc4] hover:text-[#0cc48a] text-[#e8ecc4] dark:border-emerald-500/30 dark:text-emerald-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-300 dark:hover:border-emerald-500 font-bold tracking-wider text-xs uppercase px-8 py-3.5 rounded-full transition-all duration-300 focus-visible:outline-emerald-500"
+                    className="inline-flex items-center gap-2 border-2 border-yellow-300/60 hover:bg-yellow-300 hover:text-[#0cc48a] text-yellow-300 dark:border-emerald-500/30 dark:text-emerald-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-300 dark:hover:border-emerald-500 font-bold tracking-wider text-xs uppercase px-8 py-3.5 rounded-full transition-all duration-300 focus-visible:outline-yellow-300"
                   >
                     SEE ALL ACTIVITIES
-                    <ArrowUpRight className="w-4 h-4 text-[#e8ecc4] group-hover:text-[#0cc48a] transition-colors" aria-hidden="true" />
+                    <ArrowUpRight className="w-4 h-4 text-yellow-300 group-hover:text-[#0cc48a] transition-colors" aria-hidden="true" />
                   </Link>
                 </motion.div>
               </div>

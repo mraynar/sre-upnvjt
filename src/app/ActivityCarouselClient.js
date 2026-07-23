@@ -80,26 +80,31 @@ export default function ActivityCarousel({ activities }) {
             }}
             className="flex items-center justify-center gap-4 w-full px-4"
           >
-            {/* LEFT CARD */}
+            {/* LEFT CARD — Inactive, smaller, with matching structural components */}
             <div
-              className="hidden md:block w-[26%] flex-shrink-0 opacity-60 scale-90 transition-all duration-500 rounded-2xl overflow-hidden cursor-pointer"
+              className="hidden md:block w-[26%] flex-shrink-0 opacity-50 scale-90 transition-all duration-500 rounded-2xl overflow-hidden cursor-pointer border-2 border-yellow-300/35 dark:border-white/5 bg-[#099c6d] dark:bg-[#093021] shadow-lg"
               onClick={prev}
             >
-              <div className="relative h-[200px]">
+              <div className="relative h-[160px]">
                 <img
                   src={activities[getIndex(-1)].image}
                   alt={activities[getIndex(-1)].title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" aria-hidden="true" />
-                <h3 className="absolute bottom-3 left-3 text-white font-bold text-sm uppercase">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" aria-hidden="true" />
+                <h3 className="absolute bottom-2.5 left-3 text-white font-black text-xs uppercase tracking-wide">
                   {activities[getIndex(-1)].title}
                 </h3>
+              </div>
+              <div className="p-3">
+                <p className="text-emerald-50 dark:text-gray-300 text-[11px] leading-relaxed font-bold line-clamp-2">
+                  {activities[getIndex(-1)].description}
+                </p>
               </div>
             </div>
 
             {/* CENTER CARD — featured (Emerald background matching about section cards) */}
-            <div className="w-full md:w-[44%] flex-shrink-0 scale-100 z-10 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 transition-all duration-500 rounded-2xl overflow-hidden border-2 border-[#e8ecc4]/60 dark:border-white/5 bg-[#099c6d] dark:bg-emerald-950">
+            <div className="w-full md:w-[44%] flex-shrink-0 scale-100 z-10 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 transition-all duration-500 rounded-2xl overflow-hidden border-2 border-yellow-300/65 dark:border-white/5 bg-[#099c6d] dark:bg-emerald-950">
               <div className="relative h-[280px]">
                 <img
                   src={activities[current].image}
@@ -107,7 +112,7 @@ export default function ActivityCarousel({ activities }) {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" aria-hidden="true" />
-                <span className="absolute top-3 right-3 bg-[#e8ecc4] dark:bg-emerald-400 text-slate-900 dark:text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
+                <span className="absolute top-3 right-3 bg-yellow-300 dark:bg-emerald-400 text-slate-900 dark:text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
                   Featured
                 </span>
                 <h3 className="absolute bottom-3 left-4 text-white font-black text-base uppercase tracking-wide">
@@ -121,21 +126,26 @@ export default function ActivityCarousel({ activities }) {
               </div>
             </div>
 
-            {/* RIGHT CARD */}
+            {/* RIGHT CARD — Inactive, smaller, with matching structural components */}
             <div
-              className="hidden md:block w-[26%] flex-shrink-0 opacity-60 scale-90 transition-all duration-500 rounded-2xl overflow-hidden cursor-pointer"
+              className="hidden md:block w-[26%] flex-shrink-0 opacity-50 scale-90 transition-all duration-500 rounded-2xl overflow-hidden cursor-pointer border-2 border-yellow-300/35 dark:border-white/5 bg-[#099c6d] dark:bg-[#093021] shadow-lg"
               onClick={next}
             >
-              <div className="relative h-[200px]">
+              <div className="relative h-[160px]">
                 <img
                   src={activities[getIndex(1)].image}
                   alt={activities[getIndex(1)].title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" aria-hidden="true" />
-                <h3 className="absolute bottom-3 left-3 text-white font-bold text-sm uppercase">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" aria-hidden="true" />
+                <h3 className="absolute bottom-2.5 left-3 text-white font-black text-xs uppercase tracking-wide">
                   {activities[getIndex(1)].title}
                 </h3>
+              </div>
+              <div className="p-3">
+                <p className="text-emerald-50 dark:text-gray-300 text-[11px] leading-relaxed font-bold line-clamp-2">
+                  {activities[getIndex(1)].description}
+                </p>
               </div>
             </div>
           </motion.div>
