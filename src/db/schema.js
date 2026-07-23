@@ -8,6 +8,7 @@ export const department = pgTable('department', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 255 }).unique().notNull(),
   code: varchar('code', { length: 255 }).unique().notNull(),
+  description: text('description'),
 });
 
 export const division = pgTable('division', {
@@ -21,6 +22,18 @@ export const role = pgTable('role', {
   name: varchar('name', { length: 255 }).unique().notNull(),
   permissions: jsonb('permissions').notNull(),
   createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
+});
+
+export const activity = pgTable('activity', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  description: text('description'),
+  location: varchar('location', { length: 255 }),
+  imageUrl: varchar('imageUrl', { length: 500 }),
+  date: timestamp('date', { mode: 'date' }).notNull(),
+  type: varchar('type', { length: 255 }).notNull(), // e.g., Internal, External, Workshop, Meeting
+  createdAt: timestamp('createdAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
+  updatedAt: timestamp('updatedAt', { mode: 'date' }).$defaultFn(() => new Date()).notNull(),
 });
 
 // ==========================================

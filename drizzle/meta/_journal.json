@@ -8,6 +8,13 @@
       "when": 1783854211746,
       "tag": "0000_windy_barracuda",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1784811157284,
+      "tag": "0001_silky_exodus",
+      "breakpoints": true
     }
   ]
 }

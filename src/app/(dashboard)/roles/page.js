@@ -14,7 +14,7 @@ const availableModules = [
   "content", "merchandise",
   // Operational modules (new)
   "tasks", "literature", "quiz", "ppt",
-  "leaderboard", "attendance", "events",
+  "leaderboard", "attendance", "events", "activities",
 ];
 const actions = ["create", "read", "update", "delete"];
 
