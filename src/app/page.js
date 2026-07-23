@@ -242,7 +242,7 @@ export default function Home() {
                   isLight ? "text-white" : "text-[#e8ecc4]"
                 }`}>of</span>
               </div>
-              <div className="text-amber-400 dark:text-amber-400 drop-shadow-md">RENEWABLE</div>
+              <div className="text-[#e8ecc4] drop-shadow-md">RENEWABLE</div>
               <div className={isLight ? "text-white" : "text-white drop-shadow-md"}>ENERGY</div>
             </motion.h1>
           </div>
@@ -389,30 +389,32 @@ export default function Home() {
         {/* ── Our Activity Section — 100vh ── */}
         <section
           id="activity"
-          className="scroll-mt-20 bg-gray-50 dark:bg-[#050e09] py-8 lg:py-12 px-6 lg:px-20 border-b border-slate-200 dark:border-white/5 relative overflow-hidden flex items-center justify-center lg:h-screen lg:min-h-screen"
+          className="scroll-mt-20 bg-[#0bb37e] dark:bg-[#040e0a] py-8 lg:py-12 px-6 lg:px-20 border-b border-slate-200 dark:border-white/5 relative overflow-hidden flex items-center justify-center lg:h-screen lg:min-h-screen"
         >
           <div className="w-full relative z-10 flex flex-col items-center">
             <div className="site-container w-full flex flex-col justify-between items-center gap-4">
+              
+              {/* Header */}
               <motion.div
-                initial={{ opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                className="text-center mb-6 max-w-2xl mx-auto flex flex-col items-center"
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+                className="text-center"
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-emerald-500 text-lg leading-none select-none">•</span>
-                  <span className="text-[12px] font-bold tracking-[0.2em] text-emerald-600 dark:text-emerald-400 uppercase">
+                  <span className="text-yellow-300 dark:text-emerald-500 text-lg leading-none select-none">•</span>
+                  <span className="text-[12px] font-bold tracking-[0.2em] text-emerald-100 dark:text-emerald-400 uppercase">
                     WHAT WE DO
                   </span>
                 </div>
-                <h2 className="text-[36px] md:text-[44px] font-display font-black tracking-tight text-gray-900 dark:text-white uppercase leading-[1.1]">
-                  OUR <span className="text-amber-500 dark:text-amber-400">ACTIVITY</span>
+                <h2 className="text-[36px] md:text-[44px] font-display font-black tracking-tight text-white dark:text-white uppercase leading-[1.1]">
+                  OUR <span className="text-yellow-300 dark:text-emerald-400">ACTIVITY</span>
                 </h2>
-                <div className="h-[3px] w-16 bg-gradient-to-r from-emerald-500 to-amber-400 mx-auto mt-2" aria-hidden="true" />
-                <p className="text-[15px] text-gray-500 dark:text-gray-400 max-w-xl mx-auto mt-3">
-                  From research to community impact <br>
-                  </br> explore what SRE UPN JATIM does on the ground.
+                <div className="h-[3px] w-16 bg-gradient-to-r from-white to-yellow-300 dark:from-emerald-500 dark:to-emerald-400 mx-auto mt-2" aria-hidden="true" />
+                <p className="text-[15px] text-emerald-50/90 dark:text-gray-400 max-w-xl mx-auto mt-3">
+                  From research to community impact <br />
+                  explore what SRE UPN JATIM does on the ground.
                 </p>
               </motion.div>
 
@@ -429,7 +431,7 @@ export default function Home() {
                 >
                   <Link
                     href="/events"
-                    className="inline-flex items-center gap-2 border border-emerald-500/30 hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-500/20 hover:border-emerald-500 text-emerald-600 dark:text-emerald-400 font-semibold tracking-wider text-xs uppercase px-8 py-3.5 rounded-full transition-all duration-300 focus-visible:outline-emerald-500"
+                    className="inline-flex items-center gap-2 border border-white/40 hover:bg-white hover:text-[#0bb37e] text-white dark:border-emerald-500/30 dark:text-emerald-400 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-300 dark:hover:border-emerald-500 font-semibold tracking-wider text-xs uppercase px-8 py-3.5 rounded-full transition-all duration-300 focus-visible:outline-emerald-500"
                   >
                     SEE ALL ACTIVITIES
                     <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
