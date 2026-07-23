@@ -305,7 +305,7 @@ export default function Home() {
               </div>
 
               {/* Image — fixed size, not too small, not too large */}
-              <div className="relative w-full max-w-[300px] aspect-square">
+              <div className="relative w-full max-w-[360px] aspect-square">
                 <img
                   src="/images/about/PanelSurya.jpg"
                   alt="Panel Surya SRE UPN JATIM"
