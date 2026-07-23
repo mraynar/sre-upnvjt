@@ -295,26 +295,29 @@ export default function Home() {
           className="scroll-mt-20 relative bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white py-24 px-6 lg:px-20 flex items-center border-b border-slate-200 dark:border-white/5 overflow-hidden"
           style={{ minHeight: "100vh" }}
         >
-          {/* Subtle Background Decorations */}
-          {/* Top-left: faint SVG sun/solar icon */}
-          <div className="absolute top-8 left-8 w-32 h-32 opacity-[0.04] dark:opacity-[0.06] text-emerald-500 pointer-events-none select-none z-0 animate-spin-slow" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
-              <circle cx="12" cy="12" r="4"/>
-              <path d="M12 2v2"/>
-              <path d="M12 20v2"/>
-              <path d="m4.93 4.93 1.41 1.41"/>
-              <path d="m17.66 17.66 1.41 1.41"/>
-              <path d="M2 12h2"/>
-              <path d="M20 12h2"/>
-              <path d="m6.34 17.66-1.41 1.41"/>
-              <path d="m19.07 4.93-1.41 1.41"/>
+          {/* Background decorations (Fix 2) */}
+          <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+            {/* Solar panel icon - top right */}
+            <svg className="absolute top-12 right-8 w-40 h-40 opacity-[0.04] dark:opacity-[0.06] text-emerald-600 dark:text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M3 3h7v7H3zm0 11h7v7H3zm11-11h7v7h-7zm0 11h7v7h-7z"/>
+            </svg>
+
+            {/* Leaf/plant icon - bottom left */}
+            <svg className="absolute bottom-16 left-6 w-52 h-52 opacity-[0.04] dark:opacity-[0.05] text-emerald-600 dark:text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20C19 20 22 3 22 3c-1 2-8 2-5 8z"/>
+            </svg>
+
+            {/* Wind turbine lines - mid left */}
+            <svg className="absolute top-1/2 -translate-y-1/2 -left-8 w-48 h-48 opacity-[0.03] dark:opacity-[0.05] text-emerald-600 dark:text-white" fill="none" stroke="currentColor" strokeWidth="1" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="2"/>
+              <path d="M12 2v10M6.34 6.34l7.07 7.07M2 12h10M6.34 17.66l7.07-7.07"/>
             </svg>
           </div>
 
           <div className="site-container relative z-10 w-full max-w-screen-xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-stretch w-full">
               
-              {/* Left Column: Label + Image (First on desktop & mobile) (Fix 1, 2, & 3) */}
+              {/* Left Column: Label + Image (First on desktop & mobile) (Fix 1) */}
               <div className="w-full flex flex-col justify-start order-1 lg:order-1 h-full min-h-0">
                 {/* Small uppercase label */}
                 <div className="flex items-center gap-2 mb-6 shrink-0">
@@ -324,28 +327,25 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* Plain <img> tag with offset border and L-corner accents */}
-                <div className="relative w-full h-[260px] lg:h-auto lg:flex-1 lg:min-h-0">
-                  {/* Decorative offset border (does not touch image) */}
-                  <div className="absolute -bottom-3 -left-3 w-full h-full rounded-2xl border border-emerald-500/40 dark:border-emerald-400/30 pointer-events-none" aria-hidden="true" />
-                  
-                  {/* Inner wrapper holding the image and its corner accents */}
-                  <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl group bg-white/10">
-                    {/* Decorative L-shaped corner accent top-right (directly on image) */}
-                    <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-emerald-400 z-10" aria-hidden="true" />
-                    {/* Decorative L-shaped corner accent bottom-left (directly on image) */}
-                    <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-emerald-400 z-10" aria-hidden="true" />
-                    
+                {/* Aspect-ratio image padding block */}
+                <div className="relative w-full" style={{ minHeight: '100%' }}>
+                  <div className="relative w-full overflow-hidden shadow-2xl rounded-2xl bg-white/10" style={{ paddingBottom: '130%' }}>
                     <img
                       src="/images/about/PanelSurya.jpg"
-                      alt="Solar Panel SRE UPN Jatim"
-                      className="w-full h-full object-cover rounded-2xl"
+                      alt="Panel Surya SRE UPN JATIM"
+                      className="absolute inset-0 w-full h-full object-cover rounded-2xl animate-fade-in"
                     />
+                    {/* Decorative L-shaped corner accent top-right (directly on image) */}
+                    <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-emerald-400 z-10 rounded-tr-sm" aria-hidden="true" />
+                    {/* Decorative L-shaped corner accent bottom-left (directly on image) */}
+                    <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-emerald-400 z-10 rounded-bl-sm" aria-hidden="true" />
                   </div>
+                  {/* Decorative offset border (does not touch image) */}
+                  <div className="absolute -bottom-3 -left-3 w-full h-full rounded-2xl border border-emerald-500/30 dark:border-emerald-400/20 pointer-events-none -z-10" aria-hidden="true" />
                 </div>
               </div>
 
-              {/* Right Column: Text Content & Cards (Fix 4) */}
+              {/* Right Column: Text Content & Cards */}
               <motion.div
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
