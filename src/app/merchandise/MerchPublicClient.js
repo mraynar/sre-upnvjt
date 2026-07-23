@@ -1,230 +1,191 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
-import { ShoppingBag, ArrowUpRight } from "lucide-react";
+import { ShoppingBag, ArrowUpRight, Package, ShoppingCart } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
-// ─── Animation Variants ────────────────────────────────────────────────────────
+const InstagramIcon = (props) => (
+  <svg className={`fill-current ${props.className || "w-5 h-5"}`} viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+  </svg>
+);
 
-// Stagger parent — capped total budget ~600ms for 3-col grid
-const staggerGrid = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.1, delayChildren: 0 } },
-};
-
-const cardVariant = {
-  hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
-};
-
-// ─── Main Component ────────────────────────────────────────────────────────────
-
-export default function MerchPublicClient({ merchandise }) {
-  const fallbackProducts = [
-    {
-      id: "M-01",
-      name: "SRE Essential T-Shirt",
-      category: "Apparel",
-      price: 115000,
-      status: "Available",
-      img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200&auto=format&fit=crop",
-      desc: "Kaos premium berbahan katun 30s yang menyerap keringat. Tersedia warna Hitam dan Hijau Gelap.",
-    }
-  ];
-
-  const displayProducts = merchandise && merchandise.length > 0 ? merchandise : fallbackProducts;
-
+export default function MerchPublicClient() {
   return (
-    <div className="min-h-screen bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white pt-32 pb-0 selection:bg-[#e8ecc4] dark:bg-[#050e09] selection:text-[#07130e]">
+    <div className="min-h-screen bg-white dark:bg-[#07130e] text-[#07130e] dark:text-white pt-24 select-none">
       
-      {/* ── 1. Hero Section ─────────────────────────────────────────────────── */}
-      <section id="hero" className="scroll-mt-20 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-20 relative">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 border-b border-[#07130e]/10 dark:border-white/10 pb-10"
-        >
-          <div>
-            <p className="text-primary dark:text-[#e8ecc4] text-[12px] md:text-[14px] font-bold tracking-[0.2em] uppercase mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" aria-hidden="true" />
-              SRE Official Store
-            </p>
-            <h1 className="text-[60px] md:text-[90px] lg:text-[130px] font-display font-black leading-[0.8] tracking-tighter uppercase">
-              Merch <br />
-              <span className="text-primary dark:text-[#e8ecc4]">Drop</span>
+      {/* ── 1. Hero Section (Gambar 4 Style) ── */}
+      <section className="relative bg-[#0bb37e] dark:bg-[#0c2a20] text-white py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
+        {/* Abstract background shapes / pattern texture */}
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
+        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-emerald-400/20 blur-[100px]" />
+        
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+          {/* Left Text */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="flex flex-col gap-6"
+          >
+            <h1 className="text-4xl md:text-6xl font-display font-black leading-tight tracking-tight uppercase">
+              OFFICIAL MERCHANDISE <br className="hidden md:inline" />
+              <span className="text-yellow-300 dark:text-emerald-400">SRE UPN JATIM!</span>
             </h1>
-          </div>
-          <p className="text-[14px] md:text-[16px] text-[#07130e]/60 dark:text-white/55 font-medium max-w-xs md:text-right leading-relaxed mb-4">
-            Kenakan semangat transisi energi. Dukung pergerakan hijau dengan memiliki merchandise resmi dari SRE UPN Veteran Jawa Timur.
-          </p>
-        </motion.div>
-      </section>
+            <p className="text-lg md:text-xl font-light text-emerald-50 leading-relaxed max-w-xl">
+              SRE UPN Veteran Jawa Timur merchandise can now be checked online! Show your support for the green transition with style.
+            </p>
+          </motion.div>
 
-      {/* ── 2. Marquee Banner ───────────────────────────────────────────────── */}
-      <div className="bg-slate-50 dark:bg-[#050e09] text-[#07130e] dark:text-white/70 py-3 mb-20 border-y border-slate-200 dark:border-white/5 overflow-hidden flex select-none" aria-hidden="true">
-        <motion.div 
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ repeat: Infinity, duration: 18, ease: "linear" }}
-          className="flex whitespace-nowrap gap-8 font-mono text-[13px] font-bold tracking-widest uppercase"
-        >
-          {Array(20).fill("EXCLUSIVE MERCH • SUPPORT OUR MOVEMENT •").map((text, i) => (
-            <span key={i} className="shrink-0">{text}&nbsp;</span>
-          ))}
-        </motion.div>
-      </div>
-
-      {/* ── 3. Product Grid ──────────────────────────────────────────────────── */}
-      <section id="catalog" className="scroll-mt-20 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto mb-32" aria-label="Product catalog">
-        <motion.div
-          variants={staggerGrid}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-60px" }}
-          className="grid gap-x-8 gap-y-16"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            justifyItems: "stretch",
-          }}
-        >
-          {displayProducts.map((product) => {
-            const isSoldOut = product.isAvailable === false || product.status === "Sold Out";
-            const statusLabel = product.status || (product.isAvailable ? "Available" : "Sold Out");
-            const productImage = product.imageUrl || product.img;
-
-            return (
-              <motion.article
-                key={product.id}
-                variants={cardVariant}
-                className="group cursor-pointer flex flex-col"
-                aria-label={`${product.name}${isSoldOut ? " — Sold Out" : ""}`}
+          {/* Right Placeholder Visual Box */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="w-full max-w-[420px] aspect-square mx-auto rounded-3xl border border-white/20 bg-white/5 backdrop-blur-md shadow-2xl relative overflow-hidden flex items-center justify-center group"
+          >
+            <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/10 to-transparent" />
+            {/* Spinning wind turbine vector inside box */}
+            <svg
+              className="w-48 h-48 text-white/25 group-hover:text-white/40 transition-colors duration-500"
+              viewBox="0 0 100 100"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              {/* Stand */}
+              <line x1="50" y1="45" x2="50" y2="95" strokeWidth="2.5" />
+              {/* Blades Group */}
+              <motion.g
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
+                style={{ transformOrigin: "50px 45px" }}
               >
-                <a
-                  href={isSoldOut ? undefined : (product.linkUrl || "/merchandise/order")}
-                  target={product.linkUrl ? "_blank" : "_self"}
-                  rel={product.linkUrl ? "noreferrer noopener" : undefined}
-                  aria-disabled={isSoldOut}
-                  tabIndex={isSoldOut ? -1 : 0}
-                  className="focus-visible:outline-primary focus-visible:rounded-[24px]"
-                >
-                  <div className={`w-full aspect-[4/5] overflow-hidden rounded-[24px] bg-[#0a1c15] mb-6 relative ${isSoldOut ? "cursor-not-allowed" : ""}`}>
-                    {/* Status badge */}
-                    <div className={`absolute top-4 left-4 z-10 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase backdrop-blur-md border ${
-                      isSoldOut
-                        ? "bg-red-500/80 text-white border-red-400/30"
-                        : statusLabel === "Best Seller"
-                        ? "bg-primary/20 text-primary-focus border-primary/30 dark:bg-[#050e09]/90 dark:text-white"
-                        : "bg-black/50 text-white/80 border-[#07130e]/15 dark:border-white/10"
-                    }`}>
-                      {statusLabel}
-                    </div>
-
-                    {/* Product ID tag */}
-                    <div className="absolute top-4 right-4 z-10 px-3 py-1 rounded-full border border-white/15 text-[10px] font-mono tracking-widest text-white/40 bg-black/30 backdrop-blur-sm">
-                      {product.id}
-                    </div>
-
-                    {/* Hover CTA overlay */}
-                    {!isSoldOut && (
-                      <div className="absolute inset-0 bg-[#07130e]/50 opacity-0 group-hover:opacity-100 transition-all duration-400 z-10 flex items-center justify-center">
-                        <motion.div
-                          initial={{ y: 12, opacity: 0 }}
-                          whileInView={{ y: 0, opacity: 1 }}
-                          className="translate-y-4 group-hover:translate-y-0 transition-all duration-400 flex items-center gap-2 bg-[#07130e] text-white dark:bg-white dark:text-[#07130e] px-6 py-3 rounded-full font-bold uppercase tracking-wider text-[12px] shadow-xl"
-                        >
-                          <ShoppingBag className="w-4 h-4" aria-hidden="true" />
-                          Order Now
-                        </motion.div>
-                      </div>
-                    )}
-
-                    {/* Product image */}
-                    {productImage ? (
-                      <Image
-                        src={productImage}
-                        alt={product.name}
-                        fill
-                        sizes="(max-width: 640px) 90vw, (max-width: 1280px) 45vw, 30vw"
-                        className={`object-cover transition-all duration-700 ease-out group-hover:scale-108 ${isSoldOut ? "grayscale opacity-40" : "opacity-90 group-hover:opacity-100"}`}
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-white/15" aria-label="No product image available">
-                        <ShoppingBag className="w-12 h-12 mb-2 opacity-40" aria-hidden="true" />
-                        <span className="text-[12px]">No Image Available</span>
-                      </div>
-                    )}
-                  </div>
-                </a>
-
-                {/* Product info */}
-                <div className="flex flex-col flex-1">
-                  <div className="flex justify-between items-start gap-4 mb-1.5">
-                    <h3 className="text-[19px] font-display font-bold uppercase tracking-tight text-[#07130e] dark:text-white leading-tight group-hover:text-primary transition-colors duration-300">
-                      {product.name}
-                    </h3>
-                    <span className="text-[16px] font-mono font-bold text-primary-focus dark:text-primary whitespace-nowrap">
-                      {typeof product.price === "string" && product.price.startsWith("Rp")
-                        ? product.price
-                        : `Rp ${parseFloat(product.price).toLocaleString("id-ID")}`}
-                    </span>
-                  </div>
-                  
-                  <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-[#07130e]/40 dark:text-white/35 mb-3 block">
-                    {product.category || "Official Merch"}
-                  </span>
-
-                  <p className="text-[14px] text-[#07130e]/60 dark:text-white/50 leading-relaxed font-light mb-5 line-clamp-3">
-                    {product.description || product.desc}
-                  </p>
-
-                  {/* CTA link visible below card */}
-                  {!isSoldOut && (
-                    <a
-                      href={product.linkUrl || "/merchandise/order"}
-                      target={product.linkUrl ? "_blank" : "_self"}
-                      rel={product.linkUrl ? "noreferrer noopener" : undefined}
-                      className="mt-auto inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-widest text-primary hover:text-primary-focus transition-colors duration-200 group/link focus-visible:outline-primary"
-                      aria-label={`Order ${product.name}`}
-                    >
-                      Order Now
-                      <ArrowUpRight className="w-3.5 h-3.5 group-hover/link:rotate-45 transition-transform duration-300" aria-hidden="true" />
-                    </a>
-                  )}
-                </div>
-              </motion.article>
-            );
-          })}
-        </motion.div>
+                <circle cx="50" cy="45" r="3" fill="currentColor" />
+                <path d="M50 45 L50 15 L53 30 Z" fill="currentColor" />
+                <path d="M50 45 L24 60 L38 52 Z" fill="currentColor" />
+                <path d="M50 45 L76 60 L62 52 Z" fill="currentColor" />
+              </motion.g>
+            </svg>
+            
+            <div className="absolute bottom-6 left-6 right-6 text-center">
+              <span className="text-[11px] font-mono tracking-widest text-white/50 uppercase">COMMING SOON COLLECTION</span>
+            </div>
+          </motion.div>
+        </div>
       </section>
 
-      {/* ── 4. How to Order CTA ─────────────────────────────────────────────── */}
-      <section id="order" className="scroll-mt-20 bg-slate-50 text-[#07130e] dark:bg-[#07130e] dark:text-white py-24 border-t border-slate-200 dark:border-transparent rounded-t-[40px] text-center px-6" aria-label="How to order merchandise">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <h2 className="text-[40px] md:text-[64px] font-display font-black leading-[0.9] tracking-tighter uppercase mb-6">
-            How to <br className="md:hidden" />Order?
+      {/* ── 2. Our Special Bundle Section (Gambar 2 Style) ── */}
+      <section className="py-24 px-6 md:px-12 lg:px-20 max-w-7xl mx-auto bg-white dark:bg-[#07130e]">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-display font-black uppercase text-gray-900 dark:text-white tracking-tight relative inline-block">
+            OUR SPECIAL BUNDLE
+            {/* Yellow / gold accent line underline */}
+            <div className="h-[4px] w-full bg-yellow-400 dark:bg-emerald-500 mt-2 rounded-full" />
           </h2>
-          <p className="text-[15px] md:text-[18px] text-[#07130e]/65 dark:text-white/65 max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
-            Untuk pemesanan seluruh merchandise resmi SRE UPNVJT, silakan hubungi narahubung kami via WhatsApp atau kunjungi stand kami saat event berlangsung.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <Link href="/merchandise/order">
-              <motion.span
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                className="inline-flex px-8 py-4 rounded-full bg-[#07130e] text-white hover:bg-[#0f2a20] dark:bg-primary dark:text-[#07130e] dark:hover:bg-emerald-400 font-bold uppercase tracking-widest text-[13px] hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] transition-all duration-300 cursor-pointer items-center gap-2 shadow-xl"
-              >
-                Order via Web Form <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-              </motion.span>
-            </Link>
+        </div>
+
+        {/* Empty Placeholder Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border border-emerald-500/10 dark:border-white/5 bg-emerald-50/40 dark:bg-emerald-950/10 flex flex-col items-center justify-center text-center shadow-sm"
+        >
+          <div className="w-20 h-20 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-6">
+            <Package className="w-10 h-10" />
           </div>
+          <h3 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white mb-2">
+            No bundle merchandise available yet.
+          </h3>
+          <p className="text-gray-500 dark:text-gray-400 font-light max-w-md">
+            Please check back later for exciting bundles! We are working hard to create exclusive gear packages for you.
+          </p>
         </motion.div>
+      </section>
+
+      {/* ── 3. Our Products Section (Gambar 3 Style) ── */}
+      <section className="py-24 px-6 md:px-12 lg:px-20 bg-[#0bb37e] dark:bg-[#0c2a20] text-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-display font-black uppercase tracking-tight relative inline-block">
+              OUR PRODUCTS
+              <div className="h-[4px] w-full bg-white mt-2 rounded-full" />
+            </h2>
+          </div>
+
+          {/* Empty Placeholder Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="w-full max-w-3xl mx-auto p-12 md:p-16 rounded-3xl border border-white/20 bg-white/10 dark:bg-[#07130e]/40 backdrop-blur-md flex flex-col items-center justify-center text-center shadow-2xl"
+          >
+            <div className="w-20 h-20 rounded-full bg-white/15 flex items-center justify-center text-white mb-6">
+              <Package className="w-10 h-10" />
+            </div>
+            <h3 className="text-xl md:text-2xl font-bold mb-2 text-white">
+              No merchandise available yet.
+            </h3>
+            <p className="text-emerald-100 font-light max-w-md">
+              Please check back later for exciting products! Follow our social media updates for launch announcements.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── 4. Get Official Merchandise bottom CTA (Gambar 3 Bottom Style) ── */}
+      <section className="py-24 px-6 md:px-12 lg:px-20 bg-[#082218] text-white relative overflow-hidden">
+        {/* Wind Turbine vector layout on the right side */}
+        <div className="absolute right-12 bottom-0 w-80 h-96 opacity-10 pointer-events-none hidden lg:block z-0">
+          <svg className="w-full h-full text-white" viewBox="0 0 100 100" fill="none" stroke="currentColor">
+            <line x1="50" y1="30" x2="50" y2="100" strokeWidth="2" />
+            <motion.g
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+              style={{ transformOrigin: "50px 30px" }}
+            >
+              <circle cx="50" cy="30" r="2" fill="currentColor" />
+              <path d="M50 30 L50 0 L52 15 Z" fill="currentColor" />
+              <path d="M50 30 L24 45 L38 37 Z" fill="currentColor" />
+              <path d="M50 30 L76 45 L62 37 Z" fill="currentColor" />
+            </motion.g>
+          </svg>
+        </div>
+
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-start lg:items-center gap-12 relative z-10">
+          <div className="max-w-xl">
+            <h2 className="text-3xl md:text-5xl font-display font-black leading-tight uppercase mb-6">
+              Get Our Official <br />
+              Merchandise at
+            </h2>
+            <div className="h-[4px] w-24 bg-emerald-500 rounded-full" />
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-6 w-full lg:w-auto">
+            {/* Instagram Button */}
+            <a
+              href="https://instagram.com/sre.upnvjt"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-3 bg-white/10 hover:bg-white/20 border border-white/25 px-8 py-4 rounded-full text-sm font-bold uppercase tracking-wider transition-all duration-300 transform hover:scale-105"
+            >
+              <InstagramIcon className="w-5 h-5 text-emerald-400" />
+              @sre.upnvjt
+            </a>
+
+            {/* Shopee Button */}
+            <a
+              href="https://shopee.co.id"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-3 bg-white text-[#082218] hover:bg-emerald-50 px-8 py-4 rounded-full text-sm font-bold uppercase tracking-wider shadow-lg transition-all duration-300 transform hover:scale-105"
+            >
+              <ShoppingCart className="w-5 h-5 text-emerald-600" />
+              shopee.co.id/sreupnvjt
+            </a>
+          </div>
+        </div>
       </section>
 
     </div>

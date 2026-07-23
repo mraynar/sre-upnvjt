@@ -81,7 +81,7 @@ export default function Footer() {
               alt="SRE UPNVJT Logo"
               width={160}
               height={64}
-              className="h-16 w-auto object-contain dark:brightness-0 dark:invert opacity-90 hover:opacity-100 transition-opacity"
+              className="h-16 w-auto object-contain brightness-0 dark:brightness-100 opacity-90 hover:opacity-100 transition-opacity"
             />
           </Link>
 
