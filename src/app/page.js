@@ -312,14 +312,9 @@ export default function Home() {
 
             {/* LEFT COLUMN */}
             <div className="flex flex-col gap-6 w-full lg:pt-0">
-              {/* Label + Heading — same size relationship as right column "SRE INDONESIA" */}
               <div>
-                <span className="text-xs uppercase tracking-[0.25em] text-emerald-600 dark:text-emerald-400 font-medium">
-                  • About
-                </span>
-                {/* This heading MUST visually align with "SRE INDONESIA" on the right */}
-                <h2 className="text-3xl lg:text-4xl font-black uppercase text-gray-900 dark:text-white mt-1">
-                  SRE UPN <span className="text-emerald-600 dark:text-emerald-400">JATIM</span>
+                <h2 className="text-3xl lg:text-4xl font-black uppercase text-gray-900 dark:text-white leading-none">
+                  ABOUT SRE
                 </h2>
               </div>
 
