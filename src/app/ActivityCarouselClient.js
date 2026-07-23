@@ -1,0 +1,143 @@
+'use client'
+import { useState, useEffect, useRef } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+
+// Wrap section content in a client component
+export default function ActivityCarousel({ activities }) {
+  const [current, setCurrent] = useState(0)
+  const touchStartX = useRef(null)
+
+  // Auto-rotate
+  useEffect(() => {
+    const t = setInterval(() => setCurrent(p => (p + 1) % activities.length), 4000)
+    return () => clearInterval(t)
+  }, [activities.length])
+
+  // Keyboard support
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'ArrowLeft') setCurrent(p => (p - 1 + activities.length) % activities.length)
+      if (e.key === 'ArrowRight') setCurrent(p => (p + 1) % activities.length)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [activities.length])
+
+  // Touch/trackpad swipe
+  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX }
+  const onTouchEnd = (e) => {
+    if (!touchStartX.current) return
+    const diff = touchStartX.current - e.changedTouches[0].clientX
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        setCurrent(p => (p + 1) % activities.length)
+      } else {
+        setCurrent(p => (p - 1 + activities.length) % activities.length)
+      }
+    }
+    touchStartX.current = null
+  }
+
+  const prev = () => setCurrent(p => (p - 1 + activities.length) % activities.length)
+  const next = () => setCurrent(p => (p + 1) % activities.length)
+
+  // Get 3 visible: left, center, right
+  const getIndex = (offset) => (current + offset + activities.length) % activities.length
+
+  if (!activities || activities.length === 0) return null
+
+  return (
+    <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} className="w-full">
+      <div className="flex items-center justify-center gap-4 w-full px-4">
+        {/* LEFT CARD */}
+        <div
+          className="hidden md:block w-[26%] flex-shrink-0 opacity-60 scale-90 transition-all duration-500 rounded-2xl overflow-hidden cursor-pointer"
+          onClick={prev}
+        >
+          <div className="relative h-[200px]">
+            <img
+              src={activities[getIndex(-1)].image}
+              alt={activities[getIndex(-1)].title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+            <h3 className="absolute bottom-3 left-3 text-white font-bold text-sm uppercase">
+              {activities[getIndex(-1)].title}
+            </h3>
+          </div>
+        </div>
+
+        {/* CENTER CARD — featured */}
+        <div className="w-full md:w-[44%] flex-shrink-0 scale-100 z-10 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 transition-all duration-500 rounded-2xl overflow-hidden border border-slate-200/50 dark:border-white/5">
+          <div className="relative h-[280px]">
+            <img
+              src={activities[current].image}
+              alt={activities[current].title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+            <span className="absolute top-3 right-3 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">
+              Featured
+            </span>
+            <h3 className="absolute bottom-3 left-4 text-white font-black text-base uppercase tracking-wide">
+              {activities[current].title}
+            </h3>
+          </div>
+          <div className="p-4 bg-white dark:bg-emerald-950 transition-colors duration-300">
+            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+              {activities[current].description}
+            </p>
+          </div>
+        </div>
+
+        {/* RIGHT CARD */}
+        <div
+          className="hidden md:block w-[26%] flex-shrink-0 opacity-60 scale-90 transition-all duration-500 rounded-2xl overflow-hidden cursor-pointer"
+          onClick={next}
+        >
+          <div className="relative h-[200px]">
+            <img
+              src={activities[getIndex(1)].image}
+              alt={activities[getIndex(1)].title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+            <h3 className="absolute bottom-3 left-3 text-white font-bold text-sm uppercase">
+              {activities[getIndex(1)].title}
+            </h3>
+          </div>
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="flex items-center justify-center gap-4 mt-6">
+        <button
+          onClick={prev}
+          className="w-9 h-9 rounded-full bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-700 dark:hover:bg-emerald-600 flex items-center justify-center transition-colors shadow-md focus-visible:outline-emerald-500"
+          aria-label="Previous slide"
+        >
+          <ChevronLeft className="w-4 h-4 text-white" />
+        </button>
+        <div className="flex gap-2">
+          {activities.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={`h-2 rounded-full transition-all duration-300 focus-visible:outline-emerald-500 ${
+                i === current ? 'w-6 bg-emerald-500' : 'w-2 bg-gray-400 dark:bg-gray-600'
+              }`}
+            />
+          ))}
+        </div>
+        <button
+          onClick={next}
+          className="w-9 h-9 rounded-full bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-700 dark:hover:bg-emerald-600 flex items-center justify-center transition-colors shadow-md focus-visible:outline-emerald-500"
+          aria-label="Next slide"
+        >
+          <ChevronRight className="w-4 h-4 text-white" />
+        </button>
+      </div>
+    </div>
+  )
+}

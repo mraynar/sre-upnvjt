@@ -18,6 +18,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { getPublicContent } from "@/app/actions/contentActions";
+import ActivityCarousel from "@/app/ActivityCarouselClient";
 
 export const dynamic = "force-dynamic";
 
@@ -118,7 +119,6 @@ export default function Home() {
   const isLight = mounted && (theme === "light" || resolvedTheme === "light");
 
   const [activeSection, setActiveSection] = useState("home");
-  const [rotatedActivities, setRotatedActivities] = useState(ACTIVITIES);
   const [partnersList, setPartnersList] = useState([]);
   const [publicArticlesList, setPublicArticlesList] = useState([]);
   const [publicActivitiesList, setPublicActivitiesList] = useState([]);
@@ -193,38 +193,7 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setRotatedActivities(prev => [...prev.slice(1), prev[0]]);
-    }, 4000);
-    return () => clearInterval(timer);
-  }, []);
 
-  const handlePrev = () => {
-    setRotatedActivities(prev => [prev[prev.length - 1], ...prev.slice(0, prev.length - 1)]);
-  };
-
-  const handleNext = () => {
-    setRotatedActivities(prev => [...prev.slice(1), prev[0]]);
-  };
-
-  const activeIndex = rotatedActivities[1]?.id ?? 0;
-
-  const [cardDims, setCardDims] = useState({ width: 760, gap: 32, height: 540 });
-  useEffect(() => {
-    const update = () => {
-      if (window.innerWidth < 640) {
-        setCardDims({ width: Math.round(window.innerWidth * 0.82), gap: 16, height: 420 });
-      } else if (window.innerWidth < 1024) {
-        setCardDims({ width: 520, gap: 24, height: 480 });
-      } else {
-        setCardDims({ width: 760, gap: 32, height: 540 });
-      }
-    };
-    update();
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, []);
 
   return (
     <div className="flex flex-col min-h-screen bg-canvas text-ink antialiased">
@@ -417,11 +386,8 @@ export default function Home() {
         </section>
 
 
-        {/* ── Our Activity Section ──────────────────────────────────────── */}
-        <section
-          id="activity"
-          className="scroll-mt-20 bg-gray-50 dark:bg-[#050e09] py-24 px-6 lg:px-20 border-b border-slate-200 dark:border-white/5 relative overflow-hidden"
-        >
+        {/* ── Programs / Activity Section ──────────────────────────────────────── */}
+        <section id="activity" className="scroll-mt-20 bg-white dark:bg-[#050e09] py-24 border-b border-slate-200 dark:border-white/5 relative overflow-hidden">
           <div className="w-full relative z-10 flex flex-col items-center">
             <div className="site-container w-full">
               <motion.div
@@ -447,101 +413,7 @@ export default function Home() {
               </motion.div>
 
               {/* 3 Cards Carousel Row */}
-              <div className="flex items-center justify-center gap-4 w-full">
-                {rotatedActivities.slice(0, 3).map((card, i) => {
-                  const isCenter = i === 1;
-                  return (
-                    <div
-                      key={card.id}
-                      className={`transition-all duration-500 rounded-2xl overflow-hidden flex-shrink-0 flex flex-col h-full ${
-                        isCenter
-                          ? "w-full md:w-[40%] scale-105 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 z-10"
-                          : "hidden md:block md:w-[28%] scale-95 opacity-75"
-                      }`}
-                    >
-                      {/* Image block with overlay */}
-                      <div className="relative h-[280px] w-full">
-                        <img
-                          src={card.image}
-                          alt={card.title}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" aria-hidden="true" />
-                        <h3 className="absolute bottom-4 left-4 text-white font-black text-lg uppercase tracking-wide">
-                          {card.title}
-                        </h3>
-                        {isCenter && (
-                          <div className="absolute top-4 right-4 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-                            Featured
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Card Body */}
-                      <div
-                        className={`p-5 flex-1 transition-colors duration-500 ${
-                          isCenter
-                            ? "bg-emerald-50 dark:bg-emerald-950/80 border-t border-emerald-100 dark:border-emerald-900/40"
-                            : "bg-white dark:bg-[#0d1f17]"
-                        }`}
-                      >
-                        <p
-                          className={`text-sm leading-relaxed ${
-                            isCenter ? "text-gray-700 dark:text-gray-200" : "text-gray-500 dark:text-gray-400"
-                          }`}
-                        >
-                          {card.description}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Prev/Next Navigation Controls below cards */}
-              <div className="flex items-center justify-center gap-4 mt-12">
-                <button
-                  onClick={handlePrev}
-                  className="w-10 h-10 rounded-full bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white flex items-center justify-center transition-colors duration-300 shadow-md focus-visible:outline-emerald-500 shrink-0"
-                  aria-label="Previous Activity"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={handleNext}
-                  className="w-10 h-10 rounded-full bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white flex items-center justify-center transition-colors duration-300 shadow-md focus-visible:outline-emerald-500 shrink-0"
-                  aria-label="Next Activity"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Dot Indicators */}
-              <div className="flex gap-2 justify-center mt-4" role="tablist" aria-label="Carousel navigation">
-                {ACTIVITIES.map((_, i) => (
-                  <button
-                    key={i}
-                    role="tab"
-                    aria-selected={activeIndex === i}
-                    aria-label={`View item ${i + 1}`}
-                    onClick={() => {
-                      // Find rotation steps to make original ID `i` the center card (index 1)
-                      // The current center index is activeIndex.
-                      // Let's rotate until ACTIVITIES[i] is at index 1.
-                      const targetRotated = [...ACTIVITIES];
-                      // Find how to shift targetRotated so the item with id === i is at index 1.
-                      const originalIdx = targetRotated.findIndex(x => x.id === i);
-                      // Shift amount:
-                      const shift = (originalIdx - 1 + targetRotated.length) % targetRotated.length;
-                      const newRotated = [...targetRotated.slice(shift), ...targetRotated.slice(0, shift)];
-                      setRotatedActivities(newRotated);
-                    }}
-                    className={`h-2 rounded-full transition-all duration-300 focus-visible:outline-emerald-500 ${
-                      activeIndex === i ? "bg-emerald-500 w-6" : "bg-gray-300 dark:bg-gray-600 w-2"
-                    }`}
-                  />
-                ))}
-              </div>
+              <ActivityCarousel activities={ACTIVITIES} />
 
               {/* SEE ALL ACTIVITIES CTA Button */}
               <div className="w-full text-center mt-12">
