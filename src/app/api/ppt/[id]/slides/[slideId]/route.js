@@ -44,7 +44,6 @@ export async function DELETE(req, { params }) {
 
     const resolvedParams = await params;
     const slideId = parseInt(resolvedParams.slideId);
-    const resolvedParams = await params;
     const moduleId = parseInt(resolvedParams.id);
 
     await db.delete(pptSlide).where(eq(pptSlide.id, slideId));
