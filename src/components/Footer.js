@@ -130,27 +130,36 @@ export default function Footer() {
       </footer>
 
       {/* Wave transition SVG */}
-      <div className="w-full leading-[0] pointer-events-none select-none bg-transparent relative z-20">
+      <div className={`w-full leading-[0] pointer-events-none select-none relative z-20 ${isLight ? "bg-[#0bb37e]" : "bg-[#07130e]"}`}>
         <svg
-          viewBox="0 0 1440 160"
-          preserveAspectRatio="xMidYMax slice"
+          viewBox="0 0 1440 200"
+          preserveAspectRatio="none"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full block"
+          className="w-full block h-[100px] md:h-[140px] lg:h-[200px]"
           aria-hidden="true"
         >
           <defs>
             <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#a8f0d0" : "#1a3d2e"} />
-              <stop offset="100%" stopColor={isLight ? "#6ee7b7" : "#0f2a1f"} />
+              <stop offset="0%" stopColor={isLight ? "#d1fae5" : "#14532d"} stopOpacity="0.9" />
+              <stop offset="100%" stopColor={isLight ? "#6ee7b7" : "#052e16"} stopOpacity="1" />
             </linearGradient>
             <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? "#6ee7b7" : "#0f2a1f"} />
-              <stop offset="100%" stopColor={isLight ? "#34d399" : "#07130e"} />
+              <stop offset="0%" stopColor={isLight ? "#6ee7b7" : "#064e3b"} stopOpacity="0.95" />
+              <stop offset="100%" stopColor={isLight ? "#34d399" : "#022c22"} stopOpacity="1" />
+            </linearGradient>
+            <linearGradient id="waveGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor={isLight ? "#a7f3d0" : "#065f46"} />
+              <stop offset="50%" stopColor={isLight ? "#34d399" : "#047857"} />
+              <stop offset="100%" stopColor={isLight ? "#10b981" : "#064e3b"} />
             </linearGradient>
           </defs>
-          <path d="M0 80 C 360 20, 720 140, 1080 60 C 1260 20, 1380 80, 1440 50 L1440 160 L0 160 Z" fill="url(#waveGrad1)" opacity="0.7" />
-          <path d="M0 100 C 300 50, 700 140, 1000 80 C 1200 30, 1360 100, 1440 70 L1440 160 L0 160 Z" fill="url(#waveGrad2)" />
+          {/* Back wave — lightest */}
+          <path d="M0 120 C 180 60, 360 160, 540 100 C 720 40, 900 140, 1080 80 C 1260 20, 1380 100, 1440 70 L1440 200 L0 200 Z" fill="url(#waveGrad1)" opacity="0.6" />
+          {/* Mid wave */}
+          <path d="M0 140 C 200 80, 450 180, 720 120 C 900 70, 1100 160, 1300 100 C 1380 70, 1440 120, 1440 140 L1440 200 L0 200 Z" fill="url(#waveGrad2)" opacity="0.85" />
+          {/* Front wave — most prominent */}
+          <path d="M0 160 C 120 110, 300 180, 540 150 C 780 120, 960 180, 1200 140 C 1320 118, 1400 155, 1440 160 L1440 200 L0 200 Z" fill="url(#waveGrad3)" />
         </svg>
       </div>
 

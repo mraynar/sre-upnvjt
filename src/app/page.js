@@ -264,7 +264,7 @@ export default function Home() {
             ══════════════════════════════════════════════════════════════════════ */}
 
         {/* Marquee ticker */}
-        <div className="bg-[#0bb37e] dark:bg-[#050e09] border-y border-white/10 dark:border-white/5 py-5 overflow-hidden flex select-none relative z-10" aria-hidden="true">
+        <div className="bg-[#099160] dark:bg-[#050e09] border-y border-white/10 dark:border-white/5 py-5 overflow-hidden flex select-none relative z-10" aria-hidden="true">
           <motion.div
             animate={{ x: ["0%", "-50%"] }}
             transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
@@ -282,7 +282,7 @@ export default function Home() {
         {/* ── About Section — 2-Column Redesign ── */}
         <section
           id="about"
-          className="scroll-mt-20 relative bg-[#0bb37e] dark:bg-[#07130e] text-white py-24 px-6 lg:px-20 flex items-center border-b border-slate-200 dark:border-white/5 overflow-hidden"
+          className="scroll-mt-20 relative bg-[#0bb37e] dark:bg-[#07130e] text-white py-24 px-6 lg:px-20 flex items-center border-b border-white/10 dark:border-white/5 overflow-hidden"
           style={{ minHeight: "100vh" }}
         >
           {/* BACKGROUND ICONS — z-0, spread across center (inline styles to guarantee opacity) */}
@@ -327,7 +327,7 @@ export default function Home() {
             >
               <div>
                 <h3 className="text-3xl lg:text-4xl font-black uppercase text-white">SRE INDONESIA</h3>
-                <p className="mt-3 text-emerald-50/90 dark:text-gray-300 text-base leading-relaxed">
+                <p className="mt-3 text-white dark:text-gray-300 text-base leading-relaxed font-medium">
                   Society of Renewable Energy (SRE) Indonesia is the national student organization uniting university chapters across Indonesia in the mission to accelerate the country&apos;s clean energy transition. Through education, research, and community action, we drive the clean energy revolution.
                 </p>
               </div>
@@ -336,7 +336,7 @@ export default function Home() {
               
               <div>
                 <h3 className="text-2xl lg:text-3xl font-black text-yellow-300 dark:text-emerald-400">SRE UPN JATIM</h3>
-                <p className="mt-3 text-emerald-50/90 dark:text-gray-300 text-base leading-relaxed">
+                <p className="mt-3 text-white dark:text-gray-300 text-base leading-relaxed font-medium">
                   SRE UPN Veteran Jawa Timur is a collaborative student chapter under SRE Indonesia based in Surabaya. Since 2021, we have been empowering students through hands-on clean energy campaigns, professional research projects, and community technology deployments.
                 </p>
               </div>
@@ -389,7 +389,7 @@ export default function Home() {
         {/* ── Our Activity Section — 100vh ── */}
         <section
           id="activity"
-          className="scroll-mt-20 bg-[#0bb37e] dark:bg-[#040e0a] py-8 lg:py-12 px-6 lg:px-20 border-b border-slate-200 dark:border-white/5 relative overflow-hidden flex items-center justify-center lg:h-screen lg:min-h-screen"
+          className="scroll-mt-20 bg-[#0cc48a] dark:bg-[#040e0a] py-8 lg:py-12 px-6 lg:px-20 border-b border-white/10 dark:border-white/5 relative overflow-hidden flex items-center justify-center lg:h-screen lg:min-h-screen"
         >
           <div className="w-full relative z-10 flex flex-col items-center">
             <div className="site-container w-full flex flex-col justify-between items-center gap-4">
@@ -412,7 +412,7 @@ export default function Home() {
                   OUR <span className="text-yellow-300 dark:text-emerald-400">ACTIVITY</span>
                 </h2>
                 <div className="h-[3px] w-16 bg-gradient-to-r from-white to-yellow-300 dark:from-emerald-500 dark:to-emerald-400 mx-auto mt-2" aria-hidden="true" />
-                <p className="text-[15px] text-emerald-50/90 dark:text-gray-400 max-w-xl mx-auto mt-3">
+                <p className="text-[15px] text-white dark:text-gray-400 max-w-xl mx-auto mt-3 font-medium">
                   From research to community impact <br />
                   explore what SRE UPN JATIM does on the ground.
                 </p>
@@ -445,7 +445,7 @@ export default function Home() {
 
         {/* ── Testimonials Section ──────────────────────────────────────────────── */}
         {publicTestimonialsList.length > 0 && (
-          <section className="bg-[#0aa373] dark:bg-[#07130e] border-t border-white/10 dark:border-white/5 py-24 relative overflow-hidden">
+          <section className="bg-[#097a52] dark:bg-[#07130e] border-t border-white/10 dark:border-white/5 py-24 relative overflow-hidden">
             <div className="site-container flex flex-col items-center">
               <motion.div
                 initial={{ opacity: 0, y: 22 }}
@@ -456,7 +456,7 @@ export default function Home() {
               >
                 <span className="text-[14px] font-semibold tracking-wider text-yellow-300 dark:text-emerald-400 uppercase mb-3 block">Testimonials & Review</span>
                 <h2 className="text-[36px] font-display font-black tracking-tight text-white dark:text-white uppercase">What Members Say</h2>
-                <p className="text-[15px] text-emerald-50/90 dark:text-white/60 mt-4 max-w-lg mx-auto">
+                <p className="text-[15px] text-white dark:text-white/60 mt-4 max-w-lg mx-auto font-medium">
                   Hear directly from members about their learning journey, growth, and team experiences at SRE UPNVJT.
                 </p>
               </motion.div>
@@ -474,7 +474,7 @@ export default function Home() {
                     variants={staggerChild}
                     className="bg-white/10 dark:bg-white/5 border border-white/15 dark:border-white/8 p-6 rounded-3xl flex flex-col justify-between shadow-sm relative group hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 backdrop-blur-sm"
                   >
-                    <p className="text-sm italic text-emerald-50/90 dark:text-white/60 mb-6 leading-relaxed">&ldquo;{test.content}&rdquo;</p>
+                    <p className="text-sm italic text-white dark:text-white/60 mb-6 leading-relaxed font-medium">&ldquo;{test.content}&rdquo;</p>
                     <div className="flex items-center gap-3">
                       {test.authorPhotoUrl ? (
                         <img src={test.authorPhotoUrl} alt="" className="w-10 h-10 rounded-full object-cover border border-white/20" />
@@ -497,7 +497,7 @@ export default function Home() {
 
         {/* ── Partners Section ──────────────────────────────────────────────────── */}
         {partnersList.length > 0 && (
-          <section id="partners" className="scroll-mt-20 bg-[#0bb37e] dark:bg-[#07130e] pb-24 relative overflow-hidden">
+          <section id="partners" className="scroll-mt-20 bg-[#0a9e6e] dark:bg-[#07130e] pb-24 relative overflow-hidden">
             <div className="site-container flex flex-col items-center justify-center text-center">
               <motion.div
                 initial={{ opacity: 0, y: 22 }}
@@ -508,7 +508,7 @@ export default function Home() {
               >
                 <span className="text-[14px] font-semibold tracking-wider text-yellow-300 dark:text-emerald-400 uppercase mb-3 block">Collaboration & Synergy</span>
                 <h2 className="text-[36px] font-display font-black tracking-tight text-white dark:text-white uppercase">Our Partners</h2>
-                <p className="text-[15px] text-emerald-50/90 dark:text-white/60 mt-4 max-w-lg mx-auto">
+                <p className="text-[15px] text-white dark:text-white/60 mt-4 max-w-lg mx-auto font-medium">
                   Organizations, institutions, and communities we work with to accelerate the sustainable transition.
                 </p>
               </motion.div>
