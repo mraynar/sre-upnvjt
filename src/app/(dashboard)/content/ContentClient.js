@@ -15,6 +15,7 @@ export default function ContentClient({ initialContents, currentUser }) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState("");
   
   // Form State
@@ -73,6 +74,36 @@ export default function ContentClient({ initialContents, currentUser }) {
       title,
       slug: !selectedContent ? generateSlug(title) : prev.slug
     }));
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setError("");
+
+    try {
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+      uploadData.append("folder", "content");
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: uploadData,
+      });
+
+      const json = await res.json();
+      if (json.success && json.url) {
+        setFormData(prev => ({ ...prev, imageUrl: json.url }));
+      } else {
+        setError(json.error || "Failed to upload image.");
+      }
+    } catch (err) {
+      setError("Failed to upload image.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -293,8 +324,54 @@ export default function ContentClient({ initialContents, currentUser }) {
                     </div>
 
                     <div className="space-y-3">
-                      <label className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 ml-1">Cover Image URL</label>
-                      <input type="url" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base focus:outline-none focus:ring-2 focus:ring-primary/50 text-gray-900 dark:text-white transition-all shadow-sm" placeholder="https://example.com/image.jpg" />
+                      <label className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 ml-1 flex items-center justify-between">
+                        <span>Cover Image</span>
+                        {isUploading && (
+                          <span className="text-primary text-xs font-semibold animate-pulse flex items-center gap-1">
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading image...
+                          </span>
+                        )}
+                      </label>
+                      
+                      <div className="space-y-3">
+                        {formData.imageUrl ? (
+                          <div className="relative rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 group aspect-video bg-black/20 max-h-56">
+                            <img src={formData.imageUrl} alt="Cover Preview" className="w-full h-full object-cover" />
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-xs">
+                              <label className="px-4 py-2 bg-white text-slate-900 text-xs font-bold rounded-xl cursor-pointer hover:bg-gray-100 transition-colors shadow-lg flex items-center gap-1.5">
+                                <ImageIcon className="w-4 h-4 text-primary" /> Change Image
+                                <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} disabled={isUploading} />
+                              </label>
+                              <button type="button" onClick={() => setFormData({...formData, imageUrl: ""})} className="px-4 py-2 bg-red-500 text-white text-xs font-bold rounded-xl hover:bg-red-600 transition-colors shadow-lg">
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="relative border-2 border-dashed border-gray-200 dark:border-white/10 rounded-2xl p-6 text-center hover:border-primary/50 transition-colors bg-gray-50/50 dark:bg-white/[0.02]">
+                            <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" onChange={handleFileUpload} disabled={isUploading} />
+                            <div className="flex flex-col items-center gap-2">
+                              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                                {isUploading ? <Loader2 className="w-6 h-6 animate-spin" /> : <ImageIcon className="w-6 h-6" />}
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-gray-900 dark:text-white">Click or drag image to upload</p>
+                                <p className="text-xs text-gray-500 dark:text-white/40 mt-1">Supports PNG, JPG, WEBP, GIF</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-2">
+                          <input 
+                            type="text" 
+                            value={formData.imageUrl} 
+                            onChange={e => setFormData({...formData, imageUrl: e.target.value})} 
+                            className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary/50 text-gray-900 dark:text-white transition-all" 
+                            placeholder="Or paste external image URL (https://...)" 
+                          />
+                        </div>
+                      </div>
                     </div>
 
                     <div className="space-y-3 flex flex-col h-full">

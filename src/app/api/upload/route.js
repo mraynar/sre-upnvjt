@@ -3,6 +3,7 @@ import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
+import sharp from "sharp";
 
 export async function POST(req) {
   try {
@@ -33,16 +34,23 @@ export async function POST(req) {
       if (err.code !== 'EEXIST') throw err;
     }
 
-    // Generate neat unique filename with prefix
-    const ext = path.extname(file.name);
     const prefix = safeFolder ? safeFolder.toUpperCase() : "FILE";
     const randomStr = Math.random().toString(36).substring(2, 8);
-    const filename = `${prefix}_${Date.now()}_${randomStr}${ext}`;
-    
-    const filepath = path.join(uploadDir, filename);
+    const isImage = file.type?.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif|avif)$/i.test(file.name);
 
-    // Write file
-    await writeFile(filepath, buffer);
+    let filename;
+    let filepath;
+
+    if (isImage) {
+      filename = `${prefix}_${Date.now()}_${randomStr}.webp`;
+      filepath = path.join(uploadDir, filename);
+      await sharp(buffer).webp({ quality: 80 }).toFile(filepath);
+    } else {
+      const ext = path.extname(file.name);
+      filename = `${prefix}_${Date.now()}_${randomStr}${ext}`;
+      filepath = path.join(uploadDir, filename);
+      await writeFile(filepath, buffer);
+    }
 
     // Return the URL
     const urlPath = safeFolder ? `/uploads/${safeFolder}/${filename}` : `/uploads/${filename}`;
