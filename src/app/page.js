@@ -305,7 +305,7 @@ export default function Home() {
               </div>
 
               {/* Image — stretches to match right column height */}
-              <div className="relative w-full max-w-[360px] flex-1 mt-6 min-h-[320px]">
+              <div className="relative w-full max-w-[520px] flex-1 mt-6 min-h-[320px]">
                 <img
                   src="/images/about/PanelSurya.jpg"
                   alt="Panel Surya SRE UPN JATIM"
@@ -437,109 +437,6 @@ export default function Home() {
               </div>
 
             </div>
-          </div>
-        </section>
-
-        {/* ── Featured <span className="text-emerald-700 dark:text-white">Insights</span> / Articles Section ─────────────────────────────── */}
-        <section id="article" className="scroll-mt-20 bg-white dark:bg-[#07130e] pt-24 pb-20 relative overflow-hidden border-b border-slate-200 dark:border-white/5">
-          <div className="site-container">
-            <motion.div
-              initial={{ opacity: 0, y: 22 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className="mb-16"
-            >
-              <span className="text-[14px] font-semibold tracking-wider text-primary uppercase mb-3 block">
-                EDITORIALS &amp; DISCOVERIES
-              </span>
-              <h2 className="text-[40px] font-display font-semibold tracking-tight text-[#07130e] dark:text-white">
-                Featured <span className="text-emerald-700 dark:text-white">Insights</span>
-              </h2>
-            </motion.div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              {publicArticlesList.filter((art) => art.featured).map((art) => (
-                <motion.div
-                  key={art.id}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-80px" }}
-                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex flex-col justify-between border-r-0 lg:border-r border-slate-200 dark:border-white/5 pr-0 lg:pr-12 gap-8"
-                >
-                  <div className="flex flex-col gap-6">
-                    <div className="w-full aspect-[16/9] rounded-[18px] overflow-hidden bg-white/5 group/img">
-                      <Image
-                        src={art.image}
-                        alt={art.title}
-                        width={800}
-                        height={450}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="flex items-center gap-4 text-[12px] font-normal text-ink-muted-48">
-                      <span className="text-primary font-semibold uppercase">{art.category}</span>
-                      <span>•</span>
-                      <span>{art.date}</span>
-                      <span>•</span>
-                      <span>{art.readTime}</span>
-                    </div>
-                    <h3 className="text-[34px] font-display font-semibold tracking-tight text-ink leading-tight hover:text-primary transition-colors duration-200 line-clamp-3">
-                      <a href={`/articles/${art.slug}`}>{art.title}</a>
-                    </h3>
-                    <p className="text-[17px] font-normal text-[#07130e]/80 leading-relaxed line-clamp-4 font-light">
-                      {art.desc}
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-between pt-6 border-t border-slate-200 dark:border-white/10">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-white/40 dark:bg-white/10 border border-[#d0d6a8] dark:border-white/10 flex items-center justify-center font-semibold text-[12px] text-[#07130e] dark:text-white uppercase shrink-0">SRE</div>
-                      <span className="text-[14px] font-semibold text-[#07130e] dark:text-white line-clamp-1">{art.author}</span>
-                    </div>
-                    <a
-                      href={`/articles/${art.slug}`}
-                      className="bg-[#07130e] dark:bg-white/10 hover:bg-primary hover:text-[#07130e] text-[#e8ecc4] dark:text-white text-[14px] font-semibold tracking-tight rounded-full px-5 py-2 transition-all duration-300 shrink-0 focus-visible:outline-primary"
-                    >
-                      Read Article
-                    </a>
-                  </div>
-                </motion.div>
-              ))}
-
-              <div className="flex flex-col gap-8">
-                <span className="text-[12px] font-semibold tracking-wider text-[#07130e]/50 dark:text-white/30 uppercase border-b border-[#d0d6a8] dark:border-white/10 pb-2">
-                  LATEST DISPATCHES
-                </span>
-                {publicArticlesList.filter((art) => !art.featured).map((art, idx) => (
-                  <motion.div
-                    key={art.id}
-                    initial={{ opacity: 0, x: 16 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-60px" }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: Math.min(idx * 0.08, 0.4) }}
-                    className="flex flex-col gap-4 pb-8 border-b border-slate-200 dark:border-white/10 last:border-b-0"
-                  >
-                    <div className="flex items-center justify-between text-[12px] font-normal text-ink-muted-48">
-                      <span className="text-primary font-semibold uppercase">{art.category}</span>
-                      <span>{art.readTime}</span>
-                    </div>
-                    <h4 className="text-[21px] font-display font-semibold tracking-tight text-ink leading-snug hover:text-primary transition-colors duration-200 line-clamp-2">
-                      <a href={`/articles/${art.slug}`}>{art.title}</a>
-                    </h4>
-                    <p className="text-[14px] font-normal text-[#07130e]/70 line-clamp-2 leading-relaxed font-light">{art.desc}</p>
-                    <div className="flex items-center justify-between pt-2">
-                      <span className="text-[12px] font-semibold text-[#07130e]/70 line-clamp-1 font-light">{art.author}</span>
-                      <a href={`/articles/${art.slug}`} className="text-[12px] font-semibold text-primary hover:underline flex items-center gap-0.5 shrink-0 focus-visible:outline-primary">
-                        Read <ChevronRight className="w-3 h-3" aria-hidden="true" />
-                      </a>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </div>
         </section>
 
         {/* ── Testimonials Section ──────────────────────────────────────────────── */}
