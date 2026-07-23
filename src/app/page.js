@@ -379,7 +379,7 @@ export default function Home() {
                   </span>
                 </div>
                 <p className="text-[15px] sm:text-[16px] lg:text-[17px] font-light text-[#07130e]/75 dark:text-white/65 leading-[1.75] max-w-lg">
-                  <strong className="font-semibold text-[#07130e] dark:text-white">Society of Renewable Energy (SRE) Indonesia</strong> is the national student organization dedicated to accelerating Indonesia&apos;s transition to clean and sustainable energy. Founded to unite student chapters across universities, SRE Indonesia drives education, research, and grassroots action on renewable energy at a national scale.
+                  <strong className="font-semibold text-[#07130e] dark:text-white">Society of Renewable Energy (SRE) Indonesia</strong>{" "}is the national student organization dedicated to accelerating Indonesia&apos;s transition to clean and sustainable energy. Founded to unite student chapters across universities, SRE Indonesia drives education, research, and grassroots action on renewable energy at a national scale.
                 </p>
               </div>
 
@@ -395,7 +395,7 @@ export default function Home() {
                   </span>
                 </div>
                 <p className="text-[15px] sm:text-[16px] lg:text-[17px] font-light text-[#07130e]/75 dark:text-white/65 leading-[1.75] max-w-lg">
-                  <strong className="font-semibold text-[#07130e] dark:text-white">SRE UPN Veteran Jawa Timur</strong> is an official local chapter of SRE Indonesia based in Surabaya. Since 2021, we have been empowering students through hands-on renewable energy programs, campus energy audits, and community-driven sustainability initiatives across East Java.
+                  <strong className="font-semibold text-[#07130e] dark:text-white">SRE UPN Veteran Jawa Timur</strong>{" "}is an official local chapter of SRE Indonesia based in Surabaya. Since 2021, we have been empowering students through hands-on renewable energy programs, campus energy audits, and community-driven sustainability initiatives across East Java.
                 </p>
               </div>
 
