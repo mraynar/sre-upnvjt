@@ -58,7 +58,8 @@ export default function Header() {
   useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    const handleScroll = () => setIsScrolled(window.scrollY >= 80);
+    handleScroll();
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -86,13 +87,10 @@ export default function Header() {
   if (pathname === "/login" || isDashboardRoute) return null;
 
   const isHome = pathname === "/";
-  const shouldBeSolid = isScrolled || !isHome;
+  const isTransparentOnTop = isHome && !isScrolled;
+  const shouldBeSolid = !isTransparentOnTop;
 
-  const isLightBackground = 
-    (pathname.startsWith("/article") || pathname.startsWith("/merchandise/order")) && 
-    !shouldBeSolid;
-
-  const useDarkText = mounted && theme === "light";
+  const useDarkText = mounted && theme === "light" && !isTransparentOnTop;
 
   return (
     <>
