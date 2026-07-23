@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronRight,
+  ChevronLeft,
   ArrowUpRight,
   Eye,
   Sprout,
@@ -99,6 +100,14 @@ const MOCK_ACTIVITIES = [
   }
 ];
 
+const ACTIVITIES = [
+  { id: 0, title: 'Campus Energy Audit', description: 'Conducting electrical consumption analysis and building-level energy efficiency studies.', image: '/images/about/PanelSurya.jpg' },
+  { id: 1, title: 'Renewable Energy Project', description: 'Hands-on solar and wind energy installation projects for communities.', image: '/images/about/PanelSurya.jpg' },
+  { id: 2, title: 'Study & Discussion', description: 'Weekly internal knowledge-sharing sessions on renewable energy topics.', image: '/images/about/PanelSurya.jpg' },
+  { id: 3, title: 'Social Project', description: 'Community service initiatives focused on energy access for underserved areas.', image: '/images/about/PanelSurya.jpg' },
+  { id: 4, title: 'External Events', description: 'Participating in national and international renewable energy competitions and conferences.', image: '/images/about/PanelSurya.jpg' },
+];
+
 export default function Home() {
   const { theme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -109,7 +118,7 @@ export default function Home() {
   const isLight = mounted && (theme === "light" || resolvedTheme === "light");
 
   const [activeSection, setActiveSection] = useState("home");
-  const [activeProgram, setActiveProgram] = useState(0);
+  const [rotatedActivities, setRotatedActivities] = useState(ACTIVITIES);
   const [partnersList, setPartnersList] = useState([]);
   const [publicArticlesList, setPublicArticlesList] = useState([]);
   const [publicActivitiesList, setPublicActivitiesList] = useState([]);
@@ -185,13 +194,21 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (publicActivitiesList.length > 0) {
-      const timer = setInterval(() => {
-        setActiveProgram((prev) => (prev + 1) % publicActivitiesList.length);
-      }, 4000);
-      return () => clearInterval(timer);
-    }
-  }, [publicActivitiesList.length]);
+    const timer = setInterval(() => {
+      setRotatedActivities(prev => [...prev.slice(1), prev[0]]);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handlePrev = () => {
+    setRotatedActivities(prev => [prev[prev.length - 1], ...prev.slice(0, prev.length - 1)]);
+  };
+
+  const handleNext = () => {
+    setRotatedActivities(prev => [...prev.slice(1), prev[0]]);
+  };
+
+  const activeIndex = rotatedActivities[1]?.id ?? 0;
 
   const [cardDims, setCardDims] = useState({ width: 760, gap: 32, height: 540 });
   useEffect(() => {
@@ -420,7 +437,7 @@ export default function Home() {
                     WHAT WE DO
                   </span>
                 </div>
-                <h2 className="text-[40px] md:text-[48px] font-display font-black tracking-tight text-[#07130e] dark:text-white uppercase leading-[1.1]">
+                <h2 className="text-[40px] md:text-[48px] font-display font-black tracking-tight text-gray-900 dark:text-white uppercase leading-[1.1]">
                   OUR <span className="text-emerald-500">ACTIVITY</span>
                 </h2>
                 <div className="h-[3px] w-16 bg-emerald-500 mx-auto mt-3" aria-hidden="true" />
@@ -429,60 +446,105 @@ export default function Home() {
                 </p>
               </motion.div>
 
-              {/* 3 Activity Cards Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full mt-12">
-                {[
-                  {
-                    title: "Campus Energy Audit",
-                    description: "Conducting electrical consumption analysis and building-level energy efficiency studies.",
-                    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=600&auto=format&fit=crop"
-                  },
-                  {
-                    title: "Renewable Energy Project",
-                    description: "Hands-on solar and wind energy installation projects for communities.",
-                    image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?q=80&w=600&auto=format&fit=crop"
-                  },
-                  {
-                    title: "Study & Discussion",
-                    description: "Weekly internal knowledge-sharing sessions on renewable energy topics.",
-                    image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=600&auto=format&fit=crop"
-                  }
-                ].map((act, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: idx * 0.15, ease: [0.16, 1, 0.3, 1] }}
-                    className="group bg-white dark:bg-[#0d1f17] border border-slate-200/50 dark:border-white/5 rounded-2xl overflow-hidden shadow-md hover:scale-[1.02] transition-transform duration-300 relative flex flex-col h-full"
-                  >
-                    {/* Image block with bottom overlay */}
-                    <div className="relative w-full h-[220px] overflow-hidden">
-                      <img
-                        src={act.image}
-                        alt={act.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                      {/* Dark overlay at bottom of image */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0b120f]/80 via-transparent to-transparent z-0" aria-hidden="true" />
-                      {/* Card title overlaid bold white on bottom of image */}
-                      <h3 className="absolute bottom-4 left-6 text-xl font-bold text-white z-10 font-display uppercase tracking-wide">
-                        {act.title}
-                      </h3>
-                    </div>
+              {/* 3 Cards Carousel Row */}
+              <div className="flex items-center justify-center gap-4 w-full">
+                {rotatedActivities.slice(0, 3).map((card, i) => {
+                  const isCenter = i === 1;
+                  return (
+                    <div
+                      key={card.id}
+                      className={`transition-all duration-500 rounded-2xl overflow-hidden flex-shrink-0 flex flex-col h-full ${
+                        isCenter
+                          ? "w-full md:w-[40%] scale-105 shadow-2xl shadow-emerald-900/10 dark:shadow-emerald-950/50 z-10"
+                          : "hidden md:block md:w-[28%] scale-95 opacity-75"
+                      }`}
+                    >
+                      {/* Image block with overlay */}
+                      <div className="relative h-[280px] w-full">
+                        <img
+                          src={card.image}
+                          alt={card.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" aria-hidden="true" />
+                        <h3 className="absolute bottom-4 left-4 text-white font-black text-lg uppercase tracking-wide">
+                          {card.title}
+                        </h3>
+                        {isCenter && (
+                          <div className="absolute top-4 right-4 bg-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                            Featured
+                          </div>
+                        )}
+                      </div>
 
-                    {/* Card Body */}
-                    <div className="p-6 flex-1 flex flex-col justify-start">
-                      <p className="text-gray-500 dark:text-gray-300 text-sm leading-relaxed">
-                        {act.description}
-                      </p>
+                      {/* Card Body */}
+                      <div
+                        className={`p-5 flex-1 transition-colors duration-500 ${
+                          isCenter
+                            ? "bg-emerald-50 dark:bg-emerald-950/80 border-t border-emerald-100 dark:border-emerald-900/40"
+                            : "bg-white dark:bg-[#0d1f17]"
+                        }`}
+                      >
+                        <p
+                          className={`text-sm leading-relaxed ${
+                            isCenter ? "text-gray-700 dark:text-gray-200" : "text-gray-500 dark:text-gray-400"
+                          }`}
+                        >
+                          {card.description}
+                        </p>
+                      </div>
                     </div>
-                  </motion.div>
+                  );
+                })}
+              </div>
+
+              {/* Prev/Next Navigation Controls below cards */}
+              <div className="flex items-center justify-center gap-4 mt-12">
+                <button
+                  onClick={handlePrev}
+                  className="w-10 h-10 rounded-full bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white flex items-center justify-center transition-colors duration-300 shadow-md focus-visible:outline-emerald-500 shrink-0"
+                  aria-label="Previous Activity"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={handleNext}
+                  className="w-10 h-10 rounded-full bg-emerald-600 hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400 text-white flex items-center justify-center transition-colors duration-300 shadow-md focus-visible:outline-emerald-500 shrink-0"
+                  aria-label="Next Activity"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Dot Indicators */}
+              <div className="flex gap-2 justify-center mt-4" role="tablist" aria-label="Carousel navigation">
+                {ACTIVITIES.map((_, i) => (
+                  <button
+                    key={i}
+                    role="tab"
+                    aria-selected={activeIndex === i}
+                    aria-label={`View item ${i + 1}`}
+                    onClick={() => {
+                      // Find rotation steps to make original ID `i` the center card (index 1)
+                      // The current center index is activeIndex.
+                      // Let's rotate until ACTIVITIES[i] is at index 1.
+                      const targetRotated = [...ACTIVITIES];
+                      // Find how to shift targetRotated so the item with id === i is at index 1.
+                      const originalIdx = targetRotated.findIndex(x => x.id === i);
+                      // Shift amount:
+                      const shift = (originalIdx - 1 + targetRotated.length) % targetRotated.length;
+                      const newRotated = [...targetRotated.slice(shift), ...targetRotated.slice(0, shift)];
+                      setRotatedActivities(newRotated);
+                    }}
+                    className={`h-2 rounded-full transition-all duration-300 focus-visible:outline-emerald-500 ${
+                      activeIndex === i ? "bg-emerald-500 w-6" : "bg-gray-300 dark:bg-gray-600 w-2"
+                    }`}
+                  />
                 ))}
               </div>
 
               {/* SEE ALL ACTIVITIES CTA Button */}
-              <div className="w-full text-center mt-16">
+              <div className="w-full text-center mt-12">
                 <motion.div
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
