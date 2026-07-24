@@ -40,12 +40,43 @@ export default async function TasksAdminPage() {
     .orderBy(task.deadline);
 
   // Fetch all submissions
-  const submissions = await db.query.taskSubmission.findMany({
+  const rawSubmissions = await db.query.taskSubmission.findMany({
     with: {
       member: { columns: { id: true, name: true } },
       task: { columns: { id: true, title: true, rewardXp: true } },
     },
     orderBy: [desc(taskSubmission.submittedAt)],
+  });
+
+  const subIds = rawSubmissions.map(s => s.id);
+  let txMap = new Map();
+
+  if (subIds.length > 0) {
+    const transactions = await db.query.xpTransaction.findMany({
+      where: (tx, { inArray }) => inArray(tx.sourceId, subIds),
+    });
+    transactions.forEach(tx => {
+      if (tx.sourceType === "task" || tx.sourceType === "task_import") {
+        txMap.set(tx.sourceId, tx);
+      }
+    });
+  }
+
+  const submissions = rawSubmissions.map(s => {
+    const tx = txMap.get(s.id);
+    let bonusXp = 0;
+    if (tx) {
+      const match = (tx.reason || "").match(/Bonus XP: \+(\d+) XP/);
+      if (match) {
+        bonusXp = parseInt(match[1]);
+      } else if (tx.amount > (s.task?.rewardXp || 0)) {
+        bonusXp = tx.amount - (s.task?.rewardXp || 0);
+      }
+    }
+    return {
+      ...s,
+      bonusXp,
+    };
   });
 
   return (
