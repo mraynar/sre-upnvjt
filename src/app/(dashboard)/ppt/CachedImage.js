@@ -1,64 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+
+// Build full URL from relative path stored in DB
+// R2_PUBLIC_URL is exposed to client via next.config.mjs env section
+const R2_BASE = (process.env.R2_PUBLIC_URL || "https://cdn.webly.biz.id").replace(/\/+$/, "");
+
+export function buildSlideUrl(fileUrl) {
+  if (!fileUrl) return "";
+  // Already a full URL (legacy data or external link)
+  if (fileUrl.startsWith("http://") || fileUrl.startsWith("https://")) return fileUrl;
+  // Local file served from Next.js public folder — return as-is
+  if (fileUrl.startsWith("/uploads/")) return fileUrl;
+  // Relative path stored in DB — build full CDN URL
+  return `${R2_BASE}/${fileUrl.replace(/^\/+/, "")}`;
+}
 
 export default function CachedImage({ src, alt, className, ...props }) {
-  const [imgSrc, setImgSrc] = useState(src);
+  const fullSrc = buildSlideUrl(src);
+  const [errored, setErrored] = useState(false);
 
-  useEffect(() => {
-    let isMounted = true;
-    let objectUrl = null;
-
-    if (!src) return;
-
-    const loadImg = async () => {
-      try {
-        if (typeof window === 'undefined' || !('caches' in window)) {
-          if (isMounted) setImgSrc(src);
-          return;
-        }
-
-        const cache = await caches.open('ppt-slides-cache-v1');
-        const cachedResponse = await cache.match(src);
-
-        if (cachedResponse) {
-          const blob = await cachedResponse.blob();
-          objectUrl = URL.createObjectURL(blob);
-          if (isMounted) setImgSrc(objectUrl);
-        } else {
-          // Fetch from Cloudflare R2 on first view
-          const response = await fetch(src, { mode: 'cors' });
-          if (response.ok) {
-            // Save to CacheStorage so subsequent views don't re-request R2
-            await cache.put(src, response.clone());
-            const blob = await response.blob();
-            objectUrl = URL.createObjectURL(blob);
-            if (isMounted) setImgSrc(objectUrl);
-          } else {
-            if (isMounted) setImgSrc(src);
-          }
-        }
-      } catch (err) {
-        // Fallback to direct R2 src on error/CORS fallback
-        if (isMounted) setImgSrc(src);
-      }
-    };
-
-    loadImg();
-
-    return () => {
-      isMounted = false;
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-      }
-    };
-  }, [src]);
+  if (!fullSrc) return null;
 
   return (
     <img
-      src={imgSrc || src}
+      src={errored ? "" : fullSrc}
       alt={alt}
       className={className}
       loading="lazy"
-      onError={() => setImgSrc(src)}
+      onError={() => setErrored(true)}
       {...props}
     />
   );

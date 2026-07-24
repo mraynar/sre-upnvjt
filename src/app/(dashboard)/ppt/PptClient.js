@@ -9,7 +9,7 @@ import {
   GripVertical, FileSliders, FileText
 } from "lucide-react";
 import { convertPdfToWebPFiles } from "./pdfToWebp";
-import CachedImage from "./CachedImage";
+import CachedImage, { buildSlideUrl } from "./CachedImage";
 import {
   createPptModule, updatePptModule, deletePptModule,
   createPptSlide, updatePptSlide, deletePptSlide,
@@ -92,15 +92,16 @@ export default function PptClient({ initialModules, currentUser }) {
 
     const fd = new FormData();
     fd.append("file", file);
-    const folderName = targetMod?.id ? `modul-${targetMod.id}` : "ppt-covers";
-    fd.append("folder", folderName);
+    fd.append("folder", "ppt-covers");
+    fd.append("destination", "local"); // cover disimpan lokal di public/uploads/ppt-covers
     setIsLoading(true);
     try {
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const data = await res.json();
-      if (res.ok && data.url) {
-        setModForm(p => ({ ...p, coverImageUrl: data.url }));
-        notify("success", "Cover berhasil diunggah ke R2!");
+      if (res.ok && data.path) {
+        // data.path = "/uploads/ppt-covers/PPTCOVERS_xxx.webp" — simpan di DB
+        setModForm(p => ({ ...p, coverImageUrl: data.path }));
+        notify("success", "Cover berhasil diunggah!");
       } else {
         notify("error", data.error || "Gagal mengunggah gambar");
       }
@@ -128,8 +129,9 @@ export default function PptClient({ initialModules, currentUser }) {
     try {
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const data = await res.json();
-      if (res.ok && data.url) {
-        setSlideForm(p => ({ ...p, fileUrl: data.url }));
+      if (res.ok && data.path) {
+        // Store only relative path in DB (e.g., modul-5/SLIDE.webp)
+        setSlideForm(p => ({ ...p, fileUrl: data.path }));
         notify("success", "Gambar slide berhasil diunggah ke Cloudflare R2!");
       } else {
         notify("error", data.error || "Gagal mengunggah gambar slide");
@@ -170,9 +172,9 @@ export default function PptClient({ initialModules, currentUser }) {
         const uploadRes = await fetch("/api/upload", { method: "POST", body: fd });
         const uploadData = await uploadRes.json();
         
-        if (uploadRes.ok && uploadData.url) {
-          // Create slide
-          const slideForm = { title: `Slide ${uploadedSlides + 1}`, fileUrl: uploadData.url };
+        if (uploadRes.ok && uploadData.path) {
+          // Save relative path to DB; full URL built at display time
+          const slideForm = { title: `Slide ${uploadedSlides + 1}`, fileUrl: uploadData.path };
           const slideRes = await createPptSlide(activeModule.id, slideForm);
           
           if (slideRes.success) {
@@ -477,7 +479,7 @@ export default function PptClient({ initialModules, currentUser }) {
                             {slide.title || <span className="text-gray-400 dark:text-white/30 italic font-normal">Tanpa judul</span>}
                           </h3>
                           <a
-                            href={slide.fileUrl}
+                            href={buildSlideUrl(slide.fileUrl)}
                             target="_blank"
                             rel="noreferrer"
                             className="text-[11px] text-primary hover:underline flex items-center gap-1 mt-0.5"
@@ -594,7 +596,7 @@ export default function PptClient({ initialModules, currentUser }) {
                       <div className="mt-2 p-2 bg-gray-100 dark:bg-white/5 rounded-2xl border border-gray-200 dark:border-white/10 text-center overflow-hidden">
                         <p className="text-[10px] font-bold text-gray-400 dark:text-white/40 mb-1">PREVIEW SLIDE</p>
                         <img
-                          src={slideForm.fileUrl}
+                          src={buildSlideUrl(slideForm.fileUrl)}
                           alt="Preview Slide"
                           className="max-h-40 mx-auto rounded-xl object-contain shadow-md"
                           onError={(e) => { e.target.style.display = 'none'; }}
@@ -863,7 +865,7 @@ function ModuleModal({ open, onClose, form, setForm, onSubmit, isEditing, isLoad
                   <div className="flex gap-3 items-start">
                     {form.coverImageUrl && (
                       <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-black/30">
-                        <img src={form.coverImageUrl} alt="Preview" className="w-full h-full object-cover" />
+                        <img src={buildSlideUrl(form.coverImageUrl)} alt="Preview" className="w-full h-full object-cover" />
                       </div>
                     )}
                     <div className="flex-1 flex flex-col gap-2">

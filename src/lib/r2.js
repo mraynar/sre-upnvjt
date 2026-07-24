@@ -1,56 +1,97 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 const accountId = process.env.R2_ACCOUNT_ID;
 const accessKeyId = process.env.R2_ACCESS_KEY_ID;
 const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
 const bucketName = process.env.R2_BUCKET_NAME || "sre-portal";
-const publicUrl = process.env.R2_PUBLIC_URL || "https://cdn.webly.biz.id/";
+const publicUrl = process.env.R2_PUBLIC_URL || "https://cdn.webly.biz.id";
 
 export const r2Client = (accountId && accessKeyId && secretAccessKey)
   ? new S3Client({
       region: "auto",
       endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-      credentials: {
-        accessKeyId,
-        secretAccessKey,
-      },
+      credentials: { accessKeyId, secretAccessKey },
     })
   : null;
 
 /**
- * Upload buffer directly to Cloudflare R2 storage bucket (No local public/uploads saving)
+ * Upload buffer ke Cloudflare R2.
+ * Hanya return path relatif (folder/filename) — full URL dibentuk di client.
  *
- * @param {Object} options
- * @param {Buffer} options.buffer - Binary buffer of the file
- * @param {string} options.filename - File name (e.g., slide_1.webp)
- * @param {string} options.mimeType - Content MIME type (e.g. image/webp)
- * @param {string} options.folder - Subfolder path (e.g. modul-1)
- * @returns {Promise<{ url: string, isR2: boolean }>}
+ * @param {Buffer} buffer
+ * @param {string} filename
+ * @param {string} mimeType
+ * @param {string} folder - e.g. "modul-5"
+ * @returns {Promise<{ path: string, ok: boolean }>}
+ *   path = "modul-5/FILENAME.webp" — simpan ini di DB
  */
 export async function uploadToR2({ buffer, filename, mimeType = "image/webp", folder = "" }) {
   const cleanFolder = folder.replace(/^\/+|\/+$/g, "");
   const key = cleanFolder ? `${cleanFolder}/${filename}` : filename;
-  const baseUrl = publicUrl.endsWith("/") ? publicUrl : `${publicUrl}/`;
-  const fullUrl = `${baseUrl}${key}`;
 
-  if (r2Client) {
+  if (!r2Client) {
+    console.warn("[R2] Client not configured, upload skipped.");
+    return { path: key, ok: false };
+  }
+
+  try {
+    await r2Client.send(new PutObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+      Body: buffer,
+      ContentType: mimeType,
+      CacheControl: "public, max-age=31536000, immutable",
+    }));
+    return { path: key, ok: true };
+  } catch (err) {
+    console.error("[R2] Upload error:", err);
+    return { path: key, ok: false };
+  }
+}
+
+/**
+ * Bangun full URL dari path relatif yang disimpan di DB.
+ * Hanya digunakan di sisi server jika diperlukan.
+ */
+export function buildR2Url(relativePath) {
+  if (!relativePath) return "";
+  if (relativePath.startsWith("http")) return relativePath; // legacy full URL
+  const base = publicUrl.replace(/\/+$/, "");
+  return `${base}/${relativePath}`;
+}
+
+/**
+ * Hapus objek dari Cloudflare R2 berdasarkan path relatif yang disimpan di DB.
+ *
+ * @param {string} relativePath - e.g. "modul-5/SLIDE.webp" atau full URL (legacy)
+ * @returns {Promise<{ ok: boolean }>}
+ */
+export async function deleteFromR2(relativePath) {
+  if (!relativePath) return { ok: false };
+  if (!r2Client) {
+    console.warn("[R2] Client not configured, delete skipped.");
+    return { ok: false };
+  }
+
+  // Jika full URL (legacy) → ambil path setelah domain sebagai key
+  let key = relativePath;
+  if (relativePath.startsWith("http")) {
     try {
-      const command = new PutObjectCommand({
-        Bucket: bucketName,
-        Key: key,
-        Body: buffer,
-        ContentType: mimeType,
-        CacheControl: "public, max-age=31536000, immutable",
-      });
-      await r2Client.send(command);
-
-      return { url: fullUrl, isR2: true };
-    } catch (r2Err) {
-      console.error("Cloudflare R2 Upload Error:", r2Err);
-      return { url: fullUrl, isR2: false };
+      key = new URL(relativePath).pathname.replace(/^\/+/, "");
+    } catch {
+      return { ok: false };
     }
-  } else {
-    // Return Cloudflare R2 public URL format directly
-    return { url: fullUrl, isR2: false };
+  }
+
+  try {
+    await r2Client.send(new DeleteObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+    }));
+    console.log(`[R2] Deleted: ${key}`);
+    return { ok: true };
+  } catch (err) {
+    console.error("[R2] Delete error:", err);
+    return { ok: false };
   }
 }

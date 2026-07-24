@@ -2,6 +2,10 @@
 const nextConfig = {
   reactCompiler: true,
   serverExternalPackages: ["canvas", "pdfjs-dist"],
+  // Expose R2_PUBLIC_URL to both server and client (browser)
+  env: {
+    R2_PUBLIC_URL: process.env.R2_PUBLIC_URL || "https://cdn.webly.biz.id/",
+  },
   images: {
     remotePatterns: [
       {
@@ -23,8 +27,14 @@ const nextConfig = {
         protocol: "https",
         hostname: "res.cloudinary.com",
       },
+      {
+        // Cloudflare R2 CDN
+        protocol: "https",
+        hostname: "cdn.webly.biz.id",
+      },
     ],
   },
 };
 
 export default nextConfig;
+

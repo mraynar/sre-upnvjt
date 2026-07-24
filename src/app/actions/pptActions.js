@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { pptModule, pptSlide } from "@/db/schema";
 import { desc, asc, eq, count } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { deleteFromR2 } from "@/lib/r2";
 
 export async function getPptModules() {
   try {
@@ -147,7 +148,17 @@ export async function updatePptSlide(slideId, data) {
 
 export async function deletePptSlide(slideId, moduleId) {
   try {
+    // Ambil fileUrl sebelum dihapus dari DB
+    const slide = await db.query.pptSlide.findFirst({
+      where: (t, { eq }) => eq(t.id, slideId),
+    });
+
     await db.delete(pptSlide).where(eq(pptSlide.id, slideId));
+
+    // Hapus file dari R2 (abaikan local /uploads/ paths — itu cover, bukan slide)
+    if (slide?.fileUrl && !slide.fileUrl.startsWith("/uploads/")) {
+      await deleteFromR2(slide.fileUrl);
+    }
 
     // Re-sequence remaining slides
     const remaining = await db.query.pptSlide.findMany({
