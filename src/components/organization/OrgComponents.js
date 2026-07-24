@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Mail, Users, User, Shield, ArrowRight } from "lucide-react";
+import { ArrowUpRight, Mail, Users, User, Shield, ArrowRight, Network } from "lucide-react";
 
 // Inline LinkedIn SVG to avoid import package versions mismatch
 function LinkedinIcon({ className }) {
@@ -50,13 +50,13 @@ export function DepartmentCard({ dept, index, isExecutive = false }) {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: index * 0.08 }}
-        className={`bg-gradient-to-br from-white/12 to-white/5 border-2 border-white/20 dark:border-emerald-500/30 dark:from-[#0a1f15] dark:to-[#05140e] rounded-3xl p-8 relative overflow-hidden group hover:border-yellow-300 dark:hover:border-emerald-400 hover:shadow-2xl hover:bg-white/18 transition-all duration-500 flex flex-col justify-between shadow-md cursor-pointer hover:brightness-[1.03] active:scale-[0.99] hover:-translate-y-1 h-full ${
+        className={`bg-gradient-to-br from-[#09a071] to-[#078c62] border-2 border-[#e8ecc4] dark:border-emerald-500/30 dark:from-[#0a1f15] dark:to-[#05140e] rounded-3xl p-8 relative overflow-hidden group hover:border-yellow-300 dark:hover:border-emerald-400 hover:shadow-2xl transition-all duration-500 flex flex-col justify-between shadow-md cursor-pointer hover:brightness-[1.03] active:scale-[0.99] hover:-translate-y-1 h-full ${
           isExecutive ? "md:p-10" : ""
         }`}
       >
-        {/* Decorative Index Number */}
-        <div className="absolute top-4 right-6 text-[52px] font-display font-black text-white/25 dark:text-emerald-400/25 group-hover:text-yellow-300/40 dark:group-hover:text-emerald-400/40 transition-colors">
-          {numberStr}
+        {/* Decorative Watermark Icon (Combination of org structure and energy grid) */}
+        <div className="absolute top-4 right-6 text-6xl text-[#e8ecc4]/10 group-hover:text-[#e8ecc4]/25 dark:text-emerald-400/10 dark:group-hover:text-emerald-400/25 transition-colors pointer-events-none">
+          <Network className="w-14 h-14 stroke-[1.2]" />
         </div>
 
         <div className="flex-1 flex flex-col justify-between gap-6">
@@ -72,7 +72,7 @@ export function DepartmentCard({ dept, index, isExecutive = false }) {
           {/* Stats & Director Summary */}
           <div className="space-y-4 pt-4 border-t border-white/10 dark:border-white/5">
             {isExecutive ? (
-              <div className="space-y-2.5 text-xs text-white/95">
+              <div className="space-y-2.5 text-xs text-white">
                 {/* President */}
                 <div className="flex items-start gap-2.5">
                   <User className="w-4 h-4 text-[#e8ecc4] dark:text-emerald-400 shrink-0 mt-0.5" />
@@ -102,17 +102,17 @@ export function DepartmentCard({ dept, index, isExecutive = false }) {
               <>
                 <div className="flex items-center gap-3 text-xs font-bold text-white/90">
                   <User className="w-4 h-4 text-[#e8ecc4] dark:text-emerald-400" />
-                  <span className="truncate">
+                  <span className="truncate text-white">
                     Director: <strong className="text-[#e8ecc4] dark:text-emerald-400 font-extrabold">{dept.directorName || "Not Assigned"}</strong>
                   </span>
                 </div>
 
                 <div className="flex items-center gap-6 text-xs text-white/80 dark:text-gray-400 font-semibold font-bold">
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-1.5 text-white">
                     <Shield className="w-3.5 h-3.5 text-[#e8ecc4]/85 dark:text-emerald-400/70" />
                     {dept.managerCount} Managers
                   </span>
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex items-center gap-1.5 text-white">
                     <Users className="w-3.5 h-3.5 text-[#e8ecc4]/85 dark:text-emerald-400/70" />
                     {dept.staffCount} Staff Members
                   </span>
@@ -124,11 +124,13 @@ export function DepartmentCard({ dept, index, isExecutive = false }) {
           {/* View Team CTA Button */}
           <div className="pt-3 flex items-center justify-between border-t border-white/5">
             <span
-              className="inline-flex items-center gap-2 text-xs font-black tracking-widest uppercase text-[#e8ecc4]/90 group-hover:text-yellow-300 transition-all duration-300"
+              className="inline-flex items-center gap-2 text-xs font-black tracking-widest uppercase text-[#e8ecc4] group-hover:text-yellow-300 dark:text-emerald-400 dark:group-hover:text-yellow-400 transition-all duration-300"
             >
               View Team
-              <ArrowRight className="w-4 h-4 stroke-[1.5] transform group-hover:translate-x-1.5 transition-transform duration-300" />
             </span>
+            <div className="w-8 h-8 rounded-full bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 flex items-center justify-center text-white group-hover:bg-yellow-300 group-hover:text-slate-900 group-hover:border-yellow-300 transition-all duration-300">
+              <ArrowUpRight className="w-4 h-4 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" strokeWidth={1.5} />
+            </div>
           </div>
         </div>
       </motion.div>
@@ -161,10 +163,10 @@ export function MemberCard({ member, fallbackRole }) {
         <div className="absolute inset-0 bg-gradient-to-t from-[#07130e]/90 via-[#07130e]/10 to-transparent pointer-events-none" />
       </div>
       <div className="p-4 flex-1">
-        <span className="text-[9px] font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 block mb-1">
+        <span className="text-[10px] sm:text-xs font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 block mb-1">
           {role}
         </span>
-        <h4 className="text-sm font-black text-white dark:text-white group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors leading-tight line-clamp-2">
+        <h4 className="text-sm sm:text-base font-black text-white dark:text-white group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors leading-tight line-clamp-2">
           {name}
         </h4>
       </div>
@@ -207,10 +209,10 @@ export function DirectorCard({ director, fallbackRole }) {
       </div>
 
       <div className="flex-1 text-center md:text-left flex flex-col justify-center h-full">
-        <span className="text-[11px] font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 mb-1">
+        <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 mb-1">
           {role}
         </span>
-        <h3 className="text-2xl font-black text-white dark:text-white leading-tight">
+        <h3 className="text-2xl sm:text-3xl font-black text-white dark:text-white leading-tight">
           {name}
         </h3>
         
@@ -341,15 +343,15 @@ export function OrgTreeSection({ dept }) {
     const presidentData = formatUser(president, "President");
 
     return (
-      <div className="w-full flex flex-col items-center animate-fade-in">
+      <div className="w-full flex flex-col items-center animate-fade-in pb-20">
         {/* PRESIDENT */}
         {presidentData && (
-          <div className="flex flex-col items-center w-full">
+          <div className="flex flex-col items-center w-full mt-10">
             <div className="text-center mb-6">
-              <h3 className="text-sm font-black text-yellow-300 dark:text-emerald-400 tracking-[0.25em] uppercase mb-1">
+              <h3 className="text-xs sm:text-sm font-black text-yellow-300 dark:text-emerald-400 tracking-[0.25em] uppercase mb-1">
                 Executive Leader
               </h3>
-              <h2 className="text-3xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
+              <h2 className="text-3xl sm:text-4xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
                 President
               </h2>
             </div>
@@ -368,9 +370,9 @@ export function OrgTreeSection({ dept }) {
 
         {/* VICE PRESIDENTS */}
         {vps.length > 0 && (
-          <div className="w-full flex flex-col items-center mt-6">
+          <div className="w-full flex flex-col items-center mt-8">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
+              <h2 className="text-2xl sm:text-3xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
                 Vice Presidents
               </h2>
             </div>
@@ -393,9 +395,9 @@ export function OrgTreeSection({ dept }) {
 
         {/* SECRETARIES */}
         {secretaries.length > 0 && (
-          <div className="w-full flex flex-col items-center mt-6">
+          <div className="w-full flex flex-col items-center mt-8">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
+              <h2 className="text-2xl sm:text-3xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
                 Secretaries
               </h2>
             </div>
@@ -416,16 +418,16 @@ export function OrgTreeSection({ dept }) {
   const hasDivisions = dept.divisions && dept.divisions.length > 0;
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center pb-20">
       
       {/* DIRECTOR LEVEL */}
       {dept.director && (
-        <div className="flex flex-col items-center w-full">
+        <div className="flex flex-col items-center w-full mt-10">
           <div className="text-center mb-6">
-            <h3 className="text-sm font-black text-yellow-300 dark:text-emerald-400 tracking-[0.25em] uppercase mb-1">
+            <h3 className="text-xs sm:text-sm font-black text-yellow-300 dark:text-emerald-400 tracking-[0.25em] uppercase mb-1">
               Department Leader
             </h3>
-            <h2 className="text-3xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
+            <h2 className="text-3xl sm:text-4xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
               Director
             </h2>
           </div>
@@ -452,14 +454,14 @@ export function OrgTreeSection({ dept }) {
           
           <div className="flex flex-wrap justify-center gap-x-12 gap-y-16 items-start w-full pt-8">
             {dept.divisions.map((div, idx) => (
-              <div key={idx} className="flex flex-col items-center w-full max-w-[300px] relative group">
+              <div key={idx} className="flex flex-col items-center w-full max-w-[300px] relative group/division">
                 
                 {/* Vertical line connecting horizontal bar to Division title (Desktop) */}
-                <div className="hidden md:block absolute -top-10 left-1/2 w-px h-10 bg-yellow-300/80 dark:bg-emerald-500/40 -translate-x-1/2 group-hover:bg-yellow-300 transition-colors"></div>
+                <div className="hidden md:block absolute -top-10 left-1/2 w-px h-10 bg-yellow-300/80 dark:bg-emerald-500/40 -translate-x-1/2 group-hover/division:bg-yellow-300 transition-colors"></div>
                 
                 {/* Division Header */}
                 <div className="bg-[#099c6d] dark:bg-[#07130e] border border-yellow-300/40 dark:border-emerald-500/40 px-6 py-2.5 rounded-full mb-8 z-10 text-center shadow-lg hover:border-yellow-300 transition-colors">
-                  <span className="text-xs font-black uppercase tracking-widest text-white dark:text-emerald-400">{div.name}</span>
+                  <span className="text-xs sm:text-sm font-black uppercase tracking-widest text-white dark:text-emerald-400">{div.name}</span>
                 </div>
 
                 {/* Manager */}

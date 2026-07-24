@@ -216,7 +216,7 @@ export default function AboutClient({ departmentsData = [] }) {
             </p>
           </motion.div>
 
-          {/* Change 1: Executive Card pinned at the top */}
+          {/* Executive Card pinned at the top */}
           {(() => {
             const execDept = departmentsData.find(dept => dept.code?.toUpperCase() === "EXE");
             const otherDepts = departmentsData.filter(dept => dept.code?.toUpperCase() !== "SYS" && dept.code?.toUpperCase() !== "EXE");
@@ -229,40 +229,13 @@ export default function AboutClient({ departmentsData = [] }) {
                   </div>
                 )}
 
-                 {/* Change 2: Org chart connector lines */}
-                {execDept && otherDepts.length > 0 && (
-                  <div className="w-full max-w-5xl mx-auto relative z-0">
-                    {/* Desktop/Tablet connectors */}
-                    <div className="hidden md:block w-full h-16">
-                      <svg className="w-full h-full text-white/25 dark:text-emerald-500/30" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
-                        {/* Center dropping vertical line */}
-                        <path d="M 50 0 L 50 50" stroke="currentColor" strokeWidth="1.5" />
-                        
-                        {/* Horizontal branching for 3 columns (lg screen) */}
-                        <path d="M 16.6 50 L 83.3 50" stroke="currentColor" strokeWidth="1.5" className="hidden lg:block" />
-                        <path d="M 16.6 50 L 16.6 100" stroke="currentColor" strokeWidth="1.5" className="hidden lg:block" />
-                        <path d="M 50 50 L 50 100" stroke="currentColor" strokeWidth="1.5" className="hidden lg:block" />
-                        <path d="M 83.3 50 L 83.3 100" stroke="currentColor" strokeWidth="1.5" className="hidden lg:block" />
-                        
-                        {/* Horizontal branching for 2 columns (md screen) */}
-                        <path d="M 25 50 L 75 50" stroke="currentColor" strokeWidth="1.5" className="block lg:hidden" />
-                        <path d="M 25 50 L 25 100" stroke="currentColor" strokeWidth="1.5" className="block lg:hidden" />
-                        <path d="M 75 50 L 75 100" stroke="currentColor" strokeWidth="1.5" className="block lg:hidden" />
-                      </svg>
-                    </div>
-                    {/* Mobile vertical line connector */}
-                    <div className="block md:hidden w-full h-8">
-                      <svg className="w-full h-full text-white/25 dark:text-emerald-500/30" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
-                        <path d="M 50 0 L 50 100" stroke="currentColor" strokeWidth="1.5" />
-                      </svg>
-                    </div>
-                  </div>
-                )}
+                {/* Spacing between Executive and departments grid */}
+                <div className="w-full h-12" />
 
                 {/* Remaining 5 departments stay in the grid below */}
                 <div className="flex flex-wrap justify-center gap-6 w-full mt-2 lg:mt-0">
                   {otherDepts.map((dept, idx) => (
-                    <div key={dept.slug || dept.id} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] flex">
+                    <div key={dept.slug || dept.id} className="w-full sm:w-[48%] lg:w-[31.5%] flex">
                       <DepartmentCard key={dept.slug || dept.id} dept={dept} index={idx} />
                     </div>
                   ))}
@@ -354,8 +327,8 @@ export default function AboutClient({ departmentsData = [] }) {
           </motion.div>
 
           {/* Location */}
-          <motion.div {...fadeUp(0.1)} className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-[#07130e]/40 dark:text-white/25">
-            <MapPin className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
+          <motion.div {...fadeUp(0.1)} className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white dark:text-white/50">
+            <MapPin className="w-3.5 h-3.5 text-yellow-300 dark:text-primary" aria-hidden="true" />
             Surabaya, Jawa Timur, Indonesia
           </motion.div>
 
