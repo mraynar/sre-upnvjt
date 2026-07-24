@@ -83,6 +83,8 @@ export default function PptClient({ initialModules, currentUser }) {
   };
 
   // ── File upload ──────────────────────────────────────────────────────────────
+  const [isUploadingSlideImage, setIsUploadingSlideImage] = useState(false);
+
   const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -90,14 +92,15 @@ export default function PptClient({ initialModules, currentUser }) {
 
     const fd = new FormData();
     fd.append("file", file);
-    fd.append("folder", "ppt-covers");
+    const folderName = targetMod?.id ? `modul-${targetMod.id}` : "ppt-covers";
+    fd.append("folder", folderName);
     setIsLoading(true);
     try {
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const data = await res.json();
       if (res.ok && data.url) {
         setModForm(p => ({ ...p, coverImageUrl: data.url }));
-        notify("success", "Cover berhasil diunggah!");
+        notify("success", "Cover berhasil diunggah ke R2!");
       } else {
         notify("error", data.error || "Gagal mengunggah gambar");
       }
@@ -105,6 +108,36 @@ export default function PptClient({ initialModules, currentUser }) {
       notify("error", "Terjadi kesalahan saat upload");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSingleSlideImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      notify("error", "Harap pilih file gambar (WebP/PNG/JPG)");
+      return;
+    }
+
+    const fd = new FormData();
+    fd.append("file", file);
+    const folderName = activeModule?.id ? `modul-${activeModule.id}` : "ppt-slides";
+    fd.append("folder", folderName);
+
+    setIsUploadingSlideImage(true);
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        setSlideForm(p => ({ ...p, fileUrl: data.url }));
+        notify("success", "Gambar slide berhasil diunggah ke Cloudflare R2!");
+      } else {
+        notify("error", data.error || "Gagal mengunggah gambar slide");
+      }
+    } catch {
+      notify("error", "Terjadi kesalahan saat upload gambar slide");
+    } finally {
+      setIsUploadingSlideImage(false);
     }
   };
 
@@ -123,14 +156,16 @@ export default function PptClient({ initialModules, currentUser }) {
         setPdfProgress({ current, total, status: `Mengekstrak slide ${current}/${total}...` });
       });
 
-      setPdfProgress({ current: 0, total: webpFiles.length, status: "Mengunggah gambar..." });
+      setPdfProgress({ current: 0, total: webpFiles.length, status: "Mengunggah gambar ke R2..." });
       
       let uploadedSlides = 0;
+      const folderName = activeModule?.id ? `modul-${activeModule.id}` : "ppt-slides";
+
       for (const webpFile of webpFiles) {
-        // Upload webp file
+        // Upload webp file to Cloudflare R2 folder: modul-{id}
         const fd = new FormData();
         fd.append("file", webpFile);
-        fd.append("folder", "ppt-slides");
+        fd.append("folder", folderName);
         
         const uploadRes = await fetch("/api/upload", { method: "POST", body: fd });
         const uploadData = await uploadRes.json();
@@ -148,10 +183,10 @@ export default function PptClient({ initialModules, currentUser }) {
           }
         }
         uploadedSlides++;
-        setPdfProgress({ current: uploadedSlides, total: webpFiles.length, status: `Mengunggah slide ${uploadedSlides}/${webpFiles.length}...` });
+        setPdfProgress({ current: uploadedSlides, total: webpFiles.length, status: `Mengunggah slide ${uploadedSlides}/${webpFiles.length} ke R2...` });
       }
 
-      notify("success", "Semua slide berhasil diunggah!");
+      notify("success", "Semua slide berhasil diunggah ke R2!");
     } catch (err) {
       console.error(err);
       notify("error", "Gagal memproses PDF.");
@@ -522,15 +557,50 @@ export default function PptClient({ initialModules, currentUser }) {
                         onChange={e => setSlideForm(p => ({ ...p, title: e.target.value }))}
                         className={inputCls} placeholder="e.g. Pengantar Mekanika Fluida" />
                     </InputField>
-                    <InputField label="File URL (WebP / R2) *">
+
+                    <div>
+                      <label className="block text-[11px] font-bold tracking-wider text-gray-500 dark:text-white/50 uppercase mb-2">
+                        Upload Gambar Slide (Cloudflare R2 - Folder: modul-{activeModule?.id || "slides"})
+                      </label>
+                      <div className="flex items-center gap-3">
+                        <label className="cursor-pointer px-4 py-2.5 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
+                          <UploadCloud className="w-4 h-4" />
+                          <span>{isUploadingSlideImage ? "Mengunggah..." : "Pilih File Gambar Slide"}</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleSingleSlideImageUpload}
+                            className="hidden"
+                            disabled={isUploadingSlideImage}
+                          />
+                        </label>
+                        {isUploadingSlideImage && (
+                          <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        )}
+                      </div>
+                    </div>
+
+                    <InputField label="File URL (WebP / Cloudflare R2) *">
                       <input type="url" required value={slideForm.fileUrl || ''}
                         onChange={e => setSlideForm(p => ({ ...p, fileUrl: e.target.value }))}
                         className={inputCls}
-                        placeholder="https://..." />
+                        placeholder="https://cdn.webly.biz.id/modul-1/..." />
                       <p className="mt-1.5 text-[11px] text-gray-400 dark:text-white/30 leading-relaxed">
-                        Masukkan tautan file dari Cloudflare R2 atau storage lainnya.
+                        Tautan gambar slide disimpan di folder <code className="text-primary font-bold">modul-{activeModule?.id}</code> Cloudflare R2.
                       </p>
                     </InputField>
+
+                    {slideForm.fileUrl && (
+                      <div className="mt-2 p-2 bg-gray-100 dark:bg-white/5 rounded-2xl border border-gray-200 dark:border-white/10 text-center overflow-hidden">
+                        <p className="text-[10px] font-bold text-gray-400 dark:text-white/40 mb-1">PREVIEW SLIDE</p>
+                        <img
+                          src={slideForm.fileUrl}
+                          alt="Preview Slide"
+                          className="max-h-40 mx-auto rounded-xl object-contain shadow-md"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
+                      </div>
+                    )}
                   </form>
                 </div>
                 <div className="p-6 border-t border-gray-200 dark:border-white/10 flex justify-end gap-3 shrink-0 bg-gray-50/50 dark:bg-white/[0.02]">
