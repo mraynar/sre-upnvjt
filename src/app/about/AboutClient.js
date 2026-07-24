@@ -229,40 +229,52 @@ export default function AboutClient({ departmentsData = [] }) {
                   </div>
                 )}
 
-                {/* Change 2: Org chart connector lines */}
+                 {/* Change 2: Org chart connector lines */}
                 {execDept && otherDepts.length > 0 && (
                   <div className="w-full max-w-5xl mx-auto relative z-0">
                     {/* Desktop/Tablet connectors */}
                     <div className="hidden md:block w-full h-16">
                       <svg className="w-full h-full text-white/25 dark:text-emerald-500/30" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
+                        <defs>
+                          <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
+                          </marker>
+                        </defs>
                         {/* Center dropping vertical line */}
                         <path d="M 50 0 L 50 50" stroke="currentColor" strokeWidth="2" />
                         
                         {/* Horizontal branching for 3 columns (lg screen) */}
                         <path d="M 16.6 50 L 83.3 50" stroke="currentColor" strokeWidth="2" className="hidden lg:block" />
-                        <path d="M 16.6 50 L 16.6 100" stroke="currentColor" strokeWidth="2" className="hidden lg:block" />
-                        <path d="M 50 50 L 50 100" stroke="currentColor" strokeWidth="2" className="hidden lg:block" />
-                        <path d="M 83.3 50 L 83.3 100" stroke="currentColor" strokeWidth="2" className="hidden lg:block" />
+                        <path d="M 16.6 50 L 16.6 88" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrow)" className="hidden lg:block" />
+                        <path d="M 50 50 L 50 88" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrow)" className="hidden lg:block" />
+                        <path d="M 83.3 50 L 83.3 88" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrow)" className="hidden lg:block" />
                         
                         {/* Horizontal branching for 2 columns (md screen) */}
                         <path d="M 25 50 L 75 50" stroke="currentColor" strokeWidth="2" className="block lg:hidden" />
-                        <path d="M 25 50 L 25 100" stroke="currentColor" strokeWidth="2" className="block lg:hidden" />
-                        <path d="M 75 50 L 75 100" stroke="currentColor" strokeWidth="2" className="block lg:hidden" />
+                        <path d="M 25 50 L 25 88" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrow)" className="block lg:hidden" />
+                        <path d="M 75 50 L 75 88" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrow)" className="block lg:hidden" />
                       </svg>
                     </div>
                     {/* Mobile vertical line connector */}
                     <div className="block md:hidden w-full h-8">
                       <svg className="w-full h-full text-white/25 dark:text-emerald-500/30" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
-                        <path d="M 50 0 L 50 100" stroke="currentColor" strokeWidth="2" />
+                        <defs>
+                          <marker id="arrow-mobile" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
+                          </marker>
+                        </defs>
+                        <path d="M 50 0 L 50 88" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrow-mobile)" />
                       </svg>
                     </div>
                   </div>
                 )}
 
                 {/* Remaining 5 departments stay in the grid below */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center w-full mt-2 lg:mt-0">
+                <div className="flex flex-wrap justify-center gap-6 w-full mt-2 lg:mt-0">
                   {otherDepts.map((dept, idx) => (
-                    <DepartmentCard key={dept.slug || dept.id} dept={dept} index={idx} />
+                    <div key={dept.slug || dept.id} className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] flex">
+                      <DepartmentCard key={dept.slug || dept.id} dept={dept} index={idx} />
+                    </div>
                   ))}
                 </div>
               </div>

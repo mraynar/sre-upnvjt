@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Mail, Users, User, Shield } from "lucide-react";
+import { ArrowUpRight, Mail, Users, User, Shield, ArrowRight } from "lucide-react";
 
 // Inline LinkedIn SVG to avoid import package versions mismatch
 function LinkedinIcon({ className }) {
@@ -44,13 +44,13 @@ export function DepartmentCard({ dept, index, isExecutive = false }) {
   }
 
   return (
-    <Link href={`/about/organization/${dept.slug}`} className="block w-full">
+    <Link href={`/about/organization/${dept.slug}`} className="block w-full h-full">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: index * 0.08 }}
-        className={`bg-gradient-to-br from-[#099c6d] to-[#07855c] border-2 border-[#e8ecc4] dark:border-emerald-500/30 dark:from-[#0a1f15] dark:to-[#05140e] rounded-3xl p-8 relative overflow-hidden group hover:border-yellow-300 dark:hover:border-emerald-400 hover:shadow-2xl transition-all duration-500 flex flex-col justify-between shadow-md cursor-pointer hover:brightness-[1.03] active:scale-[0.99] hover:-translate-y-1 ${
+        className={`bg-gradient-to-br from-[#099c6d] to-[#07855c] border-2 border-[#e8ecc4] dark:border-emerald-500/30 dark:from-[#0a1f15] dark:to-[#05140e] rounded-3xl p-8 relative overflow-hidden group hover:border-yellow-300 dark:hover:border-emerald-400 hover:shadow-2xl transition-all duration-500 flex flex-col justify-between shadow-md cursor-pointer hover:brightness-[1.03] active:scale-[0.99] hover:-translate-y-1 h-full ${
           isExecutive ? "md:p-10" : ""
         }`}
       >
@@ -127,10 +127,8 @@ export function DepartmentCard({ dept, index, isExecutive = false }) {
               className="inline-flex items-center gap-2 text-xs font-black tracking-widest uppercase text-[#e8ecc4]/90 group-hover:text-yellow-300 transition-all duration-300"
             >
               View Team
+              <ArrowRight className="w-4 h-4 stroke-[1.5] transform group-hover:translate-x-1.5 transition-transform duration-300" />
             </span>
-            <div className="w-8 h-8 rounded-full bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 flex items-center justify-center text-white group-hover:bg-yellow-300 group-hover:text-slate-900 group-hover:border-yellow-300 transition-all duration-300">
-              <ArrowUpRight className="w-4 h-4 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
-            </div>
           </div>
         </div>
       </motion.div>
