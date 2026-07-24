@@ -6,6 +6,7 @@ import {
   Plus, Edit2, Trash2, X, Search, CheckCircle2, XCircle,
   AlertTriangle, Target, FileText, ChevronLeft, Award, HelpCircle,
   Clock, CheckSquare, Settings, Check, UserCheck, Eye, EyeOff,
+  FileSpreadsheet, Download, Filter, ChevronDown, ChevronUp,
 } from "lucide-react";
 import {
   createQuiz, updateQuiz, deleteQuiz,
@@ -25,6 +26,59 @@ const EMPTY_QUESTION = {
   options: [{ id: "1", text: "" }, { id: "2", text: "" }],
   correctOptionId: "1",
 };
+
+function CustomSelect({ value, onChange, options, icon: Icon, placeholder = "Pilih..." }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const selectedOption = options.find(o => o.value === value) || options[0];
+
+  return (
+    <div className="relative inline-block text-left">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="h-10 px-3.5 bg-white dark:bg-[#0d1c16] border border-gray-200 dark:border-white/15 rounded-xl text-xs font-bold text-gray-900 dark:text-white flex items-center gap-2 hover:border-primary/50 dark:hover:border-primary/50 transition-all shadow-sm"
+      >
+        {Icon && <Icon className="w-4 h-4 text-primary shrink-0" />}
+        <span className="truncate max-w-[170px]">{selectedOption?.label || placeholder}</span>
+        <ChevronDown className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+      </button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <div className="fixed inset-0 z-30" onClick={() => setIsOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: -6, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.95 }}
+              transition={{ duration: 0.15 }}
+              className="absolute left-0 top-full mt-1.5 z-40 w-60 py-1.5 bg-white dark:bg-[#0b1712] border border-gray-200 dark:border-white/15 rounded-2xl shadow-2xl overflow-hidden backdrop-blur-xl"
+            >
+              {options.map(opt => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => {
+                    onChange(opt.value);
+                    setIsOpen(false);
+                  }}
+                  className={`w-full px-4 py-2.5 text-left text-xs font-semibold flex items-center justify-between transition-colors ${
+                    value === opt.value
+                      ? "bg-primary/15 text-primary dark:text-primary-light font-bold"
+                      : "text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/10"
+                  }`}
+                >
+                  <span className="truncate">{opt.label}</span>
+                  {value === opt.value && <Check className="w-3.5 h-3.5 text-primary shrink-0" />}
+                </button>
+              ))}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export default function QuizClient({ initialQuizzes, initialSubmissions, currentUser }) {
   const { data: session } = useSession();
@@ -277,6 +331,186 @@ export default function QuizClient({ initialQuizzes, initialSubmissions, current
   const filteredQuizzes = quizzes.filter(q =>
     (q.title || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Quiz Submission Filter & Collapse state
+  const [selectedQuizFilter, setSelectedQuizFilter] = useState("ALL");
+  const [selectedQuizStatusFilter, setSelectedQuizStatusFilter] = useState("ALL");
+  const [collapsedQuizzes, setCollapsedQuizzes] = useState({});
+
+  const toggleQuizCollapse = (quizId) => {
+    setCollapsedQuizzes(prev => ({ ...prev, [quizId]: !prev[quizId] }));
+  };
+
+  const exportQuizToExcel = async (qz, groupSubs) => {
+    if (!groupSubs || groupSubs.length === 0) {
+      notify("error", "Belum ada submisi untuk diexport");
+      return;
+    }
+
+    try {
+      const ExcelJS = (await import("exceljs")).default;
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = "SRE UPNVJT Portal";
+      workbook.lastModifiedBy = "SRE Admin";
+      workbook.created = new Date();
+
+      const sheet = workbook.addWorksheet("Hasil Kuis");
+
+      // Title Banner (Row 1)
+      sheet.mergeCells("A1:J1");
+      const titleCell = sheet.getCell("A1");
+      titleCell.value = `SRE UPNVJT - HASIL EVALUASI KUIS: ${(qz.title || "KUIS").toUpperCase()}`;
+      titleCell.font = { name: "Arial", size: 12, bold: true, color: { argb: "FFFFFFFF" } };
+      titleCell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF064E3B" } };
+      titleCell.alignment = { horizontal: "center", vertical: "middle" };
+      sheet.getRow(1).height = 30;
+
+      // Subtitle Info (Row 2)
+      sheet.mergeCells("A2:J2");
+      const subCell = sheet.getCell("A2");
+      subCell.value = `Passing Score: ${qz.passingScore || 70} | Reward XP: +${qz.rewardXp || 20} XP | Total Submisi: ${groupSubs.length}`;
+      subCell.font = { name: "Arial", size: 10, bold: true, color: { argb: "FF047857" } };
+      subCell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFECFDF5" } };
+      subCell.alignment = { horizontal: "center", vertical: "middle" };
+      sheet.getRow(2).height = 24;
+
+      sheet.getRow(3).height = 10;
+
+      // Table Headers (Row 4)
+      const headers = [
+        "No", "ID Submisi", "ID User", "Nama Anggota", "Waktu Submisi",
+        "MCQ Score", "Essay Score", "Total Score", "Batas Lulus", "Status"
+      ];
+
+      const headerRow = sheet.getRow(4);
+      headerRow.height = 26;
+
+      headers.forEach((h, colIdx) => {
+        const cell = headerRow.getCell(colIdx + 1);
+        cell.value = h;
+        cell.font = { name: "Arial", size: 10, bold: true, color: { argb: "FFFFFFFF" } };
+        cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF059669" } };
+        cell.alignment = { horizontal: "center", vertical: "middle" };
+        cell.border = {
+          top: { style: "thin", color: { argb: "FFFFFFFF" } },
+          bottom: { style: "medium", color: { argb: "FFFFFFFF" } },
+          left: { style: "thin", color: { argb: "FFFFFFFF" } },
+          right: { style: "thin", color: { argb: "FFFFFFFF" } },
+        };
+      });
+
+      // Data Rows (Row 5+)
+      groupSubs.forEach((s, idx) => {
+        const rowNum = idx + 5;
+        const row = sheet.getRow(rowNum);
+        row.height = 22;
+
+        const isPassed = s.isPassed;
+        const statusText = isPassed === true ? "LULUS" : isPassed === false ? "GAGAL" : "BELUM DINILAI";
+
+        const rowValues = [
+          idx + 1,
+          s.id,
+          s.memberId,
+          s.member?.name || `User ${s.memberId}`,
+          s.submittedAt ? new Date(s.submittedAt).toLocaleString("id-ID") : "-",
+          s.mcqScore !== null && s.mcqScore !== undefined ? s.mcqScore : "-",
+          s.essayScore !== null && s.essayScore !== undefined ? s.essayScore : "Ungraded",
+          s.totalScore !== null && s.totalScore !== undefined ? s.totalScore : "-",
+          qz.passingScore || 70,
+          statusText,
+        ];
+
+        rowValues.forEach((val, colIdx) => {
+          const cell = row.getCell(colIdx + 1);
+          cell.value = val;
+          cell.font = { name: "Arial", size: 10 };
+          cell.alignment = { vertical: "middle" };
+
+          if (colIdx === 0 || colIdx === 1 || colIdx === 2 || colIdx === 4 || colIdx === 5 || colIdx === 6 || colIdx === 7 || colIdx === 8) {
+            cell.alignment = { horizontal: "center", vertical: "middle" };
+          }
+
+          if (colIdx === 9) {
+            cell.alignment = { horizontal: "center", vertical: "middle" };
+            cell.font = { name: "Arial", size: 10, bold: true };
+            if (isPassed === true) {
+              cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFD1FAE5" } };
+              cell.font = { name: "Arial", size: 10, bold: true, color: { argb: "FF047857" } };
+            } else if (isPassed === false) {
+              cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFEE2E2" } };
+              cell.font = { name: "Arial", size: 10, bold: true, color: { argb: "FFB91C1C" } };
+            } else {
+              cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFEF3C7" } };
+              cell.font = { name: "Arial", size: 10, bold: true, color: { argb: "FFB45309" } };
+            }
+          }
+
+          cell.border = {
+            top: { style: "thin", color: { argb: "FFE5E7EB" } },
+            bottom: { style: "thin", color: { argb: "FFE5E7EB" } },
+            left: { style: "thin", color: { argb: "FFE5E7EB" } },
+            right: { style: "thin", color: { argb: "FFE5E7EB" } },
+          };
+        });
+      });
+
+      sheet.columns = [
+        { width: 6 },
+        { width: 12 },
+        { width: 10 },
+        { width: 28 },
+        { width: 22 },
+        { width: 14 },
+        { width: 14 },
+        { width: 14 },
+        { width: 14 },
+        { width: 18 },
+      ];
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const safeTitle = (qz.title || "Kuis").replace(/[^a-zA-Z0-9_-]/g, "_");
+      link.href = url;
+      link.download = `Submisi_Kuis_${safeTitle}_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      notify("success", `File Excel (.xlsx) untuk kuis "${qz.title}" berhasil di-download!`);
+    } catch (err) {
+      notify("error", "Gagal meng-export Excel: " + err.message);
+    }
+  };
+
+  const quizMap = React.useMemo(() => new Map(quizzes.map(q => [q.id, q])), [quizzes]);
+
+  // Group submissions per quiz
+  const quizGroups = React.useMemo(() => {
+    const map = new Map();
+
+    quizzes.forEach(q => {
+      map.set(q.id, { quiz: q, submissions: [] });
+    });
+
+    submissions.forEach(sub => {
+      const qId = sub.quizId;
+      const qObj = sub.quiz || quizMap.get(qId);
+      if (!map.has(qId)) {
+        map.set(qId, { quiz: qObj || { id: qId, title: `Kuis #${qId}` }, submissions: [] });
+      }
+      map.get(qId).submissions.push(sub);
+    });
+
+    return Array.from(map.values()).filter(group => {
+      if (selectedQuizFilter !== "ALL" && group.quiz.id.toString() !== selectedQuizFilter) {
+        return false;
+      }
+      return true;
+    });
+  }, [quizzes, submissions, selectedQuizFilter, quizMap]);
 
   const filteredSubmissions = submissions.filter(s =>
     (s.member?.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -745,86 +979,220 @@ export default function QuizClient({ initialQuizzes, initialSubmissions, current
       )}
 
       {/* ───────────────────────────────────
-          TAB: SUBMISSIONS LIST
+          TAB: SUBMISSIONS LIST (GROUPED BY QUIZ)
          ─────────────────────────────────── */}
       {activeTab === "submissions" && (
-        <div className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-lg">
-          <div className="overflow-x-auto w-full">
-            <table className="w-full min-w-[900px] text-left">
-              <thead className="border-b border-gray-200/50 dark:border-white/10 bg-gray-50/50 dark:bg-white/[0.02]">
-                <tr>
-                  {["Nama Anggota", "Kuis", "MCQ Score", "Essay Score", "Total Score", "Status", "Aksi"].map(h => (
-                    <th key={h} className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-white/5">
-                <AnimatePresence>
-                  {filteredSubmissions.length === 0 ? (
-                    <tr>
-                      <td colSpan={7} className="py-20 text-center">
-                        <div className="flex flex-col items-center gap-3 text-gray-500 dark:text-white/30">
-                          <UserCheck className="w-10 h-10" />
-                          <p className="font-medium">Belum ada hasil kuis yang dikirim</p>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : filteredSubmissions.map(sub => (
-                    <tr key={sub.id} className="hover:bg-white/60 dark:hover:bg-white/[0.03] transition-all">
-                      <td className="px-6 py-4 text-sm font-bold text-gray-900 dark:text-white">
-                        {sub.member?.name || `ID User: ${sub.memberId}`}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-white/70">
-                        {sub.quiz?.title || `ID Kuis: ${sub.quizId}`}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-white/70">
-                        {sub.mcqScore !== null ? `${sub.mcqScore}` : "—"}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        {sub.essayScore !== null ? (
-                          <span className="text-gray-900 dark:text-white font-semibold">{sub.essayScore}</span>
-                        ) : (
-                          <span className="text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded text-[10px] uppercase font-bold border border-amber-500/20">Ungraded</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-sm font-black text-primary">
-                        {sub.totalScore !== null ? `${sub.totalScore}` : "—"}
-                      </td>
-                      <td className="px-6 py-4">
-                        {sub.isPassed !== null ? (
-                          <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] uppercase font-bold border ${
-                            sub.isPassed
-                              ? "bg-green-500/10 text-green-400 border-green-500/25"
-                              : "bg-red-500/10 text-red-400 border-red-500/25"
-                          }`}>
-                            {sub.isPassed ? "LULUS" : "GAGAL"}
-                          </span>
-                        ) : (
-                          <span className="text-gray-400 text-xs font-semibold">Menunggu Penilaian</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        {sub.essayScore === null && canUpdate ? (
-                          <button
-                            onClick={() => handleOpenGradeModal(sub)}
-                            className="h-8 px-3 rounded-lg bg-primary text-[#050e0a] text-xs font-bold hover:bg-primary-focus transition-all"
-                          >
-                            Beri Nilai Essay
-                          </button>
-                        ) : (
-                          <span className="text-xs text-gray-400 dark:text-white/30">
-                            {sub.gradedBy ? `Dinilai oleh ${sub.gradedBy.name}` : "Selesai"}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </AnimatePresence>
-              </tbody>
-            </table>
+        <div className="space-y-6">
+          {/* Top Filters Bar */}
+          <div className="p-4 bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10 rounded-2xl backdrop-blur-xl flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2 text-xs font-bold text-gray-500 dark:text-white/50 uppercase">
+                <Filter className="w-4 h-4 text-primary" />
+                <span>Filter Kuis:</span>
+              </div>
+              <CustomSelect
+                value={selectedQuizFilter}
+                onChange={setSelectedQuizFilter}
+                options={[
+                  { value: "ALL", label: `Semua Kuis (${quizzes.length})` },
+                  ...quizzes.map(q => ({ value: q.id.toString(), label: q.title })),
+                ]}
+                icon={Target}
+              />
+
+              <div className="flex items-center gap-2 text-xs font-bold text-gray-500 dark:text-white/50 uppercase ml-2">
+                <span>Status Kelulusan:</span>
+              </div>
+
+              <CustomSelect
+                value={selectedQuizStatusFilter}
+                onChange={setSelectedQuizStatusFilter}
+                options={[
+                  { value: "ALL", label: "Semua Status" },
+                  { value: "PASSED", label: "Lulus" },
+                  { value: "FAILED", label: "Gagal" },
+                  { value: "UNGRADED", label: "Perlu Penilaian Essay" },
+                ]}
+                icon={Filter}
+              />
+            </div>
+
+            <div className="text-xs text-gray-500 dark:text-white/40 font-medium">
+              Menampilkan {quizGroups.length} Kuis
+            </div>
           </div>
+
+          {/* Quiz Cards Grouped List */}
+          {quizGroups.length === 0 ? (
+            <div className="p-12 text-center bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10 rounded-3xl">
+              <UserCheck className="w-12 h-12 text-gray-400 mx-auto mb-3 opacity-50" />
+              <h3 className="text-base font-bold text-gray-900 dark:text-white">Tidak ada data kuis ditemukan</h3>
+              <p className="text-xs text-gray-500 dark:text-white/40 mt-1">Coba ganti filter kuis di atas.</p>
+            </div>
+          ) : (
+            quizGroups.map(({ quiz: qz, submissions: groupSubs }) => {
+              const isCollapsed = Boolean(collapsedQuizzes[qz.id]);
+
+              // Filter groupSubs by status & searchQuery
+              const filteredGroupSubs = groupSubs.filter(s => {
+                const memberName = s.member?.name || `User ${s.memberId}`;
+                const matchSearch = memberName.toLowerCase().includes(searchQuery.toLowerCase());
+                if (!matchSearch) return false;
+
+                if (selectedQuizStatusFilter === "PASSED") return s.isPassed === true;
+                if (selectedQuizStatusFilter === "FAILED") return s.isPassed === false;
+                if (selectedQuizStatusFilter === "UNGRADED") return s.essayScore === null;
+                return true;
+              });
+
+              const totalCount = groupSubs.length;
+              const passedCount = groupSubs.filter(s => s.isPassed === true).length;
+              const failedCount = groupSubs.filter(s => s.isPassed === false).length;
+              const ungradedCount = groupSubs.filter(s => s.essayScore === null).length;
+
+              return (
+                <div
+                  key={qz.id}
+                  className="bg-white/40 dark:bg-white/[0.02] border border-gray-200/50 dark:border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl shadow-lg transition-all"
+                >
+                  {/* Quiz Group Header */}
+                  <div className="p-5 bg-gray-50/70 dark:bg-white/[0.02] border-b border-gray-200/50 dark:border-white/10 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 cursor-pointer select-none" onClick={() => toggleQuizCollapse(qz.id)}>
+                      <button
+                        type="button"
+                        className="w-8 h-8 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-500 dark:text-white/70 hover:bg-gray-100 dark:hover:bg-white/10"
+                      >
+                        {isCollapsed ? <ChevronDown className="w-4 h-4" /> : <ChevronUp className="w-4 h-4" />}
+                      </button>
+
+                      <div>
+                        <h3 className="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                          <Target className="w-4 h-4 text-primary shrink-0" />
+                          {qz.title}
+                        </h3>
+                        <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-white/40 mt-0.5">
+                          <span>Passing Score: <strong className="text-emerald-500">{qz.passingScore || 70}</strong></span>
+                          <span>•</span>
+                          <span>Reward XP: <strong className="text-amber-500">+{qz.rewardXp || 20} XP</strong></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Stats & Actions */}
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <div className="flex items-center gap-1.5 text-xs font-bold">
+                        <span className="px-2.5 py-1 rounded-full bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-white/80 border border-gray-200 dark:border-white/10">
+                          Total: {totalCount}
+                        </span>
+                        <span className="px-2.5 py-1 rounded-full bg-green-500/10 text-green-400 border border-green-500/20">
+                          Lulus: {passedCount}
+                        </span>
+                        <span className="px-2.5 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
+                          Gagal: {failedCount}
+                        </span>
+                        {ungradedCount > 0 && (
+                          <span className="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                            Need Grade: {ungradedCount}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Export Excel Button */}
+                      <button
+                        type="button"
+                        onClick={() => exportQuizToExcel(qz, groupSubs)}
+                        disabled={totalCount === 0}
+                        className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white text-xs font-bold transition-all shadow-sm"
+                      >
+                        <FileSpreadsheet className="w-4 h-4" />
+                        <span>Export Excel</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Submissions Table Inside Quiz Card */}
+                  {!isCollapsed && (
+                    <div className="overflow-x-auto w-full">
+                      <table className="w-full min-w-[900px] text-left">
+                        <thead className="border-b border-gray-200/50 dark:border-white/10 bg-gray-50/30 dark:bg-white/[0.01]">
+                          <tr>
+                            {["No", "Nama Anggota", "Waktu Submisi", "MCQ Score", "Essay Score", "Total Score", "Status", "Aksi"].map(h => (
+                              <th key={h} className="px-6 py-3.5 text-[11px] font-bold uppercase tracking-widest text-gray-500 dark:text-white/40">
+                                {h}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+                          {filteredGroupSubs.length === 0 ? (
+                            <tr>
+                              <td colSpan={8} className="py-8 text-center text-xs text-gray-400 dark:text-white/30 font-medium">
+                                Belum ada hasil submisi anggota untuk kuis ini.
+                              </td>
+                            </tr>
+                          ) : (
+                            filteredGroupSubs.map((sub, idx) => (
+                              <tr key={sub.id} className="hover:bg-white/60 dark:hover:bg-white/[0.03] transition-all">
+                                <td className="px-6 py-4 text-xs font-bold text-gray-400">
+                                  {idx + 1}
+                                </td>
+                                <td className="px-6 py-4 text-sm font-bold text-gray-900 dark:text-white">
+                                  {sub.member?.name || `ID User: ${sub.memberId}`}
+                                </td>
+                                <td className="px-6 py-4 text-xs text-gray-500 dark:text-white/50">
+                                  {sub.submittedAt ? new Date(sub.submittedAt).toLocaleString("id-ID") : "—"}
+                                </td>
+                                <td className="px-6 py-4 text-sm text-gray-600 dark:text-white/70 font-semibold">
+                                  {sub.mcqScore !== null ? `${sub.mcqScore}` : "—"}
+                                </td>
+                                <td className="px-6 py-4 text-sm">
+                                  {sub.essayScore !== null ? (
+                                    <span className="text-gray-900 dark:text-white font-semibold">{sub.essayScore}</span>
+                                  ) : (
+                                    <span className="text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded text-[10px] uppercase font-bold border border-amber-500/20">Ungraded</span>
+                                  )}
+                                </td>
+                                <td className="px-6 py-4 text-sm font-black text-primary">
+                                  {sub.totalScore !== null ? `${sub.totalScore}` : "—"}
+                                </td>
+                                <td className="px-6 py-4">
+                                  {sub.isPassed !== null ? (
+                                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] uppercase font-bold border ${
+                                      sub.isPassed
+                                        ? "bg-green-500/10 text-green-400 border-green-500/25"
+                                        : "bg-red-500/10 text-red-400 border-red-500/25"
+                                    }`}>
+                                      {sub.isPassed ? "LULUS" : "GAGAL"}
+                                    </span>
+                                  ) : (
+                                    <span className="text-amber-500 text-xs font-semibold">Menunggu Penilaian</span>
+                                  )}
+                                </td>
+                                <td className="px-6 py-4">
+                                  {sub.essayScore === null && canUpdate ? (
+                                    <button
+                                      onClick={() => handleOpenGradeModal(sub)}
+                                      className="h-8 px-3 rounded-lg bg-primary text-[#050e0a] text-xs font-bold hover:bg-primary-focus transition-all"
+                                    >
+                                      Beri Nilai Essay
+                                    </button>
+                                  ) : (
+                                    <span className="text-xs text-gray-400 dark:text-white/30">
+                                      {sub.gradedBy ? `Dinilai oleh ${sub.gradedBy.name}` : "Selesai"}
+                                    </span>
+                                  )}
+                                </td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
         </div>
       )}
 

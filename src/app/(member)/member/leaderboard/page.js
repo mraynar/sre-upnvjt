@@ -3,8 +3,8 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { user, memberProfile, division } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { user, memberProfile, division, role } from "@/db/schema";
+import { eq, desc, sql } from "drizzle-orm";
 import LeaderboardMemberClient from "./LeaderboardMemberClient";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +21,7 @@ export default async function MemberLeaderboardPage() {
     redirect("/login");
   }
 
-  // Fetch leaderboard data
+  // Fetch leaderboard data filtered where user role is 'MEMBER'
   const data = await db
     .select({
       id: user.id,
@@ -31,10 +31,13 @@ export default async function MemberLeaderboardPage() {
       xp: memberProfile.xp,
       level: memberProfile.level,
       divisionName: division.name,
+      roleName: role.name,
     })
     .from(memberProfile)
     .innerJoin(user, eq(user.id, memberProfile.userId))
+    .leftJoin(role, eq(role.id, user.roleId))
     .leftJoin(division, eq(division.id, user.divisionId))
+    .where(sql`LOWER(${role.name}) = 'member'`)
     .orderBy(desc(memberProfile.xp));
 
   const ranked = data.map((item, idx) => ({

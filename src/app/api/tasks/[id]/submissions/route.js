@@ -6,6 +6,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth/next";
 import { google } from "googleapis";
 import { Readable } from "stream";
+import { calculateSpeedBonusXp } from "@/lib/xpUtils";
 
 export async function GET(req, { params }) {
   try {
@@ -34,7 +35,7 @@ export async function PUT(req, { params }) {
     const p = await params;
     const taskId = parseInt(p.id);
     const body = await req.json();
-    const { submissionId, status, feedback } = body; // status: 'APPROVED' | 'REJECTED'
+    const { submissionId, status, feedback, bonusXp = 0 } = body; // status: 'APPROVED' | 'REJECTED'
 
     if (!submissionId || !status) {
       return NextResponse.json({ error: "ID submisi dan status wajib diisi" }, { status: 400 });
@@ -64,21 +65,48 @@ export async function PUT(req, { params }) {
       .where(eq(taskSubmission.id, parseInt(submissionId)))
       .returning();
 
-    // Reward XP if transitioned to APPROVED
-    if (nowApproved && !wasApproved && submission.task.rewardXp > 0) {
+    // Reward XP if transitioned to APPROVED or if bonusXp > 0
+    const parsedBonusXp = parseInt(bonusXp) || 0;
+    let totalGainedXp = 0;
+    let reasons = [];
+    let speedBonusXp = 0;
+
+    if (nowApproved && !wasApproved) {
+      speedBonusXp = calculateSpeedBonusXp(
+        submission.task?.createdAt,
+        submission.task?.deadline,
+        submission.submittedAt
+      );
+
+      if (submission.task?.rewardXp > 0) {
+        totalGainedXp += submission.task.rewardXp;
+        reasons.push(`Penyelesaian Tugas: ${submission.task.title} (+${submission.task.rewardXp} XP)`);
+      }
+
+      if (speedBonusXp > 0) {
+        totalGainedXp += speedBonusXp;
+        reasons.push(`Bonus Kecepatan: +${speedBonusXp} XP`);
+      }
+    }
+
+    if (parsedBonusXp > 0) {
+      totalGainedXp += parsedBonusXp;
+      reasons.push(`Bonus Admin: +${parsedBonusXp} XP`);
+    }
+
+    if (totalGainedXp > 0) {
       const profile = await db.query.memberProfile.findFirst({
         where: eq(memberProfile.userId, submission.memberId),
       });
 
-      const gainedXp = submission.task.rewardXp;
       if (!profile) {
         await db.insert(memberProfile).values({
           userId: submission.memberId,
-          xp: gainedXp,
-          level: 1,
+          xp: totalGainedXp,
+          level: Math.floor(totalGainedXp / 100) + 1,
         });
       } else {
-        const nextXp = profile.xp + gainedXp;
+        const nextXp = profile.xp + totalGainedXp;
         const nextLevel = Math.floor(nextXp / 100) + 1;
         await db.update(memberProfile)
           .set({ xp: nextXp, level: nextLevel })
@@ -87,8 +115,8 @@ export async function PUT(req, { params }) {
 
       await db.insert(xpTransaction).values({
         userId: submission.memberId,
-        amount: gainedXp,
-        reason: `Penyelesaian Tugas: ${submission.task.title}`,
+        amount: totalGainedXp,
+        reason: reasons.join(" | "),
         sourceType: "task",
         sourceId: submission.id,
       });
