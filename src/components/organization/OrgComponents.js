@@ -265,7 +265,7 @@ export function DirectorCard({ director, fallbackRole }) {
   const batch = getAngkatanByNpm(npm);
 
   return (
-    <div className="max-w-xl mx-auto bg-white/10 dark:bg-[#07130e] border-2 border-yellow-300 dark:border-emerald-500/40 rounded-3xl overflow-hidden p-6 sm:p-8 flex flex-col md:flex-row gap-6 items-center shadow-xl">
+    <div className="max-w-xl mx-auto bg-white/10 dark:bg-[#07130e] border border-white/10 dark:border-white/5 hover:border-yellow-300 transition-all duration-300 rounded-3xl overflow-hidden p-6 sm:p-8 flex flex-col md:flex-row gap-6 items-center shadow-xl">
       <div className="w-36 h-48 sm:w-42 sm:h-56 rounded-2xl overflow-hidden relative shrink-0 bg-black/40 border border-white/10">
         <Image
           src={photo || getAvatarByName(name)}

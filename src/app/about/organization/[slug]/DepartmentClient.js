@@ -38,15 +38,15 @@ export default function DepartmentClient({ dept }) {
       {/* CSS Gradient helper */}
       <style dangerouslySetInnerHTML={{ __html: `
         .dept-detail-bg {
-          background: linear-gradient(to bottom, #0bb37e 0%, #0aa373 50%, #099c6d 100%);
+          background: linear-gradient(to bottom, #0aa373 0%, #099c6d 100%);
         }
         .dark .dept-detail-bg {
-          background: linear-gradient(to bottom, #07130e 0%, #040e0a 50%, #020805 100%);
+          background: linear-gradient(to bottom, #040e0a 0%, #020805 100%);
         }
       `}} />
 
       {/* ─── Header Section (Footer Color Background) ─── */}
-      <header className="w-full bg-[#0bb37e] dark:bg-[#07130e] pt-32 pb-16 relative overflow-hidden border-b border-white/10 dark:border-white/5 z-10">
+      <header className="w-full bg-[#0bb37e] dark:bg-[#07130e] pt-32 pb-16 relative overflow-hidden border-b-2 border-white/20 dark:border-white/10 shadow-md z-10">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
         <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-20 relative z-10">
           
