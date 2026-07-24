@@ -235,35 +235,25 @@ export default function AboutClient({ departmentsData = [] }) {
                     {/* Desktop/Tablet connectors */}
                     <div className="hidden md:block w-full h-16">
                       <svg className="w-full h-full text-white/25 dark:text-emerald-500/30" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
-                        <defs>
-                          <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
-                          </marker>
-                        </defs>
                         {/* Center dropping vertical line */}
-                        <path d="M 50 0 L 50 50" stroke="currentColor" strokeWidth="2" />
+                        <path d="M 50 0 L 50 50" stroke="currentColor" strokeWidth="1.5" />
                         
                         {/* Horizontal branching for 3 columns (lg screen) */}
-                        <path d="M 16.6 50 L 83.3 50" stroke="currentColor" strokeWidth="2" className="hidden lg:block" />
-                        <path d="M 16.6 50 L 16.6 88" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrow)" className="hidden lg:block" />
-                        <path d="M 50 50 L 50 88" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrow)" className="hidden lg:block" />
-                        <path d="M 83.3 50 L 83.3 88" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrow)" className="hidden lg:block" />
+                        <path d="M 16.6 50 L 83.3 50" stroke="currentColor" strokeWidth="1.5" className="hidden lg:block" />
+                        <path d="M 16.6 50 L 16.6 100" stroke="currentColor" strokeWidth="1.5" className="hidden lg:block" />
+                        <path d="M 50 50 L 50 100" stroke="currentColor" strokeWidth="1.5" className="hidden lg:block" />
+                        <path d="M 83.3 50 L 83.3 100" stroke="currentColor" strokeWidth="1.5" className="hidden lg:block" />
                         
                         {/* Horizontal branching for 2 columns (md screen) */}
-                        <path d="M 25 50 L 75 50" stroke="currentColor" strokeWidth="2" className="block lg:hidden" />
-                        <path d="M 25 50 L 25 88" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrow)" className="block lg:hidden" />
-                        <path d="M 75 50 L 75 88" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrow)" className="block lg:hidden" />
+                        <path d="M 25 50 L 75 50" stroke="currentColor" strokeWidth="1.5" className="block lg:hidden" />
+                        <path d="M 25 50 L 25 100" stroke="currentColor" strokeWidth="1.5" className="block lg:hidden" />
+                        <path d="M 75 50 L 75 100" stroke="currentColor" strokeWidth="1.5" className="block lg:hidden" />
                       </svg>
                     </div>
                     {/* Mobile vertical line connector */}
                     <div className="block md:hidden w-full h-8">
                       <svg className="w-full h-full text-white/25 dark:text-emerald-500/30" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
-                        <defs>
-                          <marker id="arrow-mobile" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
-                          </marker>
-                        </defs>
-                        <path d="M 50 0 L 50 88" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrow-mobile)" />
+                        <path d="M 50 0 L 50 100" stroke="currentColor" strokeWidth="1.5" />
                       </svg>
                     </div>
                   </div>
