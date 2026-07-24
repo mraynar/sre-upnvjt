@@ -34,7 +34,7 @@ export default function DepartmentClient({ dept }) {
   const isEmpty = !hasDirector && !hasManagers && !hasStaff && dept.code?.toUpperCase() !== "EXE";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0bb37e] via-[#0aa373] to-[#099c6d] dark:from-[#07130e] dark:via-[#040e0a] dark:to-[#020805] text-white selection:bg-yellow-300 selection:text-slate-950 antialiased overflow-x-hidden relative pb-24">
+    <div className="min-h-screen dept-detail-bg text-white selection:bg-yellow-300 selection:text-slate-950 antialiased overflow-x-hidden relative pb-24">
       {/* Dynamic Background Accents */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
       
@@ -53,6 +53,12 @@ export default function DepartmentClient({ dept }) {
       <div className="absolute top-[30%] left-[2%] opacity-[0.08] dark:opacity-[0.02] pointer-events-none select-none text-[#e8ecc4] dark:text-emerald-500 hidden xl:block z-0">
         <svg width="200" height="400" viewBox="0 0 100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
           <style dangerouslySetInnerHTML={{ __html: `
+            .dept-detail-bg {
+              background: linear-gradient(to bottom, #0bb37e 0%, #0aa373 50%, #099c6d 100%);
+            }
+            .dark .dept-detail-bg {
+              background: linear-gradient(to bottom, #07130e 0%, #040e0a 50%, #020805 100%);
+            }
             @keyframes spin-slow-turbine {
               from { transform: rotate(0deg); }
               to { transform: rotate(360deg); }

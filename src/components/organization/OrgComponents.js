@@ -156,6 +156,37 @@ function getRoleIcon(roleName) {
   return <Zap className="w-3 h-3 text-yellow-300 dark:text-emerald-400 shrink-0" />;
 }
 
+// Helper to resolve avatar dynamically based on user's name
+function getAvatarByName(name) {
+  const lower = (name || "").toLowerCase().trim();
+  
+  // Exception list (Okvivi, Nindita Tanaya)
+  if (
+    lower.includes("okvivi") || 
+    lower.includes("nindita") || 
+    lower.includes("tanaya")
+  ) {
+    return "/images/about/organization/RobloxGirl.png";
+  }
+
+  // Exact names or keyword patterns of girls in the seed:
+  const femaleKeywords = [
+    "mirza jovita", "evi lailiyatul", "zalva zahiya", "hanifah manzilatu", 
+    "dalilah baharmus", "dygta azzahwa", "karina indirasari", "binti maratus", 
+    "elbra aliyyah", "iftitah nurazizah", "aufa", "yanis nabila", 
+    "ninit agus", "ninit adila", "hilwa aufa", "nayla dwi", "jacinda adya", "nindya aliyah", 
+    "anggun syafitri", "silvia oktaviani", "dewi astuti", "myrna syafrida", 
+    "nadia tsabitah", "athalia helen", "nailah dinda", "faza", 
+    "azifahtul nurul", "melisa fitria", "shinta dwi", "naila maharani"
+  ];
+
+  if (femaleKeywords.some(keyword => lower.includes(keyword))) {
+    return "/images/about/organization/RobloxHijab.png";
+  }
+  
+  return "/images/about/organization/RobloxMan.png";
+}
+
 // ─── 3. Member Card component (Used for Manager and Staff) ─────────────────────
 export function MemberCard({ member, fallbackRole }) {
   if (!member) return null;
@@ -165,19 +196,15 @@ export function MemberCard({ member, fallbackRole }) {
 
   return (
     <div className="group relative bg-white/10 dark:bg-[#07130e] border border-white/10 dark:border-white/5 rounded-3xl overflow-hidden hover:border-yellow-300/40 dark:hover:border-emerald-500/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.08)] dark:hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] flex flex-col h-full w-full">
-      <div className="aspect-[4/5] bg-black/40 overflow-hidden relative w-full">
-        {photo ? (
-          <Image
-            src={photo}
-            alt={name}
-            fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 30vw, 15vw"
-            className="object-cover transition-all duration-700 ease-out filter grayscale group-hover:grayscale-0 group-hover:scale-105"
-            loading="lazy"
-          />
-        ) : (
-          <AvatarFallback className="w-full h-full" />
-        )}
+      <div className="aspect-[3/4] bg-black/40 overflow-hidden relative w-full">
+        <Image
+          src={photo || getAvatarByName(name)}
+          alt={name}
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 30vw, 15vw"
+          className="object-cover transition-all duration-700 ease-out filter grayscale group-hover:grayscale-0 group-hover:scale-105"
+          loading="lazy"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-[#07130e]/90 via-[#07130e]/10 to-transparent pointer-events-none" />
       </div>
       <div className="p-4 flex-1 flex flex-col justify-between">
@@ -214,19 +241,15 @@ export function DirectorCard({ director, fallbackRole }) {
 
   return (
     <div className="max-w-xl mx-auto bg-white/10 dark:bg-[#07130e] border-2 border-yellow-300 dark:border-emerald-500/40 rounded-3xl overflow-hidden p-6 sm:p-8 flex flex-col md:flex-row gap-6 items-center shadow-xl">
-      <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl overflow-hidden relative shrink-0 bg-black/40 border border-white/10">
-        {photo ? (
-          <Image
-            src={photo}
-            alt={name}
-            fill
-            sizes="192px"
-            className="object-cover"
-            priority
-          />
-        ) : (
-          <AvatarFallback className="w-full h-full" />
-        )}
+      <div className="w-36 h-48 sm:w-42 sm:h-56 rounded-2xl overflow-hidden relative shrink-0 bg-black/40 border border-white/10">
+        <Image
+          src={photo || getAvatarByName(name)}
+          alt={name}
+          fill
+          sizes="(max-width: 640px) 150px, 200px"
+          className="object-cover"
+          priority
+        />
       </div>
 
       <div className="flex-1 text-center md:text-left flex flex-col justify-center h-full">
