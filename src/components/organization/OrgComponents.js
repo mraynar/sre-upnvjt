@@ -225,18 +225,18 @@ export function MemberCard({ member, fallbackRole }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#07130e]/90 via-[#07130e]/10 to-transparent pointer-events-none" />
       </div>
-      <div className="p-4 flex-1 flex flex-col justify-between">
+      <div className="p-4 h-[148px] flex flex-col justify-between">
         <div>
           <span className="text-[10px] sm:text-xs font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 block mb-1">
             {role}
           </span>
-          <h4 className="text-sm sm:text-base font-black text-white dark:text-white group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors leading-tight break-words mb-1">
+          <h4 className="text-sm sm:text-base font-black text-white dark:text-white group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors leading-tight break-words mb-1 line-clamp-3">
             {name}
           </h4>
-          <div className="text-[11px] text-[#e8ecc4]/80 dark:text-emerald-300/60 font-medium">
-            <div>{major}</div>
-            <div>Angkatan {batch}</div>
-          </div>
+        </div>
+        <div className="text-[11px] text-[#e8ecc4]/80 dark:text-emerald-300/60 font-medium shrink-0">
+          <div>{major}</div>
+          <div>Angkatan {batch}</div>
         </div>
       </div>
     </div>
