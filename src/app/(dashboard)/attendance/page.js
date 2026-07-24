@@ -22,30 +22,35 @@ export default async function AttendanceAdminPage() {
     redirect("/dashboard");
   }
 
-  // Fetch all attendance logs
+  // Fetch all attendance logs with member and session details
   const records = await db.query.attendance.findMany({
     with: {
       member: { columns: { id: true, name: true, npm: true } },
+      session: true,
     },
     orderBy: [desc(attendance.createdAt)],
   });
 
-  // Fetch active users (members list) for add dropdown
+  // Fetch active users (members list)
   const members = await db.query.user.findMany({
     where: eq(user.isActive, true),
     orderBy: [asc(user.name)],
     columns: { id: true, name: true, npm: true },
   });
 
+  // Fetch attendance sessions
   const sessions = await db.query.attendanceSession.findMany({
     orderBy: [desc(attendanceSession.date)],
+    with: {
+      createdBy: { columns: { id: true, name: true } },
+    },
   });
 
   return (
     <AttendanceClient
       initialAttendance={records}
       members={members}
-      sessions={sessions}
+      initialSessions={sessions}
       currentUser={session.user}
     />
   );
