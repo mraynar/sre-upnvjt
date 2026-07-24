@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ChevronRight, ArrowLeft, Users } from "lucide-react";
+import { ChevronRight, ArrowLeft, Users, Zap, Sun, Wind } from "lucide-react";
 import { OrgTreeSection } from "@/components/organization/OrgComponents";
 
 export default function DepartmentClient({ dept }) {
@@ -34,9 +34,20 @@ export default function DepartmentClient({ dept }) {
   const isEmpty = !hasDirector && !hasManagers && !hasStaff && dept.code?.toUpperCase() !== "EXE";
 
   return (
-    <div className="min-h-screen bg-[#0bb37e] dark:bg-[#07130e] text-white selection:bg-yellow-300 selection:text-slate-950 antialiased overflow-x-hidden relative pb-24">
+    <div className="min-h-screen bg-gradient-to-b from-[#0bb37e] via-[#0aa373] to-[#099c6d] dark:from-[#07130e] dark:via-[#040e0a] dark:to-[#020805] text-white selection:bg-yellow-300 selection:text-slate-950 antialiased overflow-x-hidden relative pb-24">
       {/* Dynamic Background Accents */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
+      
+      {/* Floating Decorative Icons */}
+      <div className="absolute top-[20%] right-[10%] opacity-[0.05] dark:opacity-[0.015] pointer-events-none select-none text-[#e8ecc4] dark:text-emerald-400 hidden lg:block z-0">
+        <Sun className="w-12 h-12 animate-pulse" />
+      </div>
+      <div className="absolute top-[50%] left-[8%] opacity-[0.05] dark:opacity-[0.015] pointer-events-none select-none text-[#e8ecc4] dark:text-emerald-400 hidden lg:block z-0">
+        <Zap className="w-10 h-10 animate-bounce" style={{ animationDuration: '4s' }} />
+      </div>
+      <div className="absolute top-[75%] right-[12%] opacity-[0.05] dark:opacity-[0.015] pointer-events-none select-none text-[#e8ecc4] dark:text-emerald-400 hidden lg:block z-0">
+        <Wind className="w-12 h-12" />
+      </div>
       
       {/* Wind Turbine Watermark (Left) */}
       <div className="absolute top-[30%] left-[2%] opacity-[0.08] dark:opacity-[0.02] pointer-events-none select-none text-[#e8ecc4] dark:text-emerald-500 hidden xl:block z-0">

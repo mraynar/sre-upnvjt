@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Mail, Users, User, Shield, ArrowRight, Network } from "lucide-react";
+import { ArrowUpRight, Mail, Users, User, Shield, ArrowRight, Network, Crown, Star, FileText, UserCheck, Zap } from "lucide-react";
 
 // Inline LinkedIn SVG to avoid import package versions mismatch
 function LinkedinIcon({ className }) {
@@ -138,6 +138,24 @@ export function DepartmentCard({ dept, index, isExecutive = false }) {
   );
 }
 
+// Helper to resolve a beautiful icon based on the user's role
+function getRoleIcon(roleName) {
+  const lower = (roleName || "").toLowerCase();
+  if (lower.includes("president") || lower.includes("director") || lower.includes("ketua") || lower.includes("presiden")) {
+    return <Crown className="w-3.5 h-3.5 text-yellow-300 dark:text-emerald-400 shrink-0" />;
+  }
+  if (lower.includes("vice") || lower.includes("wakil")) {
+    return <Star className="w-3.5 h-3.5 text-yellow-300 dark:text-emerald-400 shrink-0" />;
+  }
+  if (lower.includes("secretary") || lower.includes("sekretaris") || lower.includes("bendahara") || lower.includes("treasurer")) {
+    return <FileText className="w-3.5 h-3.5 text-yellow-300 dark:text-emerald-400 shrink-0" />;
+  }
+  if (lower.includes("manager") || lower.includes("kepala")) {
+    return <UserCheck className="w-3.5 h-3.5 text-yellow-300 dark:text-emerald-400 shrink-0" />;
+  }
+  return <Zap className="w-3 h-3 text-yellow-300 dark:text-emerald-400 shrink-0" />;
+}
+
 // ─── 3. Member Card component (Used for Manager and Staff) ─────────────────────
 export function MemberCard({ member, fallbackRole }) {
   if (!member) return null;
@@ -162,13 +180,16 @@ export function MemberCard({ member, fallbackRole }) {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[#07130e]/90 via-[#07130e]/10 to-transparent pointer-events-none" />
       </div>
-      <div className="p-4 flex-1">
-        <span className="text-[10px] sm:text-xs font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 block mb-1">
-          {role}
-        </span>
-        <h4 className="text-sm sm:text-base font-black text-white dark:text-white group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors leading-tight line-clamp-2">
-          {name}
-        </h4>
+      <div className="p-4 flex-1 flex flex-col justify-between">
+        <div>
+          <span className="text-[10px] sm:text-xs font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 flex items-center gap-1 mb-1.5">
+            {getRoleIcon(role)}
+            {role}
+          </span>
+          <h4 className="text-sm sm:text-base font-black text-white dark:text-white group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors leading-tight break-words">
+            {name}
+          </h4>
+        </div>
       </div>
     </div>
   );
@@ -209,10 +230,11 @@ export function DirectorCard({ director, fallbackRole }) {
       </div>
 
       <div className="flex-1 text-center md:text-left flex flex-col justify-center h-full">
-        <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 mb-1">
+        <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 flex items-center justify-center md:justify-start gap-1.5 mb-1">
+          {getRoleIcon(role)}
           {role}
         </span>
-        <h3 className="text-2xl sm:text-3xl font-black text-white dark:text-white leading-tight">
+        <h3 className="text-2xl sm:text-3xl font-black text-white dark:text-white leading-tight break-words">
           {name}
         </h3>
         
@@ -356,7 +378,7 @@ export function OrgTreeSection({ dept }) {
               </h2>
             </div>
             
-            <div className="relative z-10 w-full max-w-[340px] hover:-translate-y-2 transition-transform duration-500">
+            <div className="relative z-10 w-full max-w-[550px] hover:-translate-y-2 transition-transform duration-500">
               <DirectorCard director={presidentData} fallbackRole="President" />
             </div>
 
@@ -432,7 +454,7 @@ export function OrgTreeSection({ dept }) {
             </h2>
           </div>
           
-          <div className="relative z-10 w-full max-w-[340px] hover:-translate-y-2 transition-transform duration-500">
+          <div className="relative z-10 w-full max-w-[550px] hover:-translate-y-2 transition-transform duration-500">
             <DirectorCard director={dept.director} fallbackRole={`Director of ${dept.name}`} />
           </div>
           
