@@ -15,12 +15,12 @@ export default function DepartmentClient({ dept }) {
           <p className="text-sm text-emerald-50/70 dark:text-gray-400 mb-6">
             The requested organization department details could not be found or has not been created yet.
           </p>
-          <Link
+          <a
             href="/about#structure"
             className="inline-flex items-center gap-2 px-6 py-2.5 bg-yellow-300 dark:bg-emerald-500 text-slate-950 font-black rounded-full text-xs tracking-widest uppercase hover:scale-105 transition-all duration-300"
           >
             <ArrowLeft className="w-4 h-4" /> BACK TO ABOUT
-          </Link>
+          </a>
         </div>
       </div>
     );
@@ -31,7 +31,7 @@ export default function DepartmentClient({ dept }) {
   const hasDivisions = dept.divisions && dept.divisions.length > 0;
   const hasManagers = hasDivisions && dept.divisions.some(div => div.manager);
   const hasStaff = hasDivisions && dept.divisions.some(div => div.staff && div.staff.length > 0);
-  const isEmpty = !hasDirector && !hasManagers && !hasStaff;
+  const isEmpty = !hasDirector && !hasManagers && !hasStaff && dept.code?.toUpperCase() !== "EXE";
 
   return (
     <div className="min-h-screen bg-[#0bb37e] dark:bg-[#07130e] text-white selection:bg-yellow-300 selection:text-slate-950 antialiased overflow-hidden pb-24">
@@ -46,13 +46,13 @@ export default function DepartmentClient({ dept }) {
             Home
           </Link>
           <ChevronRight className="w-3.5 h-3.5" />
-          <Link href="/about" className="hover:text-yellow-300 dark:hover:text-emerald-400 transition-colors">
+          <a href="/about" className="hover:text-yellow-300 dark:hover:text-emerald-400 transition-colors">
             About
-          </Link>
+          </a>
           <ChevronRight className="w-3.5 h-3.5" />
-          <Link href="/about#structure" className="hover:text-yellow-300 dark:hover:text-emerald-400 transition-colors">
+          <a href="/about#structure" className="hover:text-yellow-300 dark:hover:text-emerald-400 transition-colors">
             Organization
-          </Link>
+          </a>
           <ChevronRight className="w-3.5 h-3.5" />
           <span className="text-yellow-300 dark:text-emerald-400 truncate max-w-[200px] sm:max-w-none">
             {dept.name}
@@ -60,12 +60,12 @@ export default function DepartmentClient({ dept }) {
         </div>
 
         {/* ─── Back Button ─── */}
-        <Link
+        <a
           href="/about#structure"
           className="inline-flex items-center gap-2 text-xs font-black tracking-widest uppercase text-yellow-300 hover:text-white dark:text-emerald-400 dark:hover:text-white transition-colors duration-300 mb-12"
         >
           <ArrowLeft className="w-4 h-4" /> Back to Departments
-        </Link>
+        </a>
 
         {/* ─── Hero Section ─── */}
         <div className="max-w-4xl mb-20">

@@ -25,65 +25,116 @@ export function AvatarFallback({ className }) {
 }
 
 // ─── 2. Department Card component ──────────────────────────────────────────────
-export function DepartmentCard({ dept, index }) {
+export function DepartmentCard({ dept, index, isExecutive = false }) {
   const numberStr = String(index + 1).padStart(2, "0");
   
+  let presidentName = "";
+  let vpNames = "";
+  let secretaryNames = "";
+
+  if (isExecutive && dept.users) {
+    const presidentUser = dept.users.find(u => u.positionName && u.positionName.toLowerCase() === "president");
+    presidentName = presidentUser ? presidentUser.name : "";
+
+    const vpUsers = dept.users.filter(u => u.positionName && u.positionName.toLowerCase().includes("vice president"));
+    vpNames = vpUsers.map(u => u.name).join(", ");
+
+    const secUsers = dept.users.filter(u => u.positionName && u.positionName.toLowerCase().includes("secretary"));
+    secretaryNames = secUsers.map(u => u.name).join(", ");
+  }
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: index * 0.08 }}
-      className="bg-[#099c6d] border-2 border-[#e8ecc4] dark:bg-[#0a1f15] dark:border-emerald-500/30 rounded-3xl p-8 relative overflow-hidden group hover:border-[#e8ecc4] dark:hover:border-emerald-400 hover:shadow-2xl transition-all duration-500 flex flex-col justify-between shadow-md"
-    >
-      {/* Decorative Index Number */}
-      <div className="absolute top-4 right-6 text-[52px] font-display font-black text-white/20 dark:text-emerald-400/20 group-hover:text-[#e8ecc4] dark:group-hover:text-emerald-400/40 transition-colors">
-        {numberStr}
-      </div>
-
-      <div className="flex-1 flex flex-col justify-between gap-6">
-        <div>
-          <h4 className="text-xl md:text-2xl font-black uppercase tracking-tight text-white dark:text-white mb-2 pr-12 leading-tight">
-            {dept.name}
-          </h4>
-          <p className="text-xs md:text-sm text-emerald-50/90 dark:text-gray-300 leading-relaxed font-bold mb-4 line-clamp-3">
-            {dept.description}
-          </p>
+    <Link href={`/about/organization/${dept.slug}`} className="block w-full">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: index * 0.08 }}
+        className={`bg-gradient-to-br from-[#099c6d] to-[#07855c] border-2 border-[#e8ecc4] dark:border-emerald-500/30 dark:from-[#0a1f15] dark:to-[#05140e] rounded-3xl p-8 relative overflow-hidden group hover:border-yellow-300 dark:hover:border-emerald-400 hover:shadow-2xl transition-all duration-500 flex flex-col justify-between shadow-md cursor-pointer hover:brightness-[1.03] active:scale-[0.99] hover:-translate-y-1 ${
+          isExecutive ? "md:p-10" : ""
+        }`}
+      >
+        {/* Decorative Index Number */}
+        <div className="absolute top-4 right-6 text-[52px] font-display font-black text-white/25 dark:text-emerald-400/25 group-hover:text-yellow-300/40 dark:group-hover:text-emerald-400/40 transition-colors">
+          {numberStr}
         </div>
 
-        {/* Stats & Director Summary */}
-        <div className="space-y-4 pt-4 border-t border-white/10 dark:border-white/5">
-          <div className="flex items-center gap-3 text-xs font-bold text-white/90">
-            <User className="w-4 h-4 text-[#e8ecc4] dark:text-emerald-400" />
-            <span className="truncate">
-              Director: <strong className="text-[#e8ecc4] dark:text-emerald-400 font-extrabold">{dept.directorName || "Not Assigned"}</strong>
-            </span>
+        <div className="flex-1 flex flex-col justify-between gap-6">
+          <div>
+            <h4 className="text-xl md:text-2xl font-black uppercase tracking-tight text-white dark:text-white mb-2 pr-12 leading-tight group-hover:text-yellow-300 transition-colors">
+              {dept.name}
+            </h4>
+            <p className="text-xs md:text-sm text-emerald-50/90 dark:text-gray-300 leading-relaxed font-bold mb-4 line-clamp-3">
+              {dept.description}
+            </p>
           </div>
 
-          <div className="flex items-center gap-6 text-xs text-white/80 dark:text-gray-400 font-semibold">
-            <span className="flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5 text-[#e8ecc4]/85 dark:text-emerald-400/70" />
-              {dept.managerCount} Managers
+          {/* Stats & Director Summary */}
+          <div className="space-y-4 pt-4 border-t border-white/10 dark:border-white/5">
+            {isExecutive ? (
+              <div className="space-y-2.5 text-xs text-white/95">
+                {/* President */}
+                <div className="flex items-start gap-2.5">
+                  <User className="w-4 h-4 text-[#e8ecc4] dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>
+                    <strong className="text-[#e8ecc4] dark:text-emerald-400 font-extrabold uppercase tracking-wide">President:</strong>{" "}
+                    {presidentName || "Not Assigned"}
+                  </span>
+                </div>
+                {/* Vice Presidents */}
+                <div className="flex items-start gap-2.5">
+                  <User className="w-4 h-4 text-[#e8ecc4] dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>
+                    <strong className="text-[#e8ecc4] dark:text-emerald-400 font-extrabold uppercase tracking-wide">Vice President:</strong>{" "}
+                    {vpNames || "Not Assigned"}
+                  </span>
+                </div>
+                {/* Secretary */}
+                <div className="flex items-start gap-2.5">
+                  <User className="w-4 h-4 text-[#e8ecc4] dark:text-emerald-400 shrink-0 mt-0.5" />
+                  <span>
+                    <strong className="text-[#e8ecc4] dark:text-emerald-400 font-extrabold uppercase tracking-wide">Secretary:</strong>{" "}
+                    {secretaryNames || "Not Assigned"}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-3 text-xs font-bold text-white/90">
+                  <User className="w-4 h-4 text-[#e8ecc4] dark:text-emerald-400" />
+                  <span className="truncate">
+                    Director: <strong className="text-[#e8ecc4] dark:text-emerald-400 font-extrabold">{dept.directorName || "Not Assigned"}</strong>
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-6 text-xs text-white/80 dark:text-gray-400 font-semibold font-bold">
+                  <span className="flex items-center gap-1.5">
+                    <Shield className="w-3.5 h-3.5 text-[#e8ecc4]/85 dark:text-emerald-400/70" />
+                    {dept.managerCount} Managers
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5 text-[#e8ecc4]/85 dark:text-emerald-400/70" />
+                    {dept.staffCount} Staff Members
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* View Team CTA Button */}
+          <div className="pt-3 flex items-center justify-between border-t border-white/5">
+            <span
+              className="inline-flex items-center gap-2 text-xs font-black tracking-widest uppercase text-[#e8ecc4]/90 group-hover:text-yellow-300 transition-all duration-300"
+            >
+              View Team
             </span>
-            <span className="flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-[#e8ecc4]/85 dark:text-emerald-400/70" />
-              {dept.staffCount} Staff Members
-            </span>
+            <div className="w-8 h-8 rounded-full bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 flex items-center justify-center text-white group-hover:bg-yellow-300 group-hover:text-slate-900 group-hover:border-yellow-300 transition-all duration-300">
+              <ArrowUpRight className="w-4 h-4 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+            </div>
           </div>
         </div>
-
-        {/* View Team CTA Button */}
-        <div className="pt-2">
-          <Link
-            href={`/about/organization/${dept.slug}`}
-            className="inline-flex items-center gap-2 text-xs font-black tracking-widest uppercase text-[#e8ecc4] hover:text-white dark:text-emerald-400 dark:hover:text-white transition-colors duration-300"
-          >
-            VIEW TEAM
-            <ArrowUpRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </Link>
   );
 }
 
@@ -247,7 +298,7 @@ export function StaffGrid({ divisions }) {
     <div className="space-y-12">
       <div className="text-center">
         <h3 className="text-sm font-black text-yellow-300 dark:text-emerald-400 tracking-[0.25em] uppercase mb-1">
-          Staff Members
+          Staff 
         </h3>
         <h2 className="text-3xl font-display font-black text-white uppercase tracking-tight">
           Seluruh Anggota Staf
@@ -271,6 +322,98 @@ export function StaffGrid({ divisions }) {
 // ─── 7. Org Tree Section component (Hierarchical Layout) ────────────────────────
 export function OrgTreeSection({ dept }) {
   if (!dept) return null;
+
+  const isExecutive = dept.code?.toUpperCase() === "EXE";
+
+  if (isExecutive) {
+    const president = dept.users?.find(u => u.positionName?.toLowerCase() === "president");
+    const vps = dept.users?.filter(u => u.positionName?.toLowerCase().includes("vice president")) || [];
+    const secretaries = dept.users?.filter(u => u.positionName?.toLowerCase().includes("secretary") || u.positionName?.toLowerCase().includes("sekretaris")) || [];
+
+    const formatUser = (user, fallbackRole) => {
+      if (!user) return null;
+      return {
+        name: user.name,
+        role: user.positionName || fallbackRole,
+        photo: user.profilePictureUrl || user.image || null,
+        socials: {}
+      };
+    };
+
+    const presidentData = formatUser(president, "President");
+
+    return (
+      <div className="w-full flex flex-col items-center animate-fade-in">
+        {/* PRESIDENT */}
+        {presidentData && (
+          <div className="flex flex-col items-center w-full">
+            <div className="text-center mb-6">
+              <h3 className="text-sm font-black text-yellow-300 dark:text-emerald-400 tracking-[0.25em] uppercase mb-1">
+                Executive Leader
+              </h3>
+              <h2 className="text-3xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
+                President
+              </h2>
+            </div>
+            
+            <div className="relative z-10 w-full max-w-[340px] hover:-translate-y-2 transition-transform duration-500">
+              <DirectorCard director={presidentData} fallbackRole="President" />
+            </div>
+
+            {((vps.length > 0) || (secretaries.length > 0)) && (
+              <div className="w-px h-12 bg-gradient-to-b from-yellow-300 to-yellow-300/30 dark:from-emerald-500/80 dark:to-emerald-500/20 mt-6 relative">
+                 <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-yellow-300 dark:bg-emerald-400 shadow-[0_0_10px_rgba(253,224,71,0.6)]"></div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* VICE PRESIDENTS */}
+        {vps.length > 0 && (
+          <div className="w-full flex flex-col items-center mt-6">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
+                Vice Presidents
+              </h2>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-8 w-full max-w-4xl px-4 z-10">
+              {vps.map((vp, idx) => (
+                <div key={idx} className="w-full max-w-[280px] hover:-translate-y-1.5 transition-transform duration-300">
+                  <MemberCard member={formatUser(vp, "Vice President")} fallbackRole="Vice President" />
+                </div>
+              ))}
+            </div>
+
+            {secretaries.length > 0 && (
+              <div className="w-px h-12 bg-gradient-to-b from-yellow-300 to-yellow-300/30 dark:from-emerald-500/80 dark:to-emerald-500/20 mt-6 relative">
+                 <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-yellow-300 dark:bg-emerald-400 shadow-[0_0_10px_rgba(253,224,71,0.6)]"></div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* SECRETARIES */}
+        {secretaries.length > 0 && (
+          <div className="w-full flex flex-col items-center mt-6">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-display font-black text-white uppercase tracking-tight drop-shadow-md">
+                Secretaries
+              </h2>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-8 w-full max-w-4xl px-4 z-10">
+              {secretaries.map((sec, idx) => (
+                <div key={idx} className="w-full max-w-[280px] hover:-translate-y-1.5 transition-transform duration-300">
+                  <MemberCard member={formatUser(sec, "Secretary")} fallbackRole="Secretary" />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   const hasDivisions = dept.divisions && dept.divisions.length > 0;
 

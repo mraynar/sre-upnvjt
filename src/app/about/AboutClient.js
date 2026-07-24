@@ -95,11 +95,18 @@ export default function AboutClient({ departmentsData = [] }) {
 
           <motion.div variants={wordReveal} initial="hidden" animate="show" className="max-w-4xl">
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-display font-black tracking-tight text-white dark:text-white uppercase leading-[0.95] drop-shadow-md">
-              {"Accelerating energy transition through student innovation".split(" ").map((word, i) => (
-                <motion.span key={i} variants={wordChild} className="inline-block mr-[0.25em] last:mr-0">
-                  {word}
-                </motion.span>
-              ))}
+              {"Accelerating energy transition through student innovation".split(" ").map((word, i) => {
+                const isHighlight = i === 2 || i === 4 || i === 5;
+                return (
+                  <motion.span 
+                    key={i} 
+                    variants={wordChild} 
+                    className={`inline-block mr-[0.25em] last:mr-0 ${isHighlight ? "text-yellow-300 dark:text-emerald-400" : "text-white dark:text-white"}`}
+                  >
+                    {word}
+                  </motion.span>
+                );
+              })}
             </h1>
           </motion.div>
 
@@ -113,7 +120,7 @@ export default function AboutClient({ departmentsData = [] }) {
       </section>
 
       {/* ── 2. Vision & Mission Section ──────────────────────────────────────── */}
-      <section id="vision" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#0aa373] dark:bg-[#07130e] border-b-2 border-white/25 dark:border-white/15">
+      <section id="vision" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#0aa373] dark:bg-[#040e0a] border-b-2 border-white/25 dark:border-white/15 transition-colors duration-300">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           <motion.div {...fadeUp(0)} className="lg:col-span-5 space-y-6">
             <span className="text-sm md:text-base font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase block drop-shadow-sm">Vision</span>
@@ -147,7 +154,7 @@ export default function AboutClient({ departmentsData = [] }) {
       </section>
 
       {/* ── 3. Four Strategic Pillars ────────────────────────────────────────── */}
-      <section id="pillars" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#099c6d] dark:bg-[#07130e] border-b-2 border-white/25 dark:border-white/15">
+      <section id="pillars" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#099c6d] dark:bg-[#07130e] border-b-2 border-white/25 dark:border-white/15 transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
           <motion.div {...fadeUp(0)} className="text-center mb-16 max-w-2xl mx-auto">
             <span className="text-sm md:text-base font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase block mb-3 drop-shadow-sm">Four Pillars</span>
@@ -170,7 +177,7 @@ export default function AboutClient({ departmentsData = [] }) {
                 <motion.div
                   key={pillar.num}
                   variants={staggerChild}
-                  className="group p-8 rounded-3xl bg-white/10 dark:bg-[#07130e] border border-white/20 dark:border-white/5 hover:border-yellow-300/40 dark:hover:border-emerald-500/40 transition-all duration-500 hover:shadow-lg flex flex-col justify-between"
+                  className="group p-8 rounded-3xl bg-white/10 dark:bg-[#050e0a] border border-white/20 dark:border-white/5 hover:border-yellow-300/40 dark:hover:border-emerald-500/40 transition-all duration-500 hover:shadow-lg flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-8">
@@ -196,7 +203,7 @@ export default function AboutClient({ departmentsData = [] }) {
       </section>
 
       {/* ── 4. Structure Section ────────────────────────────────────────────── */}
-      <section id="structure" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#0bb37e] dark:bg-[#07130e] border-b-2 border-white/25 dark:border-white/15">
+      <section id="structure" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#0bb37e] dark:bg-[#040e0a] border-b-2 border-white/25 dark:border-white/15 transition-colors duration-300">
         <div className="max-w-7xl mx-auto flex flex-col items-center">
           <motion.div 
             {...fadeUp(0)}
@@ -209,16 +216,63 @@ export default function AboutClient({ departmentsData = [] }) {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center w-full max-w-7xl mx-auto">
-            {departmentsData.filter(dept => dept.code?.toUpperCase() !== "SYS").map((dept, idx) => (
-              <DepartmentCard key={dept.slug || dept.id} dept={dept} index={idx} />
-            ))}
-          </div>
+          {/* Change 1: Executive Card pinned at the top */}
+          {(() => {
+            const execDept = departmentsData.find(dept => dept.code?.toUpperCase() === "EXE");
+            const otherDepts = departmentsData.filter(dept => dept.code?.toUpperCase() !== "SYS" && dept.code?.toUpperCase() !== "EXE");
+            
+            return (
+              <div className="w-full max-w-7xl mx-auto flex flex-col items-center">
+                {execDept && (
+                  <div className="w-full max-w-2xl mx-auto z-10">
+                    <DepartmentCard dept={execDept} index={0} isExecutive={true} />
+                  </div>
+                )}
+
+                {/* Change 2: Org chart connector lines */}
+                {execDept && otherDepts.length > 0 && (
+                  <div className="w-full max-w-5xl mx-auto relative z-0">
+                    {/* Desktop/Tablet connectors */}
+                    <div className="hidden md:block w-full h-16">
+                      <svg className="w-full h-full text-white/25 dark:text-emerald-500/30" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
+                        {/* Center dropping vertical line */}
+                        <path d="M 50 0 L 50 50" stroke="currentColor" strokeWidth="2" />
+                        
+                        {/* Horizontal branching for 3 columns (lg screen) */}
+                        <path d="M 16.6 50 L 83.3 50" stroke="currentColor" strokeWidth="2" className="hidden lg:block" />
+                        <path d="M 16.6 50 L 16.6 100" stroke="currentColor" strokeWidth="2" className="hidden lg:block" />
+                        <path d="M 50 50 L 50 100" stroke="currentColor" strokeWidth="2" className="hidden lg:block" />
+                        <path d="M 83.3 50 L 83.3 100" stroke="currentColor" strokeWidth="2" className="hidden lg:block" />
+                        
+                        {/* Horizontal branching for 2 columns (md screen) */}
+                        <path d="M 25 50 L 75 50" stroke="currentColor" strokeWidth="2" className="block lg:hidden" />
+                        <path d="M 25 50 L 25 100" stroke="currentColor" strokeWidth="2" className="block lg:hidden" />
+                        <path d="M 75 50 L 75 100" stroke="currentColor" strokeWidth="2" className="block lg:hidden" />
+                      </svg>
+                    </div>
+                    {/* Mobile vertical line connector */}
+                    <div className="block md:hidden w-full h-8">
+                      <svg className="w-full h-full text-white/25 dark:text-emerald-500/30" viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
+                        <path d="M 50 0 L 50 100" stroke="currentColor" strokeWidth="2" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+
+                {/* Remaining 5 departments stay in the grid below */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center w-full mt-2 lg:mt-0">
+                  {otherDepts.map((dept, idx) => (
+                    <DepartmentCard key={dept.slug || dept.id} dept={dept} index={idx} />
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </section>
 
       {/* ── 5. Get Connected Section ─────────────────────────────────────────── */}
-      <section id="connect" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#0aa373] dark:bg-[#07130e] text-white dark:text-white text-center relative overflow-hidden">
+      <section id="connect" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#0aa373] dark:bg-[#030a07] text-white dark:text-white text-center relative overflow-hidden transition-colors duration-300">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/8 rounded-full blur-[120px] pointer-events-none" aria-hidden="true" />
         
         <div className="max-w-5xl mx-auto relative z-10 flex flex-col items-center gap-10">
