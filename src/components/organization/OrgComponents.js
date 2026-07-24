@@ -528,7 +528,7 @@ export function OrgTreeSection({ dept }) {
           
           <div className="flex flex-wrap justify-center gap-x-12 gap-y-16 items-start w-full pt-8">
             {dept.divisions.map((div, idx) => (
-              <div key={idx} className="flex flex-col items-center w-full max-w-[300px] relative group/division">
+              <div key={idx} className="flex flex-col items-center w-full sm:w-[300px] shrink-0 relative group/division">
                 
                 {/* Vertical line connecting horizontal bar to Division title (Desktop) */}
                 <div className="hidden md:block absolute -top-10 left-1/2 w-px h-10 bg-yellow-300/80 dark:bg-emerald-500/40 -translate-x-1/2 group-hover/division:bg-yellow-300 transition-colors"></div>
