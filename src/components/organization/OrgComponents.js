@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowUpRight, Mail, Users, User, Shield, ArrowRight, Network, Crown, Star, FileText, UserCheck, Zap } from "lucide-react";
+import { ArrowUpRight, Mail, Users, User, Shield, ArrowRight, Network } from "lucide-react";
 
 // Inline LinkedIn SVG to avoid import package versions mismatch
 function LinkedinIcon({ className }) {
@@ -138,22 +138,36 @@ export function DepartmentCard({ dept, index, isExecutive = false }) {
   );
 }
 
-// Helper to resolve a beautiful icon based on the user's role
-function getRoleIcon(roleName) {
-  const lower = (roleName || "").toLowerCase();
-  if (lower.includes("president") || lower.includes("director") || lower.includes("ketua") || lower.includes("presiden")) {
-    return <Crown className="w-3.5 h-3.5 text-yellow-300 dark:text-emerald-400 shrink-0" />;
+// Helper to resolve a student's major from their NPM
+function getJurusanByNpm(npm) {
+  if (!npm) return "SRE Member";
+  const code = npm.substring(2, 5);
+  switch (code) {
+    case "031": return "Teknik Kimia";
+    case "032": return "Teknik Industri";
+    case "033": return "Teknik Sipil";
+    case "034": return "Teknik Lingkungan";
+    case "036": return "Teknik Mesin";
+    case "081": return "Teknik Informatika";
+    case "082": return "Sistem Informasi";
+    case "083": return "Sains Data";
+    case "011": return "Ekonomi Pembangunan";
+    case "012": return "Akuntansi";
+    case "013": return "Manajemen";
+    case "024": return "Ilmu Komunikasi";
+    case "025": return "Hubungan Internasional";
+    case "041": return "Agroteknologi";
+    case "042": return "Agribisnis";
+    case "043": return "Teknologi Pangan";
+    default: return "Teknik";
   }
-  if (lower.includes("vice") || lower.includes("wakil")) {
-    return <Star className="w-3.5 h-3.5 text-yellow-300 dark:text-emerald-400 shrink-0" />;
-  }
-  if (lower.includes("secretary") || lower.includes("sekretaris") || lower.includes("bendahara") || lower.includes("treasurer")) {
-    return <FileText className="w-3.5 h-3.5 text-yellow-300 dark:text-emerald-400 shrink-0" />;
-  }
-  if (lower.includes("manager") || lower.includes("kepala")) {
-    return <UserCheck className="w-3.5 h-3.5 text-yellow-300 dark:text-emerald-400 shrink-0" />;
-  }
-  return <Zap className="w-3 h-3 text-yellow-300 dark:text-emerald-400 shrink-0" />;
+}
+
+// Helper to resolve a student's entry year / batch from their NPM
+function getAngkatanByNpm(npm) {
+  if (!npm || npm.length < 2) return "2024";
+  const yearCode = npm.substring(0, 2);
+  return `20${yearCode}`;
 }
 
 // Helper to resolve avatar dynamically based on user's name
@@ -193,6 +207,10 @@ export function MemberCard({ member, fallbackRole }) {
   const name = member.name || "Unnamed Member";
   const role = member.role || fallbackRole || "Team Member";
   const photo = member.photo;
+  const npm = member.npm;
+
+  const major = getJurusanByNpm(npm);
+  const batch = getAngkatanByNpm(npm);
 
   return (
     <div className="group relative bg-white/10 dark:bg-[#07130e] border border-white/10 dark:border-white/5 rounded-3xl overflow-hidden hover:border-yellow-300/40 dark:hover:border-emerald-500/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.08)] dark:hover:shadow-[0_0_30px_rgba(16,185,129,0.08)] flex flex-col h-full w-full">
@@ -202,20 +220,23 @@ export function MemberCard({ member, fallbackRole }) {
           alt={name}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 30vw, 15vw"
-          className="object-cover transition-all duration-700 ease-out filter grayscale group-hover:grayscale-0 group-hover:scale-105"
+          className="object-cover transition-all duration-700 ease-out group-hover:scale-105"
           loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#07130e]/90 via-[#07130e]/10 to-transparent pointer-events-none" />
       </div>
       <div className="p-4 flex-1 flex flex-col justify-between">
         <div>
-          <span className="text-[10px] sm:text-xs font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 flex items-center gap-1 mb-1.5">
-            {getRoleIcon(role)}
+          <span className="text-[10px] sm:text-xs font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 block mb-1">
             {role}
           </span>
-          <h4 className="text-sm sm:text-base font-black text-white dark:text-white group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors leading-tight break-words">
+          <h4 className="text-sm sm:text-base font-black text-white dark:text-white group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors leading-tight break-words mb-1">
             {name}
           </h4>
+          <div className="text-[11px] text-[#e8ecc4]/80 dark:text-emerald-300/60 font-medium">
+            <div>{major}</div>
+            <div>Angkatan {batch}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -238,6 +259,10 @@ export function DirectorCard({ director, fallbackRole }) {
   const role = director.role || fallbackRole || "Director";
   const photo = director.photo;
   const socials = director.socials || {};
+  const npm = director.npm;
+
+  const major = getJurusanByNpm(npm);
+  const batch = getAngkatanByNpm(npm);
 
   return (
     <div className="max-w-xl mx-auto bg-white/10 dark:bg-[#07130e] border-2 border-yellow-300 dark:border-emerald-500/40 rounded-3xl overflow-hidden p-6 sm:p-8 flex flex-col md:flex-row gap-6 items-center shadow-xl">
@@ -253,13 +278,16 @@ export function DirectorCard({ director, fallbackRole }) {
       </div>
 
       <div className="flex-1 text-center md:text-left flex flex-col justify-center h-full">
-        <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 flex items-center justify-center md:justify-start gap-1.5 mb-1">
-          {getRoleIcon(role)}
+        <span className="text-xs sm:text-sm font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 block mb-1">
           {role}
         </span>
-        <h3 className="text-2xl sm:text-3xl font-black text-white dark:text-white leading-tight break-words">
+        <h3 className="text-2xl sm:text-3xl font-black text-white dark:text-white leading-tight break-words mb-2">
           {name}
         </h3>
+        <div className="text-xs sm:text-sm text-[#e8ecc4]/80 dark:text-emerald-300/60 font-medium mb-3">
+          <div>{major}</div>
+          <div>Angkatan {batch}</div>
+        </div>
         
         {/* Social Links */}
         <div className="flex justify-center md:justify-start items-center gap-3 mt-4">
@@ -381,6 +409,7 @@ export function OrgTreeSection({ dept }) {
         name: user.name,
         role: user.positionName || fallbackRole,
         photo: user.profilePictureUrl || user.image || null,
+        npm: user.npm || null,
         socials: {}
       };
     };

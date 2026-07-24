@@ -26,6 +26,7 @@ export async function getAllDepartments() {
       name: directorUser.name,
       role: directorUser.positionName || directorUser.role?.name || "Director",
       photo: directorUser.image || null,
+      npm: directorUser.npm || null,
     } : null;
 
     // 2. Identify Managers and Staff per Division
@@ -41,6 +42,7 @@ export async function getAllDepartments() {
         name: managerUser.name,
         role: managerUser.positionName || managerUser.role?.name || "Manager",
         photo: managerUser.image || null,
+        npm: managerUser.npm || null,
       } : null;
 
       const staffUsers = divUsers.filter(u => u.id !== managerUser?.id && u.id !== directorUser?.id);
@@ -49,6 +51,7 @@ export async function getAllDepartments() {
         name: u.name,
         role: u.positionName || u.role?.name || "Staff",
         photo: u.image || null,
+        npm: u.npm || null,
       }));
 
       return {
@@ -70,6 +73,7 @@ export async function getAllDepartments() {
         name: managerUser.name,
         role: managerUser.positionName || managerUser.role?.name || "Manager",
         photo: managerUser.image || null,
+        npm: managerUser.npm || null,
       } : null;
 
       const staffUsers = unassignedUsers.filter(u => u.id !== managerUser?.id);
@@ -78,6 +82,7 @@ export async function getAllDepartments() {
         name: u.name,
         role: u.positionName || u.role?.name || "Staff",
         photo: u.image || null,
+        npm: u.npm || null,
       }));
 
       mappedDivisions.push({
