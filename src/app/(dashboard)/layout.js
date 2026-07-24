@@ -57,6 +57,7 @@ export default function DashboardLayout({ children }) {
     { name: "PPT Modules", icon: Presentation, href: "/ppt", module: "ppt" },
     { name: "Quiz", icon: Target, href: "/quiz", module: "quiz" },
     { name: "Tasks", icon: FolderKanban, href: "/tasks", module: "tasks" },
+    { name: "Activities", icon: Activity, href: "/activities", module: "activities" },
     { name: "Leaderboard", icon: Trophy, href: "/leaderboard", module: "leaderboard" },
     { name: "Attendance", icon: ShieldCheck, href: "/attendance", module: "attendance" },
     { name: "Events (Admin)", icon: Activity, href: "/events-admin", module: "events" },

@@ -95,6 +95,16 @@ export default function UsersClient({ initialUsers, roles, departments, division
   const [selectedRoleId, setSelectedRoleId] = useState("");
   const [selectedDeptId, setSelectedDeptId] = useState("");
   const [selectedDivId, setSelectedDivId] = useState("");
+  const [selectedPositionName, setSelectedPositionName] = useState("");
+
+  const positionOptions = [
+    { value: "President", label: "President" },
+    { value: "Vice President", label: "Vice President" },
+    { value: "Secretary", label: "Secretary" },
+    { value: "Director", label: "Director" },
+    { value: "Manager", label: "Manager" },
+    { value: "Staff", label: "Staff" }
+  ];
 
   const filteredUsers = users.filter(u => 
     u.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -113,6 +123,7 @@ export default function UsersClient({ initialUsers, roles, departments, division
     setSelectedRoleId(data?.roleId?.toString() || "");
     setSelectedDeptId(data?.departmentId?.toString() || "");
     setSelectedDivId(data?.divisionId?.toString() || "");
+    setSelectedPositionName(data?.positionName || "");
     setError(null);
   };
 
@@ -363,7 +374,14 @@ export default function UsersClient({ initialUsers, roles, departments, division
 
                 <div className="relative z-[49]">
                   <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-white/50 mb-2">{t("users.specific_position")}</label>
-                  <input name="positionName" type="text" defaultValue={modal.data?.positionName || ""} placeholder={t("users.placeholder_position")} className="w-full bg-white dark:bg-white/5 shadow-sm dark:shadow-none border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-gray-900 dark:text-white focus:outline-none focus:border-primary/50 focus:bg-white dark:bg-white/10 shadow-sm dark:shadow-none transition-colors" />
+                  <CustomSelect 
+                    name="positionName" 
+                    options={positionOptions} 
+                    value={selectedPositionName} 
+                    onChange={setSelectedPositionName} 
+                    placeholder={t("users.placeholder_position") || "Select Position"}
+                    t={t}
+                  />
                 </div>
 
                 <div className="relative z-[48]">

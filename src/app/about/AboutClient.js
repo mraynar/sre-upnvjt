@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import React from "react";
+import { motion } from "framer-motion";
 import { 
-  ArrowUpRight, BookOpen, Cpu, Leaf, Users, Mail, MapPin, ChevronLeft, ChevronRight
+  ArrowUpRight, BookOpen, Cpu, Leaf, Users, Mail, MapPin
 } from "lucide-react";
-import Image from "next/image";
 import { DepartmentCard } from "@/components/organization/OrgComponents";
 
 // ─── Animation Variants ────────────────────────────────────────────────────────
@@ -72,82 +71,9 @@ const MISSION_ITEMS = [
   { desc: "Membangun kolaborasi sinergis lintas sektor: akademisi, industri, dan komunitas." },
 ];
 
-// ─── Member Card ───────────────────────────────────────────────────────────────
-
-function MemberCard({ member, index }) {
-  const prefersReduced = useReducedMotion();
-  return (
-    <motion.div
-      variants={staggerChild}
-      className="group relative bg-white/10 dark:bg-[#07130e] border border-white/10 dark:border-white/5 rounded-3xl overflow-hidden hover:border-yellow-300/40 dark:hover:border-emerald-500/30 transition-all duration-500 hover:shadow-[0_0_30px_rgba(245,158,11,0.1)] dark:hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] flex flex-col"
-    >
-      <div className="aspect-[4/5] bg-black/40 overflow-hidden relative">
-        <Image
-          src={member.profilePictureUrl || "/images/default-avatar.svg"}
-          alt={`${member.name} — ${member.role}`}
-          fill
-          sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 22vw"
-          className={`object-cover transition-all duration-700 ease-out ${prefersReduced ? "" : "filter grayscale group-hover:grayscale-0 group-hover:scale-105"}`}
-          loading="lazy"
-        />
-        {/* Always-visible gradient overlay at bottom */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#07130e]/90 dark:from-[#07130e]/90 via-[#07130e]/20 to-transparent pointer-events-none" />
-        {/* Division badge — top left */}
-        <div className="absolute top-3 left-3 z-10">
-          <span className="px-2 py-0.5 rounded bg-black/60 border border-white/10 text-[8px] font-black tracking-widest uppercase text-white/70 backdrop-blur-sm">
-            {member.dept}
-          </span>
-        </div>
-      </div>
-      <div className="p-5 flex-1">
-        <span className="text-[9px] font-black tracking-widest uppercase text-yellow-300 dark:text-emerald-400 block mb-1.5">
-          {member.role}
-        </span>
-        <h4 className="text-sm font-black text-white dark:text-white group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors leading-tight line-clamp-1">
-          {member.name}
-        </h4>
-      </div>
-    </motion.div>
-  );
-}
-
 // ─── Main Component ────────────────────────────────────────────────────────────
 
-export default function AboutClient({ divisionsData, departmentsData = [] }) {
-  const [activeTab, setActiveTab] = useState(divisionsData.length > 0 ? divisionsData[0].id : "");
-  const tabListRef = useRef(null);
-
-  const activeDivision = divisionsData.find(d => d.id === activeTab);
-  const activeIndex = divisionsData.findIndex(d => d.id === activeTab);
-
-  // Touch swipe state for mobile team navigation
-  const touchStartX = useRef(null);
-  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
-  const handleTouchEnd = (e) => {
-    if (touchStartX.current === null) return;
-    const diff = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0 && activeIndex < divisionsData.length - 1) {
-        setActiveTab(divisionsData[activeIndex + 1].id);
-      } else if (diff < 0 && activeIndex > 0) {
-        setActiveTab(divisionsData[activeIndex - 1].id);
-      }
-    }
-    touchStartX.current = null;
-  };
-
-  // Keyboard nav for the tab row
-  const handleTabKeyDown = (e, idx) => {
-    if (e.key === "ArrowRight") {
-      const next = divisionsData[idx + 1];
-      if (next) { setActiveTab(next.id); tabListRef.current?.children[idx + 1]?.focus(); }
-    }
-    if (e.key === "ArrowLeft") {
-      const prev = divisionsData[idx - 1];
-      if (prev) { setActiveTab(prev.id); tabListRef.current?.children[idx - 1]?.focus(); }
-    }
-  };
-
+export default function AboutClient({ departmentsData = [] }) {
   return (
     <div className="min-h-screen bg-[#0bb37e] dark:bg-[#07130e] text-white dark:text-white selection:bg-yellow-300 selection:text-[#07130e] antialiased overflow-hidden">
 
@@ -163,170 +89,113 @@ export default function AboutClient({ divisionsData, departmentsData = [] }) {
             className="flex flex-col items-start gap-4 mb-6"
           >
             <span className="inline-block py-2 px-5 rounded-full bg-[#099c6d] dark:bg-white/5 border-2 border-yellow-300/60 dark:border-white/20 text-[11px] font-black tracking-widest uppercase text-yellow-300 dark:text-[#e8ecc4] shadow-md">
-              SRE UPN Veteran Jawa Timur
+              About SRE UPNVJT
             </span>
           </motion.div>
 
-          {/* Word-by-word reveal for the headline */}
-          <motion.h1
-            variants={wordReveal}
-            initial="hidden"
-            animate="show"
-            className="text-[60px] md:text-[100px] lg:text-[120px] font-display font-black leading-[0.85] tracking-tighter uppercase mb-6 flex flex-wrap gap-x-6 perspective-[1000px]"
-          >
-            {["ABOUT", "US."].map((word, i) => (
-              <motion.span
-                key={i}
-                variants={wordChild}
-                className={i === 1 ? "text-yellow-300 dark:text-emerald-400" : ""}
-                style={{ display: "inline-block" }}
-              >
-                {word}
-              </motion.span>
-            ))}
-          </motion.h1>
+          <motion.div variants={wordReveal} initial="hidden" animate="show" className="max-w-4xl">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-display font-black tracking-tight text-white dark:text-white uppercase leading-[0.95] drop-shadow-md">
+              {"Accelerating energy transition through student innovation".split(" ").map((word, i) => (
+                <motion.span key={i} variants={wordChild} className="inline-block mr-[0.25em] last:mr-0">
+                  {word}
+                </motion.span>
+              ))}
+            </h1>
+          </motion.div>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.35 }}
-            className="text-base sm:text-lg md:text-xl text-white dark:text-gray-200 max-w-3xl leading-relaxed font-bold"
+            {...fadeUp(0.3)}
+            className="mt-8 text-lg sm:text-xl font-bold text-white dark:text-gray-200 max-w-2xl leading-relaxed drop-shadow-sm"
           >
-            Society of Renewable Energy UPN Veteran Jawa Timur adalah komunitas penggerak akselerasi transisi energi bersih dan edukasi lingkungan terkemuka di tingkat mahasiswa.
+            Society of Renewable Energy (SRE) UPN &quot;Veteran&quot; Jawa Timur adalah organisasi mahasiswa yang berdedikasi untuk mendorong akselerasi dan adopsi energi baru terbarukan.
           </motion.p>
         </div>
       </section>
 
-      {/* ── 2. Vision & Mission Section ─────────────────────────────────────── */}
-      <section id="vision" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#0aa373] dark:bg-[#050e0a] border-b-2 border-white/25 dark:border-white/15 relative overflow-hidden">
-        {/* Ambient decoration */}
-        <div className="absolute -top-20 -right-20 w-[500px] h-[500px] bg-primary/4 blur-[140px] rounded-full pointer-events-none" aria-hidden="true" />
-
-        <div className="max-w-7xl mx-auto">
-          
-          {/* Vision + Mission — side by side with strong visual contrast */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-0 mb-24 rounded-[32px] overflow-hidden border-2 border-white/25 dark:border-white/15 shadow-xl">
-            
-            {/* Vision — left dark panel */}
-            <motion.div
-              {...fadeUp(0)}
-              className="bg-[#099c6d] dark:bg-[#07130e] p-10 md:p-14 relative overflow-hidden flex flex-col justify-between"
-            >
-              {/* Large decorative "V" */}
-              <div className="absolute -top-8 -right-4 text-[200px] font-display font-black text-white/[0.08] select-none pointer-events-none leading-none" aria-hidden="true">
-                V
-              </div>
-              <div>
-                <div className="flex items-center gap-3 mb-8">
-                  <span className="w-8 h-8 rounded-full bg-yellow-300 text-[#07130e] flex items-center justify-center text-[11px] font-black shadow-sm">
-                    01
-                  </span>
-                  <span className="text-[12px] font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase">Our Vision</span>
-                </div>
-                <h2 className="text-[36px] md:text-[48px] font-display font-black uppercase text-white dark:text-white mb-6 tracking-tight leading-[1.05]">
-                  Menjadi wadah{" "}
-                  <span className="text-yellow-300 dark:text-emerald-400">
-                    esensial
-                  </span>{" "}
-                  mahasiswa
-                </h2>
-                <p className="text-[15px] md:text-[17px] text-white dark:text-gray-200 leading-relaxed font-bold border-l-4 border-yellow-300 dark:border-emerald-400 pl-5">
-                  Dalam mengeksplorasi, mengembangkan, dan mengimplementasikan inovasi di bidang energi baru terbarukan demi masa depan yang berkelanjutan dan mandiri energi.
-                </p>
-              </div>
-              {/* Accent line at bottom */}
-              <div className="mt-10 pt-6 border-t-2 border-white/20 dark:border-white/10">
-                <span className="text-[11px] text-white/80 dark:text-white/40 tracking-widest uppercase font-black">SRE UPNVJT Vision Statement</span>
-              </div>
-            </motion.div>
-
-            {/* Mission — right slightly lighter panel */}
-            <motion.div
-              {...fadeUp(0.1)}
-              className="bg-[#088c62] dark:bg-[#0a1a12] p-10 md:p-14 relative overflow-hidden flex flex-col justify-between border-t-2 border-white/25 dark:border-white/15 lg:border-t-0 lg:border-l-2"
-            >
-              <div className="absolute -bottom-8 -left-4 text-[200px] font-display font-black text-white/[0.08] select-none pointer-events-none leading-none" aria-hidden="true">
-                M
-              </div>
-              <div>
-                <div className="flex items-center gap-3 mb-8">
-                  <span className="w-8 h-8 rounded-full bg-white/15 border border-white/25 flex items-center justify-center text-yellow-300 dark:text-emerald-400 text-[10px] font-black">
-                    02
-                  </span>
-                  <span className="text-[10px] font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase">Our Mission</span>
-                </div>
-                <h2 className="text-[36px] md:text-[48px] font-display font-black uppercase text-white dark:text-white mb-8 tracking-tight leading-[1.05]">
-                  Core{" "}
-                  <span className="font-serif italic font-normal text-white/80 dark:text-white/70 normal-case tracking-normal">
-                    commitments
-                  </span>
-                </h2>
-                <ul className="space-y-5">
-                  {MISSION_ITEMS.map((item, idx) => (
-                    <motion.li
-                      key={idx}
-                      initial={{ opacity: 0, x: -16 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.55, delay: idx * 0.1 + 0.2, ease: [0.16, 1, 0.3, 1] }}
-                      className="flex gap-4 items-start"
-                    >
-                      <span className="shrink-0 w-7 h-7 rounded-full border-2 border-yellow-300 dark:border-emerald-400 bg-yellow-300 text-[#07130e] flex items-center justify-center text-[10px] font-black mt-0.5 shadow-sm">
-                        {String(idx + 1).padStart(2, "0")}
-                      </span>
-                      <span className="text-[14px] md:text-[15px] text-white dark:text-gray-200 leading-relaxed font-bold">
-                        {item.desc}
-                      </span>
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-              <div className="mt-10 pt-6 border-t-2 border-white/20 dark:border-white/10">
-                <span className="text-[11px] text-white/80 dark:text-white/40 tracking-widest uppercase font-black">SRE UPNVJT Mission Statement</span>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* ── Mission Pillars Grid ─────────────────────────────────────────── */}
-          <motion.div
-            {...fadeUp(0)}
-            className="mb-4"
-          >
-            <h3 className="text-[12px] font-black text-yellow-300 dark:text-emerald-300 tracking-[0.3em] uppercase text-center mb-10 drop-shadow-sm">
-              Empat Pilar Utama Pergerakan
-            </h3>
+      {/* ── 2. Vision & Mission Section ──────────────────────────────────────── */}
+      <section id="vision" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#0aa373] dark:bg-[#07130e] border-b-2 border-white/25 dark:border-white/15">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          <motion.div {...fadeUp(0)} className="lg:col-span-5 space-y-6">
+            <span className="text-sm md:text-base font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase block drop-shadow-sm">Vision</span>
+            <h2 className="text-3xl sm:text-5xl font-display font-black text-white dark:text-white uppercase tracking-tight leading-tight drop-shadow-md">
+              Center of Renewable Excellence
+            </h2>
+            <p className="text-base sm:text-lg font-bold text-white dark:text-gray-200 leading-relaxed drop-shadow-sm">
+              Menjadi wadah utama dan pusat keunggulan mahasiswa UPN &quot;Veteran&quot; Jawa Timur dalam pengembangan ilmu pengetahuan, teknologi, dan aksi nyata di bidang energi bersih demi mewujudkan masa depan Indonesia yang berkelanjutan.
+            </p>
           </motion.div>
-          <motion.div
-            variants={staggerParent}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-60px" }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5"
-          >
-            {PILLARS.map((pl) => (
-              <motion.div
-                key={pl.num}
-                variants={staggerChild}
-                className="bg-[#099c6d] border-2 border-[#e8ecc4]/60 dark:bg-[#071d14] dark:border-white/15 p-7 rounded-2xl flex flex-col justify-between hover:border-[#e8ecc4] hover:bg-[#088c62] dark:hover:bg-[#0b2b1e] hover:shadow-xl transition-all duration-500 group relative overflow-hidden shadow-md"
-              >
-                {/* Large decorative number */}
-                <span className="absolute top-3 right-4 text-[72px] font-display font-black text-white/10 dark:text-white/10 group-hover:text-[#e8ecc4]/30 transition-colors duration-500 select-none pointer-events-none leading-none" aria-hidden="true">
-                  {pl.num}
-                </span>
-                <div>
-                  <div className="w-12 h-12 rounded-2xl bg-[#e8ecc4] border-2 border-[#e8ecc4] flex items-center justify-center text-[#07130e] mb-5 group-hover:scale-110 group-hover:bg-[#e8ecc4] shadow-md transition-all duration-500 relative">
-                    <pl.icon className="w-6 h-6" aria-hidden="true" />
+
+          <motion.div {...fadeUp(0.15)} className="lg:col-span-7 space-y-6">
+            <span className="text-sm md:text-base font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase block drop-shadow-sm">Mission</span>
+            <div className="space-y-4">
+              {MISSION_ITEMS.map((item, idx) => (
+                <div 
+                  key={idx} 
+                  className="flex items-start gap-4 p-5 rounded-2xl bg-white/10 dark:bg-[#07130e] border border-white/20 dark:border-white/5 hover:border-yellow-300/40 dark:hover:border-emerald-500/30 transition-all duration-300 shadow-md"
+                >
+                  <div className="w-8 h-8 rounded-full bg-yellow-300 dark:bg-emerald-500/20 text-slate-950 dark:text-emerald-400 flex items-center justify-center font-black text-sm shrink-0 mt-0.5">
+                    0{idx + 1}
                   </div>
-                  <h4 className="text-[18px] font-black text-white dark:text-white mb-2.5 uppercase tracking-tight">{pl.title}</h4>
-                  <p className="text-[13px] text-white/95 dark:text-gray-300 leading-relaxed font-bold">{pl.desc}</p>
+                  <p className="text-sm sm:text-base font-bold text-white dark:text-gray-200 leading-relaxed drop-shadow-sm">
+                    {item.desc}
+                  </p>
                 </div>
-              </motion.div>
-            ))}
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ── 3. Org Structure Section ─────────────────────────────────────────── */}
+      {/* ── 3. Four Strategic Pillars ────────────────────────────────────────── */}
+      <section id="pillars" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#099c6d] dark:bg-[#07130e] border-b-2 border-white/25 dark:border-white/15">
+        <div className="max-w-7xl mx-auto">
+          <motion.div {...fadeUp(0)} className="text-center mb-16 max-w-2xl mx-auto">
+            <span className="text-sm md:text-base font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase block mb-3 drop-shadow-sm">Four Pillars</span>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black text-white dark:text-white uppercase tracking-tight drop-shadow-md">Focus Areas</h2>
+            <p className="text-base md:text-lg font-bold text-white dark:text-gray-200 mt-4 leading-relaxed drop-shadow-sm">
+              Kerangka kerja utama SRE UPNVJT dalam menggerakkan dampak nyata di lingkungan kampus dan masyarakat.
+            </p>
+          </motion.div>
+
+          <motion.div 
+            variants={staggerParent}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-60px" }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          >
+            {PILLARS.map((pillar) => {
+              const IconComp = pillar.icon;
+              return (
+                <motion.div
+                  key={pillar.num}
+                  variants={staggerChild}
+                  className="group p-8 rounded-3xl bg-white/10 dark:bg-[#07130e] border border-white/20 dark:border-white/5 hover:border-yellow-300/40 dark:hover:border-emerald-500/40 transition-all duration-500 hover:shadow-lg flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-8">
+                      <div className="w-12 h-12 rounded-2xl bg-white/10 dark:bg-emerald-500/10 border border-white/20 dark:border-emerald-500/20 flex items-center justify-center text-yellow-300 dark:text-emerald-400 group-hover:scale-110 transition-transform duration-300">
+                        <IconComp className="w-6 h-6" />
+                      </div>
+                      <span className="text-2xl font-black text-white/50 dark:text-white/20 group-hover:text-yellow-300/80 dark:group-hover:text-emerald-400/80 transition-colors">
+                        {pillar.num}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-black text-white dark:text-white mb-3 group-hover:text-yellow-300 dark:group-hover:text-emerald-400 transition-colors">
+                      {pillar.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm font-bold text-white/90 dark:text-gray-300 leading-relaxed">
+                      {pillar.desc}
+                    </p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── 4. Structure Section ────────────────────────────────────────────── */}
       <section id="structure" className="scroll-mt-20 py-24 px-6 md:px-12 lg:px-20 bg-[#0bb37e] dark:bg-[#07130e] border-b-2 border-white/25 dark:border-white/15">
         <div className="max-w-7xl mx-auto flex flex-col items-center">
           <motion.div 
@@ -340,106 +209,11 @@ export default function AboutClient({ divisionsData, departmentsData = [] }) {
             </p>
           </motion.div>
 
-          {/* Org cards — dynamically rendered from data service */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center w-full max-w-7xl mx-auto">
-            {departmentsData.map((dept, idx) => (
-              <DepartmentCard key={dept.slug} dept={dept} index={idx} />
+            {departmentsData.filter(dept => dept.code?.toUpperCase() !== "SYS").map((dept, idx) => (
+              <DepartmentCard key={dept.slug || dept.id} dept={dept} index={idx} />
             ))}
           </div>
-
-          <motion.div 
-            {...fadeUp(0)}
-            className="text-center mt-32 mb-16 max-w-3xl"
-          >
-            <span className="text-sm md:text-base font-black text-yellow-300 dark:text-emerald-400 tracking-[0.3em] uppercase block mb-3 drop-shadow-sm">Our Core Team</span>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black text-white dark:text-white uppercase tracking-tight drop-shadow-md">Kepengurusan Aktif</h2>
-            <p className="text-base md:text-lg font-bold text-white dark:text-gray-200 mt-4 max-w-xl mx-auto drop-shadow-sm">
-              Meet the team driving renewable energy awareness at UPNVJT.
-            </p>
-          </motion.div>
-
-          {/* Tab row + arrow navigation */}
-          <div className="flex items-center gap-3 w-full max-w-4xl mb-12">
-            <button
-              onClick={() => activeIndex > 0 && setActiveTab(divisionsData[activeIndex - 1].id)}
-              disabled={activeIndex === 0}
-              aria-label="Previous division"
-              className="shrink-0 w-9 h-9 rounded-full bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 flex items-center justify-center text-white dark:text-white/50 hover:bg-yellow-300 hover:text-slate-900 hover:border-yellow-300 disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-300 focus-visible:outline-yellow-300"
-            >
-              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
-            </button>
-
-            {/* Scrollable tab list */}
-            <div
-              ref={tabListRef}
-              role="tablist"
-              aria-label="Division selection"
-              className="flex gap-2 overflow-x-auto pb-1 flex-1 scrollbar-none hide-scrollbar"
-            >
-              {divisionsData.map((div, idx) => (
-                <button
-                  key={div.id}
-                  role="tab"
-                  aria-selected={activeTab === div.id}
-                  aria-controls={`division-panel-${div.id}`}
-                  id={`division-tab-${div.id}`}
-                  onClick={() => setActiveTab(div.id)}
-                  onKeyDown={(e) => handleTabKeyDown(e, idx)}
-                  tabIndex={activeTab === div.id ? 0 : -1}
-                  className={`px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 shrink-0 border focus-visible:outline-yellow-300 ${
-                    activeTab === div.id 
-                      ? "bg-yellow-300 dark:bg-emerald-500 text-slate-950 dark:text-slate-950 border-yellow-300 dark:border-emerald-500 shadow-[0_0_12px_rgba(245,158,11,0.25)] dark:shadow-[0_0_12px_rgba(16,185,129,0.25)]" 
-                      : "bg-white/10 dark:bg-[#07130e] text-white dark:text-white/40 border-white/20 dark:border-white/5 hover:text-yellow-300 dark:hover:text-white hover:border-white/30 dark:hover:border-white/15"
-                  }`}
-                >
-                  {div.id}
-                </button>
-              ))}
-            </div>
-
-            <button
-              onClick={() => activeIndex < divisionsData.length - 1 && setActiveTab(divisionsData[activeIndex + 1].id)}
-              disabled={activeIndex === divisionsData.length - 1}
-              aria-label="Next division"
-              className="shrink-0 w-9 h-9 rounded-full bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 flex items-center justify-center text-white dark:text-white/50 hover:bg-yellow-300 hover:text-slate-900 hover:border-yellow-300 disabled:opacity-20 disabled:cursor-not-allowed transition-all duration-300 focus-visible:outline-yellow-300"
-            >
-              <ChevronRight className="w-4 h-4" aria-hidden="true" />
-            </button>
-          </div>
-
-          {/* Members grid — swipe-able on mobile */}
-          <AnimatePresence mode="wait">
-            {activeDivision && (
-              <motion.div
-                key={activeDivision.id}
-                id={`division-panel-${activeDivision.id}`}
-                role="tabpanel"
-                aria-labelledby={`division-tab-${activeDivision.id}`}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <motion.div
-                  variants={staggerParent}
-                  initial="hidden"
-                  animate="show"
-                  className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 w-full"
-                >
-                  {activeDivision.members.map((member, i) => (
-                    <MemberCard key={`${member.name}-${i}`} member={member} index={i} />
-                  ))}
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Swipe hint on mobile */}
-          {divisionsData.length > 1 && (
-            <p className="text-[11px] text-white/50 dark:text-white/20 mt-8 sm:hidden tracking-wider">
-              ← Swipe to switch division →
-            </p>
-          )}
         </div>
       </section>
 
@@ -536,7 +310,7 @@ export default function AboutClient({ divisionsData, departmentsData = [] }) {
           >
             <div className="rounded-[24px] overflow-hidden border border-[#07130e]/15 dark:border-white/10 shadow-2xl dark:shadow-black/50">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.5746707745677!2d112.7183887!3d-7.2868858!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fbd3d75e4a39%3A0x7e3a00f2f4fea8a7!2sUPN%20Veteran%20Jawa%20Timur!5e0!3m2!1sid!2sid!4v1720839600000!5m2!1sid!2sid"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7914.428799763908!2d112.78460684130685!3d-7.329800820714099!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fab87edcad15%3A0xb26589947991eea1!2sUniversitas%20Pembangunan%20Nasional%20%22Veteran%22%20Jawa%20Timur!5e0!3m2!1sid!2sid!4v1784814004159!5m2!1sid!2sid"
                 width="100%"
                 height="340"
                 style={{ border: 0, display: "block" }}
@@ -550,7 +324,7 @@ export default function AboutClient({ divisionsData, departmentsData = [] }) {
             {/* Fallback link for direct navigation */}
             <div className="mt-4 text-center">
               <a
-                href="https://maps.google.com/?q=UPN+Veteran+Jawa+Timur+Surabaya"
+                href="https://maps.app.goo.gl/t8684b8ntLqntkLh7"
                 target="_blank"
                 rel="noreferrer noopener"
                 className="inline-flex items-center gap-2 text-[12px] font-bold tracking-widest uppercase text-[#07130e]/45 dark:text-white/30 hover:text-primary transition-colors duration-200 focus-visible:outline-primary"

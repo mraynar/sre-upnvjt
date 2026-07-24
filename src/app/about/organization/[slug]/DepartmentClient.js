@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { ChevronRight, ArrowLeft, Users } from "lucide-react";
-import { DirectorCard, ManagerSection, StaffGrid } from "@/components/organization/OrgComponents";
+import { OrgTreeSection } from "@/components/organization/OrgComponents";
 
 export default function DepartmentClient({ dept }) {
   if (!dept) {
@@ -38,7 +38,7 @@ export default function DepartmentClient({ dept }) {
       {/* Dynamic Background Accents */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" aria-hidden="true" />
 
-      <div className="max-w-7xl mx-auto px-6 pt-32 relative z-10">
+      <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-20 pt-32 relative z-10">
         
         {/* ─── Breadcrumbs & Back Nav ─── */}
         <div className="flex flex-wrap items-center gap-2.5 text-xs font-bold uppercase tracking-wider text-emerald-100/60 dark:text-white/30 mb-8">
@@ -91,34 +91,9 @@ export default function DepartmentClient({ dept }) {
             </p>
           </div>
         ) : (
-          /* Structured Sections */
-          <div className="space-y-24">
-            
-            {/* Director Section */}
-            {hasDirector && (
-              <div className="space-y-8">
-                <div className="text-center">
-                  <h3 className="text-sm font-black text-yellow-300 dark:text-emerald-400 tracking-[0.25em] uppercase mb-1">
-                    Department Leader
-                  </h3>
-                  <h2 className="text-3xl font-display font-black text-white uppercase tracking-tight">
-                    Director
-                  </h2>
-                </div>
-                <DirectorCard director={dept.director} fallbackRole={`Director of ${dept.name}`} />
-              </div>
-            )}
-
-            {/* Managers Section */}
-            {hasManagers && (
-              <ManagerSection divisions={dept.divisions} />
-            )}
-
-            {/* Staff Section */}
-            {hasStaff && (
-              <StaffGrid divisions={dept.divisions} />
-            )}
-            
+          /* Structured Sections - Organizational Tree */
+          <div className="w-full mt-12">
+            <OrgTreeSection dept={dept} />
           </div>
         )}
 
