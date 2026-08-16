@@ -24,37 +24,37 @@ function HamburgerIcon({ isOpen, onClick, useDarkText }) {
     <button
       onClick={onClick}
       aria-label="Toggle menu"
-      className="md:hidden relative w-12 h-12 flex flex-col items-center justify-center z-[70] group rounded-full overflow-hidden"
+      className="md:hidden relative w-11 h-11 flex flex-col items-center justify-center z-[70] group rounded-full cursor-pointer"
     >
-      {/* Glassmorphic background when open */}
+      {/* Background ring indicator */}
       <div 
-        className={`absolute inset-0 transition-all duration-500 rounded-full ${
-          isOpen ? 'bg-white/10 backdrop-blur-md border border-white/20 scale-100' : 'bg-transparent scale-90'
+        className={`absolute inset-0 transition-all duration-300 rounded-full ${
+          isOpen ? 'bg-white/15 border border-white/25 scale-100' : 'bg-transparent scale-90'
         }`} 
       />
       
-      {/* Lines container - right aligned */}
-      <div className="relative w-6 h-[18px] flex flex-col justify-between items-end">
-        {/* Top line - starts short (50%) */}
+      {/* Lines container */}
+      <div className="relative w-5 h-[16px] flex flex-col justify-between items-center">
+        {/* Top line */}
         <motion.span
           initial={false}
-          animate={isOpen ? { rotate: 45, y: 8, width: "100%" } : { rotate: 0, y: 0, width: "50%" }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className={`block h-[2px] rounded-full origin-center group-hover:w-full transition-all duration-300 group-hover:bg-primary drop-shadow-sm ${useDarkText && !isOpen ? "bg-[#07130e]" : "bg-white"}`}
+          animate={isOpen ? { rotate: 45, y: 7, scaleX: 1 } : { rotate: 0, y: 0, scaleX: 0.7 }}
+          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className={`block w-full h-[2px] rounded-full origin-center drop-shadow-sm ${useDarkText && !isOpen ? "bg-[#07130e]" : "bg-white"}`}
         />
-        {/* Middle line - always full */}
+        {/* Middle line */}
         <motion.span
           initial={false}
-          animate={isOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1, width: "100%" }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className={`block w-full h-[2px] rounded-full origin-center group-hover:bg-primary transition-colors drop-shadow-sm ${useDarkText && !isOpen ? "bg-[#07130e]" : "bg-white"}`}
+          animate={isOpen ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+          transition={{ duration: 0.15, ease: "easeInOut" }}
+          className={`block w-full h-[2px] rounded-full origin-center drop-shadow-sm ${useDarkText && !isOpen ? "bg-[#07130e]" : "bg-white"}`}
         />
-        {/* Bottom line - starts medium (75%) */}
+        {/* Bottom line */}
         <motion.span
           initial={false}
-          animate={isOpen ? { rotate: -45, y: -8, width: "100%" } : { rotate: 0, y: 0, width: "75%" }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className={`block h-[2px] rounded-full origin-center group-hover:w-full transition-all duration-300 group-hover:bg-primary drop-shadow-sm ${useDarkText && !isOpen ? "bg-[#07130e]" : "bg-white"}`}
+          animate={isOpen ? { rotate: -45, y: -7, scaleX: 1 } : { rotate: 0, y: 0, scaleX: 0.85 }}
+          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className={`block w-full h-[2px] rounded-full origin-center drop-shadow-sm ${useDarkText && !isOpen ? "bg-[#07130e]" : "bg-white"}`}
         />
       </div>
     </button>
@@ -247,31 +247,31 @@ export default function Header() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.25 }}
               onClick={close}
-              className="fixed inset-0 z-40 md:hidden bg-black/60 backdrop-blur-md"
+              className="fixed inset-0 z-40 md:hidden bg-black/75 backdrop-blur-md"
             />
-            {/* Menu Panel – Fullscreen backdrop blur overlay */}
+            {/* Menu Panel – Fullscreen overlay */}
             <motion.div
               key="panel"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="fixed inset-0 z-50 md:hidden h-[100dvh] flex flex-col justify-between px-7 pt-20 pb-6 overflow-y-auto bg-black/40 backdrop-blur-xl text-white transition-colors duration-500"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed inset-0 z-50 md:hidden h-[100dvh] flex flex-col justify-between px-7 pt-20 pb-6 overflow-y-auto bg-black/20 text-white will-change-transform"
             >
               {/* Glowing Background Ambient Orbs */}
               <div
-                className={`absolute top-1/4 -left-20 w-72 h-72 rounded-full blur-[100px] pointer-events-none transition-colors duration-500 ${
+                className={`absolute top-1/4 -left-20 w-72 h-72 rounded-full blur-[80px] pointer-events-none transition-colors duration-300 ${
                   mounted && theme === "light"
-                    ? "bg-yellow-300/30"
-                    : "bg-emerald-500/15"
+                    ? "bg-yellow-300/20"
+                    : "bg-emerald-500/10"
                 }`}
               />
               <div
-                className={`absolute bottom-1/4 -right-20 w-80 h-80 rounded-full blur-[120px] pointer-events-none transition-colors duration-500 ${
+                className={`absolute bottom-1/4 -right-20 w-80 h-80 rounded-full blur-[90px] pointer-events-none transition-colors duration-300 ${
                   mounted && theme === "light"
-                    ? "bg-yellow-400/20"
+                    ? "bg-yellow-400/15"
                     : "bg-teal-400/10"
                 }`}
               />
@@ -279,17 +279,17 @@ export default function Header() {
               {/* Main Content Container */}
               <div className="my-auto flex flex-col justify-center w-full px-2 relative z-10 py-2">
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1, duration: 0.4 }}
-                  className={`flex items-center justify-between mb-4 sm:mb-6 pb-2 border-b transition-colors duration-500 ${
+                  transition={{ delay: 0.05, duration: 0.3 }}
+                  className={`flex items-center justify-between mb-4 sm:mb-6 pb-2 border-b transition-colors duration-300 ${
                     mounted && theme === "light"
                       ? "border-white/20"
                       : "border-white/10"
                   }`}
                 >
                   <span
-                    className={`text-[11px] font-bold tracking-[0.25em] uppercase transition-colors duration-500 ${
+                    className={`text-[11px] font-bold tracking-[0.25em] uppercase transition-colors duration-300 ${
                       mounted && theme === "light"
                         ? "text-yellow-300"
                         : "text-emerald-400"
@@ -298,7 +298,7 @@ export default function Header() {
                     {t("visitor.navbar.nav_menu")}
                   </span>
                   <span
-                    className={`text-[10px] font-mono transition-colors duration-500 ${
+                    className={`text-[10px] font-mono transition-colors duration-300 ${
                       mounted && theme === "light"
                         ? "text-emerald-900/40"
                         : "text-white/40"
@@ -318,11 +318,11 @@ export default function Header() {
                     return (
                       <Link key={item.name} href={item.path} onClick={close}>
                         <motion.div
-                          initial={{ opacity: 0, x: -20 }}
+                          initial={{ opacity: 0, x: -12 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{
-                            delay: 0.12 + i * 0.08,
-                            duration: 0.45,
+                            delay: 0.05 + i * 0.04,
+                            duration: 0.3,
                             ease: [0.16, 1, 0.3, 1],
                           }}
                           className={`group flex items-center justify-between py-1.5 transition-all cursor-pointer ${
@@ -373,11 +373,11 @@ export default function Header() {
 
                 {/* Actions Row: Login CTA + Mobile Language Toggle */}
                 <motion.div
-                  initial={{ opacity: 0, y: 15 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{
-                    delay: 0.15 + navItems.length * 0.08,
-                    duration: 0.45,
+                    delay: 0.05 + navItems.length * 0.04,
+                    duration: 0.3,
                     ease: [0.16, 1, 0.3, 1],
                   }}
                   className="mt-6 flex items-center gap-3"
