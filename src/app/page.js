@@ -825,14 +825,14 @@ export default function Home() {
                             href={href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full py-2.5 bg-transparent text-yellow-300 border border-yellow-300 hover:bg-yellow-300 hover:text-[#056349] dark:text-emerald-400 dark:border-emerald-400 dark:hover:bg-emerald-400 dark:hover:text-[#0b120f] rounded-xl text-[11px] font-black text-center block transition-all duration-300 tracking-wider uppercase"
+                            className="w-full py-2.5 bg-transparent text-yellow-300 border border-yellow-300 hover:bg-yellow-300 hover:text-[#058562] dark:text-emerald-400 dark:border-emerald-400 dark:hover:bg-emerald-400 dark:hover:text-[#0b120f] rounded-xl text-[11px] font-black text-center block transition-all duration-300 tracking-wider uppercase"
                           >
                             {buttonText}
                           </a>
                         ) : (
                           <Link
                             href={href}
-                            className="w-full py-2.5 bg-transparent text-yellow-300 border border-yellow-300 hover:bg-yellow-300 hover:text-[#056349] dark:text-emerald-400 dark:border-emerald-400 dark:hover:bg-emerald-400 dark:hover:text-[#0b120f] rounded-xl text-[11px] font-black text-center block transition-all duration-300 tracking-wider uppercase"
+                            className="w-full py-2.5 bg-transparent text-yellow-300 border border-yellow-300 hover:bg-yellow-300 hover:text-[#058562] dark:text-emerald-400 dark:border-emerald-400 dark:hover:bg-emerald-400 dark:hover:text-[#0b120f] rounded-xl text-[11px] font-black text-center block transition-all duration-300 tracking-wider uppercase"
                           >
                             {buttonText}
                           </Link>
@@ -844,7 +844,7 @@ export default function Home() {
 
                 {/* Render Companion Card if there are less than 4 upcoming events */}
                 {upcomingActivities.length < 4 && (
-                  <div className="group relative flex flex-col bg-[#056349] border border-white/20 dark:bg-black/35 dark:border-white/5 rounded-[2rem] overflow-hidden shadow-2xl hover:shadow-2xl hover:shadow-black/40 hover:-translate-y-1.5 transition-all duration-500 w-full max-w-[280px]">
+                  <div className="group relative flex flex-col bg-[#058562] border border-white/20 dark:bg-black/35 dark:border-white/5 rounded-[2rem] overflow-hidden shadow-2xl hover:shadow-2xl hover:shadow-black/40 hover:-translate-y-1.5 transition-all duration-500 w-full max-w-[280px]">
                     {/* 4:5 Aspect Ratio Decorative Header */}
                     <div className="relative w-full aspect-[4/5] flex flex-col items-center justify-center p-5 text-center bg-gradient-to-b from-yellow-300/10 to-transparent dark:from-emerald-500/10 dark:to-transparent">
                       {/* Floating Glowing Orbs */}
@@ -877,7 +877,7 @@ export default function Home() {
                         href="https://www.instagram.com/sre.upnjatim/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full py-2.5 bg-yellow-300 hover:bg-yellow-400 text-[#056349] hover:text-black dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 font-black rounded-xl text-[11px] text-center block transition-all duration-300 tracking-wider uppercase shadow-md hover:shadow-xl hover:-translate-y-0.5"
+                        className="w-full py-2.5 bg-yellow-300 hover:bg-yellow-400 text-[#058562] hover:text-black dark:bg-emerald-400 dark:hover:bg-emerald-300 dark:text-slate-950 font-black rounded-xl text-[11px] text-center block transition-all duration-300 tracking-wider uppercase shadow-md hover:shadow-xl hover:-translate-y-0.5"
                       >
                         {language === "id" ? "Ikuti Instagram Kami" : "Follow Our Instagram"}
                       </a>
